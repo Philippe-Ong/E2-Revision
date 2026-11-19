@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235146b8'/%3E%3Cpath d='M18 20h28M18 32h20M18 44h24' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Exercice 1.2 — Factorielle : boucle, récursion et table. Théorie, méthode et QCM.">
+<title>Exercice 1.2 — Factorielle : boucle, récursion et table</title>
+<style>
+:root{
+  --bg:#f4f2ec;--card:#fffdf9;--card2:#efede5;--ink:#1b1a17;--muted:#5d5b54;--faint:#8b887e;
+  --line:rgba(27,26,23,.16);--line2:rgba(27,26,23,.08);--accent:#5146b8;--accent-s:#eae8fb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151412;--card:#1e1d1a;--card2:#262420;--ink:#e9e6dd;--muted:#b3afa5;--faint:#8b877c;
+  --line:rgba(255,255,255,.17);--line2:rgba(255,255,255,.075);--accent:#b3abff;--accent-s:#2a2451;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top a{text-decoration:none;font-size:12.5px;color:var(--muted);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.top a:hover{background:var(--card2);color:var(--ink)}
+.top .spacer{flex:1}
+.top .exam{font:650 9.5px/1 var(--mono);letter-spacing:.08em;background:var(--accent-s);color:var(--accent);border-radius:999px;padding:5px 8px}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px 70px}
+.eyebrow{font:650 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.07;letter-spacing:-.03em;font-weight:680;margin:10px 0 12px}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:65ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;font:11.5px/1.4 var(--mono);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:650}
+section{margin-top:34px}
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:650 10px var(--mono)}
+.tag{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+h2{font-size:clamp(20px,3vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 8px}
+h3{font-size:15px;font-weight:650;margin:0 0 4px}
+p{margin:0 0 10px}
+ul,ol{margin:8px 0 10px;padding-left:22px}
+li{margin:5px 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0}
+.box{border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:14px}
+.box.rule{border-left-color:#0e6b55}
+.box.trap{border-left-color:#b33a2b}
+.box .lbl{font:650 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.code{margin:12px 0;border-radius:10px;overflow:hidden;background:#1c1c1a;border:1px solid #2d2d29}
+.code code{background:none;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+.code header{display:flex;justify-content:space-between;padding:7px 11px;background:#242420;color:#a9a79e;font:10.5px var(--mono)}
+.code pre{margin:0;padding:12px 13px;overflow:auto;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.tbl th,.tbl td{border-bottom:1px solid var(--line2);padding:7px 8px;text-align:left;vertical-align:top}
+.tbl th{font:650 10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tbl tr:last-child td{border-bottom:0}
+.result{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:11px 13px;margin:12px 0;font-size:14px}
+.viz{margin:14px 0 4px;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:12px 13px;overflow-x:auto}
+.viz-title{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.viz-caption{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+.viz-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.viz-node{min-width:54px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:7px 9px;text-align:center;font:12px/1.3 var(--mono);color:var(--ink)}
+.viz-node b{display:block;font:9px/1.3 var(--mono);letter-spacing:.04em;color:var(--accent);margin-bottom:2px}
+.viz-arrow{font:14px/1 var(--mono);color:var(--faint);white-space:nowrap}
+.viz-label{font:9.5px/1.4 var(--mono);color:var(--faint);text-align:center}
+.viz-stack{display:flex;flex-direction:column;gap:5px;align-items:center;padding:4px 0}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:5px;padding:4px 0}
+.viz-cell{border:1px solid var(--line2);background:var(--card2);border-radius:6px;padding:6px 5px;text-align:center;font:11px/1.3 var(--mono)}
+.viz-bar{height:10px;border-radius:3px;background:var(--accent);min-width:2px}
+.viz-note{font-size:12px;color:var(--muted);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px}
+.viz svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.qcm{margin-top:12px}
+.q{background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:13px 14px;margin-top:10px}
+.qq{font-weight:600;margin:0 0 9px;font-size:14.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:8px 10px;font:13px/1.45 var(--sans);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{border-color:#0e6b55;background:rgba(14,107,85,.14)}
+.opt.ko{border-color:#b33a2b;background:rgba(179,58,43,.14)}
+.fb{margin-top:9px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:9px}
+.score{font:12px var(--mono);color:var(--faint);margin-top:12px}
+.hero{max-width:860px;margin:0 auto;padding:32px 22px 0}
+.home{max-width:1050px;margin:0 auto;padding:42px 22px 70px}
+.home h1{margin-bottom:8px}
+.group{margin-top:28px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line2);padding-bottom:7px;margin-bottom:11px}
+.group-head h2{font-size:14px;font-weight:650;margin:0}
+.group-head span{font:10.5px var(--mono);color:var(--faint)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.ex-card{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .14s ease}
+.ex-card:hover{transform:translateY(-2px)}
+.ex-card .num{font:650 10px var(--mono);color:var(--accent)}
+.ex-card h3{font-size:15.5px;margin:1px 0 0}
+.ex-card p{font-size:12.5px;line-height:1.45;color:var(--muted);margin:0;flex:1}
+.ex-card .go{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px}
+@media (max-width:640px){
+  .wrap,.hero{padding:24px 15px 55px}
+  .home{padding:28px 15px 60px}
+  .lead{font-size:15.5px}
+  .cards{grid-template-columns:1fr}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:5px 4px}
+  .top{gap:6px;padding:8px 10px}
+  .top a{font-size:11.5px}
+  .top .spacer{display:none}
+  .top .exam{margin-left:auto}
+  .code pre{font-size:11.5px;line-height:1.65}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.001ms!important}}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="index.html">← Tous les exercices</a>
+  <span class="spacer"></span>
+  <a href="../recursivite/algo-recursivite-theorie-animee.html">Version théorie · Récursivité</a>
+  <span class="exam">TE1</span>
+</div>
+<header class="hero">
+  <div class="eyebrow">E2-ALGO · exercice 1.2 · Chapitre 1</div>
+  <h1>Factorielle : boucle, récursion et table</h1>
+  <p class="lead">Calculer n! de trois façons et afficher les vingt et une valeurs de 0! à 20! sans déborder.</p>
+  <div class="chips">
+    <span class="chip">exercice <b>1.2</b></span>
+    <span class="chip">itération · récursion · cas de base · LUT · débordement 64 bits</span>
+    <span class="chip">théorie : <b>Récursivité</b></span>
+  </div>
+</header>
+<main class="wrap">
+  <section>
+    <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
+    <h2>Ce que demande l’exercice</h2>
+    <p>L'exercice demande une fonction qui calcule la factorielle d'un nombre passé en paramètre, appelée depuis main, et l'affichage par printf des factorielles de 0 à 20.</p>
+<p>a) Une version itérative. b) Une version récursive. c) Une version qui lit une table calculée par le préprocesseur.</p>
+<p>La note de l'énoncé conseille unsigned long long et le format %Ilu pour viser plus grand ; la sortie du cours vient d'une exécution Windows et montre les 21 lignes, de 1 à 2 432 902 008 176 640 000.</p>
+    <table class="tbl"><tr><th>n</th><th>n!</th></tr><tr><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>2</td></tr><tr><td>3</td><td>6</td></tr><tr><td>4</td><td>24</td></tr><tr><td>5</td><td>120</td></tr><tr><td>6</td><td>720</td></tr><tr><td>7</td><td>5040</td></tr><tr><td>8</td><td>40320</td></tr><tr><td>9</td><td>362880</td></tr><tr><td>10</td><td>3628800</td></tr><tr><td>11</td><td>39916800</td></tr><tr><td>12</td><td>479001600</td></tr><tr><td>13</td><td>6227020800</td></tr><tr><td>14</td><td>87178291200</td></tr><tr><td>15</td><td>1307674368000</td></tr><tr><td>16</td><td>20922789888000</td></tr><tr><td>17</td><td>355687428096000</td></tr><tr><td>18</td><td>6402373705728000</td></tr><tr><td>19</td><td>121645100408832000</td></tr><tr><td>20</td><td>2432902008176640000</td></tr></table>
+    <div class="viz"><div class="viz-title">La pile d'appels de fact(4)</div><div class='viz-stack' style='display:flex;flex-direction:column;gap:6px;max-width:440px;font-size:14px'><div class='viz-node' style='display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(27,26,23,.18);border-left:4px solid #5146b8;border-radius:8px;padding:9px 12px;background:#fffdf9;color:#1b1a17'><span style='font-family:ui-monospace,Consolas,monospace'>fact(4) = 4 × fact(3)</span><span style='font-size:13px;color:#5d5b54'>attend</span></div><div class='viz-node' style='display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(27,26,23,.18);border-left:4px solid #7b73d0;border-radius:8px;padding:9px 12px;background:#fffdf9;color:#1b1a17'><span style='font-family:ui-monospace,Consolas,monospace'>fact(3) = 3 × fact(2)</span><span style='font-size:13px;color:#5d5b54'>attend</span></div><div class='viz-node' style='display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(27,26,23,.18);border-left:4px solid #9a94dd;border-radius:8px;padding:9px 12px;background:#fffdf9;color:#1b1a17'><span style='font-family:ui-monospace,Consolas,monospace'>fact(2) = 2 × fact(1)</span><span style='font-size:13px;color:#5d5b54'>attend</span></div><div class='viz-node' style='display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(27,26,23,.18);border-left:4px solid #0e6b55;border-radius:8px;padding:9px 12px;background:#e6f0ec;color:#1b1a17'><span style='font-family:ui-monospace,Consolas,monospace'>fact(1) = 1</span><span style='font-size:13px;color:#0e6b55;font-weight:600'>cas de base</span></div></div><div class='viz-row' style='display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;flex-wrap:wrap'><span class='viz-label' style='font-size:13px;color:#5d5b54'>retour</span><span class='viz-node' style='padding:5px 11px;border:1px solid #0e6b55;border-radius:999px;background:#e6f0ec;color:#0e6b55;font-family:ui-monospace,Consolas,monospace'>1</span><span class='viz-arrow' style='color:#8b887e'>→</span><span class='viz-node' style='padding:5px 11px;border:1px solid #0e6b55;border-radius:999px;background:#e6f0ec;color:#0e6b55;font-family:ui-monospace,Consolas,monospace'>2</span><span class='viz-arrow' style='color:#8b887e'>→</span><span class='viz-node' style='padding:5px 11px;border:1px solid #0e6b55;border-radius:999px;background:#e6f0ec;color:#0e6b55;font-family:ui-monospace,Consolas,monospace'>6</span><span class='viz-arrow' style='color:#8b887e'>→</span><span class='viz-node' style='padding:5px 11px;border:1px solid #5146b8;border-radius:999px;background:#eae8fb;color:#5146b8;font-family:ui-monospace,Consolas,monospace'>24</span></div><div class='viz-note' style='margin-top:10px;font-size:13px;color:#5d5b54'>4 × (3 × (2 × (1))) : la multiplication n'a lieu qu'au retour, jamais avant que la pile ne se referme.</div><div class="viz-caption">Quatre trames empilées, la plus profonde en bas ; le cas de base rend 1, puis chaque trame multiplie en se dépilant.</div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
+    <h2>Les notions à mobiliser</h2>
+    <div class="grid"><div class="card"><h3>Le cas de base</h3><p>Une récursion a besoin d'une porte de sortie : 0! et 1! valent 1, donc <code>if (n &lt;= 1) return 1;</code>. Sans ce test, l'appel descend indéfiniment et la pile d'appels déborde.</p></div>
+<div class="card"><h3>La pile d'appels</h3><p><code>fact(20)</code> empile 20 trames, une par valeur de 20 à 1 : le cas de base <code>n &lt;= 1</code> s'arrête sur <code>fact(1)</code>. Elles se dépilent ensuite en multipliant. Le coût est linéaire : n − 1 multiplications et n appels, en O(n) temps comme en O(n) mémoire.</p></div>
+<div class="card"><h3>La table précalculée</h3><p>Le préprocesseur ne calcule rien : il substitue <code>#define F5 (F4 * 5ULL)</code>. C'est le compilateur qui évalue les vingt produits une fois pour toutes ; la lecture suivante est un simple accès indexé, en O(1).</p></div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
+    <h2>Comment procéder</h2>
+    <ol><li>Poser l'accumulateur à 1 et la boucle de 2 à n, pour que 0! et 1! passent sans multiplication.</li>
+<li>Écrire la récursion avec le cas de base n inférieur ou égal à 1 et le retour n × fact(n−1).</li>
+<li>Construire la table par #define en chaîne, de F1 à F20, puis l'indexer avec un tableau const.</li>
+<li>Afficher avec %llu et un argument unsigned long long, jamais avec %d.</li>
+<li>Comparer les trois sorties ligne à ligne, puis tester 21 pour voir le débordement.</li></ol>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">04</div><div class="tag">application</div></div>
+    <h2>Application à l’énoncé</h2>
+    <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>/* a) itération */
+unsigned long long factIteration(unsigned n)
+{
+    unsigned long long acc = 1ULL;
+    for (unsigned i = 2; i &lt;= n; i++) {
+        acc *= i;
+    }
+    return acc;
+}
+
+/* b) récursion : n! = n * (n-1)! */
+unsigned long long factRecursion(unsigned n)
+{
+    if (n &lt;= 1u) {
+        return 1ULL;          /* cas de base : 0! = 1! = 1 */
+    }
+    return n * factRecursion(n - 1u);
+}
+
+/* c) table construite par le préprocesseur */
+#define F1  1ULL
+#define F2  (F1 * 2ULL)
+#define F3  (F2 * 3ULL)
+#define F4  (F3 * 4ULL)
+#define F5  (F4 * 5ULL)
+#define F6  (F5 * 6ULL)
+#define F7  (F6 * 7ULL)
+#define F8  (F7 * 8ULL)
+#define F9  (F8 * 9ULL)
+#define F10 (F9 * 10ULL)
+#define F11 (F10 * 11ULL)
+#define F12 (F11 * 12ULL)
+#define F13 (F12 * 13ULL)
+#define F14 (F13 * 14ULL)
+#define F15 (F14 * 15ULL)
+#define F16 (F15 * 16ULL)
+#define F17 (F16 * 17ULL)
+#define F18 (F17 * 18ULL)
+#define F19 (F18 * 19ULL)
+#define F20 (F19 * 20ULL)
+
+static unsigned long long const cFactLut[] = {
+    1ULL, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
+    F11, F12, F13, F14, F15, F16, F17, F18, F19, F20};
+enum { eFactLutLen = sizeof cFactLut / sizeof cFactLut[0] };
+
+unsigned long long factLut(unsigned n)
+{
+    return (n &lt; eFactLutLen) ? cFactLut[n] : 0ULL;
+}
+</code></pre></div>
+    <table class="tbl"><tr><th>tour</th><th>i</th><th>acc avant</th><th>test</th><th>acc après</th></tr><tr><td>1</td><td>2</td><td>1</td><td>2 ≤ 5 vrai</td><td>2</td></tr><tr><td>2</td><td>3</td><td>2</td><td>3 ≤ 5 vrai</td><td>6</td></tr><tr><td>3</td><td>4</td><td>6</td><td>4 ≤ 5 vrai</td><td>24</td></tr><tr><td>4</td><td>5</td><td>24</td><td>5 ≤ 5 vrai</td><td>120</td></tr><tr><td>fin</td><td>6</td><td>120</td><td>6 ≤ 5 faux</td><td>120</td></tr></table><p>Le temps ne se lit pas au chronomètre sur vingt valeurs : les trois versions rendent la même chose en microsecondes. Ce qui les sépare est le nombre d'opérations. Sur cinq millions d'appels mesurés ici avec <code>clock_gettime</code>, sans optimisation et avec gcc 13.2, la boucle et la récursion prennent 25 à 30 ns par appel, la table 0,8 ns : une trentaine de fois moins.</p>
+    <div class="result"><b>Résultat.</b> Les trois versions donnent les mêmes 21 valeurs. 20! = 2 432 902 008 176 640 000 est le plus grand factoriel qui tient en 64 bits.</div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
+    <h2>Les pièges</h2>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Initialiser l'accumulateur à 0 : tous les produits restent nuls et 0! vaut 0 au lieu de 1.</li>
+<li>Calculer en int 32 bits : 13! = 6 227 020 800 dépasse déjà 2 147 483 647.</li>
+<li>Afficher un unsigned long long avec %d : format inadapté ; utiliser %llu.</li>
+<li>Croire que la table évite le débordement : 21! = 51 090 942 171 709 440 000 dépasse 2⁶⁴ − 1, et la multiplication rend 14 197 454 024 290 336 768.</li></ul></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
+    <h2>Trois questions</h2>
+    <div class="qcm" data-qcm>
+<div class="q" data-answer="1" data-why="La boucle tourne pour i = 2, 3, 4 et 5 : quatre multiplications, pour un résultat de 120.">
+<p class="qq">1. Combien de multiplications exécute factIteration(5) ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">1</button>
+<button class="opt" type="button" data-opt="1">4</button>
+<button class="opt" type="button" data-opt="2">5</button>
+<button class="opt" type="button" data-opt="3">6</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="2" data-why="20! ≈ 2,43·10¹⁸ reste sous 2⁶⁴ − 1 ≈ 1,84·10¹⁹ ; 21! ≈ 5,11·10¹⁹ le dépasse.">
+<p class="qq">2. Quel est le plus grand n dont la factorielle tient dans un unsigned long long ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">12</button>
+<button class="opt" type="button" data-opt="1">13</button>
+<button class="opt" type="button" data-opt="2">20</button>
+<button class="opt" type="button" data-opt="3">21</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="1" data-why="Les appels vont de 20 à 1 : le cas de base n &lt;= 1 s&#x27;arrête sur fact(1), sans appeler fact(0). Soit 20 trames, celle du cas de base comprise.">
+<p class="qq">3. Combien de trames empile factRecursion(20) ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">19</button>
+<button class="opt" type="button" data-opt="1">20</button>
+<button class="opt" type="button" data-opt="2">21</button>
+<button class="opt" type="button" data-opt="3">22</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 3</div></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-qcm]').forEach(function (qcm) {
+    var score = 0, total = 0;
+    qcm.querySelectorAll('.q').forEach(function (q) {
+      total++;
+      var answer = Number(q.getAttribute('data-answer'));
+      var fb = q.querySelector('.fb');
+      q.querySelectorAll('.opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (q.getAttribute('data-done')) return;
+          q.setAttribute('data-done', '1');
+          var pick = Number(btn.getAttribute('data-opt'));
+          q.querySelectorAll('.opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (i === answer) b.classList.add('ok');
+            if (i === pick && i !== answer) b.classList.add('ko');
+          });
+          fb.hidden = false;
+          fb.innerHTML = (pick === answer ? '<b>Correct.</b> ' : '<b>À revoir.</b> ') + q.getAttribute('data-why');
+          if (pick === answer) score++;
+          var out = qcm.querySelector('.score b');
+          if (out) out.textContent = score;
+        });
+      });
+    });
+    var out = qcm.querySelector('.score b');
+    if (out) out.textContent = '0';
+  });
+})();
+</script>
+
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

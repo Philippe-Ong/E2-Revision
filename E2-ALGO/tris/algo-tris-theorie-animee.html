@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Algorithmes de tri — théorie et laboratoires</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-cmp{background:var(--amber-s);border-color:var(--amber)}
+  .sw-swap{background:var(--red-s);border-color:var(--red)}
+  .sw-done{background:var(--green-s);border-color:var(--green)}
+  .sw-pivot{background:var(--purple-s);border-color:var(--purple)}
+  .sw-min{background:var(--teal-s);border-color:var(--teal)}
+  .sw-key{background:var(--blue-s);border-color:var(--blue)}
+  .sw-trou{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--faint);border-style:dashed}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tblwrap{overflow-x:auto;margin:18px 0}
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;max-width:780px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+  .tbl .ok{color:var(--green);font-weight:600}
+  .tbl .no{color:var(--red);font-weight:600}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  /* ---------- moteur de barres ---------- */
+  .bars-stage{position:relative;padding:8px 2px 2px}
+  .bars{display:flex;align-items:stretch;gap:8px;height:200px}
+  .bar{flex:1 1 0;min-width:0;display:grid;grid-template-rows:30px 1fr 15px;gap:2px}
+  .bar.is-dim{opacity:.36}
+  .bmark{font:650 10px/12px var(--mono);color:var(--accent);text-align:center;opacity:0;transition:opacity .2s;white-space:nowrap;overflow:visible;align-self:start}
+  .bmark.on{opacity:1}
+  .btrack{position:relative;height:100%;display:flex;align-items:flex-end}
+  .bfill{width:100%;border:1px solid var(--line);border-radius:6px 6px 2px 2px;background:var(--card2);height:10%;transition:height .42s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s,box-shadow .2s}
+  .bval{position:absolute;left:50%;transform:translateX(-50%);font:700 13px/1 var(--mono);color:var(--ink);transition:bottom .42s cubic-bezier(.2,.8,.2,1),color .2s;z-index:1}
+  .bidx{font:10px/15px var(--mono);color:var(--faint);text-align:center}
+  .bar.is-cmp .bfill{background:var(--amber-s);border-color:var(--amber)}
+  .bar.is-cmp .bval{color:var(--amber)}
+  .bar.is-swap .bfill{background:var(--red-s);border-color:var(--red);box-shadow:0 0 0 3px var(--red-s)}
+  .bar.is-swap .bval{color:var(--red)}
+  .bar.is-done .bfill{background:var(--green-s);border-color:var(--green)}
+  .bar.is-done .bval{color:var(--green)}
+  .bar.is-pivot .bfill{background:var(--purple-s);border-color:var(--purple)}
+  .bar.is-pivot .bval{color:var(--purple)}
+  .bar.is-min .bfill{background:var(--teal-s);border-color:var(--teal)}
+  .bar.is-min .bval{color:var(--teal)}
+  .bar.is-key .bfill{background:var(--blue-s);border-color:var(--blue)}
+  .bar.is-key .bval{color:var(--blue)}
+  .bar.is-trou .bfill{background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px);border-style:dashed;border-color:var(--faint)}
+  .bar.is-trou .bval{color:var(--faint)}
+  .bar.is-trou .bmark{color:var(--faint)}
+  .bar.is-left .bfill{background:var(--blue-s);border-color:var(--blue)}
+  .bar.is-left .bval{color:var(--blue)}
+  .bar.is-right .bfill{background:var(--teal-s);border-color:var(--teal)}
+  .bar.is-right .bval{color:var(--teal)}
+  .bar-aux{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+  .bar-aux[hidden]{display:none}
+  .aux-lbl{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .aux-cells{display:flex;gap:4px;flex-wrap:wrap}
+  .aux-cell{width:30px;text-align:center;border:1px solid var(--line2);border-radius:5px;background:var(--card2);font:650 11px/19px var(--mono);color:var(--muted)}
+  .aux-cell.empty{color:var(--faint);background:transparent;border-style:dashed}
+  .bar-counters{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px;font:12px/1.4 var(--mono);color:var(--muted)}
+  .bar-counters b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .bar-counters .badge-pass{margin-left:auto;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:4px 9px;font-size:10.5px}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note code{font-size:12px}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- calculateur de coût ---------- */
+  .calc{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px 16px;margin:18px 0;box-shadow:var(--shadow)}
+  .calc label{display:grid;gap:5px;font:11px/1.2 var(--mono);color:var(--faint)}
+  .calc input{width:92px;border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 8px;font:13px var(--mono);color:var(--ink)}
+  .calc input:focus{outline:2px solid var(--accent-s);border-color:var(--accent)}
+  .calc output{flex:1 1 250px;font:12.5px/1.6 var(--mono);color:var(--muted);background:var(--card2);border-radius:8px;padding:7px 10px}
+  .calc output b{color:var(--accent)}
+
+  /* ---------- stabilité ---------- */
+  .stab{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:15px 16px;margin:18px 0;box-shadow:var(--shadow)}
+  .stab h4{margin:0 0 8px}
+  .stab-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:7px 0}
+  .stab-name{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);min-width:82px}
+  .stab-chip{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 7px;font:11.5px var(--mono);color:var(--ink)}
+  .stab-chip small{color:var(--faint);font-size:10px}
+  .stab-chip.bad{border-color:var(--red);background:var(--red-s);color:var(--red)}
+  .stab-chip.bad small{color:var(--red)}
+  .stab-fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:7px}
+  .stab-fb b{color:var(--ink)}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+  .minicard table.tbl{font-size:12.5px;margin:6px 0 0}
+  .checklist{list-style:none;padding:0}
+  .checklist li{display:flex;gap:8px;align-items:baseline;font-size:13.5px}
+  .checklist li::before{content:"☐";color:var(--accent);font-size:13px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:700px){
+    .tblwrap .tbl{min-width:560px}
+    .tbl{min-width:0;font-size:13px}
+    .tblwrap .tbl th,.tblwrap .tbl td{padding:6px 8px}
+    .tblwrap .tbl td:first-child{white-space:normal}
+    .lab-code{font-size:11.5px}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .bars{height:150px;gap:5px}
+    .bval{font-size:11.5px}
+    .bar-aux .aux-cell{width:26px}
+    .calc input{width:76px}
+    .calc label{flex:1 1 76px}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.quiz,.box,.calc,.stab{box-shadow:none}
+    .bar-counters .badge-pass{display:none}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ALGO</div>
+        <div class="brandsub">Algorithmes de tri<br>Fiche de révision · TE1</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>Le problème</a>
+      <a href="#s2"><i>02</i>Tri à bulles</a>
+      <a href="#s3"><i>03</i>Le coût</a>
+      <a href="#s4"><i>04</i>Insertion</a>
+      <a href="#s5"><i>05</i>Sélection</a>
+      <a href="#s6"><i>06</i>Fusion</a>
+      <a href="#s7"><i>07</i>Rapide</a>
+      <a href="#s8"><i>08</i>Comparatif</a>
+      <a href="#s9"><i>09</i>Choisir</a>
+      <a href="#s10"><i>10</i>qsort</a>
+      <a href="#s11"><i>11</i>Pièges</a>
+      <a href="#s12"><i>12</i>QCM</a>
+      <a href="#s13"><i>13</i>Mémo</a>
+    </nav>
+    <div class="sidefoot"><b>TE1</b> · vendredi 20.11.2026<br><span>13 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ALGO · chapitre 1 · algorithmes de tri</div>
+      <h1>Algorithmes de tri</h1>
+      <p class="sub">Cinq algorithmes sur un même tableau témoin : comparaisons, échanges, complexité et stabilité, illustrés pas à pas.</p>
+      <div class="meta">
+        <span class="chip"><b>13</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires pas à pas</span>
+        <span class="chip">C11 · <b>gcc</b></span>
+        <span class="chip">témoin <b>5 1 4 2 8 7 3</b></span>
+        <span class="chip">TE1 · <b>20.11.2026</b></span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Fondations</h3><p>Comparer, échanger, stable, en place, adaptatif.</p></a>
+        <a class="step" href="#s2"><div class="n">02</div><h3>Tris quadratiques</h3><p>Bulles, insertion, sélection — et leurs compteurs.</p></a>
+        <a class="step" href="#s3"><div class="n">03</div><h3>Le coût</h3><p>La formule du cours, passes et permutations.</p></a>
+        <a class="step" href="#s6"><div class="n">04</div><h3>Diviser</h3><p>Fusion garantie, rapide en moyenne.</p></a>
+        <a class="step" href="#s9"><div class="n">05</div><h3>Choisir</h3><p>Quel tri pour quel tableau, et pourquoi.</p></a>
+        <a class="step" href="#s12"><div class="n">06</div><h3>Test</h3><p>QCM, pièges, mémo et checklist.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-cmp"></i>comparaison</span>
+        <span><i class="sw sw-swap"></i>échange</span>
+        <span><i class="sw sw-done"></i>zone triée</span>
+        <span><i class="sw sw-pivot"></i>pivot</span>
+        <span><i class="sw sw-min"></i>minimum</span>
+        <span><i class="sw sw-key"></i>clé</span>
+        <span><i class="sw sw-trou"></i>case libre</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b> ; les points sous le dessin permettent de sauter à une étape. La hauteur d'une barre est sa valeur, son numéro est son indice. Les compteurs correspondent au code C affiché. Le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche.</p>
+    </div>
+
+    
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1.5</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">le problème</div></div>
+      <h2>Comparer et échanger : deux opérations suffisent</h2>
+      <p class="lead">Trier, c'est ranger <code>n</code> éléments selon une relation d'ordre, en n'utilisant que deux gestes : <b>comparer</b> deux éléments et les <b>déplacer</b>. Toute la théorie — complexité, stabilité, mémoire — se déduit du nombre de fois qu'on fait ces deux gestes.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Un tri est une <b>machine à deux boutons</b>. Le bouton « comparer » ne dit que <i>plus petit</i>, <i>égal</i> ou <i>plus grand</i> ; le bouton « échanger » déplace deux cases. Un algorithme de tri n'est rien d'autre qu'un <b>programme de boutons</b> : combien de comparaisons, combien d'échanges, dans quel ordre. Deux tris qui font les mêmes gestes dans un ordre différent peuvent avoir le même résultat et des coûts du simple au centuple.</p>
+      </div>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 200" role="img" aria-label="Deux cases 5 et 1 comparées, puis échangées : la paire était inversée.">
+            <text class="ts" x="40" y="30">1. comparer</text>
+            <g class="c-blue"><rect x="40" y="44" width="88" height="58" rx="8"/><text class="t" x="84" y="81" text-anchor="middle">5</text></g>
+            <g class="c-blue"><rect x="138" y="44" width="88" height="58" rx="8"/><text class="t" x="182" y="81" text-anchor="middle">1</text></g>
+            <text class="tm" x="40" y="120">t[0]</text><text class="tm" x="138" y="120">t[1]</text>
+            <text class="ts" x="94" y="140" text-anchor="middle">5 &gt; 1 ? oui</text>
+
+            <path d="M 240 73 C 268 73, 274 73, 300 73" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="270" y="60" text-anchor="middle">inversée</text>
+
+            <text class="ts" x="322" y="30">2. échanger</text>
+            <g class="c-red"><rect x="322" y="44" width="88" height="58" rx="8"/><text class="t" x="366" y="81" text-anchor="middle">1</text></g>
+            <g class="c-red"><rect x="420" y="44" width="88" height="58" rx="8"/><text class="t" x="464" y="81" text-anchor="middle">5</text></g>
+            <text class="tm" x="322" y="120">t[0]</text><text class="tm" x="420" y="120">t[1]</text>
+            <text class="ts" x="376" y="140" text-anchor="middle">un échange = 3 écritures</text>
+
+            <path d="M 526 73 C 550 73, 556 73, 578 73" class="arrd" marker-end="url(#ar)"/>
+            <text class="ts" x="600" y="60" text-anchor="middle">avancer</text>
+            <text class="ts" x="600" y="79" text-anchor="middle">i = 2</text>
+
+            <text class="ts" x="40" y="180">Une comparaison lit deux cases ; un échange en écrit deux et utilise une case temporaire. C'est toute la facture d'un tri.</text>
+          </svg>
+        </div>
+        <figcaption>Les deux seuls gestes d'un tri par comparaison. Un algorithme « en place » n'utilise qu'une poignée de cases temporaires ; un algorithme « stable » ne déplace jamais deux éléments égaux l'un par rapport à l'autre.</figcaption>
+      </figure>
+
+      <h3>Trois propriétés, trois questions</h3>
+      <p>Avant d'écrire une boucle, pose trois questions. Elles reviennent dans tous les exercices et dans tous les QCM.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Le vocabulaire à ne pas mélanger</caption>
+          <tr><th>propriété</th><th>question</th><th>réponse</th><th>contre-exemple</th></tr>
+          <tr><td><b>stable</b></td><td>deux éléments égaux gardent-ils leur ordre d'arrivée ?</td><td>oui : l'ordre relatif des clés égales est conservé</td><td>sélection et rapide ne le garantissent pas</td></tr>
+          <tr><td><b>en place</b></td><td>combien de mémoire en plus du tableau ?</td><td>O(1) cases auxiliaires (ou O(log n) pour la pile)</td><td>fusion demande O(n) cases</td></tr>
+          <tr><td><b>adaptatif</b></td><td>un tableau déjà trié coûte-t-il moins cher ?</td><td>oui : le nombre d'opérations dépend de l'ordre d'entrée</td><td>sélection fait toujours n(n−1)/2 comparaisons</td></tr>
+        </table>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La borne à connaître</div>
+        <p>Aucun tri <b>par comparaison</b> ne peut garantir moins de <code>log₂(n!)</code> comparaisons, soit environ <code>n log₂ n − 1,44 n</code>. C'est pour cela que <code>O(n log n)</code> est la <b>meilleure classe possible</b> pour un tri généraliste : le tri fusion et le tri rapide l'atteignent, les tris quadratiques en sont très loin. La borne est une information, pas une promesse : elle ne dit rien du cas moyen d'un algorithme donné.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">« En place » ne veut pas dire « stable »</div>
+        <p>Ce sont deux axes <b>indépendants</b>. Le tri par sélection est en place et <b>instable</b> ; le tri fusion est stable et <b>pas en place</b> ; le tri par insertion est les deux à la fois ; le tri rapide est en place (seule la pile de récursion s'ajoute) mais <b>instable</b>. Une question d'examen peut porter sur un seul des deux axes : lis bien le mot.</p>
+      </div>
+
+      <h3>Le tableau témoin de toute la page</h3>
+      <p>Tous les laboratoires utilisent le même tableau de sept valeurs : <b>5, 1, 4, 2, 8, 7, 3</b>. Il a été choisi parce qu'il n'est ni trié, ni inversé, et qu'il contient neuf inversions — assez pour voir plusieurs passes, assez peu pour suivre à la main.</p>
+
+      <p>Une <b>inversion</b> est une paire d'indices <code>i &lt; j</code> telle que <code>t[i] &gt; t[j]</code>. Il y en a exactement neuf ici :</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Les neuf inversions de 5 1 4 2 8 7 3</caption>
+          <tr><th>paire</th><th>valeurs</th><th>indices</th></tr>
+          <tr><td>1</td><td>5 &gt; 1</td><td>0, 1</td></tr>
+          <tr><td>2</td><td>5 &gt; 4</td><td>0, 2</td></tr>
+          <tr><td>3</td><td>5 &gt; 2</td><td>0, 3</td></tr>
+          <tr><td>4</td><td>5 &gt; 3</td><td>0, 6</td></tr>
+          <tr><td>5</td><td>4 &gt; 2</td><td>2, 3</td></tr>
+          <tr><td>6</td><td>4 &gt; 3</td><td>2, 6</td></tr>
+          <tr><td>7</td><td>8 &gt; 7</td><td>4, 5</td></tr>
+          <tr><td>8</td><td>8 &gt; 3</td><td>4, 6</td></tr>
+          <tr><td>9</td><td>7 &gt; 3</td><td>5, 6</td></tr>
+        </table>
+      </div>
+
+      <p>Chaque échange de <b>voisins</b> corrige exactement une inversion, et une seule. Le tri à bulles fera donc <b>9 échanges</b> — ni plus, ni moins — et le tri par insertion fera <b>9 décalages</b>. C'est le premier contrôle à faire quand on implémente un tri : le nombre de mouvements doit coller au nombre d'inversions.</p>
+
+      <div class="box note">
+        <div class="lbl">Les compteurs de cette page</div>
+        <p>Chaque laboratoire affiche deux compteurs : les <b>comparaisons</b> (chaque évaluation d'un <code>&lt;</code> entre deux éléments) et les <b>écritures</b> (chaque affectation d'un élément ; un échange classique en compte 3). Ils sont produits par la même implémentation que le code C affiché, exécutée sur le témoin, et vérifiés par un banc de test. Le total doit toujours valoir : <b>1, 2, 3, 4, 5, 7, 8</b> à la fin.</p>
+      </div>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">ex. 1.5 · A8</div></div>
+      <h2>Tri à bulles : le plus grand remonte, passe après passe</h2>
+      <p class="lead">À chaque passe, on compare les <b>voisins</b> et on échange les paires inversées. Le plus grand élément « fait des bulles » jusqu'à la fin du tableau ; on recommence tant qu'une passe a échangé quelque chose.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Passe le tableau au peigne, de gauche à droite. Chaque fois que deux voisins sont à l'envers, tu les remets dans l'ordre. À la fin d'une passe, la plus grande valeur est forcément arrivée tout à droite — comme une bulle qui remonte. La passe suivante n'a plus besoin d'aller jusqu'au bout : les dernières cases sont déjà définitives.</p>
+      </div>
+
+      <p>Voici exactement l'algorithme de l'énoncé 1.5, en C11 : la boucle <code>repeat … until s = 0</code> devient un <code>do … while</code>, et <code>s</code> compte les permutations de la passe.</p>
+
+      <div class="code"><header><span>tri-a-bulles.c</span><button data-copy>copier</button></header><pre><code data-hl>/* Tri à bulles du cours (Ex. 1.5) : repeat ... until s = 0.
+   Renvoie le nombre total de permutations. */
+uint32_t triABulles(int16_t t[], size_t n)
+{
+    uint32_t permutations = 0u;
+    uint32_t s;
+
+    do {
+        s = 0u;                        /* le compteur repart à zéro   */
+        for (size_t i = 1u; i &lt; n; i++) {
+            if (t[i] &lt; t[i - 1u]) {    /* paire de voisins inversée   */
+                int16_t tmp = t[i];    /* échange : 3 écritures       */
+                t[i] = t[i - 1u];
+                t[i - 1u] = tmp;
+                s++;
+            }
+        }
+        permutations += s;
+    } while (s != 0u);                 /* until s = 0 : on s'arrête   */
+
+    return permutations;
+}</code></pre></div>
+
+      <p>Sur le tableau de l'énoncé, le programme du TP affiche ceci — <b>20 permutations en 9 passes</b>, et la dernière passe ne change rien :</p>
+
+      <div class="code"><header><span>sortie console · TP Ex. 1.5</span></header><pre><code>The unsorted numbers : 28  3 45  1  5 17 33 32 42  2
+The sorted numbers   :  1  2  3  5 17 28 32 33 42 45
+The number of required permutations to sort the table: 20</code></pre></div>
+
+      <div class="lab" data-lab="bulles">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · tri à bulles</div><div class="lab-sub">tableau témoin · 7 éléments · comparaisons et échanges</div></div>
+          <span class="lab-tag" data-count></span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="bars-stage" data-bars-stage>
+          <div class="bars" data-bars></div>
+        </div>
+        <div class="bar-aux" data-aux hidden></div>
+        <div class="bar-counters">
+          <span>comparaisons <b data-cmp>0</b></span>
+          <span>écritures <b data-wr>0</b></span>
+          <span class="badge-pass" data-badge>départ</span>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+{"algo":"bulles","interval":850,"labels":["comparaisons","écritures"],"data":[5,1,4,2,8,7,3],"states":[{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","",""],"marks":["","","","","","",""],"aux":null,"note":"<b>Le tableau de départ :</b> 5, 1, 4, 2, 8, 7, 3. Il contient <b>9 inversions</b> (des paires i &lt; j avec t[i] &gt; t[j]) : le tri à bulles fera donc exactement <b>9 échanges</b>, car chaque échange de voisins en corrige une et une seule.","code":"int16_t t[7] = {5, 1, 4, 2, 8, 7, 3};","cmp":0,"wr":0,"badge":"départ"},{"arr":[1,5,4,2,8,7,3],"roles":["swap","swap","","","","",""],"marks":["i-1","i","","","","",""],"aux":null,"note":"<b>Passe 1 · i = 1</b> : on compare t[0] = 5 et t[1] = 1. 5 &gt; 1 : paire inversée, on échange. s vaut maintenant 1.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":1,"wr":3,"badge":"passe 1"},{"arr":[1,4,5,2,8,7,3],"roles":["","swap","swap","","","",""],"marks":["","i-1","i","","","",""],"aux":null,"note":"<b>Passe 1 · i = 2</b> : on compare t[1] = 5 et t[2] = 4. 5 &gt; 4 : paire inversée, on échange. s vaut maintenant 2.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":2,"wr":6,"badge":"passe 1"},{"arr":[1,4,2,5,8,7,3],"roles":["","","swap","swap","","",""],"marks":["","","i-1","i","","",""],"aux":null,"note":"<b>Passe 1 · i = 3</b> : on compare t[2] = 5 et t[3] = 2. 5 &gt; 2 : paire inversée, on échange. s vaut maintenant 3.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":3,"wr":9,"badge":"passe 1"},{"arr":[1,4,2,5,8,7,3],"roles":["","","","cmp","cmp","",""],"marks":["","","","i-1","i","",""],"aux":null,"note":"<b>Passe 1 · i = 4</b> : on compare t[3] = 5 et t[4] = 8. 8 &lt; 5 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":4,"wr":9,"badge":"passe 1"},{"arr":[1,4,2,5,7,8,3],"roles":["","","","","swap","swap",""],"marks":["","","","","i-1","i",""],"aux":null,"note":"<b>Passe 1 · i = 5</b> : on compare t[4] = 8 et t[5] = 7. 8 &gt; 7 : paire inversée, on échange. s vaut maintenant 4.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":5,"wr":12,"badge":"passe 1"},{"arr":[1,4,2,5,7,3,8],"roles":["","","","","","swap","swap"],"marks":["","","","","","i-1","i"],"aux":null,"note":"<b>Passe 1 · i = 6</b> : on compare t[5] = 8 et t[6] = 3. 8 &gt; 3 : paire inversée, on échange. s vaut maintenant 5.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":6,"wr":15,"badge":"passe 1"},{"arr":[1,4,2,5,7,3,8],"roles":["","","","","","","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Fin de la passe 1 :</b> 5 échanges. La plus grande valeur restante est arrivée en t[6]. s = 5 ≠ 0 : le <code>do … while</code> relance une passe complète.","code":"} while (s != 0u);   /* s ≠ 0 : nouvelle passe */","cmp":6,"wr":15,"badge":"passe 1"},{"arr":[1,4,2,5,7,3,8],"roles":["cmp","cmp","","","","","done"],"marks":["i-1","i","","","","",""],"aux":null,"note":"<b>Passe 2 · i = 1</b> : on compare t[0] = 1 et t[1] = 4. 4 &lt; 1 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":7,"wr":15,"badge":"passe 2"},{"arr":[1,2,4,5,7,3,8],"roles":["","swap","swap","","","","done"],"marks":["","i-1","i","","","",""],"aux":null,"note":"<b>Passe 2 · i = 2</b> : on compare t[1] = 4 et t[2] = 2. 4 &gt; 2 : paire inversée, on échange. s vaut maintenant 1.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":8,"wr":18,"badge":"passe 2"},{"arr":[1,2,4,5,7,3,8],"roles":["","","cmp","cmp","","","done"],"marks":["","","i-1","i","","",""],"aux":null,"note":"<b>Passe 2 · i = 3</b> : on compare t[2] = 4 et t[3] = 5. 5 &lt; 4 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":9,"wr":18,"badge":"passe 2"},{"arr":[1,2,4,5,7,3,8],"roles":["","","","cmp","cmp","","done"],"marks":["","","","i-1","i","",""],"aux":null,"note":"<b>Passe 2 · i = 4</b> : on compare t[3] = 5 et t[4] = 7. 7 &lt; 5 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":10,"wr":18,"badge":"passe 2"},{"arr":[1,2,4,5,3,7,8],"roles":["","","","","swap","swap","done"],"marks":["","","","","i-1","i",""],"aux":null,"note":"<b>Passe 2 · i = 5</b> : on compare t[4] = 7 et t[5] = 3. 7 &gt; 3 : paire inversée, on échange. s vaut maintenant 2.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":11,"wr":21,"badge":"passe 2"},{"arr":[1,2,4,5,3,7,8],"roles":["","","","","","cmp","cmp"],"marks":["","","","","","i-1","i"],"aux":null,"note":"<b>Passe 2 · i = 6</b> : on compare t[5] = 7 et t[6] = 8. 8 &lt; 7 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":12,"wr":21,"badge":"passe 2"},{"arr":[1,2,4,5,3,7,8],"roles":["","","","","","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Fin de la passe 2 :</b> 2 échanges. La plus grande valeur restante est arrivée en t[5]. s = 2 ≠ 0 : le <code>do … while</code> relance une passe complète.","code":"} while (s != 0u);   /* s ≠ 0 : nouvelle passe */","cmp":12,"wr":21,"badge":"passe 2"},{"arr":[1,2,4,5,3,7,8],"roles":["cmp","cmp","","","","done","done"],"marks":["i-1","i","","","","",""],"aux":null,"note":"<b>Passe 3 · i = 1</b> : on compare t[0] = 1 et t[1] = 2. 2 &lt; 1 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":13,"wr":21,"badge":"passe 3"},{"arr":[1,2,4,5,3,7,8],"roles":["","cmp","cmp","","","done","done"],"marks":["","i-1","i","","","",""],"aux":null,"note":"<b>Passe 3 · i = 2</b> : on compare t[1] = 2 et t[2] = 4. 4 &lt; 2 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":14,"wr":21,"badge":"passe 3"},{"arr":[1,2,4,5,3,7,8],"roles":["","","cmp","cmp","","done","done"],"marks":["","","i-1","i","","",""],"aux":null,"note":"<b>Passe 3 · i = 3</b> : on compare t[2] = 4 et t[3] = 5. 5 &lt; 4 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":15,"wr":21,"badge":"passe 3"},{"arr":[1,2,4,3,5,7,8],"roles":["","","","swap","swap","done","done"],"marks":["","","","i-1","i","",""],"aux":null,"note":"<b>Passe 3 · i = 4</b> : on compare t[3] = 5 et t[4] = 3. 5 &gt; 3 : paire inversée, on échange. s vaut maintenant 1.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":16,"wr":24,"badge":"passe 3"},{"arr":[1,2,4,3,5,7,8],"roles":["","","","","cmp","cmp","done"],"marks":["","","","","i-1","i",""],"aux":null,"note":"<b>Passe 3 · i = 5</b> : on compare t[4] = 5 et t[5] = 7. 7 &lt; 5 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":17,"wr":24,"badge":"passe 3"},{"arr":[1,2,4,3,5,7,8],"roles":["","","","","","cmp","cmp"],"marks":["","","","","","i-1","i"],"aux":null,"note":"<b>Passe 3 · i = 6</b> : on compare t[5] = 7 et t[6] = 8. 8 &lt; 7 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":18,"wr":24,"badge":"passe 3"},{"arr":[1,2,4,3,5,7,8],"roles":["","","","","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Fin de la passe 3 :</b> 1 échange. La plus grande valeur restante est arrivée en t[4]. s = 1 ≠ 0 : le <code>do … while</code> relance une passe complète.","code":"} while (s != 0u);   /* s ≠ 0 : nouvelle passe */","cmp":18,"wr":24,"badge":"passe 3"},{"arr":[1,2,4,3,5,7,8],"roles":["cmp","cmp","","","done","done","done"],"marks":["i-1","i","","","","",""],"aux":null,"note":"<b>Passe 4 · i = 1</b> : on compare t[0] = 1 et t[1] = 2. 2 &lt; 1 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":19,"wr":24,"badge":"passe 4"},{"arr":[1,2,4,3,5,7,8],"roles":["","cmp","cmp","","done","done","done"],"marks":["","i-1","i","","","",""],"aux":null,"note":"<b>Passe 4 · i = 2</b> : on compare t[1] = 2 et t[2] = 4. 4 &lt; 2 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":20,"wr":24,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["","","swap","swap","done","done","done"],"marks":["","","i-1","i","","",""],"aux":null,"note":"<b>Passe 4 · i = 3</b> : on compare t[2] = 4 et t[3] = 3. 4 &gt; 3 : paire inversée, on échange. s vaut maintenant 1.","code":"if (t[i] < t[i - 1u]) { /* échange des deux voisins */ s++; }","cmp":21,"wr":27,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","cmp","cmp","done","done"],"marks":["","","","i-1","i","",""],"aux":null,"note":"<b>Passe 4 · i = 4</b> : on compare t[3] = 4 et t[4] = 5. 5 &lt; 4 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":22,"wr":27,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","","cmp","cmp","done"],"marks":["","","","","i-1","i",""],"aux":null,"note":"<b>Passe 4 · i = 5</b> : on compare t[4] = 5 et t[5] = 7. 7 &lt; 5 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":23,"wr":27,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","","done","cmp","cmp"],"marks":["","","","","","i-1","i"],"aux":null,"note":"<b>Passe 4 · i = 6</b> : on compare t[5] = 7 et t[6] = 8. 8 &lt; 7 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":24,"wr":27,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Fin de la passe 4 :</b> 1 échange. La plus grande valeur restante est arrivée en t[3]. s = 1 ≠ 0 : le <code>do … while</code> relance une passe complète.","code":"} while (s != 0u);   /* s ≠ 0 : nouvelle passe */","cmp":24,"wr":27,"badge":"passe 4"},{"arr":[1,2,3,4,5,7,8],"roles":["cmp","cmp","","done","done","done","done"],"marks":["i-1","i","","","","",""],"aux":null,"note":"<b>Passe 5 · i = 1</b> : on compare t[0] = 1 et t[1] = 2. 2 &lt; 1 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":25,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["","cmp","cmp","done","done","done","done"],"marks":["","i-1","i","","","",""],"aux":null,"note":"<b>Passe 5 · i = 2</b> : on compare t[1] = 2 et t[2] = 3. 3 &lt; 2 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":26,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["","","cmp","cmp","done","done","done"],"marks":["","","i-1","i","","",""],"aux":null,"note":"<b>Passe 5 · i = 3</b> : on compare t[2] = 3 et t[3] = 4. 4 &lt; 3 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":27,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","cmp","cmp","done","done"],"marks":["","","","i-1","i","",""],"aux":null,"note":"<b>Passe 5 · i = 4</b> : on compare t[3] = 4 et t[4] = 5. 5 &lt; 4 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":28,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","done","cmp","cmp","done"],"marks":["","","","","i-1","i",""],"aux":null,"note":"<b>Passe 5 · i = 5</b> : on compare t[4] = 5 et t[5] = 7. 7 &lt; 5 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":29,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["","","","done","done","cmp","cmp"],"marks":["","","","","","i-1","i"],"aux":null,"note":"<b>Passe 5 · i = 6</b> : on compare t[5] = 7 et t[6] = 8. 8 &lt; 7 : l'ordre est bon, on ne touche à rien.","code":"if (t[i] < t[i - 1u]) { ... }","cmp":30,"wr":27,"badge":"passe 5"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Passe 5 : aucune paire à échanger (s = 0).</b> Le test <code>until s = 0</code> arrête l'algorithme. Résultat : <b>1, 2, 3, 4, 5, 7, 8</b> — 30 comparaisons et 9 échanges (27 écritures).","code":"} while (s != 0u);   /* s = 0 : fin */","cmp":30,"wr":27,"badge":"trié"}]}
+        </script>
+      </div>
+
+      <p>À la fin de chaque passe, les cases vertes à droite sont <b>définitives</b>. Après la passe 1, le 8 est en dernière position ; après la passe 2, le 7 ; et ainsi de suite. La dernière passe ne fait que constater qu'il n'y a plus rien à échanger : <code>s = 0</code> arrête tout.</p>
+
+      <div class="box rule">
+        <div class="lbl">La règle du cours</div>
+        <ul>
+          <li>Parcourir de l'indice 1 à <code>n − 1</code> ; si <code>t[i] &lt; t[i−1]</code>, échanger et incrémenter <code>s</code>.</li>
+          <li>Remettre <code>s = 0</code> <b>au début</b> de chaque passe ; s'arrêter quand <code>s == 0</code>.</li>
+          <li>Le nombre de permutations est égal au nombre d'<b>inversions</b> : chaque échange de voisins en corrige exactement une.</li>
+          <li>Complexité : <code>O(n²)</code> dans le pire cas, <code>O(n)</code> si le tableau est déjà trié (une passe, <code>n − 1</code> comparaisons, zéro échange).</li>
+        </ul>
+      </div>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Permutations et passes pour N = 10 (séquences de l'exercice 1.5)</caption>
+          <tr><th>séquence</th><th class="num">permutations</th><th class="num">passes</th><th>commentaire</th></tr>
+          <tr><td>28 3 45 1 5 17 33 32 42 2</td><td class="num">20</td><td class="num">9</td><td>l'énoncé ; la 9<sup>e</sup> passe ne change rien</td></tr>
+          <tr><td>déjà trié</td><td class="num">0</td><td class="num">1</td><td>une seule passe, <code>s = 0</code></td></tr>
+          <tr><td>ordre inverse</td><td class="num">45</td><td class="num">10</td><td><code>N(N−1)/2</code> inversions, le maximum</td></tr>
+          <tr><td>2 3 4 … 10 1</td><td class="num">9</td><td class="num">10</td><td>la « tortue » : le 1 recule d'une case par passe</td></tr>
+          <tr><td>10 1 2 … 9</td><td class="num">9</td><td class="num">2</td><td>le « lièvre » : le 10 traverse tout en une passe</td></tr>
+        </table>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le <code>s = 0</code> oublié</div>
+        <p>Si <code>s</code> n'est pas remis à zéro au début de chaque passe, le compteur garde les échanges de la passe précédente : la condition <code>s != 0</code> reste vraie et la boucle <b>ne s'arrête jamais</b>. Le <code>s = 0</code> est la première instruction du <code>do</code>, pas la dernière. Et ne confonds pas « N passes » avec « N comparaisons » : une passe fait <b>n − 1</b> comparaisons.</p>
+      </div>
+
+      <h3>La version sans drapeau</h3>
+      <p>Sans le compteur <code>s</code>, il faut faire <code>n − 1</code> passes, même si le tableau est déjà trié. Le résultat est identique, le coût ne l'est pas.</p>
+
+      <div class="code"><header><span>sans-drapeau.c</span><button data-copy>copier</button></header><pre><code data-hl>void triABullesSansDrapeau(int16_t t[], size_t n)
+{
+    for (size_t passe = 1u; passe &lt; n; passe++) {
+        for (size_t i = 1u; i &lt; n; i++) {
+            if (t[i] &lt; t[i - 1u]) {     /* échange */
+                int16_t tmp = t[i];
+                t[i] = t[i - 1u];
+                t[i - 1u] = tmp;
+            }
+        }
+    }
+}</code></pre></div>
+
+      <div class="box note">
+        <div class="lbl">Pourquoi le drapeau change tout</div>
+        <p>Sans drapeau, un tableau déjà trié coûte <code>n(n−1)/2</code> comparaisons. Avec, il coûte <code>n − 1</code>. C'est exactement la définition d'un tri <b>adaptatif</b>. Le prix est une variable et un test par passe : négligeable.</p>
+      </div>
+
+      <div class="box idea">
+        <div class="lbl">Tortue et lièvre</div>
+        <p>Un grand élément qui part de la gauche traverse tout le tableau en <b>une seule passe</b> (le lièvre). Un petit élément qui part de la droite ne recule que d'<b>une case par passe</b> (la tortue) : c'est ce qui rend le tri à bulles lent sur les tableaux où un petit élément traîne à la fin. Le tri par insertion n'a pas ce défaut.</p>
+      </div>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">exemple 2 · complexité</div></div>
+      <h2>Combien coûte une passe : la formule du cours</h2>
+      <p class="lead">On ne chronomètre pas, on <b>compte</b>. La diapositive de complexité propose une convention : une passe coûte <code>4N − 2</code> pas, un échange en coûte 5, et le test d'arrêt 1. Avec <code>P</code> passes et <code>I</code> permutations, le coût total s'écrit en une ligne.</p>
+
+      <div class="box rule">
+        <div class="lbl">La formule</div>
+        <p style="font:15px/1.9 var(--mono);color:var(--ink)">c<sub>t</sub> = P · (4N − 2) · t + 5 · I · t</p>
+        <ul>
+          <li><code>s := 0</code> coûte <code>1t</code> ; chaque tour de boucle <code>4t</code> (incrément, deux accès, comparaison).</li>
+          <li>Un échange coûte <code>3t</code>, plus <code>2t</code> pour <code>s := s + 1</code> : soit <code>5t</code> par permutation.</li>
+          <li><code>P</code> est le nombre de passes, <code>I</code> le nombre de permutations, <code>N</code> la taille du tableau.</li>
+        </ul>
+      </div>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Coût pour N = 10, avec la convention ci-dessus</caption>
+          <tr><th>séquence</th><th class="num">P</th><th class="num">I</th><th class="num">c<sub>t</sub></th><th>classe</th></tr>
+          <tr><td>déjà trié</td><td class="num">1</td><td class="num">0</td><td class="num">38 t</td><td><code>O(N)</code></td></tr>
+          <tr><td>10 1 2 … 9</td><td class="num">2</td><td class="num">9</td><td class="num">121 t</td><td><code>O(N²)</code></td></tr>
+          <tr><td>2 3 4 … 10 1</td><td class="num">10</td><td class="num">9</td><td class="num">425 t</td><td><code>O(N²)</code></td></tr>
+          <tr><td>ordre inverse</td><td class="num">10</td><td class="num">45</td><td class="num">605 t</td><td><code>O(N²)</code></td></tr>
+          <tr><td>série de l'énoncé 1.5</td><td class="num">9</td><td class="num">20</td><td class="num">442 t</td><td><code>O(N²)</code></td></tr>
+        </table>
+      </div>
+
+      <p>Vérifie au moins une ligne à la main : pour la série de l'énoncé, <code>9 × 38 + 5 × 20 = 342 + 100 = 442</code>. C'est le même calcul que l'exemple 1 du cours, avec des passes et des permutations en plus.</p>
+
+      <div class="calc" data-calc>
+        <label>N (taille)<input type="number" min="1" max="100000" step="1" value="7" data-n></label>
+        <label>P (passes)<input type="number" min="1" max="100000" step="1" value="5" data-p></label>
+        <label>I (permutations)<input type="number" min="0" max="100000000" step="1" value="9" data-i></label>
+        <output data-calc-out></output>
+      </div>
+
+      <p>Avec les valeurs par défaut, tu obtiens le coût du <b>tableau témoin</b> : <code>N = 7</code>, <code>P = 5</code>, <code>I = 9</code>. Change <code>P</code> ou <code>I</code> pour voir basculer le coût d'un tableau déjà trié (une passe, zéro permutation) à un tableau inversé.</p>
+
+      <div class="box note">
+        <div class="lbl">Les constantes dépendent de la convention</div>
+        <p>La diapositive ne donne que <code>3t</code> pour un échange ; le <code>2t</code> de <code>s := s + 1</code> et le <code>4t</code> du tour sont <b>proposés</b>, comme dans l'exemple 1. Deux corrigés peuvent donc afficher des constantes différentes sans se contredire. Ce qui ne change pas, c'est l'ordre de grandeur : <code>O(N²)</code> au pire, <code>O(N)</code> si le tableau est déjà trié.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège du « nombre de passes »</div>
+        <p>Sur le témoin, le tri à bulles fait <b>5 passes</b> mais <b>30 comparaisons</b> : chaque passe compare 6 paires. Écrire « 5 passes donc 5 comparaisons » est faux. Et le nombre de passes dépend des données : c'est lui qui rend le coût variable, pas <code>N</code> seul.</p>
+      </div>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">insertion</div></div>
+      <h2>Tri par insertion : on insère une carte à la fois</h2>
+      <p class="lead">C'est le tri du joueur de cartes. La main gauche est triée ; on prend la carte suivante et on la glisse à sa place en <b>décalant</b> les cartes plus grandes d'une case vers la droite. Rien d'autre.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>La main gauche est triée. On prend la carte <code>t[i]</code> dans la main droite : c'est la <b>clé</b>. On la compare à la carte la plus à droite de la main gauche ; si elle est plus grande, elle glisse d'une case vers la droite et on recommence. Quand on trouve une carte plus petite (ou le bord de la main), on pose la clé devant elle. La main gauche a gagné une carte, toujours triée.</p>
+      </div>
+
+      <div class="code"><header><span>tri-insertion.c</span><button data-copy>copier</button></header><pre><code data-hl>void triInsertion(int16_t t[], size_t n)
+{
+    for (size_t i = 1u; i &lt; n; i++) {
+        int16_t cle = t[i];            /* la carte à insérer          */
+        size_t j = i;
+
+        while (j &gt; 0u &amp;&amp; cle &lt; t[j - 1u]) {
+            t[j] = t[j - 1u];          /* décalage vers la droite     */
+            j--;
+        }
+        t[j] = cle;                    /* la clé trouve sa place      */
+    }
+}</code></pre></div>
+
+      <div class="lab" data-lab="insertion">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · tri par insertion</div><div class="lab-sub">décalages successifs · la clé remonte la main gauche</div></div>
+          <span class="lab-tag" data-count></span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="bars-stage" data-bars-stage>
+          <div class="bars" data-bars></div>
+        </div>
+        <div class="bar-aux" data-aux hidden></div>
+        <div class="bar-counters">
+          <span>comparaisons <b data-cmp>0</b></span>
+          <span>écritures <b data-wr>0</b></span>
+          <span class="badge-pass" data-badge>départ</span>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+{"algo":"insertion","interval":900,"labels":["comparaisons","écritures"],"data":[5,1,4,2,8,7,3],"states":[{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","",""],"marks":["","","","","","",""],"aux":null,"note":"<b>Principe :</b> on prend les éléments un par un, de gauche à droite. Les <b>i</b> premiers sont déjà triés ; la clé t[i] est insérée à sa place en décalant les plus grandes vers la droite.","code":"int16_t t[7] = {5, 1, 4, 2, 8, 7, 3};","cmp":0,"wr":0,"badge":"départ"},{"arr":[5,1,4,2,8,7,3],"roles":["done","key","","","","",""],"marks":["","clé","","","","",""],"aux":null,"note":"<b>i = 1</b> : la clé est t[1] = 1. Les 1 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":0,"wr":0,"badge":"clé 1"},{"arr":[5,5,4,2,8,7,3],"roles":["trou","swap","","","","",""],"marks":["libre","j","","","","",""],"aux":null,"note":"<b>j = 1</b> : t[0] = 5 &gt; clé 1. On décale 5 d'une case à droite (t[1] = 5) ; la case t[0] est <b>libre</b>, la clé y descendra peut-être. j passe à 0.","code":"t[j] = t[j - 1u];\nj--;","cmp":1,"wr":1,"badge":"décalage"},{"arr":[5,5,4,2,8,7,3],"roles":["trou","","","","","",""],"marks":["libre","","","","","",""],"aux":null,"note":"<b>j = 0</b> : plus aucun voisin à gauche. La clé est plus petite que tout le préfixe trié, elle se place en tête, dans la case libre t[0].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":1,"wr":1,"badge":"bord"},{"arr":[1,5,4,2,8,7,3],"roles":["done","done","","","","",""],"marks":["place","","","","","",""],"aux":null,"note":"<b>1 se place en t[0].</b> Les 2 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":1,"wr":2,"badge":"placement"},{"arr":[1,5,4,2,8,7,3],"roles":["done","done","key","","","",""],"marks":["","","clé","","","",""],"aux":null,"note":"<b>i = 2</b> : la clé est t[2] = 4. Les 2 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":1,"wr":2,"badge":"clé 4"},{"arr":[1,5,5,2,8,7,3],"roles":["done","trou","swap","","","",""],"marks":["","libre","j","","","",""],"aux":null,"note":"<b>j = 2</b> : t[1] = 5 &gt; clé 4. On décale 5 d'une case à droite (t[2] = 5) ; la case t[1] est <b>libre</b>, la clé y descendra peut-être. j passe à 1.","code":"t[j] = t[j - 1u];\nj--;","cmp":2,"wr":3,"badge":"décalage"},{"arr":[1,5,5,2,8,7,3],"roles":["cmp","trou","","","","",""],"marks":["j-1","libre","","","","",""],"aux":null,"note":"<b>j = 1</b> : t[0] = 1 &lt; 4 : on s'arrête, la clé est plus grande. Sa place est juste à droite, dans la case libre t[1].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":3,"wr":3,"badge":"comparaison"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","","","",""],"marks":["","place","","","","",""],"aux":null,"note":"<b>4 se place en t[1].</b> Les 3 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":3,"wr":4,"badge":"placement"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","key","","",""],"marks":["","","","clé","","",""],"aux":null,"note":"<b>i = 3</b> : la clé est t[3] = 2. Les 3 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":3,"wr":4,"badge":"clé 2"},{"arr":[1,4,5,5,8,7,3],"roles":["done","done","trou","swap","","",""],"marks":["","","libre","j","","",""],"aux":null,"note":"<b>j = 3</b> : t[2] = 5 &gt; clé 2. On décale 5 d'une case à droite (t[3] = 5) ; la case t[2] est <b>libre</b>, la clé y descendra peut-être. j passe à 2.","code":"t[j] = t[j - 1u];\nj--;","cmp":4,"wr":5,"badge":"décalage"},{"arr":[1,4,4,5,8,7,3],"roles":["done","trou","swap","","","",""],"marks":["","libre","j","","","",""],"aux":null,"note":"<b>j = 2</b> : t[1] = 4 &gt; clé 2. On décale 4 d'une case à droite (t[2] = 4) ; la case t[1] est <b>libre</b>, la clé y descendra peut-être. j passe à 1.","code":"t[j] = t[j - 1u];\nj--;","cmp":5,"wr":6,"badge":"décalage"},{"arr":[1,4,4,5,8,7,3],"roles":["cmp","trou","done","","","",""],"marks":["j-1","libre","","","","",""],"aux":null,"note":"<b>j = 1</b> : t[0] = 1 &lt; 2 : on s'arrête, la clé est plus grande. Sa place est juste à droite, dans la case libre t[1].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":6,"wr":6,"badge":"comparaison"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","done","done","","",""],"marks":["","place","","","","",""],"aux":null,"note":"<b>2 se place en t[1].</b> Les 4 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":6,"wr":7,"badge":"placement"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","done","done","key","",""],"marks":["","","","","clé","",""],"aux":null,"note":"<b>i = 4</b> : la clé est t[4] = 8. Les 4 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":6,"wr":7,"badge":"clé 8"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","done","cmp","trou","",""],"marks":["","","","j-1","libre","",""],"aux":null,"note":"<b>j = 4</b> : t[3] = 5 &lt; 8 : on s'arrête, la clé est plus grande. Sa place est juste à droite, dans la case libre t[4].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":7,"wr":7,"badge":"comparaison"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","done","done","done","",""],"marks":["","","","","place","",""],"aux":null,"note":"<b>8 se place en t[4].</b> Les 5 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":7,"wr":8,"badge":"placement"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","done","done","done","key",""],"marks":["","","","","","clé",""],"aux":null,"note":"<b>i = 5</b> : la clé est t[5] = 7. Les 5 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":7,"wr":8,"badge":"clé 7"},{"arr":[1,2,4,5,8,8,3],"roles":["done","done","done","done","trou","swap",""],"marks":["","","","","libre","j",""],"aux":null,"note":"<b>j = 5</b> : t[4] = 8 &gt; clé 7. On décale 8 d'une case à droite (t[5] = 8) ; la case t[4] est <b>libre</b>, la clé y descendra peut-être. j passe à 4.","code":"t[j] = t[j - 1u];\nj--;","cmp":8,"wr":9,"badge":"décalage"},{"arr":[1,2,4,5,8,8,3],"roles":["done","done","done","cmp","trou","",""],"marks":["","","","j-1","libre","",""],"aux":null,"note":"<b>j = 4</b> : t[3] = 5 &lt; 7 : on s'arrête, la clé est plus grande. Sa place est juste à droite, dans la case libre t[4].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":9,"wr":9,"badge":"comparaison"},{"arr":[1,2,4,5,7,8,3],"roles":["done","done","done","done","done","done",""],"marks":["","","","","place","",""],"aux":null,"note":"<b>7 se place en t[4].</b> Les 6 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":9,"wr":10,"badge":"placement"},{"arr":[1,2,4,5,7,8,3],"roles":["done","done","done","done","done","done","key"],"marks":["","","","","","","clé"],"aux":null,"note":"<b>i = 6</b> : la clé est t[6] = 3. Les 6 éléments de gauche sont triés ; on compare la clé à son voisin de gauche, puis on décale tant que le voisin est plus grand.","code":"int16_t cle = t[i];\nsize_t j = i;","cmp":9,"wr":10,"badge":"clé 3"},{"arr":[1,2,4,5,7,8,8],"roles":["done","done","done","done","done","trou","swap"],"marks":["","","","","","libre","j"],"aux":null,"note":"<b>j = 6</b> : t[5] = 8 &gt; clé 3. On décale 8 d'une case à droite (t[6] = 8) ; la case t[5] est <b>libre</b>, la clé y descendra peut-être. j passe à 5.","code":"t[j] = t[j - 1u];\nj--;","cmp":10,"wr":11,"badge":"décalage"},{"arr":[1,2,4,5,7,7,8],"roles":["done","done","done","done","trou","swap",""],"marks":["","","","","libre","j",""],"aux":null,"note":"<b>j = 5</b> : t[4] = 7 &gt; clé 3. On décale 7 d'une case à droite (t[5] = 7) ; la case t[4] est <b>libre</b>, la clé y descendra peut-être. j passe à 4.","code":"t[j] = t[j - 1u];\nj--;","cmp":11,"wr":12,"badge":"décalage"},{"arr":[1,2,4,5,5,7,8],"roles":["done","done","done","trou","swap","done",""],"marks":["","","","libre","j","",""],"aux":null,"note":"<b>j = 4</b> : t[3] = 5 &gt; clé 3. On décale 5 d'une case à droite (t[4] = 5) ; la case t[3] est <b>libre</b>, la clé y descendra peut-être. j passe à 3.","code":"t[j] = t[j - 1u];\nj--;","cmp":12,"wr":13,"badge":"décalage"},{"arr":[1,2,4,4,5,7,8],"roles":["done","done","trou","swap","done","done",""],"marks":["","","libre","j","","",""],"aux":null,"note":"<b>j = 3</b> : t[2] = 4 &gt; clé 3. On décale 4 d'une case à droite (t[3] = 4) ; la case t[2] est <b>libre</b>, la clé y descendra peut-être. j passe à 2.","code":"t[j] = t[j - 1u];\nj--;","cmp":13,"wr":14,"badge":"décalage"},{"arr":[1,2,4,4,5,7,8],"roles":["done","cmp","trou","done","done","done",""],"marks":["","j-1","libre","","","",""],"aux":null,"note":"<b>j = 2</b> : t[1] = 2 &lt; 3 : on s'arrête, la clé est plus grande. Sa place est juste à droite, dans la case libre t[2].","code":"while (j > 0u && cle < t[j - 1u]) { ... }","cmp":14,"wr":14,"badge":"comparaison"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","place","","","",""],"aux":null,"note":"<b>3 se place en t[2].</b> Les 7 premiers éléments sont maintenant triés, et l'ordre des clés égales n'a pas bougé : le tri est stable.","code":"t[j] = cle;","cmp":14,"wr":15,"badge":"placement"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Terminé :</b> 1, 2, 3, 4, 5, 7, 8. 14 comparaisons et 15 écritures (9 décalages + 6 placements). Sur un tableau déjà trié, il n'y aurait eu que 6 comparaisons : c'est le tri <b>adaptatif</b>.","code":"/* tableau trié */","cmp":14,"wr":15,"badge":"trié"}]}
+        </script>
+      </div>
+
+      <p>Le préfixe vert grandit d'une case par insertion. La barre rouge est la valeur qui vient d'être décalée ; la case en pointillés est <b>libre</b> — elle contient encore une copie, mais la clé, gardée dans <code>cle</code>, va l'écraser. À la fin, <b>14 comparaisons et 15 écritures</b> — contre 30 et 27 pour le tri à bulles sur le même tableau.</p>
+
+      <div class="box rule">
+        <div class="lbl">L'invariant, et pourquoi c'est stable</div>
+        <p>Avant chaque tour, les <code>i</code> premiers éléments sont <b>triés</b> et sont exactement les <code>i</code> plus petits du tableau. La comparaison est <b>strictement</b> inférieure (<code>cle &lt; t[j−1]</code>) : une clé égale ne provoque pas de décalage, donc elle reste derrière la clé déjà en place. C'est ce <code>&lt;</code> — et non <code>≤</code> — qui rend le tri <b>stable</b>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Décaler, ce n'est pas échanger</div>
+        <p>La version naïve échange la clé avec son voisin à chaque inversion : 3 écritures par inversion. La version par décalage écrit une seule fois par inversion, plus une fois pour poser la clé. Sur le témoin : <b>15 écritures</b> au lieu de 27 pour le tri à bulles. Sur un microcontrôleur, la différence se voit.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Complexité</div>
+        <ul>
+          <li>Meilleur cas (déjà trié) : <code>n − 1</code> comparaisons, <code>n − 1</code> écritures — <code>O(n)</code>.</li>
+          <li>Pire cas (ordre inverse) : <code>n(n−1)/2</code> comparaisons et décalages — <code>O(n²)</code>.</li>
+          <li>Moyenne : environ <code>n²/4</code> comparaisons et décalages — <code>O(n²)</code>, mais avec une petite constante.</li>
+        </ul>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Le tri des cas réels</div>
+        <p>C'est le tri utilisé pour les petites séries (moins de 16 à 32 éléments) et pour les données <b>presque triées</b>. Beaucoup de bibliothèques l'utilisent comme finition à l'intérieur d'un tri rapide ou d'un tri fusion : en dessous d'un certain seuil, ses constantes battent les algorithmes en <code>n log n</code>. On peut aussi diviser ses comparaisons par deux par recherche dichotomique dans le préfixe — mais les décalages, eux, ne bougent pas.</p>
+      </div>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">sélection</div></div>
+      <h2>Tri par sélection : le minimum, puis un seul échange</h2>
+      <p class="lead">À chaque passe, on cherche le <b>minimum</b> de la zone non triée et on l'échange avec la première case de cette zone. Un seul échange par passe — mais un balayage complet à chaque fois, quoi qu'il arrive.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Tu as sept bulletins devant toi. Tu cherches le plus mauvais, tu le mets à gauche, et tu ne le regardes plus. Puis tu cherches le plus mauvais des six qui restent, tu le mets en deuxième position, et ainsi de suite. Tu ne déplaces presque rien — mais tu <b>relis tout</b> à chaque tour.</p>
+      </div>
+
+      <div class="code"><header><span>tri-selection.c</span><button data-copy>copier</button></header><pre><code data-hl>void triSelection(int16_t t[], size_t n)
+{
+    for (size_t i = 0u; i + 1u &lt; n; i++) {
+        size_t min = i;
+        for (size_t j = i + 1u; j &lt; n; j++) {
+            if (t[j] &lt; t[min]) {
+                min = j;
+            }
+        }
+        if (min != i) {                /* un seul échange par passe   */
+            int16_t tmp = t[i];
+            t[i] = t[min];
+            t[min] = tmp;
+        }
+    }
+}</code></pre></div>
+
+      <div class="lab" data-lab="selection">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · tri par sélection</div><div class="lab-sub">minimum courant en vert d'eau · un échange par passe</div></div>
+          <span class="lab-tag" data-count></span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="bars-stage" data-bars-stage>
+          <div class="bars" data-bars></div>
+        </div>
+        <div class="bar-aux" data-aux hidden></div>
+        <div class="bar-counters">
+          <span>comparaisons <b data-cmp>0</b></span>
+          <span>écritures <b data-wr>0</b></span>
+          <span class="badge-pass" data-badge>départ</span>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+{"algo":"selection","interval":800,"labels":["comparaisons","écritures"],"data":[5,1,4,2,8,7,3],"states":[{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","",""],"marks":["","","","","","",""],"aux":null,"note":"<b>Principe :</b> à chaque passe, on cherche le <b>minimum</b> de la zone non triée, puis on l'échange avec la première case de cette zone. Un seul échange par passe, mais un balayage complet.","code":"int16_t t[7] = {5, 1, 4, 2, 8, 7, 3};","cmp":0,"wr":0,"badge":"départ"},{"arr":[5,1,4,2,8,7,3],"roles":["min","","","","","",""],"marks":["min","","","","","",""],"aux":null,"note":"<b>Passe 1 :</b> minimum courant = t[0] = 5, à la première case de la zone non triée. On balaie j = 1 … 6.","code":"size_t min = i;","cmp":0,"wr":0,"badge":"passe 1"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","","","","",""],"marks":["","min","","","","",""],"aux":null,"note":"<b>j = 1</b> : t[1] = 1 &lt; 5 : nouveau minimum, il passe de t[0] à t[1].","code":"if (t[j] < t[min]) { min = j; }","cmp":1,"wr":0,"badge":"minimum"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","cmp","","","",""],"marks":["","min","j","","","",""],"aux":null,"note":"<b>j = 2</b> : t[2] = 4 ≥ 1 : le minimum reste en t[1].","code":"if (t[j] < t[min]) { ... }","cmp":2,"wr":0,"badge":"passe 1"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","","cmp","","",""],"marks":["","min","","j","","",""],"aux":null,"note":"<b>j = 3</b> : t[3] = 2 ≥ 1 : le minimum reste en t[1].","code":"if (t[j] < t[min]) { ... }","cmp":3,"wr":0,"badge":"passe 1"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","","","cmp","",""],"marks":["","min","","","j","",""],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ 1 : le minimum reste en t[1].","code":"if (t[j] < t[min]) { ... }","cmp":4,"wr":0,"badge":"passe 1"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","","","","cmp",""],"marks":["","min","","","","j",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ 1 : le minimum reste en t[1].","code":"if (t[j] < t[min]) { ... }","cmp":5,"wr":0,"badge":"passe 1"},{"arr":[5,1,4,2,8,7,3],"roles":["","min","","","","","cmp"],"marks":["","min","","","","","j"],"aux":null,"note":"<b>j = 6</b> : t[6] = 3 ≥ 1 : le minimum reste en t[1].","code":"if (t[j] < t[min]) { ... }","cmp":6,"wr":0,"badge":"passe 1"},{"arr":[1,5,4,2,8,7,3],"roles":["done","swap","","","","",""],"marks":["i","min","","","","",""],"aux":null,"note":"<b>Passe 1 terminée :</b> le minimum 1 passe de t[1] à t[0]. <b>Un seul échange</b> pour toute la passe — mais il saute par-dessus les cases intermédiaires, ce qui peut inverser deux clés égales : le tri par sélection n'est <b>pas stable</b>.","code":"if (min != i) { /* échange t[i] et t[min] */ }","cmp":6,"wr":3,"badge":"échange"},{"arr":[1,5,4,2,8,7,3],"roles":["done","min","","","","",""],"marks":["","min","","","","",""],"aux":null,"note":"<b>Passe 2 :</b> minimum courant = t[1] = 5, à la première case de la zone non triée. On balaie j = 2 … 6.","code":"size_t min = i;","cmp":6,"wr":3,"badge":"passe 2"},{"arr":[1,5,4,2,8,7,3],"roles":["done","","min","","","",""],"marks":["","","min","","","",""],"aux":null,"note":"<b>j = 2</b> : t[2] = 4 &lt; 5 : nouveau minimum, il passe de t[1] à t[2].","code":"if (t[j] < t[min]) { min = j; }","cmp":7,"wr":3,"badge":"minimum"},{"arr":[1,5,4,2,8,7,3],"roles":["done","","","min","","",""],"marks":["","","","min","","",""],"aux":null,"note":"<b>j = 3</b> : t[3] = 2 &lt; 4 : nouveau minimum, il passe de t[2] à t[3].","code":"if (t[j] < t[min]) { min = j; }","cmp":8,"wr":3,"badge":"minimum"},{"arr":[1,5,4,2,8,7,3],"roles":["done","","","min","cmp","",""],"marks":["","","","min","j","",""],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ 2 : le minimum reste en t[3].","code":"if (t[j] < t[min]) { ... }","cmp":9,"wr":3,"badge":"passe 2"},{"arr":[1,5,4,2,8,7,3],"roles":["done","","","min","","cmp",""],"marks":["","","","min","","j",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ 2 : le minimum reste en t[3].","code":"if (t[j] < t[min]) { ... }","cmp":10,"wr":3,"badge":"passe 2"},{"arr":[1,5,4,2,8,7,3],"roles":["done","","","min","","","cmp"],"marks":["","","","min","","","j"],"aux":null,"note":"<b>j = 6</b> : t[6] = 3 ≥ 2 : le minimum reste en t[3].","code":"if (t[j] < t[min]) { ... }","cmp":11,"wr":3,"badge":"passe 2"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","","swap","","",""],"marks":["","i","","min","","",""],"aux":null,"note":"<b>Passe 2 terminée :</b> le minimum 2 passe de t[3] à t[1]. <b>Un seul échange</b> pour toute la passe — mais il saute par-dessus les cases intermédiaires, ce qui peut inverser deux clés égales : le tri par sélection n'est <b>pas stable</b>.","code":"if (min != i) { /* échange t[i] et t[min] */ }","cmp":11,"wr":6,"badge":"échange"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","min","","","",""],"marks":["","","min","","","",""],"aux":null,"note":"<b>Passe 3 :</b> minimum courant = t[2] = 4, à la première case de la zone non triée. On balaie j = 3 … 6.","code":"size_t min = i;","cmp":11,"wr":6,"badge":"passe 3"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","min","cmp","","",""],"marks":["","","min","j","","",""],"aux":null,"note":"<b>j = 3</b> : t[3] = 5 ≥ 4 : le minimum reste en t[2].","code":"if (t[j] < t[min]) { ... }","cmp":12,"wr":6,"badge":"passe 3"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","min","","cmp","",""],"marks":["","","min","","j","",""],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ 4 : le minimum reste en t[2].","code":"if (t[j] < t[min]) { ... }","cmp":13,"wr":6,"badge":"passe 3"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","min","","","cmp",""],"marks":["","","min","","","j",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ 4 : le minimum reste en t[2].","code":"if (t[j] < t[min]) { ... }","cmp":14,"wr":6,"badge":"passe 3"},{"arr":[1,2,4,5,8,7,3],"roles":["done","done","","","","","min"],"marks":["","","","","","","min"],"aux":null,"note":"<b>j = 6</b> : t[6] = 3 &lt; 4 : nouveau minimum, il passe de t[2] à t[6].","code":"if (t[j] < t[min]) { min = j; }","cmp":15,"wr":6,"badge":"minimum"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","","","","swap"],"marks":["","","i","","","","min"],"aux":null,"note":"<b>Passe 3 terminée :</b> le minimum 3 passe de t[6] à t[2]. <b>Un seul échange</b> pour toute la passe — mais il saute par-dessus les cases intermédiaires, ce qui peut inverser deux clés égales : le tri par sélection n'est <b>pas stable</b>.","code":"if (min != i) { /* échange t[i] et t[min] */ }","cmp":15,"wr":9,"badge":"échange"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","min","","",""],"marks":["","","","min","","",""],"aux":null,"note":"<b>Passe 4 :</b> minimum courant = t[3] = 5, à la première case de la zone non triée. On balaie j = 4 … 6.","code":"size_t min = i;","cmp":15,"wr":9,"badge":"passe 4"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","min","cmp","",""],"marks":["","","","min","j","",""],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ 5 : le minimum reste en t[3].","code":"if (t[j] < t[min]) { ... }","cmp":16,"wr":9,"badge":"passe 4"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","min","","cmp",""],"marks":["","","","min","","j",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ 5 : le minimum reste en t[3].","code":"if (t[j] < t[min]) { ... }","cmp":17,"wr":9,"badge":"passe 4"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","","","","min"],"marks":["","","","","","","min"],"aux":null,"note":"<b>j = 6</b> : t[6] = 4 &lt; 5 : nouveau minimum, il passe de t[3] à t[6].","code":"if (t[j] < t[min]) { min = j; }","cmp":18,"wr":9,"badge":"minimum"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","","swap"],"marks":["","","","i","","","min"],"aux":null,"note":"<b>Passe 4 terminée :</b> le minimum 4 passe de t[6] à t[3]. <b>Un seul échange</b> pour toute la passe — mais il saute par-dessus les cases intermédiaires, ce qui peut inverser deux clés égales : le tri par sélection n'est <b>pas stable</b>.","code":"if (min != i) { /* échange t[i] et t[min] */ }","cmp":18,"wr":12,"badge":"échange"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","min","",""],"marks":["","","","","min","",""],"aux":null,"note":"<b>Passe 5 :</b> minimum courant = t[4] = 8, à la première case de la zone non triée. On balaie j = 5 … 6.","code":"size_t min = i;","cmp":18,"wr":12,"badge":"passe 5"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","min",""],"marks":["","","","","","min",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 &lt; 8 : nouveau minimum, il passe de t[4] à t[5].","code":"if (t[j] < t[min]) { min = j; }","cmp":19,"wr":12,"badge":"minimum"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","","min"],"marks":["","","","","","","min"],"aux":null,"note":"<b>j = 6</b> : t[6] = 5 &lt; 7 : nouveau minimum, il passe de t[5] à t[6].","code":"if (t[j] < t[min]) { min = j; }","cmp":20,"wr":12,"badge":"minimum"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","","swap"],"marks":["","","","","i","","min"],"aux":null,"note":"<b>Passe 5 terminée :</b> le minimum 5 passe de t[6] à t[4]. <b>Un seul échange</b> pour toute la passe — mais il saute par-dessus les cases intermédiaires, ce qui peut inverser deux clés égales : le tri par sélection n'est <b>pas stable</b>.","code":"if (min != i) { /* échange t[i] et t[min] */ }","cmp":20,"wr":15,"badge":"échange"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","min",""],"marks":["","","","","","min",""],"aux":null,"note":"<b>Passe 6 :</b> minimum courant = t[5] = 7, à la première case de la zone non triée. On balaie j = 6 … 6.","code":"size_t min = i;","cmp":20,"wr":15,"badge":"passe 6"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","min","cmp"],"marks":["","","","","","min","j"],"aux":null,"note":"<b>j = 6</b> : t[6] = 8 ≥ 7 : le minimum reste en t[5].","code":"if (t[j] < t[min]) { ... }","cmp":21,"wr":15,"badge":"passe 6"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done",""],"marks":["","","","","","i",""],"aux":null,"note":"<b>Passe 6 :</b> le minimum était déjà en t[5] : <b>aucun échange</b>. La case est définitive.","code":"if (min != i) { ... }   /* rien à faire */","cmp":21,"wr":15,"badge":"passe 6"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Terminé :</b> 1, 2, 3, 4, 5, 7, 8. 21 comparaisons — toujours n(n−1)/2 = 21, trié ou non — et 5 échanges (15 écritures). Le nombre de comparaisons ne dépend pas des données : le tri par sélection n'est pas adaptatif.","code":"/* tableau trié */","cmp":21,"wr":15,"badge":"trié"}]}
+        </script>
+      </div>
+
+      <p>Les comparaisons tombent toujours au même rythme : <b>21</b> pour sept éléments, soit <code>n(n−1)/2</code>, que le tableau soit trié ou non. Les échanges, eux, sont rares : <b>5</b> sur le témoin (15 écritures).</p>
+
+      <div class="box rule">
+        <div class="lbl">Le tri le plus prévisible</div>
+        <ul>
+          <li>Comparaisons : <b>toujours</b> <code>n(n−1)/2</code>, dans tous les cas — meilleur, moyen, pire.</li>
+          <li>Échanges : au plus <code>n − 1</code>, donc au plus <code>3(n−1)</code> écritures.</li>
+          <li>Complexité <code>O(n²)</code> partout, mémoire <code>O(1)</code>, <b>pas adaptatif</b>, <b>pas stable</b>.</li>
+        </ul>
+      </div>
+
+      <h3>Pourquoi il n'est pas stable</h3>
+      <p>L'échange est <b>à longue distance</b> : il saute par-dessus toutes les cases intermédiaires. Une clé égale peut donc passer de l'autre côté d'une autre clé égale. Le tableau suivant a huit étudiants, notés de 1 à 3 ; la lettre est leur ordre d'arrivée.</p>
+
+      <div class="stab" data-stab>
+        <h4>Huit étudiants, trois notes égales</h4>
+        <p class="small">On trie par note seulement. Les étudiants de même note doivent rester dans l'ordre a, b, c… : c'est ça, la stabilité.</p>
+        <div data-stab-rows></div>
+        <div class="stab-fb" data-stab-fb></div>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">La leçon du contre-exemple</div>
+        <p>Dans le tri par sélection, l'échange final déplace le minimum vers la gauche <b>sans regarder</b> les clés égales qu'il croise. Deux étudiants de même note peuvent donc être inversés. Si tu dois trier des enregistrements par un champ puis par un autre, ou afficher des ex æquo dans l'ordre d'inscription, la sélection est le mauvais outil : prends insertion ou fusion.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Quand même l'utiliser</div>
+        <p>Quand une <b>écriture coûte cher</b> : mémoire flash, EEPROM, registre matériel. La sélection minimise le nombre de déplacements (au plus <code>n−1</code> échanges) au prix de beaucoup de lectures. C'est le seul des cinq tris de cette page qui a un argument sérieux dans ce cas.</p>
+      </div>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">fusion · n log n</div></div>
+      <h2>Tri fusion : diviser, puis fusionner</h2>
+      <p class="lead">On coupe le tableau en deux, on trie chaque moitié par le même procédé, puis on <b>fusionne</b> les deux moitiés triées en un seul balayage. C'est le tri qui garantit <code>n log n</code> dans tous les cas.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Deux piles de copies déjà triées sur la table. Tu regardes la première carte de chaque pile, tu prends la plus petite, tu la poses sur la pile de sortie. Tu répètes. Quand une pile est vide, tu verses le reste de l'autre. <b>Aucune comparaison inutile, aucun retour en arrière.</b></p>
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 680 232" role="img" aria-label="Deux moitiés triées 1 2 4 5 et 3 7 8 fusionnées en 1 2 3 4 5 7 8.">
+            <text class="ts" x="244" y="18" text-anchor="middle">moitié gauche triée</text>
+            <text class="ts" x="490" y="18" text-anchor="middle">moitié droite triée</text>
+            <text class="tm" x="156" y="34" text-anchor="middle" fill="var(--blue)">i</text>
+            <text class="tm" x="412" y="34" text-anchor="middle" fill="var(--teal)">j</text>
+
+            <g class="c-blue">
+              <rect x="130" y="40" width="52" height="44" rx="7"/><rect x="194" y="40" width="52" height="44" rx="7"/>
+              <rect x="258" y="40" width="52" height="44" rx="7"/><rect x="322" y="40" width="52" height="44" rx="7"/>
+            </g>
+            <g class="c-blue">
+              <text class="t" x="156" y="68" text-anchor="middle">1</text><text class="t" x="220" y="68" text-anchor="middle">2</text>
+              <text class="t" x="284" y="68" text-anchor="middle">4</text><text class="t" x="348" y="68" text-anchor="middle">5</text>
+            </g>
+            <g class="c-teal">
+              <rect x="386" y="40" width="52" height="44" rx="7"/><rect x="450" y="40" width="52" height="44" rx="7"/>
+              <rect x="514" y="40" width="52" height="44" rx="7"/>
+            </g>
+            <g class="c-teal">
+              <text class="t" x="412" y="68" text-anchor="middle">3</text><text class="t" x="476" y="68" text-anchor="middle">7</text>
+              <text class="t" x="540" y="68" text-anchor="middle">8</text>
+            </g>
+            <line x1="378" y1="38" x2="378" y2="86" class="arrd"/>
+
+            <path d="M 340 96 C 340 108, 340 112, 340 126" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="352" y="116">fusionner : on prend le plus petit des deux</text>
+
+            <g class="c-green">
+              <rect x="130" y="136" width="52" height="44" rx="7"/><rect x="194" y="136" width="52" height="44" rx="7"/>
+              <rect x="258" y="136" width="52" height="44" rx="7"/><rect x="322" y="136" width="52" height="44" rx="7"/>
+              <rect x="386" y="136" width="52" height="44" rx="7"/><rect x="450" y="136" width="52" height="44" rx="7"/>
+              <rect x="514" y="136" width="52" height="44" rx="7"/>
+            </g>
+            <g class="c-green">
+              <text class="t" x="156" y="164" text-anchor="middle">1</text><text class="t" x="220" y="164" text-anchor="middle">2</text>
+              <text class="t" x="284" y="164" text-anchor="middle">3</text><text class="t" x="348" y="164" text-anchor="middle">4</text>
+              <text class="t" x="412" y="164" text-anchor="middle">5</text><text class="t" x="476" y="164" text-anchor="middle">7</text>
+              <text class="t" x="540" y="164" text-anchor="middle">8</text>
+            </g>
+            <text class="ts" x="130" y="202">Un seul balayage : 7 écritures dans le tampon, puis 7 recopies.</text>
+            <text class="ts" x="130" y="218">Le reste d'une moitié est recopié sans aucune comparaison.</text>
+          </svg>
+        </div>
+        <figcaption>La fusion de deux suites triées : deux index qui avancent, jamais de retour. C'est cette propriété qui donne la borne <code>n log n</code>, et c'est la comparaison <b>stricte</b> <code>t[j] &lt; t[i]</code> qui garantit la stabilité.</figcaption>
+      </figure>
+
+      <div class="code"><header><span>tri-fusion.c</span><button data-copy>copier</button></header><pre><code data-hl>/* fusionne t[g..m-1] et t[m..d-1], déjà triés, dans t[g..d-1] */
+static void fusion(int16_t t[], int16_t tmp[], size_t g, size_t m, size_t d)
+{
+    size_t i = g, j = m, k = g;
+
+    while (i &lt; m &amp;&amp; j &lt; d) {
+        if (t[j] &lt; t[i]) {              /* strict : la gauche gagne les égalités */
+            tmp[k++] = t[j++];
+        } else {
+            tmp[k++] = t[i++];
+        }
+    }
+    while (i &lt; m) { tmp[k++] = t[i++]; }   /* reste de la gauche */
+    while (j &lt; d) { tmp[k++] = t[j++]; }   /* reste de la droite */
+
+    for (size_t p = g; p &lt; d; p++) {
+        t[p] = tmp[p];                 /* on recopie dans le tableau          */
+    }
+}
+
+static void triFusionRec(int16_t t[], int16_t tmp[], size_t g, size_t d)
+{
+    if (d - g &lt; 2u) {                  /* 0 ou 1 élément : déjà trié          */
+        return;
+    }
+    size_t m = g + (d - g) / 2u;
+    triFusionRec(t, tmp, g, m);
+    triFusionRec(t, tmp, m, d);
+    fusion(t, tmp, g, m, d);
+}
+
+void triFusion(int16_t t[], size_t n, int16_t tmp[])
+{
+    triFusionRec(t, tmp, 0u, n);       /* tmp : n cases, O(n) mémoire          */
+}</code></pre></div>
+
+      <div class="lab" data-lab="fusion">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · tri fusion</div><div class="lab-sub">division en deux, puis fusion avec deux index · tampon visible</div></div>
+          <span class="lab-tag" data-count></span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="bars-stage" data-bars-stage>
+          <div class="bars" data-bars></div>
+        </div>
+        <div class="bar-aux" data-aux hidden></div>
+        <div class="bar-counters">
+          <span>comparaisons <b data-cmp>0</b></span>
+          <span>écritures <b data-wr>0</b></span>
+          <span class="badge-pass" data-badge>départ</span>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+{"algo":"fusion","interval":950,"labels":["comparaisons","écritures"],"data":[5,1,4,2,8,7,3],"states":[{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","",""],"marks":["","","","","","",""],"aux":null,"note":"<b>Principe :</b> on divise le tableau en deux moitiés, on trie chaque moitié par le même algorithme, puis on <b>fusionne</b> les deux moitiés triées. Le tampon <b>tmp</b> est le prix de la simplicité : O(n) mémoire auxiliaire.","code":"int16_t tmp[7];\ntriFusion(t, 7, tmp);","cmp":0,"wr":0,"badge":"départ"},{"arr":[5,1,4,2,8,7,3],"roles":["left","left","left","right","right","right","right"],"marks":["g","","","","","","d-1"],"aux":null,"note":"<b>Diviser [ 0 … 6 ]</b> en deux : [ 0 … 2 ] (3 éléments) et [ 3 … 6 ] (4 éléments). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":0,"wr":0,"badge":"division"},{"arr":[5,1,4,2,8,7,3],"roles":["left","right","right","dim","dim","dim","dim"],"marks":["g","","d-1","","","",""],"aux":null,"note":"<b>Diviser [ 0 … 2 ]</b> en deux : [ 0 … 0 ] (1 élément) et [ 1 … 2 ] (2 éléments). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":0,"wr":0,"badge":"division"},{"arr":[5,1,4,2,8,7,3],"roles":["dim","left","right","dim","dim","dim","dim"],"marks":["","g","d-1","","","",""],"aux":null,"note":"<b>Diviser [ 1 … 2 ]</b> en deux : [ 1 … 1 ] (1 élément) et [ 2 … 2 ] (1 élément). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":0,"wr":0,"badge":"division"},{"arr":[5,1,4,2,8,7,3],"roles":["done","left","right","dim","dim","dim","dim"],"marks":["","i","j","","","",""],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 1 … 1 ] et [ 2 … 2 ]</b> : i = 1 sur la gauche, j = 2 sur la droite, k = 1 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":0,"wr":0,"badge":"fusion"},{"arr":[5,1,4,2,8,7,3],"roles":["done","","right","dim","dim","dim","dim"],"marks":["","","j","","","",""],"aux":[null,1,null,null,null,null,null],"note":"<b>Comparaison :</b> t[1] = 1 contre t[2] = 4 : on retient <b>1</b> et on l'écrit en tmp[1]. La gauche est épuisée (i = 2).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":1,"wr":1,"badge":"fusion"},{"arr":[5,1,4,2,8,7,3],"roles":["done","left","left","dim","dim","dim","dim"],"marks":["","","","","","",""],"aux":[null,1,4,null,null,null,null],"note":"<b>La moitié gauche est épuisée :</b> on recopie 1 élément sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":1,"wr":2,"badge":"reste"},{"arr":[5,1,4,2,8,7,3],"roles":["done","done","done","dim","dim","dim","dim"],"marks":["","g","d-1","","","",""],"aux":[null,1,4,null,null,null,null],"note":"<b>[ 1 … 2 ] est trié :</b> 1, 4. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":1,"wr":4,"badge":"fusion faite"},{"arr":[5,1,4,2,8,7,3],"roles":["left","right","right","dim","dim","dim","dim"],"marks":["i","j","","","","",""],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 0 … 0 ] et [ 1 … 2 ]</b> : i = 0 sur la gauche, j = 1 sur la droite, k = 0 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":1,"wr":4,"badge":"fusion"},{"arr":[5,1,4,2,8,7,3],"roles":["left","","right","dim","dim","dim","dim"],"marks":["i","","j","","","",""],"aux":[1,null,null,null,null,null,null],"note":"<b>Comparaison :</b> t[0] = 5 contre t[1] = 1 : on retient <b>1</b> et on l'écrit en tmp[0]. La droite avance (j = 2).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":2,"wr":5,"badge":"fusion"},{"arr":[5,1,4,2,8,7,3],"roles":["left","","","dim","dim","dim","dim"],"marks":["i","","","","","",""],"aux":[1,4,null,null,null,null,null],"note":"<b>Comparaison :</b> t[0] = 5 contre t[2] = 4 : on retient <b>4</b> et on l'écrit en tmp[1]. La droite est épuisée (j = 3).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":3,"wr":6,"badge":"fusion"},{"arr":[5,1,4,2,8,7,3],"roles":["left","left","left","dim","dim","dim","dim"],"marks":["","","","","","",""],"aux":[1,4,5,null,null,null,null],"note":"<b>La moitié droite est épuisée :</b> on recopie 1 élément sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":3,"wr":7,"badge":"reste"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","dim","dim","dim","dim"],"marks":["g","","d-1","","","",""],"aux":[1,4,5,null,null,null,null],"note":"<b>[ 0 … 2 ] est trié :</b> 1, 4, 5. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":3,"wr":10,"badge":"fusion faite"},{"arr":[1,4,5,2,8,7,3],"roles":["dim","dim","dim","left","left","right","right"],"marks":["","","","g","","","d-1"],"aux":null,"note":"<b>Diviser [ 3 … 6 ]</b> en deux : [ 3 … 4 ] (2 éléments) et [ 5 … 6 ] (2 éléments). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":3,"wr":10,"badge":"division"},{"arr":[1,4,5,2,8,7,3],"roles":["dim","dim","dim","left","right","dim","dim"],"marks":["","","","g","d-1","",""],"aux":null,"note":"<b>Diviser [ 3 … 4 ]</b> en deux : [ 3 … 3 ] (1 élément) et [ 4 … 4 ] (1 élément). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":3,"wr":10,"badge":"division"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","left","right","dim","dim"],"marks":["","","","i","j","",""],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 3 … 3 ] et [ 4 … 4 ]</b> : i = 3 sur la gauche, j = 4 sur la droite, k = 3 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":3,"wr":10,"badge":"fusion"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","","right","dim","dim"],"marks":["","","","","j","",""],"aux":[null,null,null,2,null,null,null],"note":"<b>Comparaison :</b> t[3] = 2 contre t[4] = 8 : on retient <b>2</b> et on l'écrit en tmp[3]. La gauche est épuisée (i = 4).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":4,"wr":11,"badge":"fusion"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","left","left","dim","dim"],"marks":["","","","","","",""],"aux":[null,null,null,2,8,null,null],"note":"<b>La moitié gauche est épuisée :</b> on recopie 1 élément sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":4,"wr":12,"badge":"reste"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","done","done","dim","dim"],"marks":["","","","g","d-1","",""],"aux":[null,null,null,2,8,null,null],"note":"<b>[ 3 … 4 ] est trié :</b> 2, 8. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":4,"wr":14,"badge":"fusion faite"},{"arr":[1,4,5,2,8,7,3],"roles":["dim","dim","dim","dim","dim","left","right"],"marks":["","","","","","g","d-1"],"aux":null,"note":"<b>Diviser [ 5 … 6 ]</b> en deux : [ 5 … 5 ] (1 élément) et [ 6 … 6 ] (1 élément). On trie la moitié gauche, puis la droite, puis on fusionne.","code":"size_t m = g + (d - g) / 2u;\ntriFusionRec(t, tmp, g, m);\ntriFusionRec(t, tmp, m, d);","cmp":4,"wr":14,"badge":"division"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","done","done","left","right"],"marks":["","","","","","i","j"],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 5 … 5 ] et [ 6 … 6 ]</b> : i = 5 sur la gauche, j = 6 sur la droite, k = 5 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":4,"wr":14,"badge":"fusion"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","done","done","left",""],"marks":["","","","","","i",""],"aux":[null,null,null,null,null,3,null],"note":"<b>Comparaison :</b> t[5] = 7 contre t[6] = 3 : on retient <b>3</b> et on l'écrit en tmp[5]. La droite est épuisée (j = 7).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":5,"wr":15,"badge":"fusion"},{"arr":[1,4,5,2,8,7,3],"roles":["done","done","done","done","done","left","left"],"marks":["","","","","","",""],"aux":[null,null,null,null,null,3,7],"note":"<b>La moitié droite est épuisée :</b> on recopie 1 élément sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":5,"wr":16,"badge":"reste"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","g","d-1"],"aux":[null,null,null,null,null,3,7],"note":"<b>[ 5 … 6 ] est trié :</b> 3, 7. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":5,"wr":18,"badge":"fusion faite"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","left","left","right","right"],"marks":["","","","i","","j",""],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 3 … 4 ] et [ 5 … 6 ]</b> : i = 3 sur la gauche, j = 5 sur la droite, k = 3 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":5,"wr":18,"badge":"fusion"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","","left","right","right"],"marks":["","","","","i","j",""],"aux":[null,null,null,2,null,null,null],"note":"<b>Comparaison :</b> t[3] = 2 contre t[5] = 3 : on retient <b>2</b> et on l'écrit en tmp[3]. La gauche avance (i = 4).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":6,"wr":19,"badge":"fusion"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","","left","","right"],"marks":["","","","","i","","j"],"aux":[null,null,null,2,3,null,null],"note":"<b>Comparaison :</b> t[4] = 8 contre t[5] = 3 : on retient <b>3</b> et on l'écrit en tmp[4]. La droite avance (j = 6).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":7,"wr":20,"badge":"fusion"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","","left","",""],"marks":["","","","","i","",""],"aux":[null,null,null,2,3,7,null],"note":"<b>Comparaison :</b> t[4] = 8 contre t[6] = 7 : on retient <b>7</b> et on l'écrit en tmp[5]. La droite est épuisée (j = 7).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":8,"wr":21,"badge":"fusion"},{"arr":[1,4,5,2,8,3,7],"roles":["done","done","done","left","left","left","left"],"marks":["","","","","","",""],"aux":[null,null,null,2,3,7,8],"note":"<b>La moitié droite est épuisée :</b> on recopie 1 élément sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":8,"wr":22,"badge":"reste"},{"arr":[1,4,5,2,3,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","g","","","d-1"],"aux":[null,null,null,2,3,7,8],"note":"<b>[ 3 … 6 ] est trié :</b> 2, 3, 7, 8. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":8,"wr":26,"badge":"fusion faite"},{"arr":[1,4,5,2,3,7,8],"roles":["left","left","left","right","right","right","right"],"marks":["i","","","j","","",""],"aux":[null,null,null,null,null,null,null],"note":"<b>Fusion de [ 0 … 2 ] et [ 3 … 6 ]</b> : i = 0 sur la gauche, j = 3 sur la droite, k = 0 dans le tampon. On écrit toujours le plus petit des deux en tmp[k].","code":"while (i < m && j < d) {","cmp":8,"wr":26,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["","left","left","right","right","right","right"],"marks":["","i","","j","","",""],"aux":[1,null,null,null,null,null,null],"note":"<b>Comparaison :</b> t[0] = 1 contre t[3] = 2 : on retient <b>1</b> et on l'écrit en tmp[0]. La gauche avance (i = 1).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":9,"wr":27,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["","left","left","","right","right","right"],"marks":["","i","","","j","",""],"aux":[1,2,null,null,null,null,null],"note":"<b>Comparaison :</b> t[1] = 4 contre t[3] = 2 : on retient <b>2</b> et on l'écrit en tmp[1]. La droite avance (j = 4).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":10,"wr":28,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["","left","left","","","right","right"],"marks":["","i","","","","j",""],"aux":[1,2,3,null,null,null,null],"note":"<b>Comparaison :</b> t[1] = 4 contre t[4] = 3 : on retient <b>3</b> et on l'écrit en tmp[2]. La droite avance (j = 5).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":11,"wr":29,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["","","left","","","right","right"],"marks":["","","i","","","j",""],"aux":[1,2,3,4,null,null,null],"note":"<b>Comparaison :</b> t[1] = 4 contre t[5] = 7 : on retient <b>4</b> et on l'écrit en tmp[3]. La gauche avance (i = 2).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":12,"wr":30,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["","","","","","right","right"],"marks":["","","","","","j",""],"aux":[1,2,3,4,5,null,null],"note":"<b>Comparaison :</b> t[2] = 5 contre t[5] = 7 : on retient <b>5</b> et on l'écrit en tmp[4]. La gauche est épuisée (i = 3).","code":"if (t[j] < t[i]) { tmp[k++] = t[j++]; } else { tmp[k++] = t[i++]; }","cmp":13,"wr":31,"badge":"fusion"},{"arr":[1,4,5,2,3,7,8],"roles":["left","left","left","left","left","left","left"],"marks":["","","","","","",""],"aux":[1,2,3,4,5,7,8],"note":"<b>La moitié gauche est épuisée :</b> on recopie 2 éléments sans aucune comparaison. C'est le second <code>while</code> de la fusion.","code":"while (i < m) { tmp[k++] = t[i++]; }","cmp":13,"wr":33,"badge":"reste"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["g","","","","","","d-1"],"aux":[1,2,3,4,5,7,8],"note":"<b>[ 0 … 6 ] est trié :</b> 1, 2, 3, 4, 5, 7, 8. On recopie le tampon dans le tableau (une écriture par élément), puis on remonte d'un niveau pour fusionner des blocs deux fois plus grands.","code":"for (size_t p = g; p < d; p++) { t[p] = tmp[p]; }","cmp":13,"wr":40,"badge":"fusion faite"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Terminé :</b> 1, 2, 3, 4, 5, 7, 8. 13 comparaisons et 40 écritures, dont la moitié dans le tampon. Coût garanti O(n log n) — ici 3 niveaux de fusion pour 7 éléments — au prix de 7 cases supplémentaires.","code":"/* tableau trié */","cmp":13,"wr":40,"badge":"trié"}]}
+        </script>
+      </div>
+
+      <p>Les barres bleues et vertes d'eau sont les deux moitiés en cours de fusion ; la ligne du bas montre le <b>tampon</b> <code>tmp</code> qui se remplit. Une fois le tampon complet, on le recopie dans le tableau : c'est le prix de la fusion.</p>
+
+      <div class="box rule">
+        <div class="lbl">Ce que garantit la fusion</div>
+        <ul>
+          <li><code>O(n log n)</code> dans <b>tous</b> les cas : le découpage est toujours en deux moitiés égales, le nombre de niveaux vaut <code>⌈log₂ n⌉</code>.</li>
+          <li><b>Stable</b> si, en cas d'égalité, on prend la gauche d'abord — c'est le rôle du <code>&lt;</code> strict.</li>
+          <li><b>Pas en place</b> : <code>n</code> cases auxiliaires, soit <code>O(n)</code> mémoire.</li>
+          <li><b>Pas adaptatif</b> : un tableau déjà trié passe par les mêmes fusions (on peut ajouter un test, mais ce n'est plus l'algorithme du cours).</li>
+        </ul>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Combien de niveaux ?</div>
+        <p>Pour 7 éléments, <code>⌈log₂ 7⌉ = 3</code> niveaux de fusion. Pour 1 000 éléments, 10 niveaux ; pour 1 000 000, 20 niveaux. C'est cette croissance logarithmique qui rend la fusion imbattable sur les gros tableaux, alors que le tri à bulles aurait besoin de 500 milliards de comparaisons pour un million d'éléments.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Les trois fautes classiques de la fusion</div>
+        <ul>
+          <li><b>Oublier de recopier</b> le tampon dans le tableau : le résultat est juste dans <code>tmp</code>, pas dans <code>t</code>.</li>
+          <li><b>Utiliser <code>≤</code></b> au lieu de <code>&lt;</code> dans la comparaison : la fusion devient instable, deux clés égales changent d'ordre.</li>
+          <li><b>Oublier le reste</b> d'une moitié après la boucle principale : les éléments restants ne sont jamais écrits.</li>
+        </ul>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Le lien avec les listes chaînées</div>
+        <p>La fusion est le tri naturel d'une <b>liste chaînée</b> : on coupe la liste en deux, on trie chaque moitié, puis on relie les nœuds dans le bon ordre. Avantage : la fusion de deux listes se fait en <code>O(1)</code> mémoire, sans tampon, puisqu'il suffit de réarranger les liens. C'est exactement le genre de code du chapitre 3.</p>
+      </div>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">rapide · pivot</div></div>
+      <h2>Tri rapide : un pivot, deux zones, deux récursions</h2>
+      <p class="lead">On choisit un <b>pivot</b>, on range la zone en deux parts — plus petit à gauche, plus grand ou égal à droite — puis on trie chaque part par le même procédé. En moyenne le plus rapide des cinq ; au pire, le plus lent.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Tu prends une valeur au hasard, disons le dernier élément, et tu fais deux tas : « plus petit que lui » et « plus grand ou égal ». Le pivot se retrouve alors <b>à sa place définitive</b>, sans avoir trié le reste. Il ne reste plus qu'à faire pareil dans chaque tas. Chaque pivot bien placé réduit le problème.</p>
+      </div>
+
+      <div class="code"><header><span>tri-rapide.c</span><button data-copy>copier</button></header><pre><code data-hl>/* partition de Lomuto : pivot = dernier élément, renvoie sa position finale */
+static size_t partition(int16_t t[], size_t g, size_t d)
+{
+    int16_t pivot = t[d];
+    size_t i = g;                      /* frontière : [g..i-1] &lt; pivot        */
+
+    for (size_t j = g; j &lt; d; j++) {
+        if (t[j] &lt; pivot) {
+            int16_t tmp = t[i];
+            t[i] = t[j];
+            t[j] = tmp;
+            i++;
+        }
+    }
+    int16_t tmp = t[i];                /* le pivot va à sa place définitive   */
+    t[i] = t[d];
+    t[d] = tmp;
+
+    return i;
+}
+
+static void triRapideRec(int16_t t[], size_t g, size_t d)
+{
+    if (d &lt;= g) {                      /* 0 ou 1 élément                      */
+        return;
+    }
+    size_t p = partition(t, g, d);
+
+    if (p &gt; g) {                       /* évite g - 1 quand p == 0            */
+        triRapideRec(t, g, p - 1u);
+    }
+    triRapideRec(t, p + 1u, d);
+}
+
+void triRapide(int16_t t[], size_t n)
+{
+    if (n &gt; 1u) {
+        triRapideRec(t, 0u, n - 1u);
+    }
+}</code></pre></div>
+
+      <div class="lab" data-lab="rapide">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · tri rapide</div><div class="lab-sub">pivot violet · partition autour de lui, puis récursion</div></div>
+          <span class="lab-tag" data-count></span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="bars-stage" data-bars-stage>
+          <div class="bars" data-bars></div>
+        </div>
+        <div class="bar-aux" data-aux hidden></div>
+        <div class="bar-counters">
+          <span>comparaisons <b data-cmp>0</b></span>
+          <span>écritures <b data-wr>0</b></span>
+          <span class="badge-pass" data-badge>départ</span>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+{"algo":"rapide","interval":900,"labels":["comparaisons","écritures"],"data":[5,1,4,2,8,7,3],"states":[{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","",""],"marks":["","","","","","",""],"aux":null,"note":"<b>Principe :</b> on choisit un <b>pivot</b>, on partitionne la zone en « plus petit que le pivot » à gauche et « plus grand ou égal » à droite, puis on trie les deux côtés par le même procédé. Ici le pivot est toujours le <b>dernier</b> élément de la zone (partition de Lomuto).","code":"triRapide(t, 7);","cmp":0,"wr":0,"badge":"départ"},{"arr":[5,1,4,2,8,7,3],"roles":["","","","","","","pivot"],"marks":["","","","","","","pivot"],"aux":null,"note":"<b>Zone [ 0 … 6 ] :</b> pivot = t[6] = 3. On balaie j de 0 à 5 ; i marque la frontière des éléments &lt; pivot.","code":"int16_t pivot = t[d];\nsize_t i = g;","cmp":0,"wr":0,"badge":"pivot 3"},{"arr":[5,1,4,2,8,7,3],"roles":["cmp","","","","","","pivot"],"marks":["j","","","","","","pivot"],"aux":null,"note":"<b>j = 0</b> : t[0] = 5 ≥ pivot 3 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":1,"wr":0,"badge":"partition"},{"arr":[1,5,4,2,8,7,3],"roles":["swap","swap","","","","","pivot"],"marks":["i","j","","","","",""],"aux":null,"note":"<b>j = 1</b> : t[1] = 1 &lt; pivot 3 : il doit passer à gauche. On l'échange avec t[0] (i = 0), puis i avance.","code":"if (t[j] < pivot) { /* échange t[i], t[j] */ i++; }","cmp":2,"wr":3,"badge":"partition"},{"arr":[1,5,4,2,8,7,3],"roles":["","","cmp","","","","pivot"],"marks":["","","j","","","","pivot"],"aux":null,"note":"<b>j = 2</b> : t[2] = 4 ≥ pivot 3 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":3,"wr":3,"badge":"partition"},{"arr":[1,2,4,5,8,7,3],"roles":["","swap","","swap","","","pivot"],"marks":["","i","","j","","",""],"aux":null,"note":"<b>j = 3</b> : t[3] = 2 &lt; pivot 3 : il doit passer à gauche. On l'échange avec t[1] (i = 1), puis i avance.","code":"if (t[j] < pivot) { /* échange t[i], t[j] */ i++; }","cmp":4,"wr":6,"badge":"partition"},{"arr":[1,2,4,5,8,7,3],"roles":["","","","","cmp","","pivot"],"marks":["","","","","j","","pivot"],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ pivot 3 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":5,"wr":6,"badge":"partition"},{"arr":[1,2,4,5,8,7,3],"roles":["","","","","","cmp","pivot"],"marks":["","","","","","j","pivot"],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ pivot 3 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":6,"wr":6,"badge":"partition"},{"arr":[1,2,3,5,8,7,4],"roles":["","","done","","","",""],"marks":["","","pivot","","","",""],"aux":null,"note":"<b>Pivot placé en t[2] :</b> la zone [ 0 … 1 ] ne contient que des valeurs &lt; 3, la zone [ 3 … 6 ] des valeurs ≥ 3. Cette position est définitive : on récursive à gauche, puis à droite.","code":"size_t p = partition(t, g, d);","cmp":6,"wr":9,"badge":"pivot en place"},{"arr":[1,2,3,5,8,7,4],"roles":["","pivot","done","dim","dim","dim","dim"],"marks":["","pivot","","","","",""],"aux":null,"note":"<b>Zone [ 0 … 1 ] :</b> pivot = t[1] = 2. On balaie j de 0 à 0 ; i marque la frontière des éléments &lt; pivot.","code":"int16_t pivot = t[d];\nsize_t i = g;","cmp":6,"wr":9,"badge":"pivot 2"},{"arr":[1,2,3,5,8,7,4],"roles":["swap","pivot","done","dim","dim","dim","dim"],"marks":["j","","","","","",""],"aux":null,"note":"<b>j = 0</b> : t[0] = 1 &lt; pivot 2 : il doit passer à gauche. Il est déjà à la frontière (i = j = 0), on avance simplement i.","code":"if (t[j] < pivot) { /* échange t[i], t[j] */ i++; }","cmp":7,"wr":12,"badge":"partition"},{"arr":[1,2,3,5,8,7,4],"roles":["","done","done","dim","dim","dim","dim"],"marks":["","pivot","","","","",""],"aux":null,"note":"<b>Pivot placé en t[1] :</b> la zone [ 0 … 0 ] ne contient que des valeurs &lt; 2, aucune valeur à droite. Cette position est définitive : on récursive à gauche, puis à droite.","code":"size_t p = partition(t, g, d);","cmp":7,"wr":15,"badge":"pivot en place"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","dim","dim","dim","dim"],"marks":["","","","","","",""],"aux":null,"note":"<b>Zone [ 0 … 0 ]</b> : un seul élément, il est déjà à sa place. Aucune comparaison, aucun échange.","code":"if (d <= g) { return; }","cmp":7,"wr":15,"badge":"cas de base"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","","","","pivot"],"marks":["","","","","","","pivot"],"aux":null,"note":"<b>Zone [ 3 … 6 ] :</b> pivot = t[6] = 4. On balaie j de 3 à 5 ; i marque la frontière des éléments &lt; pivot.","code":"int16_t pivot = t[d];\nsize_t i = g;","cmp":7,"wr":15,"badge":"pivot 4"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","cmp","","","pivot"],"marks":["","","","j","","","pivot"],"aux":null,"note":"<b>j = 3</b> : t[3] = 5 ≥ pivot 4 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":8,"wr":15,"badge":"partition"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","","cmp","","pivot"],"marks":["","","","","j","","pivot"],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ pivot 4 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":9,"wr":15,"badge":"partition"},{"arr":[1,2,3,5,8,7,4],"roles":["done","done","done","","","cmp","pivot"],"marks":["","","","","","j","pivot"],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ pivot 4 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":10,"wr":15,"badge":"partition"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","",""],"marks":["","","","pivot","","",""],"aux":null,"note":"<b>Pivot placé en t[3] :</b> aucune valeur &lt; 4 à gauche, la zone [ 4 … 6 ] des valeurs ≥ 4. Cette position est définitive : on récursive à gauche, puis à droite.","code":"size_t p = partition(t, g, d);","cmp":10,"wr":18,"badge":"pivot en place"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","","pivot"],"marks":["","","","","","","pivot"],"aux":null,"note":"<b>Zone [ 4 … 6 ] :</b> pivot = t[6] = 5. On balaie j de 4 à 5 ; i marque la frontière des éléments &lt; pivot.","code":"int16_t pivot = t[d];\nsize_t i = g;","cmp":10,"wr":18,"badge":"pivot 5"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","cmp","","pivot"],"marks":["","","","","j","","pivot"],"aux":null,"note":"<b>j = 4</b> : t[4] = 8 ≥ pivot 5 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":11,"wr":18,"badge":"partition"},{"arr":[1,2,3,4,8,7,5],"roles":["done","done","done","done","","cmp","pivot"],"marks":["","","","","","j","pivot"],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 ≥ pivot 5 : il reste à droite, on ne fait rien.","code":"if (t[j] < pivot) { ... }","cmp":12,"wr":18,"badge":"partition"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","",""],"marks":["","","","","pivot","",""],"aux":null,"note":"<b>Pivot placé en t[4] :</b> aucune valeur &lt; 5 à gauche, la zone [ 5 … 6 ] des valeurs ≥ 5. Cette position est définitive : on récursive à gauche, puis à droite.","code":"size_t p = partition(t, g, d);","cmp":12,"wr":21,"badge":"pivot en place"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","","pivot"],"marks":["","","","","","","pivot"],"aux":null,"note":"<b>Zone [ 5 … 6 ] :</b> pivot = t[6] = 8. On balaie j de 5 à 5 ; i marque la frontière des éléments &lt; pivot.","code":"int16_t pivot = t[d];\nsize_t i = g;","cmp":12,"wr":21,"badge":"pivot 8"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","swap","pivot"],"marks":["","","","","","j",""],"aux":null,"note":"<b>j = 5</b> : t[5] = 7 &lt; pivot 8 : il doit passer à gauche. Il est déjà à la frontière (i = j = 5), on avance simplement i.","code":"if (t[j] < pivot) { /* échange t[i], t[j] */ i++; }","cmp":13,"wr":24,"badge":"partition"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","","done"],"marks":["","","","","","","pivot"],"aux":null,"note":"<b>Pivot placé en t[6] :</b> la zone [ 5 … 5 ] ne contient que des valeurs &lt; 8, aucune valeur à droite. Cette position est définitive : on récursive à gauche, puis à droite.","code":"size_t p = partition(t, g, d);","cmp":13,"wr":27,"badge":"pivot en place"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Zone [ 5 … 5 ]</b> : un seul élément, il est déjà à sa place. Aucune comparaison, aucun échange.","code":"if (d <= g) { return; }","cmp":13,"wr":27,"badge":"cas de base"},{"arr":[1,2,3,4,5,7,8],"roles":["done","done","done","done","done","done","done"],"marks":["","","","","","",""],"aux":null,"note":"<b>Terminé :</b> 1, 2, 3, 4, 5, 7, 8. 13 comparaisons et 27 écritures ici — mais sur un tableau <b>déjà trié</b> avec le pivot en dernière position, le même code ferait 21 comparaisons et 7 niveaux de récursion : c'est le pire cas O(n²).","code":"/* tableau trié */","cmp":13,"wr":27,"badge":"trié"}]}
+        </script>
+      </div>
+
+      <p>Suis le violet : le pivot est le dernier élément de la zone courante. Quand la partition se termine, il passe à sa position définitive (vert) et la zone est coupée en deux. Les zones déjà réglées s'éteignent, la récursion continue sur les autres.</p>
+
+      <div class="box rule">
+        <div class="lbl">Les trois complexités</div>
+        <ul>
+          <li><b>Meilleur / moyen</b> : <code>O(n log n)</code>, environ <code>1,39 n log₂ n</code> comparaisons en moyenne avec un pivot aléatoire.</li>
+          <li><b>Pire</b> : <code>O(n²)</code>, quand chaque partition ne sépare qu'un seul élément — tableau déjà trié avec pivot en dernière position, ou beaucoup de clés égales.</li>
+          <li><b>Mémoire</b> : <code>O(log n)</code> en moyenne pour la pile de récursion, <code>O(n)</code> au pire. En place au sens strict du terme (pas de tableau auxiliaire).</li>
+          <li><b>Pas stable</b> : les échanges font sauter les éléments par-dessus la zone.</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le pire cas est le cas le plus fréquent</div>
+        <p>Avec le pivot en <b>dernière</b> position, un tableau <b>déjà trié</b> est le pire des cas : chaque partition ne place qu'un élément, et il faut <code>n</code> niveaux de récursion. Sur sept éléments triés, cela fait <b>21 comparaisons</b> et une profondeur de 7 au lieu de 3. Sur un fichier de 100 000 lignes déjà trié, la pile déborde. C'est le piège numéro un du chapitre.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Choisir un meilleur pivot</div>
+        <ul>
+          <li><b>Milieu</b> de la zone, ou <b>médiane de trois</b> (premier, milieu, dernier) : le cas trié redevient <code>n log n</code>.</li>
+          <li><b>Aléatoire</b> : pas de cas pathologique systématique, mais un générateur à appeler et un résultat non déterministe.</li>
+          <li><b>Partition à trois zones</b> (plus petit / égal / plus grand) quand il y a beaucoup de doublons : Lomuto dégénère, Hoare ou le « Dutch flag » non.</li>
+          <li><b>Récursion sur le plus petit côté d'abord</b>, puis boucle sur l'autre : la pile reste en <code>O(log n)</code> même au pire.</li>
+        </ul>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Pourquoi <code>p &gt; g</code> avant <code>p - 1u</code></div>
+        <p><code>p</code> et <code>g</code> sont des <code>size_t</code>, donc non signés. Si <code>p == 0</code>, l'expression <code>p - 1u</code> ne vaut pas −1 : elle vaut un nombre énorme, et l'appel récursif lit hors du tableau. Le test <code>if (p &gt; g)</code> est la protection ; <code>if (d &lt;= g)</code> en tête de fonction protège l'autre côté. Ces deux tests sont la différence entre un tri qui marche et un plantage aléatoire.</p>
+      </div>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">le tableau à retenir</div></div>
+      <h2>Le tableau comparatif complet</h2>
+      <p class="lead">Cinq algorithmes, sept colonnes. C'est le tableau à savoir reconstruire de mémoire : il tient sur une demi-page et il répond à presque toutes les questions de cours.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Complexités et propriétés — les cinq tris de la fiche</caption>
+          <tr><th>algorithme</th><th>meilleur</th><th>moyen</th><th>pire</th><th>mémoire</th><th>stable</th><th>en place</th><th>adaptatif</th></tr>
+          <tr><td>tri à bulles</td><td><code>O(n)</code></td><td><code>O(n²)</code></td><td><code>O(n²)</code></td><td><code>O(1)</code></td><td class="ok">oui</td><td class="ok">oui</td><td class="ok">oui</td></tr>
+          <tr><td>tri par insertion</td><td><code>O(n)</code></td><td><code>O(n²)</code></td><td><code>O(n²)</code></td><td><code>O(1)</code></td><td class="ok">oui</td><td class="ok">oui</td><td class="ok">oui</td></tr>
+          <tr><td>tri par sélection</td><td><code>O(n²)</code></td><td><code>O(n²)</code></td><td><code>O(n²)</code></td><td><code>O(1)</code></td><td class="no">non</td><td class="ok">oui</td><td class="no">non</td></tr>
+          <tr><td>tri fusion</td><td><code>O(n log n)</code></td><td><code>O(n log n)</code></td><td><code>O(n log n)</code></td><td><code>O(n)</code></td><td class="ok">oui</td><td class="no">non</td><td class="no">non</td></tr>
+          <tr><td>tri rapide</td><td><code>O(n log n)</code></td><td><code>O(n log n)</code></td><td><code>O(n²)</code></td><td><code>O(log n)</code></td><td class="no">non</td><td class="ok">oui</td><td class="no">non</td></tr>
+        </table>
+      </div>
+
+      <p>Deux lectures utiles. D'abord, la colonne « pire » : seule la fusion garantit <code>n log n</code> ; le rapide y échoue. Ensuite, la colonne « mémoire » : seule la fusion demande un tableau auxiliaire, en <code>O(n)</code> (le rapide n'utilise que la pile de récursion, en <code>O(log n)</code>).</p>
+
+      <h3>Les compteurs sur le tableau témoin</h3>
+      <p>Les cinq algorithmes, exécutés sur <b>5 1 4 2 8 7 3</b>. Les chiffres sont ceux du code C de cette page, pas des estimations.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Même tableau, cinq algorithmes : ce que chacun paie réellement</caption>
+          <tr><th>algorithme</th><th class="num">comparaisons</th><th class="num">écritures</th><th>détail des mouvements</th></tr>
+          <tr><td>tri à bulles</td><td class="num">30</td><td class="num">27</td><td>9 échanges × 3 écritures</td></tr>
+          <tr><td>tri par insertion</td><td class="num">14</td><td class="num">15</td><td>9 décalages + 6 placements</td></tr>
+          <tr><td>tri par sélection</td><td class="num">21</td><td class="num">15</td><td>5 échanges × 3 écritures</td></tr>
+          <tr><td>tri fusion</td><td class="num">13</td><td class="num">40</td><td>20 écritures dans le tampon + 20 recopies</td></tr>
+          <tr><td>tri rapide</td><td class="num">13</td><td class="num">27</td><td>9 échanges × 3 écritures</td></tr>
+        </table>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Ce que ces chiffres disent — et ne disent pas</div>
+        <p>Sur <b>ce</b> tableau, l'insertion et le rapide font deux fois moins de comparaisons que les bulles. Mais un seul tableau ne prouve rien : change l'ordre des données et les rangs s'inversent. Les compteurs servent à <b>vérifier une implémentation</b> (ils doivent coller aux inversions et aux formules), pas à classer les algorithmes. Le classement, c'est la colonne « pire » du tableau précédent.</p>
+      </div>
+
+      <h3>Quand <code>n</code> grandit</h3>
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Comparaisons dans le pire cas</caption>
+          <tr><th>algorithme</th><th>formule</th><th class="num">n = 7</th><th class="num">n = 100</th><th class="num">n = 1 000</th></tr>
+          <tr><td>bulles / insertion / sélection</td><td><code>n(n−1)/2</code></td><td class="num">21</td><td class="num">4 950</td><td class="num">499 500</td></tr>
+          <tr><td>fusion</td><td><code>n⌈log₂ n⌉ − 2^⌈log₂ n⌉ + 1</code></td><td class="num">≤ 14</td><td class="num">≤ 573</td><td class="num">≤ 8 977</td></tr>
+        </table>
+      </div>
+
+      <p>À 1 000 éléments, l'écart est déjà de <b>55 fois</b>. À 1 000 000 d'éléments, le tri à bulles demanderait près de 500 milliards de comparaisons — plusieurs heures — quand la fusion en demande une vingtaine de millions. C'est la définition même d'un changement de classe.</p>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">décider</div></div>
+      <h2>Comment choisir, en quatre questions</h2>
+      <p class="lead">Il n'y a pas de « meilleur tri ». Il y a un tri adapté à trois contraintes : la taille des données, l'ordre déjà présent, et ce que coûte une écriture. Pose les questions dans cet ordre.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>La table de décision</caption>
+          <tr><th>situation</th><th>choix</th><th>pourquoi</th></tr>
+          <tr><td>petite série (n &lt; 32)</td><td>insertion</td><td>constantes minimales, pas de récursion, adaptatif ; c'est la finition des bibliothèques</td></tr>
+          <tr><td>tableau presque trié</td><td>insertion (ou bulles à drapeau)</td><td><code>O(n)</code> : les décalages se limitent aux quelques éléments mal placés</td></tr>
+          <tr><td>mémoire très limitée</td><td>sélection ou rapide</td><td><code>O(1)</code> cases auxiliaires ; la fusion est exclue, elle réclame <code>n</code> cases</td></tr>
+          <tr><td>stabilité exigée</td><td>insertion ou fusion</td><td>les clés égales gardent leur ordre d'arrivée ; jamais sélection ni rapide</td></tr>
+          <tr><td>données hostiles (triées, inversées, adversaire)</td><td>fusion</td><td><code>n log n</code> garanti ; le rapide peut tomber en <code>O(n²)</code></td></tr>
+          <tr><td>écritures coûteuses (flash, EEPROM)</td><td>sélection</td><td>au plus <code>n−1</code> échanges, soit <code>3(n−1)</code> écritures</td></tr>
+          <tr><td>gros volume, cas moyen</td><td>rapide</td><td>meilleures constantes en pratique, tri en place, cache-friendly</td></tr>
+          <tr><td>liste chaînée</td><td>fusion</td><td>on relie les nœuds sans tableau auxiliaire : <code>O(1)</code> mémoire</td></tr>
+        </table>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La réponse de l'ingénieur</div>
+        <p>Dans un vrai programme, on n'écrit pas ces tris : on appelle <code>qsort</code> (C) ou une fonction de bibliothèque, qui combine plusieurs algorithmes et choisit le meilleur selon la taille. Le cours demande de les <b>écrire</b> pour comprendre ce que la bibliothèque cache : les comparaisons, les écritures, la récursion et les garanties.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le mauvais réflexe</div>
+        <p>« C'est presque trié, donc le tri rapide va être très rapide. » Avec un pivot en dernière position, c'est exactement l'inverse : un tableau presque trié produit des partitions déséquilibrées, donc une récursion profonde et un coût quadratique. Sur des données déjà ordonnées, prends insertion ou fusion.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Aucun des cinq ne réunit tout</div>
+        <p>Aucun des cinq tris de la fiche n'est à la fois <b>stable</b>, <b>en place</b> et <b>garanti en <code>n log n</code></b>. La fusion est stable et garantie mais prend de la mémoire ; le rapide est en place mais ni stable ni garanti ; l'insertion est stable et en place mais quadratique. Des tris qui réunissent les trois existent (tri par blocs, <i>block sort</i>), mais ils sont nettement plus complexes et hors du cours.</p>
+      </div>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">bibliothèque · pointeur de fonction</div></div>
+      <h2><code>qsort</code> : trier n'importe quoi avec un comparateur</h2>
+      <p class="lead">La bibliothèque standard du C ne sait pas trier des <code>int16_t</code>, des structures ou des chaînes : elle sait trier des <b>octets</b> et appeler une fonction de comparaison que tu fournis. Le tri devient générique parce que le critère est un <b>pointeur de fonction</b>.</p>
+
+      <div class="code"><header><span>qsort-int.c</span><button data-copy>copier</button></header><pre><code data-hl>#include &lt;stdlib.h&gt;
+
+/* renvoie négatif, nul ou positif : jamais la différence brute */
+int cmpInt16(const void *a, const void *b)
+{
+    int16_t x = *(const int16_t *)a;
+    int16_t y = *(const int16_t *)b;
+
+    return (x &gt; y) - (x &lt; y);          /* -1, 0 ou +1, sans dépassement */
+}
+
+int16_t t[7] = {5, 1, 4, 2, 8, 7, 3};
+qsort(t, 7, sizeof t[0], cmpInt16);    /* t vaut 1 2 3 4 5 7 8 */</code></pre></div>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Ce que le comparateur doit renvoyer</caption>
+          <tr><th>valeur</th><th>sens</th><th>conséquence</th></tr>
+          <tr><td><code>&lt; 0</code></td><td><code>a</code> avant <code>b</code></td><td><code>a</code> est placé avant</td></tr>
+          <tr><td><code>0</code></td><td>égaux pour ce critère</td><td>l'ordre entre eux n'est pas garanti (qsort n'est pas stable)</td></tr>
+          <tr><td><code>&gt; 0</code></td><td><code>a</code> après <code>b</code></td><td><code>a</code> est placé après</td></tr>
+        </table>
+      </div>
+
+      <p>Avec une structure, le même mécanisme s'applique : on convertit les <code>void *</code> vers le type réel, puis on compare le champ voulu.</p>
+
+      <div class="code"><header><span>qsort-struct.c</span><button data-copy>copier</button></header><pre><code data-hl>typedef struct {
+    char nom[32];
+    int  age;
+} Etudiant;
+
+int cmpAge(const void *a, const void *b)
+{
+    const Etudiant *x = a;             /* conversion implicite depuis void * */
+    const Etudiant *y = b;
+
+    return (x-&gt;age &gt; y-&gt;age) - (x-&gt;age &lt; y-&gt;age);
+}
+
+qsort(etudiants, n, sizeof etudiants[0], cmpAge);</code></pre></div>
+
+      <div class="box trap">
+        <div class="lbl">Le comparateur qui plante une fois sur mille</div>
+        <p><code>return *(int *)a - *(int *)b;</code> a l'air correct et casse sur les grandes valeurs : si <code>a</code> vaut <code>INT_MAX</code> et <code>b</code> vaut <code>−1</code>, la différence déborde d'un <code>int</code> — comportement indéfini. Écris toujours <code>(x &gt; y) - (x &lt; y)</code>, qui vaut exactement −1, 0 ou +1, ou compare explicitement. Même piège avec <code>strcmp</code> : son résultat n'a pas besoin d'être −1 ou 1, seulement négatif, nul ou positif.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Les deux garanties de <code>qsort</code></div>
+        <p><b>Pas stable</b> : la norme C ne promet rien sur l'ordre des éléments égaux ; une implémentation peut utiliser un tri rapide, une autre un tri fusion. <b>Aucune complexité garantie</b> : la norme ne fixe pas de borne, et les implémentations courantes sont en <code>O(n log n)</code> en moyenne avec un pire cas <code>O(n²)</code> possible. Si tu as besoin de stabilité ou d'une borne garantie, trie avec fusion, ou trie sur un critère total (clé + rang d'arrivée).</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Le tri générique du cours</div>
+        <p>C'est exactement le mécanisme de l'exercice 1.11 : une fonction de tri qui reçoit le tableau, la taille, et un pointeur vers la comparaison. On peut même choisir l'algorithme à l'exécution avec un tableau de pointeurs de fonction :</p>
+        <pre style="margin:8px 0 0;font:12px/1.6 var(--mono);overflow-x:auto"><code data-hl>typedef void (*Tri_t)(int16_t t[], size_t n);
+
+static const Tri_t tris[] = { triInsertion, triSelection, triRapide };
+tris[0](t, n);   /* le tri est choisi à l'exécution */</code></pre>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">pièges</div></div>
+      <h2>Pièges classiques</h2>
+      <p class="lead">Un tri faux compile. Il boucle, il lit hors du tableau, ou il rend un résultat presque trié — et le piège est toujours le même : une borne, un échange, une égalité.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Erreurs fréquentes</caption>
+          <tr><th>piège</th><th>ce qui se passe</th><th>le remède</th></tr>
+          <tr><td><code>i &lt;= n</code> au lieu de <code>i &lt; n</code></td><td>lecture de <code>t[n]</code>, hors du tableau : comportement indéfini</td><td>toujours <code>i &lt; n</code> ; vérifier la borne haute des deux boucles</td></tr>
+          <tr><td>échange incorrect</td><td><code>t[i] = t[j]; t[j] = t[i];</code> : les deux cases finissent identiques</td><td>passer par un temporaire : <code>tmp = t[i]; t[i] = t[j]; t[j] = tmp;</code></td></tr>
+          <tr><td><code>s</code> non remis à zéro</td><td>le tri à bulles ne s'arrête jamais</td><td><code>s = 0</code> en première instruction de la passe</td></tr>
+          <tr><td>comparaison inversée</td><td>ordre décroissant involontaire</td><td>vérifier le sens : <code>t[i] &lt; t[i−1]</code> pour croissant</td></tr>
+          <tr><td><code>j &gt;= 0</code> avec un <code>size_t</code></td><td>la condition est toujours vraie : boucle infinie et lecture en <code>t[−1]</code></td><td><code>j &gt; 0</code>, ou un type signé pour <code>j</code></td></tr>
+          <tr><td>pivot = dernier sur données triées</td><td>partitions déséquilibrées, <code>O(n²)</code>, pile profonde</td><td>médiane de trois, pivot aléatoire, ou fusion</td></tr>
+          <tr><td><code>p - 1u</code> quand <code>p == 0</code></td><td>sous-dépassement : un <code>size_t</code> énorme, puis lecture hors tableau</td><td><code>if (p &gt; g)</code> avant l'appel récursif</td></tr>
+          <tr><td>fusion : tampon oublié</td><td>le tableau n'est jamais mis à jour</td><td>recopier <code>tmp[g..d-1]</code> dans <code>t</code> après chaque fusion</td></tr>
+          <tr><td>fusion : <code>&lt;=</code> au lieu de <code>&lt;</code></td><td>deux clés égales s'inversent : tri instable</td><td>comparer strictement, la gauche d'abord</td></tr>
+          <tr><td>stabilité : <code>&lt;=</code> dans l'insertion</td><td>les clés égales sont décalées : tri instable</td><td><code>cle &lt; t[j−1]</code>, pas <code>&lt;=</code></td></tr>
+          <tr><td>tableau d'un élément</td><td>la boucle lit <code>t[1]</code> qui n'existe pas</td><td>traiter <code>n &lt; 2</code> avant toute boucle</td></tr>
+          <tr><td><code>sizeof</code> d'un tableau en paramètre</td><td>8 au lieu de la taille réelle : la longueur est perdue</td><td>passer <code>size_t n</code> avec le tableau</td></tr>
+          <tr><td>comparateur <code>*a - *b</code></td><td>débordement sur les grandes valeurs : UB</td><td><code>(x &gt; y) - (x &lt; y)</code></td></tr>
+        </table>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Le jeu de tests qui attrape tout</div>
+        <p>Six tableaux suffisent à démasquer presque toutes les erreurs : <b>vide</b> (n = 0), <b>un élément</b> (n = 1), <b>deux éléments</b> inversés, <b>déjà trié</b>, <b>ordre inverse</b>, <b>avec doublons</b> (3 3 1 1 2 2 3 1). Sur chacun : le résultat est trié, et sur les doublons, l'ordre relatif des clés égales est conservé si le tri est stable.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le tableau d'un élément, et le tableau vide</div>
+        <p>Pour le tri rapide, <code>triRapideRec(t, 0u, n - 1u)</code> avec <code>n == 0</code> calcule <code>n − 1u</code> sur un <code>size_t</code> : le résultat n'est pas −1 mais un nombre gigantesque. La garde <code>if (n &gt; 1u)</code> n'est pas décorative. Pour la fusion, <code>d - g &lt; 2u</code> protège à la fois <code>n = 0</code> et <code>n = 1</code>. Chaque tri a sa garde ; il faut la trouver avant l'examen, pas pendant.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Les outils qui voient les fautes</div>
+        <p><code>gcc -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined</code> arrête le programme au premier dépassement de tableau. Sans cela, une lecture hors bornes peut « marcher » sur ta machine et casser ailleurs. Et compare toujours le nombre d'échanges au nombre d'inversions quand tu peux le calculer.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">auto-test</div></div>
+      <h2>QCM : douze questions</h2>
+      <p class="lead">Une seule réponse par question. Le retour s'affiche immédiatement avec l'explication.</p>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+
+      <div class="box idea" style="margin-top:30px">
+        <div class="lbl">À retenir</div>
+        <p>Un tri se résume par trois nombres et un mot : les <b>comparaisons</b>, les <b>écritures</b>, la <b>mémoire</b> auxiliaire — et la <b>stabilité</b>. Savoir les donner pour les cinq algorithmes permet de répondre aux questions de cours.</p>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">mémo final</div></div>
+      <h2>Mémo final et checklist</h2>
+      <p class="lead">Tout ce qui doit rester après la dernière relecture, sur une page.</p>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Les cinq complexités</h4>
+          <table class="tbl" style="margin:6px 0 0;font-size:12.5px">
+            <tr><th>tri</th><th>pire</th><th>mém.</th></tr>
+            <tr><td>bulles</td><td>n²</td><td>1</td></tr>
+            <tr><td>insertion</td><td>n²</td><td>1</td></tr>
+            <tr><td>sélection</td><td>n²</td><td>1</td></tr>
+            <tr><td>fusion</td><td>n log n</td><td>n</td></tr>
+            <tr><td>rapide</td><td>n²</td><td>log n</td></tr>
+          </table>
+        </div>
+        <div class="minicard">
+          <h4>Stable / en place / adaptatif</h4>
+          <ul>
+            <li><b>Stables</b> : bulles, insertion, fusion.</li>
+            <li><b>Pas stables</b> : sélection, rapide.</li>
+            <li><b>En place</b> : bulles, insertion, sélection, rapide.</li>
+            <li><b>Pas en place</b> : fusion (<code>n</code> cases).</li>
+            <li><b>Adaptatifs</b> : bulles, insertion.</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Les formules</h4>
+          <ul>
+            <li>Inversions <code>=</code> échanges de voisins.</li>
+            <li>Pire cas quadratique : <code>n(n−1)/2</code>.</li>
+            <li>Borne des comparaisons : <code>log₂(n!) ≈ n log₂ n − 1,44 n</code>.</li>
+            <li>Fusion : <code>⌈log₂ n⌉</code> niveaux, <code>≤ n⌈log₂ n⌉ − 2^⌈log₂ n⌉ + 1</code> comparaisons.</li>
+            <li>Coût du cours : <code>c<sub>t</sub> = P(4N−2)t + 5It</code>.</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Une phrase par algorithme</h4>
+          <ul>
+            <li><b>Bulles</b> : le plus grand remonte, on s'arrête si une passe n'échange rien.</li>
+            <li><b>Insertion</b> : on insère une clé dans un préfixe trié en décalant.</li>
+            <li><b>Sélection</b> : on cherche le minimum, un échange par passe.</li>
+            <li><b>Fusion</b> : diviser en deux, fusionner deux suites triées.</li>
+            <li><b>Rapide</b> : partitionner autour d'un pivot, récurser des deux côtés.</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Les invariants</h4>
+          <ul>
+            <li>Bulles : après la passe <code>k</code>, les <code>k</code> dernières cases sont définitives.</li>
+            <li>Insertion : les <code>i</code> premiers éléments sont triés.</li>
+            <li>Sélection : les <code>i</code> premiers sont les <code>i</code> plus petits, triés.</li>
+            <li>Fusion : deux moitiés triées, deux index qui avancent.</li>
+            <li>Rapide : le pivot est à sa place définitive après la partition.</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Checklist</h4>
+          <ul class="checklist">
+            <li>Les bornes : <code>i &lt; n</code>, <code>j &gt; 0</code>, <code>d − g &lt; 2</code>.</li>
+            <li>L'échange passe par un temporaire.</li>
+            <li><code>s = 0</code> au début de chaque passe.</li>
+            <li><code>size_t</code> : jamais <code>n − 1</code> sans garde.</li>
+            <li>Testé sur 0, 1, 2 éléments, trié, inverse, doublons.</li>
+            <li>Stabilité : comparaison stricte, gauche d'abord.</li>
+            <li>Complexités et mémoire récitées sans hésiter.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">Le contrôle final, en trois lignes</div>
+        <p>Sur le témoin, chaque tri doit rendre <b>1 2 3 4 5 7 8</b>. Le nombre d'échanges de voisins doit valoir <b>9</b> (les inversions). Et le tri doit rester correct sur un tableau vide, un tableau d'un élément et un tableau de doublons. Si ces trois contrôles passent, l'implémentation est saine.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|int8_t|int16_t|int32_t|uint8_t|uint16_t|uint32_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     laboratoires de tri : barres, compteurs, étapes
+     ============================================================ */
+  function mountLab(root, spec){
+    const states = spec.states;
+    const n = spec.data.length;
+    const max = Math.max.apply(null, spec.data);
+    const barsEl = root.querySelector('[data-bars]');
+    const auxEl = root.querySelector('[data-aux]');
+    const noteEl = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const cmpEl = root.querySelector('[data-cmp]');
+    const wrEl = root.querySelector('[data-wr]');
+    const badgeEl = root.querySelector('[data-badge]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const countEl = root.querySelector('[data-count]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    if (!barsEl || !states || !states.length) return;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    barsEl.innerHTML = '';
+    const bars = [];
+    for (let k = 0; k < n; k++) {
+      const b = document.createElement('div');
+      b.className = 'bar';
+      b.innerHTML = '<span class="bmark"></span>' +
+        '<div class="btrack"><span class="bval"></span><div class="bfill"></div></div>' +
+        '<span class="bidx">' + k + '</span>';
+      barsEl.appendChild(b);
+      bars.push({
+        el: b,
+        fill: b.querySelector('.bfill'),
+        val: b.querySelector('.bval'),
+        mark: b.querySelector('.bmark')
+      });
+    }
+
+    if (countEl) countEl.textContent = states.length + ' étapes';
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function paint(){
+      const s = states[i];
+      for (let k = 0; k < n; k++) {
+        const bar = bars[k];
+        const v = s.arr[k];
+        const pct = max > 0 ? Math.round(v / max * 100) : 0;
+        bar.fill.style.height = pct + '%';
+        bar.val.style.bottom = 'calc(' + pct + '% + 4px)';
+        bar.val.textContent = v;
+        bar.el.className = 'bar' + (s.roles[k] ? ' is-' + s.roles[k] : '');
+        bar.mark.textContent = s.marks[k] || '';
+        bar.mark.classList.toggle('on', !!s.marks[k]);
+      }
+
+      if (auxEl) {
+        if (s.aux && s.aux.length) {
+          auxEl.hidden = false;
+          auxEl.innerHTML = '<span class="aux-lbl">tampon tmp</span><div class="aux-cells">' +
+            s.aux.map(function(v, k){
+              const empty = (v === null || v === undefined);
+              return '<span class="aux-cell' + (empty ? ' empty' : '') + '" title="tmp[' + k + ']">' +
+                (empty ? '·' : v) + '</span>';
+            }).join('') + '</div>';
+        } else {
+          auxEl.hidden = true;
+          auxEl.innerHTML = '';
+        }
+      }
+
+      if (cmpEl) cmpEl.textContent = s.cmp;
+      if (wrEl) wrEl.textContent = s.wr;
+      if (badgeEl) badgeEl.textContent = s.badge || '';
+      if (noteEl) noteEl.innerHTML = s.note;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint();
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(); }
+      }, spec.interval || 900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(); });
+
+    paint();
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     calculateur de coût : c_t = P(4N - 2)t + 5 I t
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-calc]');
+    if (!root) return;
+    const inN = root.querySelector('[data-n]');
+    const inP = root.querySelector('[data-p]');
+    const inI = root.querySelector('[data-i]');
+    const out = root.querySelector('[data-calc-out]');
+    if (!inN || !inP || !inI || !out) return;
+
+    function entier(el, min, max, defaut){
+      const v = parseInt(el.value, 10);
+      if (!isFinite(v)) return defaut;
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function compute(){
+      const N = entier(inN, 1, 100000, 7);
+      const P = entier(inP, 1, 100000, 1);
+      const I = entier(inI, 0, 100000000, 0);
+      const ct = (4 * N - 2) * P + 5 * I;
+      out.innerHTML = 'c<sub>t</sub> = (4 × ' + N + ' − 2) × ' + P + ' t + 5 × ' + I +
+        ' t = <b>' + ct.toLocaleString('fr-CH') + ' t</b>' +
+        (N === 7 && P === 5 && I === 9 ? ' <span class="small">(tableau témoin)</span>' : '');
+    }
+
+    [inN, inP, inI].forEach(function(el){ el.addEventListener('input', compute); });
+    compute();
+  })();
+
+  /* ============================================================
+     stabilité : insertion contre sélection sur huit étudiants
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-stab]');
+    if (!root) return;
+    const rows = root.querySelector('[data-stab-rows]');
+    const fb = root.querySelector('[data-stab-fb]');
+    if (!rows || !fb) return;
+
+    const CLES = [[2,'a'],[1,'b'],[2,'c'],[1,'d'],[3,'e'],[2,'f'],[1,'g'],[3,'h']];
+    const copie = function(){ return CLES.map(function(p){ return p.slice(); }); };
+
+    function insertion(){
+      const a = copie();
+      for (let i = 1; i < a.length; i++) {
+        const cle = a[i].slice();
+        let j = i;
+        while (j > 0 && cle[0] < a[j - 1][0]) { a[j] = a[j - 1]; j--; }
+        a[j] = cle;
+      }
+      return a;
+    }
+
+    function selection(){
+      const a = copie();
+      for (let i = 0; i + 1 < a.length; i++) {
+        let m = i;
+        for (let j = i + 1; j < a.length; j++) {
+          if (a[j][0] < a[m][0]) m = j;
+        }
+        if (m !== i) { const t = a[i]; a[i] = a[m]; a[m] = t; }
+      }
+      return a;
+    }
+
+    function violations(a){
+      const bad = {};
+      for (let i = 1; i < a.length; i++) {
+        if (a[i][0] === a[i - 1][0] && a[i][1] < a[i - 1][1]) { bad[i] = true; bad[i - 1] = true; }
+      }
+      return bad;
+    }
+
+    function ligne(nom, a, bad){
+      return '<div class="stab-row"><span class="stab-name">' + nom + '</span>' +
+        a.map(function(p, i){
+          return '<span class="stab-chip' + (bad[i] ? ' bad' : '') + '">' + p[0] +
+            '<small>·' + p[1] + '</small></span>';
+        }).join('') + '</div>';
+    }
+
+    const ins = insertion();
+    const sel = selection();
+    rows.innerHTML = ligne('départ', CLES, {}) +
+      ligne('insertion', ins, violations(ins)) +
+      ligne('sélection', sel, violations(sel));
+
+    const badSel = violations(sel);
+    const idx = Object.keys(badSel).map(Number).sort(function(a, b){ return a - b; });
+    if (idx.length) {
+      const k = idx[idx.length - 1];
+      fb.innerHTML = '<b>Sélection :</b> les deux étudiants de note ' + sel[k][0] + ' (' + sel[k - 1][1] +
+        ' puis ' + sel[k][1] + ') sont dans l\'ordre inverse de leur arrivée. <b>Insertion :</b> les mêmes notes ' +
+        'restent dans l\'ordre a, b, c. La différence n\'est pas la vitesse, c\'est le <b>chemin des échanges</b>.';
+    }
+  })();
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'Combien d\'inversions contient le tableau 5 1 4 2 8 7 3 ?',
+     o: ['6', '9', '12', '21'], a: 1,
+     fb: 'Neuf paires sont inversées : (5,1), (5,4), (5,2), (5,3), (4,2), (4,3), (8,7), (8,3), (7,3). Le tri à bulles fera donc exactement neuf échanges.'},
+    {q: 'Quel tri est à la fois <b>stable</b> et <b>en place</b> ?',
+     o: ['le tri par sélection', 'le tri rapide', 'le tri fusion', 'le tri par insertion'], a: 3,
+     fb: 'L\'insertion est stable (comparaison stricte) et n\'utilise qu\'une case temporaire. La sélection est en place mais instable ; la fusion est stable mais pas en place ; le rapide est en place mais instable.'},
+    {q: 'Combien de comparaisons fait le tri par sélection sur un tableau <b>déjà trié</b> de 10 éléments ?',
+     o: ['9', '45', '10', '0'], a: 1,
+     fb: 'Toujours n(n−1)/2 = 45, quel que soit l\'ordre des données. La sélection n\'est pas adaptative : elle relit toute la zone à chaque passe.'},
+    {q: 'Combien de comparaisons fait le tri à bulles du cours sur un tableau déjà trié de <code>n</code> éléments ?',
+     o: ['n − 1', 'n(n−1)/2', 'n log n', '0'], a: 0,
+     fb: 'Une seule passe de n − 1 comparaisons, zéro échange, donc s = 0 et le do…while s\'arrête. C\'est ce qui rend le tri à bulles adaptatif.'},
+    {q: 'Quel tri garantit <code>O(n log n)</code> dans <b>tous</b> les cas ?',
+     o: ['le tri rapide', 'le tri fusion', 'le tri par insertion', 'le tri par sélection'], a: 1,
+     fb: 'La fusion découpe toujours en deux moitiés égales : ⌈log₂ n⌉ niveaux, quoi qu\'il arrive. Le rapide est en O(n log n) en moyenne seulement.'},
+    {q: 'Quelle mémoire auxiliaire le tri fusion demande-t-il ?',
+     o: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], a: 2,
+     fb: 'Un tampon de n éléments pour la fusion. C\'est le prix de la garantie n log n, et la raison pour laquelle on ne l\'utilise pas quand la mémoire est comptée.'},
+    {q: 'Tri rapide avec le pivot en <b>dernière</b> position, sur un tableau <b>déjà trié</b> : quelle complexité ?',
+     o: ['O(n)', 'O(n log n)', 'O(n²)', 'O(log n)'], a: 2,
+     fb: 'Chaque partition ne place qu\'un élément : les zones sont 0 et n−1. Sur 7 éléments triés, cela fait 21 comparaisons et une profondeur de 7. C\'est le pire cas.'},
+    {q: 'Pourquoi le tri par sélection n\'est-il pas stable ?',
+     o: ['il compare mal les clés', 'son échange à longue distance peut inverser deux clés égales', 'il utilise trop de mémoire', 'il n\'échange jamais'], a: 1,
+     fb: 'L\'échange saute par-dessus les cases intermédiaires sans regarder les clés égales. Deux étudiants de même note peuvent changer d\'ordre — le laboratoire de la section 5 le montre.'},
+    {q: 'Que change <code>if (t[i] &lt;= t[i-1])</code> au lieu de <code>if (t[i] &lt; t[i-1])</code> dans le tri à bulles ?',
+     o: ['rien du tout', 'le tableau n\'est plus trié', 'il trie encore, mais échange les clés égales : il devient instable', 'il devient O(n)'], a: 2,
+     fb: 'Le résultat reste croissant, mais deux clés égales sont échangées : l\'ordre d\'arrivée n\'est plus conservé, et on paie des échanges inutiles.'},
+    {q: 'Quel tri choisir pour un tableau <b>presque trié</b> ?',
+     o: ['le tri rapide', 'le tri par insertion', 'le tri par sélection', 'le tri fusion'], a: 1,
+     fb: 'Insertion (ou bulles à drapeau) : le nombre de comparaisons et de décalages se limite aux éléments mal placés, donc O(n) si le tableau est déjà trié.'},
+    {q: 'Que doit renvoyer un comparateur de <code>qsort</code> ?',
+     o: ['0 ou 1', 'n\'importe quel entier', 'un entier négatif, nul ou positif', 'void'], a: 2,
+     fb: 'Négatif si le premier élément vient avant le second, nul si le critère les juge égaux, positif sinon. Évite <code>*a - *b</code> : la différence peut déborder.'},
+    {q: 'Que fait <code>for (size_t i = 1; i &lt;= n; i++) { if (t[i] &lt; t[i-1]) ... }</code> sur un tableau de <code>n</code> cases ?',
+     o: ['rien de spécial', 'il lit t[n], hors du tableau : comportement indéfini', 'il trie correctement en n comparaisons', 'il oublie le dernier élément'], a: 1,
+     fb: 'n est une valeur de size_t et l\'indice maximal valide est n−1. La lecture de t[n] est hors bornes : le compilateur ne dit rien, l\'exécution casse — parfois.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

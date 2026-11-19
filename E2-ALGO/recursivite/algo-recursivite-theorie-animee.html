@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Récursivité — théorie et laboratoires</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-int{background:var(--blue-s);border-color:var(--blue)}
+  .sw-char{background:var(--green-s);border-color:var(--green)}
+  .sw-ptr{background:var(--accent-s);border-color:var(--accent)}
+  .sw-heap{background:var(--coral-s);border-color:var(--coral)}
+  .sw-free{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- traducteur de déclarations ---------- */
+  .translator{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px;background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:16px;margin:22px 0;box-shadow:var(--shadow);align-items:start}
+  .trans-list{display:grid;gap:4px;align-content:start}
+  .trans-list button{text-align:left;border:1px solid transparent;background:var(--card2);border-radius:7px;padding:5px 8px;font:11.5px/1.5 var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s,color .15s;overflow-wrap:anywhere}
+  .trans-list button:hover{color:var(--ink);background:var(--card)}
+  .trans-list button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .trans-list button code{background:none;border:0;padding:0;font-size:12px;color:inherit}
+  .trans-out{background:var(--card2);border-radius:10px;padding:12px 14px;min-height:150px}
+  .trans-out .decl{font:12px var(--mono);color:var(--accent);margin-bottom:6px;overflow-wrap:anywhere}
+  .trans-out .fr{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:550;max-width:40ch}
+  .trans-out .why{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;max-width:46ch}
+  @media (max-width:760px){
+    .translator{grid-template-columns:1fr;padding:13px}
+    .trans-list{grid-template-columns:1fr 1fr}
+    .trans-out{min-height:120px}
+  }
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .mem-stage{position:relative;padding:12px 4px 4px;margin-top:2px}
+  .mem-groups{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;justify-content:center}
+  .mem-groups.is-stack{flex-direction:column;align-items:center;gap:24px}
+  .mem-groups.is-stack .mem-group{width:100%;position:relative;padding-top:16px}
+  .mem-groups.is-stack .mem-gtitle{position:absolute;left:0;top:0;text-align:left}
+  .mem-group{display:grid;justify-items:center;gap:6px;min-width:0}
+  .mem-gtitle{font:650 9.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .mem-ghint{font-size:11px;color:var(--faint);line-height:1.35;text-align:center;max-width:230px}
+  .cells{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:flex-start}
+  .cells.is-column{flex-direction:column;gap:44px;align-items:center}
+  .cell{--cw:108px;width:var(--cw);max-width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:7px 8px 6px;text-align:center;position:relative;transition:border-color .22s,background .22s,box-shadow .22s,opacity .22s}
+  .cell.is-ptr{border-color:var(--accent);background:linear-gradient(var(--accent-s),var(--card) 72%)}
+  .cell.is-char{border-color:var(--green);background:linear-gradient(var(--green-s),var(--card) 78%)}
+  .cell.is-heap{border-color:var(--coral);background:linear-gradient(var(--coral-s),var(--card) 78%)}
+  .cell.is-active{box-shadow:0 0 0 3px var(--accent-s);border-color:var(--accent)}
+  .cell.is-changed{animation:flash .9s ease}
+  .cell.is-new{animation:pop .34s ease}
+  .cell.is-freed{opacity:.62;border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px)}
+  .cell.is-freed .cval{text-decoration:line-through}
+  .cell.is-err{border-color:var(--red);background:var(--red-s)}
+  .cell.is-null .cval{color:var(--faint)}
+  .cname{display:flex;align-items:center;justify-content:center;gap:4px;font:650 11.5px/1.2 var(--mono);color:var(--ink);min-height:16px}
+  .ctype{font:8.5px/1 var(--mono);text-transform:none;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:2px 3px;font-weight:400}
+  .cval{font:700 18px/1.18 var(--mono);margin:4px 0 1px;min-height:21px;overflow-wrap:anywhere}
+  .is-ptr .cval{font-size:13.5px;font-weight:650;color:var(--accent);letter-spacing:-.02em}
+  .caddr{font:9.5px/1.15 var(--mono);color:var(--faint);letter-spacing:.01em}
+  .cfields{display:grid;gap:1px;margin:4px 0 2px}
+  .cf{display:flex;justify-content:space-between;gap:8px;font:11px/1.5 var(--mono);border-bottom:1px dotted var(--line2);padding:1px 2px}
+  .cf:last-child{border-bottom:0}
+  .cf span{color:var(--faint)}
+  .cf b{font-weight:650}
+  .cell.w-node{--cw:158px}
+  .cell.w-wide{--cw:150px}
+
+  .arrow-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .arrow{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .arrow.is-accent{stroke:var(--accent);stroke-width:2}
+  .alabel{font:10px/1 var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- simulateur de code ---------- */
+  .codesim .sim{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+  .sim-code{list-style:none;margin:0;padding:8px 0;background:#1c1c1a;border-radius:11px;font:12px/1.72 var(--mono);overflow:auto;min-height:150px}
+  .sim-code li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:1px 11px 1px 6px;border-left:3px solid transparent;color:#cfccc4;white-space:pre;cursor:pointer}
+  .sim-code li:hover{background:rgba(255,255,255,.045)}
+  .sim-code li .ln{color:#67655f;text-align:right;user-select:none}
+  .sim-code li.on{background:rgba(255,255,255,.09);border-left-color:var(--accent-2);color:#fff}
+  .sim-code li.on .ln{color:#b9b6ad}
+  .sim-code .k{color:#9ec7f3} .sim-code .n{color:#e7b06a} .sim-code .s{color:#a7d8a9} .sim-code .c{color:#8b8880} .sim-code .f{color:#c6a9f8}
+  .sim-side{min-width:0}
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:9px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+  @media (max-width:880px){
+    .codesim .sim{grid-template-columns:1fr}
+    .codesim .sim-code{min-height:0}
+  }
+
+  /* ---------- explorateur d'adresses ---------- */
+  .addrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .addr-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0 13px}
+  .byte{border:1px solid var(--line2);border-radius:7px;background:var(--card2);padding:4px 3px 3px;text-align:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+  .byte:hover{transform:translateY(-1px);border-color:var(--line)}
+  .byte .ba{display:block;font:8.5px/1.2 var(--mono);color:var(--faint)}
+  .byte .bv{display:block;font:650 12px/1.3 var(--mono);color:var(--ink)}
+  .byte.v-x{background:var(--blue-s);border-color:var(--blue)}
+  .byte.v-c{background:var(--green-s);border-color:var(--green)}
+  .byte.v-p{background:var(--accent-s);border-color:var(--accent)}
+  .byte.pad{opacity:.5;background:transparent;border-style:dashed;cursor:default}
+  .byte.pad:hover{transform:none;border-color:var(--line2)}
+  .byte.sel{outline:2px solid var(--ink);outline-offset:1px}
+  .addr-vars{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+  .addr-vars button{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:6px 9px;font:12px var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s}
+  .addr-vars button:hover{background:var(--card)}
+  .addr-vars button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .addr-info{font-size:13px;line-height:1.55;color:var(--muted);background:var(--card2);border-radius:9px;padding:9px 11px;min-height:3.1em}
+  .addr-info b{color:var(--ink)}
+  .addr-info .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- widget tableau ---------- */
+  .arrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .arr-stage{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;align-items:center;padding:34px 0 6px;min-height:120px}
+  .arr-p{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:6px 8px;text-align:center}
+  .arr-p .n{font:650 11px/1.2 var(--mono);color:var(--ink)}
+  .arr-p .v{font:650 13px/1.2 var(--mono);color:var(--accent);margin:2px 0}
+  .arr-p .ty{font:9px/1 var(--mono);color:var(--faint)}
+  .arr-track{position:relative;display:flex;gap:0;min-width:0}
+  .arr-cell{flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--card);padding:7px 3px 6px;text-align:center;position:relative;transition:background .2s,border-color .2s,transform .2s}
+  .arr-cell:first-child{border-radius:9px 0 0 9px}
+  .arr-cell:last-child{border-radius:0 9px 9px 0}
+  .arr-cell .av{font:700 17px/1.2 var(--mono);color:var(--ink)}
+  .arr-cell .ai{font:9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+  .arr-cell.sel{background:var(--teal-s);border-color:var(--teal);transform:translateY(-2px)}
+  .arr-cell.sel .av{color:var(--teal)}
+  .arr-cur{position:absolute;top:-31px;transform:translateX(-50%);text-align:center;font:650 10.5px/1 var(--mono);color:var(--teal);transition:left .28s ease;white-space:nowrap}
+  .arr-cur::after{content:"";display:block;width:1.5px;height:16px;background:var(--teal);margin:4px auto 0}
+  .arr-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .arr-formula{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px;margin-top:8px}
+  .arr-formula b{color:var(--ink)}
+  .arr-formula .ok{color:var(--teal)} .arr-formula .ko{color:var(--red)}
+  .arr-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .arr-ctrl input[type=range]{flex:1 1 160px;accent-color:var(--teal);min-width:120px}
+  .arr-ctrl output{font:12px var(--mono);color:var(--faint);min-width:58px;text-align:right}
+
+  /* ---------- const ---------- */
+  .constgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:20px 0}
+  @media (max-width:800px){.constgrid{grid-template-columns:1fr}}
+  .const-card{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .const-card code{display:block;font-size:12px;background:var(--card2);white-space:nowrap;overflow-x:auto}
+  .const-viz{display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);color:var(--muted);flex-wrap:wrap;min-height:38px}
+  .cv-box{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 6px}
+  .cv-ptr{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .cv-lock{color:var(--red);font-size:12px}
+  .cv-arrow{color:var(--faint)}
+  .const-btns{display:flex;flex-wrap:wrap;gap:5px}
+  .const-btns button{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:5px 8px;font:10.5px var(--mono);color:var(--muted);cursor:pointer}
+  .const-btns button:hover{background:var(--card);color:var(--ink)}
+  .const-fb{font-size:11.5px;line-height:1.4;min-height:2.6em;color:var(--faint)}
+  .const-fb.ok{color:var(--teal)} .const-fb.ko{color:var(--red)}
+
+  /* ---------- pointeur de fonction ---------- */
+  .fplab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .fp-stage{display:flex;flex-direction:column;align-items:center;gap:26px;padding:10px 0;position:relative}
+  .fp-op{background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:8px 11px;text-align:center;min-width:110px}
+  .fp-op .n{font:650 11px/1.2 var(--mono)}
+  .fp-op .v{font:650 12.5px/1.3 var(--mono);color:var(--accent);margin-top:2px}
+  .fp-fns{display:flex;gap:8px;flex-wrap:wrap}
+  .fp-fn{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:8px 10px;font:11.5px/1.4 var(--mono);color:var(--muted);cursor:pointer;text-align:left;transition:border-color .18s,background .18s}
+  .fp-fn b{display:block;color:var(--ink);font-size:12.5px}
+  .fp-fn span{color:var(--faint);font-size:10px}
+  .fp-fn.on{border-color:var(--teal);background:var(--teal-s);color:var(--teal)}
+  .fp-fn.on b{color:var(--teal)}
+  .fp-out{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px}
+  .fp-out b{color:var(--ink)}
+  .fp-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:flex;gap:9px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .mem-groups{gap:20px}
+    .cell{--cw:98px}
+    .addr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+    .arr-stage{grid-template-columns:1fr;gap:0;padding:8px 0 6px}
+    .arr-p{justify-self:start;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start;padding:5px 8px;margin-bottom:54px;width:auto}
+    .arr-p .v{margin:0}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.addrlab,.arrlab,.fplab,.quiz,.box{box-shadow:none}
+  }
+  /* ---------- récursivité : pile de trames, aiguilles, arbre ---------- */
+  .lab[data-stack] .cells.is-column{gap:10px}
+  .lab[data-lab="factpile"] .cell{--cw:172px}
+  .lab[data-lab="phonealarm"] .cell{--cw:128px}
+  .ctype{white-space:nowrap}
+  .lab[data-pegs] .mem-groups.is-stack{flex-direction:row;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:26px}
+  .lab[data-pegs] .mem-groups.is-stack .mem-group{width:auto;padding-top:0;min-width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .lab[data-pegs] .mem-groups.is-stack .mem-gtitle{position:static;text-align:center}
+  .lab[data-pegs] .cells.is-column{flex:1 1 auto;gap:6px;min-height:40px;justify-content:flex-end}
+  .treestage{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 2px 0}
+  .treestage svg{min-width:540px}
+  .tnd rect{fill:var(--card2);stroke:var(--line);stroke-width:1.2}
+  .tnd.off{opacity:.4}
+  .tnd.ok rect{fill:var(--teal-s);stroke:var(--teal)}
+  .tnd.on rect{fill:var(--accent-s);stroke:var(--accent);stroke-width:1.9}
+  .tnd.dup rect{stroke:var(--red);stroke-dasharray:3 2}
+  .tnd text{font-family:var(--mono)}
+  .tnl{font-size:12px;font-weight:600;fill:var(--ink)}
+  .tnd.ok .tnl{fill:var(--teal)}
+  .tnd.on .tnl{fill:var(--accent)}
+  .tnv{font-size:11px;fill:var(--muted)}
+  .tnd.ok .tnv{fill:var(--teal);font-weight:600}
+  .tedge{stroke:var(--line);stroke-width:1.2;fill:none}
+  .tedge.on{stroke:var(--accent);stroke-width:1.8}
+  @media (max-width:620px){
+    .lab[data-pegs] .mem-groups.is-stack{gap:14px}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ALGO</div>
+        <div class="brandsub">Récursivité<br>Fiche de révision · TE1</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>Définition</a>
+      <a href="#s2"><i>02</i>Pile d'appels</a>
+      <a href="#s3"><i>03</i>Factorielle</a>
+      <a href="#s4"><i>04</i>Tours de Hanoï</a>
+      <a href="#s5"><i>05</i>Diviser pour régner</a>
+      <a href="#s6"><i>06</i>Fibonacci</a>
+      <a href="#s7"><i>07</i>Mémoïsation</a>
+      <a href="#s8"><i>08</i>Récursion ou boucle</a>
+      <a href="#s9"><i>09</i>Coût</a>
+      <a href="#s10"><i>10</i>Profondeur</a>
+      <a href="#s11"><i>11</i>Erreurs fréquentes</a>
+      <a href="#s12"><i>12</i>QCM</a>
+      <a href="#s13"><i>13</i>Mémo</a>
+    </nav>
+    <div class="sidefoot"><b>TE1</b> · vendredi 20.11.2026<br><span>13 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ALGO · chapitre 1 · récursivité</div>
+      <h1>Récursivité</h1>
+      <p class="sub">Cas de base, pile d'appels, factorielle, tours de Hanoï, diviser pour régner, Fibonacci et mémoïsation : le chapitre 1 et ses laboratoires pas à pas.</p>
+      <div class="meta">
+        <span class="chip"><b>13</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires pas à pas</span>
+        <span class="chip">C11 · <b>gcc</b></span>
+        <span class="chip">Hanoï : <b>2ⁿ−1</b> coups</span>
+        <span class="chip">TE1 · <b>20.11.2026</b></span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Fondations</h3><p>Cas simple, réduction, condition d'arrêt.</p></a>
+        <a class="step" href="#s2"><div class="n">02</div><h3>La pile</h3><p>Trames, adresse de retour, montée et descente.</p></a>
+        <a class="step" href="#s3"><div class="n">03</div><h3>Factorielle</h3><p>Boucle contre récursion, <code>O(n)</code>, débordement.</p></a>
+        <a class="step" href="#s4"><div class="n">04</div><h3>Hanoï</h3><p>Décomposition, 7 coups, <code>2<sup>n</sup>−1</code>, arbre d'appels.</p></a>
+        <a class="step" href="#s6"><div class="n">05</div><h3>Fibonacci &amp; cache</h3><p>Récursion multiple, recalculs, mémoïsation.</p></a>
+        <a class="step" href="#s11"><div class="n">06</div><h3>Pièges &amp; test</h3><p>Erreurs classiques, QCM, mémo.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-int"></i>trame, disque</span>
+        <span><i class="sw sw-char"></i>personne de la liste</span>
+        <span><i class="sw sw-ptr"></i>appel en cours</span>
+        <span><i class="sw sw-heap"></i>case de cache remplie</span>
+        <span><i class="sw sw-free"></i>terminé, ou case vide</span>
+        <span>flèche = appel</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b>. Les adresses de pile (0x7ffc20, 0x7ffc10…) sont symboliques ; le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche.</p>
+    </div>
+
+    
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1.2</span><span class="doc-ref" title="Document du cours non publié">1.10</span><span class="doc-ref" title="Document du cours non publié">1.14</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">définition</div></div>
+      <h2>Une fonction qui s'appelle elle-même, avec une porte de sortie</h2>
+      <p class="lead">Le cours définit une fonction <b>récursive</b> de deux façons : elle s'appelle elle-même, ou elle fait partie d'une séquence d'appels qui revient sur elle (<code>func1</code> → <code>func2</code> → <code>func_n</code> → <code>func1</code>). Dans les deux cas, la même question se pose : où l'enchaînement s'arrête-t-il ?</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Résoudre un problème de taille <code>n</code> en réutilisant la solution du <b>même problème</b> sur une taille plus petite. La récursion n'est pas une répétition : c'est une <b>réduction</b>. Il faut donc deux pièces, et elles vont toujours ensemble : un <b>cas de base</b> que l'on sait résoudre sans récursion, et un <b>cas récursif</b> qui rapproche du cas de base.</p>
+      </div>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 244" role="img" aria-label="Schéma : un problème de taille n, un test sur le cas simple, puis soit une résolution directe, soit une reformulation avec n-1 et un nouvel appel.">
+            <g class="c-blue"><rect x="26" y="98" width="156" height="62" rx="11"/><text class="th" x="104" y="124" text-anchor="middle">problème</text><text class="ts" x="104" y="142" text-anchor="middle">taille n</text></g>
+            <g class="c-gray"><polygon points="286,92 356,129 286,166 216,129" fill="var(--gray-s)" stroke="var(--gray)" stroke-width=".8"/><text class="t" x="286" y="126" text-anchor="middle">cas simple ?</text><text class="ts" x="286" y="143" text-anchor="middle">n = 1</text></g>
+            <g class="c-teal"><rect x="424" y="30" width="228" height="56" rx="11"/><text class="th" x="538" y="54" text-anchor="middle">résoudre directement</text><text class="ts" x="538" y="71" text-anchor="middle">c'est le cas de base</text></g>
+            <g class="c-purple"><rect x="424" y="176" width="228" height="56" rx="11"/><text class="th" x="538" y="199" text-anchor="middle">reformuler avec n−1</text><text class="ts" x="538" y="216" text-anchor="middle">puis combiner les résultats</text></g>
+            <path d="M182 129 H 214" class="arr" marker-end="url(#ar)"/>
+            <path d="M330 96 C 372 66, 388 58, 422 58" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="360" y="62">oui</text>
+            <path d="M330 162 C 372 192, 388 200, 422 200" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="360" y="196">non</text>
+            <path d="M424 204 H 190 Q 104 204 104 166" class="arrd" marker-end="url(#ar)"/>
+            <text class="ts" x="122" y="196">même fonction, n−1</text>
+          </svg>
+        </div>
+        <figcaption>Le schéma du cours : <code>if (casSimple) { résoudre; } else { reformuler avec l'appel récursif; }</code>. La flèche pointillée est le seul chemin qui revient en arrière : elle doit toujours diminuer la taille.</figcaption>
+      </figure>
+
+      <h3>Les trois conditions d'une récursion correcte</h3>
+      <p>Le cours énonce les conditions pour qu'un problème se prête à une fonction récursive. Elles servent aussi de grille de lecture d'un code qu'on ne connaît pas :</p>
+      <ul>
+        <li><b>Un ou plusieurs cas simples</b> ont une solution triviale — <code>0! = 1</code>, un disque se déplace en un coup, une liste d'une personne n'a personne à prévenir.</li>
+        <li><b>Les autres cas se redéfinissent</b> en termes de problèmes plus proches des cas simples — <code>n! = n × (n−1)!</code>, déplacer <code>n</code> disques ramène à <code>n−1</code>.</li>
+        <li><b>Le problème se réduit</b> effectivement, appel après appel : la taille décroît strictement, sinon la récursion ne s'arrête jamais.</li>
+      </ul>
+
+      <div class="code"><header><span>multiplication.c</span><button data-copy>copier</button></header><pre><code data-hl>/* diapo 6 : multiplier, c'est additionner n fois */
+uint32_t mult(uint32_t n, uint32_t m)
+{
+    if (n == 1u) {                 /* cas simple : plus rien à ajouter */
+        return m;
+    }
+    return m + mult(n - 1u, m);    /* réduction : n -> n - 1 */
+}
+/* mult(3, 5) = 5 + mult(2, 5) = 5 + (5 + mult(1, 5)) = 5 + 5 + 5 = 15 */</code></pre></div>
+
+      <table class="tbl">
+        <caption>Les quatre cas du chapitre : ce qui arrête, ce qui réduit</caption>
+        <tr><th>algorithme</th><th>cas de base</th><th>réduction</th><th>appels</th></tr>
+        <tr><td>factorielle</td><td><code>n ≤ 1</code> → 1</td><td><code>n × (n−1)!</code></td><td>1 par niveau, <code>n</code> au total</td></tr>
+        <tr><td>Hanoï</td><td><code>n = 1</code> → 1 coup</td><td><code>2 × toh(n−1) + 1</code></td><td>2 par niveau, <code>2ⁿ−1</code> coups</td></tr>
+        <tr><td>Fibonacci</td><td><code>n ≤ 2</code> → 1</td><td><code>f(n−1) + f(n−2)</code></td><td>2 par nœud, <code>C(n) = 2·f(n) − 1</code></td></tr>
+        <tr><td>alerte téléphonique</td><td><code>size ≤ 1</code> → rien</td><td>deux moitiés du reste</td><td>2 par niveau, <code>size−1</code> au total</td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Une fonction récursive sans condition d'arrêt empile des trames sans jamais les dépiler : la pile est épuisée et le programme s'arrête (<i>stack overflow</i>). Ce n'est pas une boucle infinie qui tourne : c'est un plantage immédiat.</p>
+      </div>
+
+      <details class="try">
+        <summary>Combien d'appels de <code>mult</code> pour <code>mult(5, 7)</code> ?</summary>
+        <div class="ans">Cinq appels : <code>mult(5,7)</code>, <code>mult(4,7)</code>, <code>mult(3,7)</code>, <code>mult(2,7)</code>, <code>mult(1,7)</code>. Le dernier est le cas de base et rend 7 ; les quatre retours ajoutent 7 à chaque fois, soit 35. Le nombre d'appels vaut <code>n</code>, pas <code>n−1</code>.</div>
+      </details>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">la pile d'appels</div></div>
+      <h2>Chaque appel empile une trame, chaque retour la dépile</h2>
+      <p class="lead">Une fonction ordinaire reçoit ses paramètres dans des registres et rend la main. Une fonction récursive ne peut pas faire cela : quand elle s'appelle, l'appel en cours n'est pas fini, il attend un résultat. Tout ce qu'il doit retrouver après l'appel est donc rangé dans une <b>trame</b> (<i>stack frame</i>) posée sur la pile.</p>
+
+      <table class="tbl">
+        <caption>Ce que contient une trame de <code>FactorialRecursion</code></caption>
+        <tr><th>élément</th><th>rôle</th><th>ici</th></tr>
+        <tr><td>paramètre</td><td>la valeur reçue pour cet appel</td><td><code>number</code>, par exemple 4</td></tr>
+        <tr><td>variables locales</td><td>ce que la fonction garde pour elle</td><td>aucune dans cette version courte</td></tr>
+        <tr><td>adresse de retour</td><td>l'instruction à reprendre après l'appel</td><td>le <code>*</code> de <code>n * Fact(n−1)</code></td></tr>
+        <tr><td>registres sauvegardés</td><td>l'état de l'appelant pendant l'appel</td><td>selon l'architecture et les optimisations</td></tr>
+      </table>
+
+      <p>L'adresse de retour est la pièce décisive : c'est elle qui dit à l'appelant <b>où reprendre</b> quand la valeur arrive. Sans elle, la machine saurait calculer <code>Fact(3)</code> mais pas quoi faire du 3 qu'il rend.</p>
+
+      <div class="box note">
+        <div class="lbl">Sens de la pile</div>
+        <p>Sur x86 et ARM, la pile <b>descend</b> en mémoire : chaque nouvelle trame est placée à une adresse plus petite. Dans les laboratoires, les adresses baissent donc de 0x7ffc30 vers 0x7ffbf0 à mesure que la pile monte. Une trame occupe quelques dizaines d'octets, parfois plus si la fonction a de grands tableaux locaux.</p>
+      </div>
+
+      <div class="lab" data-lab="factpile" data-column data-stack>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · la pile de <code>Fact(4)</code></div><div class="lab-sub">la pile monte jusqu'au cas de base, puis redescend</div></div>
+          <span class="lab-tag">10 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"<b>main</b> appelle <code>FactorialRecursion(4)</code>. Une trame est créée pour l'appel : le paramètre vaut 4, l'adresse de retour est l'instruction qui suit l'appel dans main.","code":"uint64_t r = FactorialRecursion(4u);","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","state":"active","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"<code>n = 4</code> n'est pas ≤ 1 : c'est le cas récursif. La trame de Fact(4) reste sur la pile et une seconde trame apparaît pour Fact(3). La première est bloquée sur la multiplication.","code":"return 4u * FactorialRecursion(3u);","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","state":"active","fields":[{"k":"n","v":"3"},{"k":"attend","v":"3 × r"},{"k":"r","v":"?"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"Troisième trame. La pile a monté de deux niveaux et aucune valeur n'a encore été calculée : tout le travail est en attente du cas de base.","code":"return 3u * FactorialRecursion(2u);","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F2","name":"Factorial(2)","type":"trame","addr":"@ 0x7ffc00","kind":"int","state":"active","fields":[{"k":"n","v":"2"},{"k":"attend","v":"2 × r"},{"k":"r","v":"?"}]},{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","fields":[{"k":"n","v":"3"},{"k":"attend","v":"3 × r"},{"k":"r","v":"?"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"Profondeur maximale : quatre trames de <code>Fact</code> plus celle de main. Le paramètre vaut 1, donc l'appel suivant prend la première branche.","code":"return 2u * FactorialRecursion(1u);","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F1","name":"Factorial(1)","type":"trame","addr":"@ 0x7ffbf0","kind":"int","state":"active","fields":[{"k":"n","v":"1"},{"k":"attend","v":"—"},{"k":"r","v":"?"}]},{"id":"F2","name":"Factorial(2)","type":"trame","addr":"@ 0x7ffc00","kind":"int","fields":[{"k":"n","v":"2"},{"k":"attend","v":"2 × r"},{"k":"r","v":"?"}]},{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","fields":[{"k":"n","v":"3"},{"k":"attend","v":"3 × r"},{"k":"r","v":"?"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"Cas de base : <code>n ≤ 1</code> rend 1 sans appeler personne. C'est la première valeur concrète de toute la chaîne, et la seule qui ne dépend d'aucun autre appel.","code":"if (number <= 1u) { return 1u; }","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F1","name":"Factorial(1)","type":"trame","addr":"@ 0x7ffbf0","kind":"int","state":"changed","fields":[{"k":"n","v":"1"},{"k":"r","v":"1"}]},{"id":"F2","name":"Factorial(2)","type":"trame","addr":"@ 0x7ffc00","kind":"int","fields":[{"k":"n","v":"2"},{"k":"attend","v":"2 × r"},{"k":"r","v":"?"}]},{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","fields":[{"k":"n","v":"3"},{"k":"attend","v":"3 × r"},{"k":"r","v":"?"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"La trame de Fact(1) est dépilée : son 1 est arrivé dans Fact(2). La multiplication <code>2 × 1</code> peut enfin se faire. La pile redescend.","code":"/* retour dans Fact(2) : 2 × 1 */","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F2","name":"Factorial(2)","type":"trame","addr":"@ 0x7ffc00","kind":"int","state":"changed","fields":[{"k":"n","v":"2"},{"k":"r","v":"2"}]},{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","fields":[{"k":"n","v":"3"},{"k":"attend","v":"3 × r"},{"k":"r","v":"?"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"Fact(3) reçoit 2 : <code>3 × 2 = 6</code>. Chaque retour consomme une trame, dans l'ordre inverse des appels.","code":"/* retour dans Fact(3) : 3 × 2 */","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F3","name":"Factorial(3)","type":"trame","addr":"@ 0x7ffc10","kind":"int","state":"changed","fields":[{"k":"n","v":"3"},{"k":"r","v":"6"}]},{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","fields":[{"k":"n","v":"4"},{"k":"attend","v":"4 × r"},{"k":"r","v":"?"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"Fact(4) reçoit 6 : <code>4 × 6 = 24</code>. Il ne reste plus que deux trames, puis une seule.","code":"/* retour dans Fact(4) : 4 × 6 */","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"F4","name":"Factorial(4)","type":"trame","addr":"@ 0x7ffc20","kind":"int","state":"changed","fields":[{"k":"n","v":"4"},{"k":"r","v":"24"}]},{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"—"}]}]}],"arrows":[]},
+          {"label":"La trame de Fact(4) est dépilée à son tour ; main reçoit 24. La pile est revenue à son état de départ, comme si rien ne s'était empilé.","code":"printf(\"%llu\\n\", (unsigned long long)r);","output":"24","groups":[{"title":"Pile d'appels · le sommet est en haut","cells":[{"id":"main","name":"main","type":"trame","addr":"@ 0x7ffc30","kind":"int","state":"changed","fields":[{"k":"appel","v":"Fact(4)"},{"k":"reçu","v":"24"}]}]}],"arrows":[]},
+          {"label":"Bilan de l'exécution : <b>4 appels</b> empilés, <b>profondeur maximale 4</b> trames de Fact, <b>3 multiplications</b>. Le temps est en <code>O(n)</code>, la mémoire de pile aussi.","code":"/* 4 appels, 3 multiplications, profondeur 4 */","groups":[{"title":"Bilan","cells":[{"id":"b1","name":"appels","value":"4","type":"Fact(4)…Fact(1)","kind":"int"},{"id":"b2","name":"profondeur","value":"4","type":"trames","kind":"int"},{"id":"b3","name":"multipl.","value":"3","type":"4×3×2×1","kind":"int"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Croire que la valeur « remonte » comme une donnée stockée quelque part. Ce qui remonte, c'est le <b>retour de fonction</b> : la trame du sommet est détruite, sa valeur est copiée dans la trame du dessous, qui reprend son calcul. Une trame détruite ne peut plus être lue : c'est pour cela qu'on ne retourne jamais l'adresse d'une variable locale.</p>
+      </div>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">étude de cas · Ex 1.2</div></div>
+      <h2>La factorielle : même résultat, deux chemins</h2>
+      <p class="lead">La factorielle est la définition récursive la plus courte du cours : <code>n! = n × (n−1)!</code> avec <code>0! = 1</code>. L'exercice 1.2 demande trois implémentations du même calcul — itération, récursion, table précalculée — pour comparer trois façons de coder, pas trois résultats.</p>
+
+      <div class="code"><header><span>factorielle.c</span><button data-copy>copier</button></header><pre><code data-hl>/* a) itération : une boucle descend de n jusqu'à 2 */
+uint64_t Factorial_with_iteration(uint32_t number)
+{
+    uint64_t result = 1u;
+    for (uint32_t i = number; i >= 2u; i--) {
+        result *= (uint64_t)i;
+    }
+    return result;
+}
+
+/* b) récursion : la fonction s'appelle elle-même */
+uint64_t Factorial_with_recursion(uint32_t number)
+{
+    if (number <= 1u) {                 /* cas de base : 0! = 1! = 1 */
+        return 1u;
+    }
+    return (uint64_t)number * Factorial_with_recursion(number - 1u);
+}</code></pre></div>
+
+      <p>Les deux versions font le même nombre de multiplications : <code>n−1</code> pour <code>n ≥ 2</code>, aucune pour 0 et 1. Elles diffèrent par ce qu'elles engagent en plus : la récursive ouvre <code>n</code> trames, l'itérative garde deux variables.</p>
+
+      <table class="tbl">
+        <caption>Trace de <code>4!</code>, de gauche à droite</caption>
+        <tr><th>étape</th><th>itération</th><th>récursion</th></tr>
+        <tr><td>départ</td><td><code>result = 1</code>, <code>i = 4</code></td><td><code>Fact(4)</code> attend <code>4 × r</code></td></tr>
+        <tr><td>1</td><td><code>result = 4</code>, <code>i = 3</code></td><td><code>Fact(3)</code> attend <code>3 × r</code></td></tr>
+        <tr><td>2</td><td><code>result = 12</code>, <code>i = 2</code></td><td><code>Fact(2)</code> attend <code>2 × r</code></td></tr>
+        <tr><td>3</td><td><code>result = 24</code>, <code>i = 1</code>, boucle finie</td><td><code>Fact(1)</code> rend 1 (cas de base)</td></tr>
+        <tr><td>retours</td><td>—</td><td>1 → 2 → 6 → <b>24</b></td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Les deux versions sont en <code>O(n)</code> : le nombre d'opérations est proportionnel à <code>n</code>. La récursive paie en plus <code>n</code> appels de fonction et <code>n</code> trames, l'itérative seulement deux variables. Sur un petit <code>n</code>, la différence ne se mesure pas ; sur un million, elle décide du plantage.</p>
+      </div>
+
+      <h3>Jusqu'où le type tient</h3>
+      <p>Le résultat grandit beaucoup plus vite que <code>n</code>. La note du cours insiste sur les types : <code>uint32_t</code> pour le paramètre, <code>uint64_t</code> pour le résultat, <code>%llu</code> pour l'affichage. Voici les bornes réelles, recalculées :</p>
+
+      <table class="tbl">
+        <caption>Bornes des entiers non signés (C11, <code>&lt;stdint.h&gt;</code>)</caption>
+        <tr><th>valeur</th><th class="num">résultat</th><th>tient dans</th></tr>
+        <tr><td><code>12!</code></td><td class="num">479 001 600</td><td><code>uint32_t</code> (max 4 294 967 295)</td></tr>
+        <tr><td><code>13!</code></td><td class="num">6 227 020 800</td><td>plus dans <code>uint32_t</code></td></tr>
+        <tr><td><code>20!</code></td><td class="num">2 432 902 008 176 640 000</td><td><code>uint64_t</code> (max 18 446 744 073 709 551 615)</td></tr>
+        <tr><td><code>21!</code></td><td class="num">14 197 454 024 290 336 768</td><td><b>non</b> : déborde modulo 2⁶⁴, la valeur affichée est fausse</td></tr>
+      </table>
+
+      <p>La dernière factorielle exacte en 64 bits est donc <code>20!</code>. Au-delà, aucune récursion ne sauve le résultat : le problème est le type, pas l'algorithme. C'est pour cela que la version LUT de l'exercice refuse l'indice 21 et rend 0.</p>
+
+      <div class="box trap">
+        <div class="lbl">Les deux pièges de la factorielle</div>
+        <p><b>La base oubliée ou fausse.</b> <code>if (number == 0)</code> au lieu de <code>number &lt;= 1</code> fonctionne pour 0, mais reste correct pour 1 ; en revanche une base <code>if (number == 1)</code> seule boucle à l'infini pour 0. Écrire <code>number &lt;= 1</code> couvre les deux cas triviaux et ne peut pas être franchi vers le négatif — impossible ici, <code>uint32_t</code> oblige.</p>
+        <p><b>Le débordement silencieux.</b> <code>21!</code> ne provoque aucune erreur : le produit dépasse 2⁶⁴ et repart à zéro. Le seul signe est un résultat absurde.</p>
+      </div>
+
+      <details class="try">
+        <summary>Pourquoi <code>(uint64_t)number</code> devant le produit ?</summary>
+        <div class="ans"><code>number</code> est un <code>uint32_t</code>. Sans conversion, le compilateur peut calculer <code>number * ...</code> dans un type plus étroit avant de l'affecter au <code>uint64_t</code>. Le transtypage force la multiplication en 64 bits et évite de perdre les bits hauts dès que le produit dépasse 32 bits.</div>
+      </details>
+    </section>
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">étude de cas · Ex 1.10</div></div>
+      <h2>Hanoï : deux fois le travail du niveau précédent</h2>
+      <p class="lead">Trois aiguilles, <code>n</code> disques de tailles différentes empilés sur la première. Il faut les amener sur la deuxième, en ne déplaçant qu'un disque à la fois et sans jamais poser un grand sur un petit. Le cours pose la question avant de donner la solution : combien de coups ?</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Pour déplacer <code>n</code> disques de la source vers la destination, il faut d'abord déplacer les <code>n−1</code> plus petits sur l'aiguille auxiliaire, puis déplacer le plus grand — un seul coup —, puis ramener les <code>n−1</code> sur la destination. Le problème de taille <code>n</code> se ramène à <b>deux</b> problèmes de taille <code>n−1</code> et un coup.</p>
+      </div>
+
+      <div class="code"><header><span>hanoi.c</span><button data-copy>copier</button></header><pre><code data-hl>/* ex 1.10 : récursif, avec le compteur passé par adresse */
+void toh(uint32_t disk, char source, char dest, char aux, uint32_t *pMoves)
+{
+    if (disk == 1u) {                   /* cas simple : un seul disque */
+        printf("Move disk 1 from %c to %c\n", source, dest);
+        (*pMoves)++;
+        return;
+    }
+    toh(disk - 1u, source, aux, dest, pMoves);   /* n-1 vers l'auxiliaire */
+    printf("Move disk %u from %c to %c\n", disk, source, dest);
+    (*pMoves)++;
+    toh(disk - 1u, aux, dest, source, pMoves);   /* n-1 vers la destination */
+}</code></pre></div>
+
+      <p>L'appel <code>toh(3, 'A', 'B', 'C')</code> produit exactement les sept lignes de l'énoncé, dans cet ordre : <code>1 A→B</code>, <code>2 A→C</code>, <code>1 B→C</code>, <code>3 A→B</code>, <code>1 C→A</code>, <code>2 C→B</code>, <code>1 A→B</code>. Ce n'est pas un ordre choisi : c'est celui que la récursion impose.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 300" role="img" aria-label="Arbre d'appels de toh(3) : deux appels récursifs et un déplacement au niveau racine, sept feuilles pour les sept coups.">
+            <g class="c-purple"><rect x="241" y="22" width="178" height="36" rx="9"/><text class="tm" x="330" y="45" text-anchor="middle">toh(3, S, D, A)</text></g>
+            <g class="c-blue"><rect x="75" y="113" width="150" height="34" rx="9"/><text class="tm" x="150" y="135" text-anchor="middle">toh(2, S, A, D)</text></g>
+            <g class="c-teal"><rect x="288" y="113" width="84" height="34" rx="9"/><text class="tm" x="330" y="135" text-anchor="middle">S→D</text></g>
+            <g class="c-blue"><rect x="437" y="113" width="150" height="34" rx="9"/><text class="tm" x="512" y="135" text-anchor="middle">toh(2, A, D, S)</text></g>
+            <path class="arr" d="M330 58 V 85 H 150 V 111" marker-end="url(#ar)"/>
+            <path class="arrd" d="M330 58 V 109" marker-end="url(#ar)"/>
+            <path class="arr" d="M330 58 V 85 H 512 V 111" marker-end="url(#ar)"/>
+            <g class="c-gray"><rect x="17" y="220" width="86" height="40" rx="8"/><text class="ts" x="60" y="237" text-anchor="middle">coup 1</text><text class="tm" x="60" y="252" text-anchor="middle">A→B</text></g>
+            <g class="c-gray"><rect x="107" y="220" width="86" height="40" rx="8"/><text class="ts" x="150" y="237" text-anchor="middle">coup 2</text><text class="tm" x="150" y="252" text-anchor="middle">A→C</text></g>
+            <g class="c-gray"><rect x="197" y="220" width="86" height="40" rx="8"/><text class="ts" x="240" y="237" text-anchor="middle">coup 3</text><text class="tm" x="240" y="252" text-anchor="middle">B→C</text></g>
+            <g class="c-gray"><rect x="287" y="220" width="86" height="40" rx="8"/><text class="ts" x="330" y="237" text-anchor="middle">coup 4</text><text class="tm" x="330" y="252" text-anchor="middle">A→B</text></g>
+            <g class="c-gray"><rect x="377" y="220" width="86" height="40" rx="8"/><text class="ts" x="420" y="237" text-anchor="middle">coup 5</text><text class="tm" x="420" y="252" text-anchor="middle">C→A</text></g>
+            <g class="c-gray"><rect x="467" y="220" width="86" height="40" rx="8"/><text class="ts" x="510" y="237" text-anchor="middle">coup 6</text><text class="tm" x="510" y="252" text-anchor="middle">C→B</text></g>
+            <g class="c-gray"><rect x="557" y="220" width="86" height="40" rx="8"/><text class="ts" x="600" y="237" text-anchor="middle">coup 7</text><text class="tm" x="600" y="252" text-anchor="middle">A→B</text></g>
+            <path class="arr" d="M150 147 V 174 H 60 V 218" marker-end="url(#ar)"/>
+            <path class="arrd" d="M150 147 V 218" marker-end="url(#ar)"/>
+            <path class="arr" d="M150 147 V 174 H 240 V 218" marker-end="url(#ar)"/>
+            <path class="arr" d="M512 147 V 174 H 420 V 218" marker-end="url(#ar)"/>
+            <path class="arrd" d="M512 147 V 218" marker-end="url(#ar)"/>
+            <path class="arr" d="M512 147 V 174 H 600 V 218" marker-end="url(#ar)"/>
+            <text class="ts" x="330" y="286" text-anchor="middle">traits pleins : appels récursifs — traits pointillés : déplacements effectifs</text>
+          </svg>
+        </div>
+        <figcaption>L'arbre de <code>toh(3, 'A', 'B', 'C')</code> : trois niveaux, sept feuilles, sept coups. Les feuilles de gauche (coups 1 à 3) déplacent deux disques vers l'auxiliaire, la feuille centrale (coup 4) déplace le plus grand, celles de droite (coups 5 à 7) ramènent les deux autres.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle · le nombre de coups</div>
+        <p><code>M(1) = 1</code> et <code>M(n) = 2·M(n−1) + 1</code>. En déroulant : <code>M(n) = 2ⁿ − 1</code>. Pour <code>n = 3</code> : 7 coups ; pour <code>n = 10</code> : 1 023 ; pour <code>n = 20</code> : 1 048 575 ; pour les 64 disques de la légende : 18 446 744 073 709 551 615.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Ce que <code>2ⁿ−1</code> représente en temps</caption>
+        <tr><th>disques</th><th class="num">coups</th><th>à 1 coup/s</th><th>à 10⁹ coups/s</th></tr>
+        <tr><td>3</td><td class="num">7</td><td>7 s</td><td>instantané</td></tr>
+        <tr><td>10</td><td class="num">1 023</td><td>17 min</td><td>instantané</td></tr>
+        <tr><td>20</td><td class="num">1 048 575</td><td>12 jours</td><td>1 ms</td></tr>
+        <tr><td>30</td><td class="num">1 073 741 823</td><td>34 ans</td><td>1,1 s</td></tr>
+        <tr><td>64</td><td class="num">18 446 744 073 709 551 615</td><td>585 milliards d'années</td><td>585 ans</td></tr>
+      </table>
+
+      <p>À un coup par minute, les 64 disques demanderaient environ 3,5·10¹³ années ; à un milliard de coups par seconde, encore 585 ans. La légende du temple de Brahma n'est pas une image : <code>2⁶⁴</code> dépasse tout ce qu'une machine peut énumérer.</p>
+
+      <div class="lab" data-lab="hanoi" data-column data-pegs>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · trois disques de A vers B</div><div class="lab-sub">aiguille C en auxiliaire, un seul disque par coup</div></div>
+          <span class="lab-tag">8 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="sim-out"><span>Coups</span><code data-out>0</code></div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"État de départ : les trois disques sont sur <b>A</b>, le plus petit en haut. Le but est de les amener tous sur <b>B</b>, <b>C</b> servant d'auxiliaire.","code":"toh(3, 'A', 'B', 'C');","output":"0","groups":[{"title":"A · départ","cells":[{"id":"A1","name":"D1","value":"1","kind":"int","w":62},{"id":"A2","name":"D2","value":"2","kind":"int","w":88},{"id":"A3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"B · arrivée","cells":[]},{"title":"C · auxiliaire","cells":[]}],"arrows":[]},
+          {"label":"Premier coup : le disque 1 passe de A à B. C'est la première feuille de l'arbre, atteinte après trois appels imbriqués.","code":"printf(\"Move disk 1 from A to B\\n\");","output":"1","groups":[{"title":"A · départ","cells":[{"id":"A2","name":"D2","value":"2","kind":"int","w":88},{"id":"A3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"B · arrivée","cells":[{"id":"B1","name":"D1","value":"1","kind":"int","w":62,"state":"changed"}]},{"title":"C · auxiliaire","cells":[]}],"arrows":[]},
+          {"label":"Le disque 2 part sur l'auxiliaire C : à ce moment, les disques 1 et 2 sont séparés, ce qui permet de libérer le disque 3.","code":"printf(\"Move disk 2 from A to C\\n\");","output":"2","groups":[{"title":"A · départ","cells":[{"id":"A3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"B · arrivée","cells":[{"id":"B1","name":"D1","value":"1","kind":"int","w":62}]},{"title":"C · auxiliaire","cells":[{"id":"C2","name":"D2","value":"2","kind":"int","w":88,"state":"changed"}]}],"arrows":[]},
+          {"label":"Le disque 1 rejoint le disque 2 sur C. Les deux plus petits sont maintenant rangés sur l'auxiliaire : la première moitié du travail est faite.","code":"printf(\"Move disk 1 from B to C\\n\");","output":"3","groups":[{"title":"A · départ","cells":[{"id":"A3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"B · arrivée","cells":[]},{"title":"C · auxiliaire","cells":[{"id":"C1","name":"D1","value":"1","kind":"int","w":62,"state":"changed"},{"id":"C2","name":"D2","value":"2","kind":"int","w":88}]}],"arrows":[]},
+          {"label":"Le coup central : le plus grand disque passe de A à B. Il ne bougera plus, et c'est le seul coup qui le concerne.","code":"printf(\"Move disk 3 from A to B\\n\");","output":"4","groups":[{"title":"A · départ","cells":[]},{"title":"B · arrivée","cells":[{"id":"B3","name":"D3","value":"3","kind":"int","w":114,"state":"changed"}]},{"title":"C · auxiliaire","cells":[{"id":"C1","name":"D1","value":"1","kind":"int","w":62},{"id":"C2","name":"D2","value":"2","kind":"int","w":88}]}],"arrows":[]},
+          {"label":"La deuxième moitié commence et répète la première, avec les rôles échangés : C devient la source, A l'auxiliaire. Le disque 1 revient sur A.","code":"printf(\"Move disk 1 from C to A\\n\");","output":"5","groups":[{"title":"A · départ","cells":[{"id":"A1","name":"D1","value":"1","kind":"int","w":62,"state":"changed"}]},{"title":"B · arrivée","cells":[{"id":"B3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"C · auxiliaire","cells":[{"id":"C2","name":"D2","value":"2","kind":"int","w":88}]}],"arrows":[]},
+          {"label":"Le disque 2 se pose sur le disque 3. L'empilement sur B est déjà correct : 2 sur 3, jamais l'inverse.","code":"printf(\"Move disk 2 from C to B\\n\");","output":"6","groups":[{"title":"A · départ","cells":[{"id":"A1","name":"D1","value":"1","kind":"int","w":62}]},{"title":"B · arrivée","cells":[{"id":"B2","name":"D2","value":"2","kind":"int","w":88,"state":"changed"},{"id":"B3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"C · auxiliaire","cells":[]}],"arrows":[]},
+          {"label":"Dernier coup : le disque 1 vient coiffer la pile. Sept coups, soit <code>2³−1</code> : la formule est vérifiée sur le plus petit cas non trivial.","code":"printf(\"Move disk 1 from A to B\\n\");","output":"7","groups":[{"title":"A · départ","cells":[]},{"title":"B · arrivée","cells":[{"id":"B1","name":"D1","value":"1","kind":"int","w":62,"state":"changed"},{"id":"B2","name":"D2","value":"2","kind":"int","w":88},{"id":"B3","name":"D3","value":"3","kind":"int","w":114}]},{"title":"C · auxiliaire","cells":[]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">La profondeur n'est pas le problème</div>
+        <p>Pour 64 disques, la pile ne contient que <b>64</b> trames : aucun risque de débordement. Ce qui bloque, c'est le nombre de coups, en <code>O(2ⁿ)</code>. Hanoï est le cas typique d'un algorithme dont le <b>temps</b> explose alors que la <b>mémoire</b> reste linéaire.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le compteur en variable globale</div>
+        <p>Une variable globale <code>uint32_t gMoves</code> fonctionne, mais la fonction dépend alors d'un état caché : deux appels successifs ne repartent pas de zéro, et la fonction n'est plus réentrante. L'énoncé demande explicitement de l'éviter. On passe <code>uint32_t *pMoves</code> et on incrémente <code>(*pMoves)++</code> : l'appelant décide où vit le compteur.</p>
+      </div>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">diviser pour régner · loterie · Ex 1.14</div></div>
+      <h2>Diviser pour régner : la loterie et l'alerte téléphonique</h2>
+      <p class="lead">Donald a gagné à la loterie et doit prévenir les quinze membres de sa famille par téléphone. Chacun applique la même consigne : couper sa liste en deux, appeler la première personne de chaque moitié, et lui confier cette moitié. C'est du diviser pour régner — un problème de taille <code>n</code> devient deux problèmes de taille <code>n/2</code>.</p>
+
+      <div class="box rule">
+        <div class="lbl">La consigne du cours</div>
+        <p><i>Si je n'ai pas besoin de transmettre le message, je ne fais rien. Sinon je coupe ma liste en deux : j'appelle la première personne de la première moitié et je la charge de transmettre ; j'appelle la première personne de la deuxième moitié et je la charge de transmettre.</i> — c'est exactement une fonction récursive à deux appels.</p>
+      </div>
+
+      <div class="code"><header><span>alerte.c</span><button data-copy>copier</button></header><pre><code data-hl>/* list[0] est l'appelant, déjà informé ; list[1..size-1] restent à prévenir */
+static void phoneAlarm(ListRecord_t const list[], size_t size)
+{
+    if (size <= 1u) {                   /* cas de base : personne à prévenir */
+        return;
+    }
+    size_t const rest  = size - 1u;
+    size_t const half1 = rest / 2u;     /* moitié gauche du reste */
+    size_t const half2 = rest - half1;  /* moitié droite = le reste, pas (size-1)/2 */
+
+    if (half1 > 0u) {                   /* une moitié vide n'a pas de premier */
+        showCalledPerson(&amp;list[1]);
+        phoneAlarm(&amp;list[1], half1);
+    }
+    if (half2 > 0u) {
+        showCalledPerson(&amp;list[1u + half1]);
+        phoneAlarm(&amp;list[1u + half1], half2);
+    }
+}</code></pre></div>
+
+      <p>Les deux gardes <code>half1 &gt; 0</code> et <code>half2 &gt; 0</code> ne sont pas décoratives. Quand le reste vaut 1, <code>half1 = 0</code> : sans garde, on appellerait deux fois la même personne — une fois comme « première de la moitié gauche », une fois comme « première de la moitié droite ». Avec les gardes, chaque personne est appelée exactement une fois, et le total vaut <code>size − 1</code>.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 262" role="img" aria-label="Arbre des appels pour huit entrées : 1 appelle 2 et 5, 2 appelle 3 et 4, 5 appelle 6 et 7, 7 appelle 8.">
+            <path class="arr" d="M340 60 V 74 H 170 V 88" marker-end="url(#ar)"/>
+            <path class="arr" d="M340 60 V 74 H 480 V 88" marker-end="url(#ar)"/>
+            <path class="arr" d="M170 120 V 130 H 105 V 148" marker-end="url(#ar)"/>
+            <path class="arr" d="M170 120 V 130 H 235 V 148" marker-end="url(#ar)"/>
+            <path class="arr" d="M480 120 V 130 H 410 V 148" marker-end="url(#ar)"/>
+            <path class="arr" d="M480 120 V 130 H 545 V 148" marker-end="url(#ar)"/>
+            <path class="arr" d="M545 180 V 194 H 615 V 208" marker-end="url(#ar)"/>
+            <g class="c-blue"><circle cx="340" cy="44" r="16"/><text class="t" x="340" y="49" text-anchor="middle">1</text></g>
+            <g class="c-blue"><circle cx="170" cy="104" r="16"/><text class="t" x="170" y="109" text-anchor="middle">2</text></g>
+            <g class="c-blue"><circle cx="480" cy="104" r="16"/><text class="t" x="480" y="109" text-anchor="middle">5</text></g>
+            <g class="c-teal"><circle cx="105" cy="164" r="16"/><text class="t" x="105" y="169" text-anchor="middle">3</text></g>
+            <g class="c-teal"><circle cx="235" cy="164" r="16"/><text class="t" x="235" y="169" text-anchor="middle">4</text></g>
+            <g class="c-teal"><circle cx="410" cy="164" r="16"/><text class="t" x="410" y="169" text-anchor="middle">6</text></g>
+            <g class="c-teal"><circle cx="545" cy="164" r="16"/><text class="t" x="545" y="169" text-anchor="middle">7</text></g>
+            <g class="c-green"><circle cx="615" cy="224" r="16"/><text class="t" x="615" y="229" text-anchor="middle">8</text></g>
+            <text class="ts" x="18" y="34">Donald (1) reçoit l'appel</text>
+            <text class="tm" x="18" y="52">liste de 8 entrées</text>
+            <text class="tm" x="18" y="248">cercles : entrées de la liste — flèches : appelant vers appelé</text>
+          </svg>
+        </div>
+        <figcaption>Extrait des huit premières entrées : Donald (1) appelle Huey (2) et Daisy (5) ; chacun fait de même. Sept appels, trois niveaux. L'ordre des appels est 2, 3, 4, 5, 6, 7, 8 — chaque personne une seule fois. La liste complète de l'énoncé compte 15 entrées.</figcaption>
+      </figure>
+
+      <div class="lab" data-lab="phonealarm">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · découpage récursif de la liste</div><div class="lab-sub">extrait de 8 entrées sur les 15 de l'Ex1.14, deux moitiés à chaque niveau</div></div>
+          <span class="lab-tag">9 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Donald reçoit l'appel et tient la liste entière : 8 entrées. Il est l'entrée 1, donc l'appelant ; les 7 autres sont à prévenir.","code":"phoneAlarm(cTheList, 8u);","groups":[{"title":"Segment reçu · 8 personnes","cells":[{"id":"p1","name":"Donald","value":"1","type":"appelant","kind":"char","state":"active","w":104},{"id":"p2","name":"Huey","value":"2","type":"à prévenir","kind":"char","w":104},{"id":"p3","name":"Dewey","value":"3","type":"à prévenir","kind":"char","w":104},{"id":"p4","name":"Louie","value":"4","type":"à prévenir","kind":"char","w":104},{"id":"p5","name":"Daisy","value":"5","type":"à prévenir","kind":"char","w":104},{"id":"p6","name":"April","value":"6","type":"à prévenir","kind":"char","w":104},{"id":"p7","name":"May","value":"7","type":"à prévenir","kind":"char","w":104},{"id":"p8","name":"June","value":"8","type":"à prévenir","kind":"char","w":104}]},{"title":"Journal des appels","cells":[]}],"arrows":[]},
+          {"label":"Il coupe le <b>reste</b> (7 personnes) en deux : 3 et 4. Il appelle Huey (entrée 2) et lui confie la première moitié, 3 personnes.","code":"half1 = 3 ; showCalledPerson(&list[1]);","groups":[{"title":"Segment reçu · 3 personnes","cells":[{"id":"p2","name":"Huey","value":"2","type":"appelant","kind":"char","state":"active","w":104},{"id":"p3","name":"Dewey","value":"3","type":"à prévenir","kind":"char","w":104},{"id":"p4","name":"Louie","value":"4","type":"à prévenir","kind":"char","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"Huey applique la même consigne : son reste vaut 2, coupé en 1 et 1. Il appelle Dewey (3) et lui confie une seule personne.","code":"half1 = 1 ; half2 = 1 ;","groups":[{"title":"Segment reçu · 1 personne","cells":[{"id":"p3","name":"Dewey","value":"3","type":"appelant","kind":"char","state":"active","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"Dewey est seul dans sa liste : <code>size <= 1</code>. C'est le cas de base, il ne fait rien et rend la main. Aucun appel de plus.","code":"if (size <= 1u) { return; }","groups":[{"title":"Segment reçu · 1 personne","cells":[{"id":"p3","name":"Dewey","value":"3","type":"cas de base","kind":"char","state":"changed","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96}]}],"arrows":[]},
+          {"label":"Retour dans Huey : sa seconde moitié contient Louie (4). Un appel, puis la liste est vide et l'appel s'arrête.","code":"showCalledPerson(&list[1 + half1]);","groups":[{"title":"Segment reçu · 1 personne","cells":[{"id":"p4","name":"Louie","value":"4","type":"appelant","kind":"char","state":"active","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96},{"id":"j4","name":"Louie","value":"4","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"Retour dans Donald : sa seconde moitié contient 4 personnes. Il appelle Daisy (5), qui hérite des entrées 5 à 8.","code":"showCalledPerson(&list[1 + half1]);","groups":[{"title":"Segment reçu · 4 personnes","cells":[{"id":"p5","name":"Daisy","value":"5","type":"appelant","kind":"char","state":"active","w":104},{"id":"p6","name":"April","value":"6","type":"à prévenir","kind":"char","w":104},{"id":"p7","name":"May","value":"7","type":"à prévenir","kind":"char","w":104},{"id":"p8","name":"June","value":"8","type":"à prévenir","kind":"char","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96},{"id":"j4","name":"Louie","value":"4","kind":"int","w":96},{"id":"j5","name":"Daisy","value":"5","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"Daisy coupe son reste (3) en 1 et 2 : elle appelle April (6) seule, puis s'occupera de la paire 7–8.","code":"half1 = 1 ; half2 = 2 ;","groups":[{"title":"Segment reçu · 1 personne","cells":[{"id":"p6","name":"April","value":"6","type":"appelant","kind":"char","state":"active","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96},{"id":"j4","name":"Louie","value":"4","kind":"int","w":96},{"id":"j5","name":"Daisy","value":"5","kind":"int","w":96},{"id":"j6","name":"April","value":"6","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"La seconde moitié de Daisy compte deux personnes : elle appelle May (7), qui doit prévenir June (8).","code":"showCalledPerson(&list[1 + half1]);","groups":[{"title":"Segment reçu · 2 personnes","cells":[{"id":"p7","name":"May","value":"7","type":"appelant","kind":"char","state":"active","w":104},{"id":"p8","name":"June","value":"8","type":"à prévenir","kind":"char","w":104}]},{"title":"Journal des appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96},{"id":"j4","name":"Louie","value":"4","kind":"int","w":96},{"id":"j5","name":"Daisy","value":"5","kind":"int","w":96},{"id":"j6","name":"April","value":"6","kind":"int","w":96},{"id":"j7","name":"May","value":"7","kind":"int","state":"new","w":96}]}],"arrows":[]},
+          {"label":"May n'a qu'une personne à prévenir : son reste vaut 1, donc <code>half1 = 0</code> et <code>half2 = 1</code>. Elle appelle June (8) une seule fois. Total : <b>7 appels</b> pour 8 entrées.","code":"if (half1 > 0u) { … }   /* moitié gauche vide : aucun appel */","groups":[{"title":"Segment reçu · 1 personne","cells":[{"id":"p8","name":"June","value":"8","type":"appelant","kind":"char","state":"active","w":104}]},{"title":"Journal des appels · 7 appels","cells":[{"id":"j2","name":"Huey","value":"2","kind":"int","w":96},{"id":"j3","name":"Dewey","value":"3","kind":"int","w":96},{"id":"j4","name":"Louie","value":"4","kind":"int","w":96},{"id":"j5","name":"Daisy","value":"5","kind":"int","w":96},{"id":"j6","name":"April","value":"6","kind":"int","w":96},{"id":"j7","name":"May","value":"7","kind":"int","w":96},{"id":"j8","name":"June","value":"8","kind":"int","state":"new","w":96}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <table class="tbl">
+        <caption>Ce que le découpage donne selon la taille de la liste</caption>
+        <tr><th>entrées</th><th>reste</th><th>moitiés</th><th class="num">appels</th><th>niveaux sous l'appelant</th></tr>
+        <tr><td>8</td><td>7</td><td>3 + 4</td><td class="num">7</td><td>3</td></tr>
+        <tr><td>15</td><td>14</td><td>7 + 7</td><td class="num">14</td><td>3</td></tr>
+        <tr><td>14</td><td>13</td><td>6 + 7</td><td class="num">13</td><td>3</td></tr>
+        <tr><td>1</td><td>0</td><td>—</td><td class="num">0</td><td>0</td></tr>
+      </table>
+
+      <p>Le laboratoire ci-dessus réduit la liste aux huit premières entrées pour garder les cellules lisibles. La liste complète de l'énoncé 1.14 est celle-ci :</p>
+
+      <table class="tbl">
+        <caption>Liste de l'énoncé 1.14 — 15 entrées</caption>
+        <tr><th class="num">entrée</th><th>personne</th><th>téléphone</th></tr>
+        <tr><td class="num">1</td><td>Donald Duck</td><td class="num">877-764-2539-0</td></tr>
+        <tr><td class="num">2</td><td>Huey Duck</td><td class="num">877-764-2539-1</td></tr>
+        <tr><td class="num">3</td><td>Dewey Duck</td><td class="num">877-764-2539-2</td></tr>
+        <tr><td class="num">4</td><td>Louie Duck</td><td class="num">877-764-2539-3</td></tr>
+        <tr><td class="num">5</td><td>Daisy Duck</td><td class="num">877-764-2538-0</td></tr>
+        <tr><td class="num">6</td><td>April Duck</td><td class="num">877-764-2538-1</td></tr>
+        <tr><td class="num">7</td><td>May Duck</td><td class="num">877-764-2538-2</td></tr>
+        <tr><td class="num">8</td><td>June Duck</td><td class="num">877-764-2538-3</td></tr>
+        <tr><td class="num">9</td><td>Scrooge McDuck</td><td class="num">877-764-2537</td></tr>
+        <tr><td class="num">10</td><td>Elvira Coot</td><td class="num">877-764-2536</td></tr>
+        <tr><td class="num">11</td><td>Gladstone Gander</td><td class="num">877-764-2535</td></tr>
+        <tr><td class="num">12</td><td>Gus Goose</td><td class="num">877-764-2534</td></tr>
+        <tr><td class="num">13</td><td>Brigitta MacBride</td><td class="num">877-764-2533</td></tr>
+        <tr><td class="num">14</td><td>Gyro Gearloose</td><td class="num">877-764-2532-999</td></tr>
+        <tr><td class="num">15</td><td>The Beagle Boys</td><td class="num">877-764-2531</td></tr>
+      </table>
+
+      <p>Avec 15 entrées, l'arbre est complet : <code>1 + 2 + 4 + 8 = 15</code> personnes, donc 14 appels et 3 niveaux sous Donald. Avec 14 entrées, les moitiés deviennent inégales (6 et 7) et une branche s'arrête un cran plus tôt : 13 appels, et personne n'est oublié.</p>
+
+      <div class="box trap">
+        <div class="lbl">Deux pièges de l'énoncé 1.14</div>
+        <p><b>La mauvaise formule pour la seconde moitié.</b> Écrire <code>halfright = (size - halfleft - 1) / 2</code> perd des personnes : le brouillon de l'énoncé n'appelle que 2, 3, 4, 5, 7, 10 et 11. La seconde moitié doit être <b>le reste</b> : <code>half2 = rest - half1</code>.</p>
+        <p><b>Le numéro de Gyro.</b> <code>"877-764-2532-999"</code> fait exactement 16 caractères dans un <code>char[16]</code> : gcc l'accepte, mais il n'y a pas de <code>'\0'</code> final, et <code>printf("%s")</code> lit au-delà du tableau. Afficher avec <code>%.16s</code> ou agrandir le champ.</p>
+      </div>
+
+      <details class="try">
+        <summary>Combien d'appels pour 16 entrées, et pour une seule ?</summary>
+        <div class="ans">15 appels pour 16 entrées, car chacun prévient exactement <code>size−1</code> personnes. Et zéro appel pour une entrée : <code>size &lt;= 1</code> est le cas de base. Le nombre d'appels ne dépend pas de la forme de l'arbre, seulement de la taille.</div>
+      </details>
+    </section>
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">récursion multiple</div></div>
+      <h2>Fibonacci : la récursion double à chaque nœud</h2>
+      <p class="lead">La suite de Fibonacci est définie par <code>f(n) = f(n−1) + f(n−2)</code> avec <code>f(1) = f(2) = 1</code>. Deux appels récursifs par appel, donc un <b>arbre</b> et non une chaîne : c'est la récursion multiple, et c'est là que le coût change de nature.</p>
+
+      <div class="code"><header><span>fibonacci.c</span><button data-copy>copier</button></header><pre><code data-hl>/* version naïve : fidèle à la définition, mais elle recalcule */
+uint64_t FibRecursion(uint32_t n)
+{
+    if (n &lt;= 2u) {                 /* deux cas de base : f(1) et f(2) */
+        return 1u;
+    }
+    return FibRecursion(n - 1u) + FibRecursion(n - 2u);
+}</code></pre></div>
+
+      <p>Pour <code>f(5)</code>, l'arbre contient neuf nœuds, donc neuf appels : <code>f(5)</code> une fois, <code>f(4)</code> une fois, <code>f(3)</code> <b>deux</b> fois, <code>f(2)</code> trois fois et <code>f(1)</code> deux fois. Les mêmes valeurs sont recalculées indépendamment, sans que personne ne s'en souvienne.</p>
+
+      <div class="lab" data-lab="fibtree" data-fibtree>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · arbre d'appels de <code>f(5)</code></div><div class="lab-sub">les nœuds rouges sont des recalculs</div></div>
+          <span class="lab-tag">9 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="treestage" data-treestage></div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"upto":1,"label":"L'appel <code>FibRecursion(5)</code> entre dans l'arbre. Il n'a pas de valeur : il en attend deux.","code":"FibRecursion(5)"},
+          {"upto":2,"label":"Premier appel récursif : <code>f(4)</code>. La branche gauche est explorée en entier avant la droite.","code":"return FibRecursion(4) + FibRecursion(3);"},
+          {"upto":3,"label":"<code>f(4)</code> demande <code>f(3)</code>. La branche gauche descend encore : c'est une exploration en profondeur.","code":"FibRecursion(3)"},
+          {"upto":4,"label":"<code>f(3)</code> demande <code>f(2)</code> : <code>n ≤ 2</code>, donc le cas de base rend 1 immédiatement. Premier nœud terminé.","code":"if (n <= 2u) { return 1u; }"},
+          {"upto":5,"label":"Second enfant : <code>f(1)</code> rend 1 à son tour. <code>f(3) = 1 + 1 = 2</code> et remonte.","code":"return FibRecursion(2) + FibRecursion(1);"},
+          {"upto":6,"label":"Le second enfant de <code>f(4)</code> est un autre <code>f(2)</code> : il rend 1. <code>f(4) = 2 + 1 = 3</code>.","code":"return 2u + 1u;   /* f(4) = 3 */"},
+          {"upto":7,"label":"<code>f(5)</code> explore enfin sa branche droite : un <b>second</b> <code>f(3)</code>. Même question, même réponse à calculer, et le premier résultat n'a pas été conservé.","code":"FibRecursion(3)   /* recalcul */"},
+          {"upto":8,"label":"Ce <code>f(3)</code> redemande <code>f(2)</code>, déjà calculé deux fois. Le nœud est marqué en rouge : c'est un recalcul.","code":"FibRecursion(2)   /* recalcul */"},
+          {"upto":9,"label":"Puis <code>f(1)</code>, également déjà connu. <code>f(3) = 2</code>, donc <code>f(5) = 3 + 2 = 5</code>. Bilan : <b>9 appels</b> pour <code>f(5)</code>, dont <b>4 recalculs</b> — <code>f(3)</code> calculé deux fois, <code>f(2)</code> trois fois, <code>f(1)</code> deux fois.","code":"return 3u + 2u;   /* 9 appels, 4 recalculs, f(5) = 5 */"}
+        ]}
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle · le coût</div>
+        <p>Le nombre d'appels obéit à <code>C(n) = C(n−1) + C(n−2) + 1</code>, avec <code>C(1) = C(2) = 1</code>. Il double à peu près à chaque pas : <code>C(10) = 109</code>, <code>C(20) = 13 529</code>, <code>C(30) = 1 664 079</code>. La complexité est <code>O(2ⁿ)</code> — plus précisément en <code>φⁿ</code>, avec <code>φ ≈ 1,618</code>, mais l'ordre de grandeur est le même.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Fibonacci naïf : la valeur, puis le prix payé</caption>
+        <tr><th>n</th><th class="num">f(n)</th><th class="num">appels</th><th>rapport</th></tr>
+        <tr><td>5</td><td class="num">5</td><td class="num">9</td><td>—</td></tr>
+        <tr><td>10</td><td class="num">55</td><td class="num">109</td><td>×12 pour 5 de plus</td></tr>
+        <tr><td>20</td><td class="num">6 765</td><td class="num">13 529</td><td>×124</td></tr>
+        <tr><td>30</td><td class="num">832 040</td><td class="num">1 664 079</td><td>×123</td></tr>
+      </table>
+
+      <p>Autrement dit, calculer <code>f(30)</code> coûte plus d'un million et demi d'appels pour une valeur de 832 040. Une version itérative fait trente additions. Le problème n'est pas la récursion en soi : c'est le <b>recalcul</b>.</p>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Conclure « la récursion est lente ». <code>f(30)</code> itératif et <code>f(30)</code> récursif font le même nombre d'additions utiles ; le récursif en fait 1 664 079 fois plus. La lenteur vient de l'arbre, pas de l'appel de fonction.</p>
+      </div>
+
+      <details class="try">
+        <summary>Pourquoi deux cas de base <code>f(1)</code> et <code>f(2)</code> plutôt qu'un seul ?</summary>
+        <div class="ans">Parce que la réduction descend de deux en deux : <code>f(2)</code> appelle <code>f(1)</code> et <code>f(0)</code>. On arrête donc à <code>n ≤ 2</code> pour ne jamais demander <code>f(0)</code>, qui n'est pas défini dans la convention du cours. Avec un seul cas de base <code>n == 1</code>, la récursion ne s'arrêterait pas sur <code>f(2)</code> et <code>f(0)</code> serait appelé indéfiniment.</div>
+      </details>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">mémoïsation &amp; LUT</div></div>
+      <h2>Mémoïsation : calculer une fois, lire ensuite</h2>
+      <p class="lead">Puisque l'arbre de Fibonacci recalcule les mêmes valeurs, la correction est simple : <b>ranger</b> chaque résultat la première fois, et le <b>relire</b> ensuite. Le cours en donne deux formes — la table précalculée de l'exercice 1.2 (LUT) et le cache rempli à l'exécution (mémoïsation).</p>
+
+      <div class="code"><header><span>cache.c</span><button data-copy>copier</button></header><pre><code data-hl>/* LUT : table statique, calculée à la compilation (ex 1.2 c) */
+static uint64_t const cFact[] = {
+    1u, 1u, 2u, 6u, 24u, 120u, 720u, 5040u, 40320u, 362880u, 3628800u,
+    39916800u, 479001600u, 6227020800u, 87178291200u, 1307674368000u,
+    20922789888000u, 355687428096000u, 6402373705728000u,
+    121645100408832000u, 2432902008176640000u          /* 20! */
+};
+
+uint64_t Factorial_with_lut(uint32_t number)
+{
+    if (number >= sizeof cFact / sizeof cFact[0]) {    /* hors table */
+        return 0u;
+    }
+    return cFact[number];                              /* O(1) */
+}
+
+/* mémoïsation : le cache se remplit à l'exécution */
+enum { eCacheSize = 64 };
+static uint64_t sCache[eCacheSize];
+static bool     sKnown[eCacheSize];
+
+uint64_t FibMemo(uint32_t n)
+{
+    if (n &lt;= 2u)   { return 1u; }
+    if (n >= eCacheSize) { return 0u; }        /* hors cache */
+    if (sKnown[n]) { return sCache[n]; }       /* déjà calculé */
+    uint64_t const r = FibMemo(n - 1u) + FibMemo(n - 2u);
+    sCache[n] = r;                             /* on range… */
+    sKnown[n] = true;
+    return r;                                  /* …et on rend */
+}</code></pre></div>
+
+      <div class="lab" data-lab="memo">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · le cache se remplit</div><div class="lab-sub"><code>FibMemo(6)</code>, cache vide au départ</div></div>
+          <span class="lab-tag">8 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Cache vide au départ. Sans cache, <code>f(6)</code> coûte <b>15 appels</b>. Les cas de base <code>f(1)</code> et <code>f(2)</code> rendent 1 directement, sans passer par le cache : seules les cases 3 à 6 servent.","code":"static uint64_t sCache[64];   /* tout à zéro */","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"—","w":98},{"id":"c4","name":"sCache[4]","value":"—","w":98},{"id":"c5","name":"sCache[5]","value":"—","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"0","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"0","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"<code>FibMemo(6)</code> : la case 6 est vide, le calcul commence. Premier appel consommé, rien n'est encore rangé.","code":"if (sKnown[6]) { return sCache[6]; }   /* non */","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"—","w":98},{"id":"c4","name":"sCache[4]","value":"—","w":98},{"id":"c5","name":"sCache[5]","value":"—","w":98},{"id":"c6","name":"sCache[6]","value":"—","state":"active","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"1","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"0","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"<code>f(6)</code> appelle <code>f(5)</code>, absent lui aussi. La descente continue : c'est seulement au retour que les cases se rempliront.","code":"return FibMemo(5) + FibMemo(4);","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"—","w":98},{"id":"c4","name":"sCache[4]","value":"—","w":98},{"id":"c5","name":"sCache[5]","value":"—","state":"active","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"2","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"0","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"Même chose pour <code>f(4)</code> : trois appels, toujours aucune case remplie. La mémoïsation ne paie qu'à partir du premier retour.","code":"FibMemo(4)","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"—","w":98},{"id":"c4","name":"sCache[4]","value":"—","state":"active","w":98},{"id":"c5","name":"sCache[5]","value":"—","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"3","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"0","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"On atteint <code>f(3)</code> : il appelle <code>f(2)</code> puis <code>f(1)</code>, deux cas de base. <code>f(3) = 2</code> est enfin rangé : la case 3 ne sera plus jamais recalculée.","code":"sCache[3] = 2u ;  sKnown[3] = true;","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"2","kind":"heap","state":"changed","w":98},{"id":"c4","name":"sCache[4]","value":"—","w":98},{"id":"c5","name":"sCache[5]","value":"—","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"6","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"1","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"<code>f(4) = f(3) + f(2)</code>. <code>f(3)</code> est relu dans le cache — aucun calcul ; seul <code>f(2)</code> coûte un appel. La case 4 se remplit.","code":"if (sKnown[3]) { return sCache[3]; }   /* oui */","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"2","kind":"heap","state":"active","w":98},{"id":"c4","name":"sCache[4]","value":"3","kind":"heap","state":"changed","w":98},{"id":"c5","name":"sCache[5]","value":"—","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"7","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"2","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"<code>f(5) = f(4) + f(3)</code> : deux relectures, aucun calcul. Sans cache, cette même étape aurait recalculé tout le sous-arbre.","code":"sCache[5] = 5u ;  sKnown[5] = true;","groups":[{"title":"Cache · cases 3 à 6","cells":[{"id":"c3","name":"sCache[3]","value":"2","kind":"heap","state":"active","w":98},{"id":"c4","name":"sCache[4]","value":"3","kind":"heap","state":"active","w":98},{"id":"c5","name":"sCache[5]","value":"5","kind":"heap","state":"changed","w":98},{"id":"c6","name":"sCache[6]","value":"—","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"8","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"3","type":"remplies","kind":"int","w":98}]}],"arrows":[]},
+          {"label":"<code>f(6) = f(5) + f(4) = 5 + 3 = 8</code>, case 6 remplie. Bilan : <b>9 appels</b> au lieu de 15, et quatre cases occupées — de la mémoire <code>O(n)</code> contre du temps <code>O(2ⁿ)</code>.","code":"sCache[6] = 8u ;  return 8u;","groups":[{"title":"Cache · quatre cases remplies","cells":[{"id":"c3","name":"sCache[3]","value":"2","kind":"heap","w":98},{"id":"c4","name":"sCache[4]","value":"3","kind":"heap","w":98},{"id":"c5","name":"sCache[5]","value":"5","kind":"heap","w":98},{"id":"c6","name":"sCache[6]","value":"8","kind":"heap","state":"changed","w":98}]},{"title":"Compteurs","cells":[{"id":"n1","name":"appels","value":"9","type":"FibMemo","kind":"int","w":98},{"id":"n2","name":"cases","value":"4","type":"remplies","kind":"int","w":98}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <table class="tbl">
+        <caption>Fibonacci : sans cache, puis avec cache (mesuré sur le code ci-dessus, cache froid)</caption>
+        <tr><th>n</th><th class="num">f(n)</th><th class="num">appels naïfs</th><th class="num">appels mémoïsés</th><th class="num">cases remplies</th></tr>
+        <tr><td>6</td><td class="num">8</td><td class="num">15</td><td class="num">9</td><td class="num">4</td></tr>
+        <tr><td>20</td><td class="num">6 765</td><td class="num">13 529</td><td class="num">37</td><td class="num">18</td></tr>
+        <tr><td>30</td><td class="num">832 040</td><td class="num">1 664 079</td><td class="num">57</td><td class="num">28</td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle · l'échange</div>
+        <p>La mémoïsation échange de la <b>mémoire</b> contre du <b>temps</b>. Le coût passe de <code>O(2ⁿ)</code> à <code>O(n)</code> en temps, mais demande <code>O(n)</code> cases en plus. La LUT pousse la logique plus loin : la table est figée à la compilation, le temps devient <code>O(1)</code> et la mémoire est payée une fois pour toutes.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Trois façons de calculer <code>n!</code> (exercice 1.2) et deux de calculer <code>f(n)</code></caption>
+        <tr><th>version</th><th>temps</th><th>mémoire</th><th>condition</th></tr>
+        <tr><td>itération</td><td><code>O(n)</code></td><td><code>O(1)</code></td><td>—</td></tr>
+        <tr><td>récursion</td><td><code>O(n)</code></td><td><code>O(n)</code> de pile</td><td>profondeur <code>n</code></td></tr>
+        <tr><td>LUT</td><td><code>O(1)</code></td><td>21 × 8 = 168 octets</td><td>domaine fini et connu</td></tr>
+        <tr><td>Fibonacci naïf</td><td><code>O(2ⁿ)</code></td><td><code>O(n)</code> de pile</td><td>inutilisable au-delà de 35</td></tr>
+        <tr><td>Fibonacci mémoïsé</td><td><code>O(n)</code></td><td><code>O(n)</code> de cache</td><td>cache dimensionné</td></tr>
+      </table>
+
+      <div class="box trap">
+        <div class="lbl">Les deux pièges du cache</div>
+        <p><b>Oublier d'écrire le résultat.</b> Lire le cache sans jamais le remplir ne change rien au coût : <code>if (sKnown[n]) return sCache[n];</code> doit être suivi de <code>sCache[n] = r;</code>.</p>
+        <p><b>Un cache <code>static</code> garde son contenu.</b> Il survit d'un appel à l'autre et même d'un test à l'autre : la deuxième exécution mesure un cache chaud, pas le coût réel. Il faut le vider explicitement entre deux mesures, ou le déclarer local et le passer en paramètre.</p>
+      </div>
+    </section>
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">récursion ou itération</div></div>
+      <h2>Récursion ou boucle : ce que la pile coûte</h2>
+      <p class="lead">Toute récursion linéaire peut s'écrire avec une boucle, et l'inverse est vrai aussi. Le choix ne porte donc pas sur la puissance d'expression, mais sur ce qu'on accepte de payer : des trames, des appels, et parfois de la lisibilité.</p>
+
+      <table class="tbl">
+        <caption>Les deux formes, sur un problème linéaire</caption>
+        <tr><th>critère</th><th>boucle</th><th>récursion</th></tr>
+        <tr><td>mémoire</td><td><code>O(1)</code> : deux variables</td><td><code>O(n)</code> : une trame par appel</td></tr>
+        <tr><td>temps</td><td><code>O(n)</code>, sans frais d'appel</td><td><code>O(n)</code> plus le coût des appels</td></tr>
+        <tr><td>lisibilité</td><td>bonne pour un parcours régulier</td><td>bonne quand la définition est récursive</td></tr>
+        <tr><td>risque</td><td>indices, bornes, oubli d'incrément</td><td>profondeur, cas de base, recalcul</td></tr>
+        <tr><td>limite pratique</td><td>aucune liée à la pile</td><td>taille de la pile</td></tr>
+        <tr><td>quand la choisir</td><td>suite linéaire simple, traitement de tableau</td><td>arbre, découpage en moitiés, définition récursive</td></tr>
+      </table>
+
+      <h3>La récursion terminale</h3>
+      <p>Une fonction est <b>récursive terminale</b> (<i>tail recursive</i>) quand l'appel récursif est la <b>dernière</b> opération : il n'y a plus rien à faire au retour, donc la trame n'a plus besoin d'être conservée. On obtient cette forme en transportant le résultat partiel dans un accumulateur.</p>
+
+      <div class="code"><header><span>terminal.c</span><button data-copy>copier</button></header><pre><code data-hl>/* non terminale : la multiplication attend le retour */
+uint64_t FactRec(uint32_t n)
+{
+    if (n &lt;= 1u) { return 1u; }
+    return (uint64_t)n * FactRec(n - 1u);     /* il reste un × à faire */
+}
+
+/* terminale : l'appel est la dernière instruction */
+uint64_t FactTail(uint32_t n, uint64_t acc)
+{
+    if (n &lt;= 1u) { return acc; }
+    return FactTail(n - 1u, acc * (uint64_t)n);   /* rien après l'appel */
+}
+/* appel : FactTail(4, 1) -> FactTail(3, 4) -> FactTail(2, 12) -> FactTail(1, 24) */</code></pre></div>
+
+      <div class="box note">
+        <div class="lbl">Ce que le compilateur en fait</div>
+        <p>gcc peut transformer une récursion terminale en boucle — c'est l'élimination d'appel terminal, active à <code>-O2</code>. La pile cesse alors de croître et le coût rejoint celui de la boucle. Mais le <b>standard C n'impose pas</b> cette optimisation : le même code compilé à <code>-O0</code> empile ses trames. On ne compte donc jamais dessus pour garantir qu'un programme ne débordera pas.</p>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle du choix</div>
+        <ul>
+          <li><b>Boucle</b> quand la structure est une suite : parcourir un tableau, cumuler, compter. <code>O(1)</code> de mémoire, pas de limite de pile.</li>
+          <li><b>Récursion</b> quand la structure est un arbre ou un découpage : tours de Hanoï, alerte téléphonique, parcours d'arborescence, tri fusion. Écrire la boucle équivalente demanderait une pile explicite — autant laisser le processeur la gérer.</li>
+          <li><b>Récursion + cache</b> quand l'arbre recalcule : Fibonacci, programmation dynamique.</li>
+        </ul>
+      </div>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 200" role="img" aria-label="Comparaison : la boucle garde deux variables pendant que la récursion empile quatre trames.">
+            <g class="c-teal"><rect x="34" y="56" width="150" height="58" rx="10"/><text class="th" x="109" y="80" text-anchor="middle">boucle</text><text class="ts" x="109" y="99" text-anchor="middle">result, i</text></g>
+            <text class="tm" x="34" y="140">2 variables,</text>
+            <text class="tm" x="34" y="156">O(1) de mémoire</text>
+            <g class="c-blue"><rect x="300" y="126" width="300" height="26" rx="6"/><text class="tm" x="450" y="144" text-anchor="middle">main</text></g>
+            <g class="c-blue"><rect x="300" y="96" width="300" height="26" rx="6"/><text class="tm" x="450" y="114" text-anchor="middle">Fact(4)</text></g>
+            <g class="c-blue"><rect x="300" y="66" width="300" height="26" rx="6"/><text class="tm" x="450" y="84" text-anchor="middle">Fact(3)</text></g>
+            <g class="c-blue"><rect x="300" y="36" width="300" height="26" rx="6"/><text class="tm" x="450" y="54" text-anchor="middle">Fact(2) ← sommet</text></g>
+            <path class="arr" d="M480 36 V 20" marker-end="url(#ar)"/>
+            <text class="ts" x="492" y="22">la pile monte</text>
+            <text class="tm" x="300" y="176">4 trames, O(n) de mémoire</text>
+            <text class="tm" x="300" y="192">chacune coûte des octets et un appel</text>
+          </svg>
+        </div>
+        <figcaption>Même résultat, même nombre de multiplications. La différence est une pile de trames qui existe pendant tout le calcul.</figcaption>
+      </figure>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Réécrire une récursion en boucle « parce que c'est plus rapide » sans mesurer. À <code>-O2</code>, les deux versions d'une fonction terminale ont souvent le même temps. Ce qui change vraiment, c'est la mémoire : une boucle ne débordera jamais la pile, une récursion si.</p>
+      </div>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">coût</div></div>
+      <h2>Compter les appels, pas les lignes</h2>
+      <p class="lead">Pour une fonction récursive, le coût se lit dans la <b>relation de récurrence</b>, pas dans le nombre de lignes du code. Trois formes suffisent à couvrir le chapitre : un appel qui réduit de 1, un appel qui divise par 2, deux appels qui réduisent de 1.</p>
+
+      <table class="tbl">
+        <caption>Les trois formes rencontrées, et leur coût</caption>
+        <tr><th>relation</th><th>exemple</th><th>appels et coût</th></tr>
+        <tr><td><code>T(n) = T(n−1) + 1</code></td><td>factorielle, <code>mult</code></td><td><code>n</code> appels · <code>O(n)</code></td></tr>
+        <tr><td><code>T(n) = T(n/2) + 1</code></td><td>alerte téléphonique</td><td><code>log₂ n</code> niveaux · <code>O(log n)</code>, mais <code>O(n)</code> appels au total</td></tr>
+        <tr><td><code>T(n) = 2·T(n−1) + 1</code></td><td>tours de Hanoï</td><td><code>2ⁿ−1</code> appels · <code>O(2ⁿ)</code></td></tr>
+        <tr><td><code>T(n) = T(n−1) + T(n−2) + 1</code></td><td>Fibonacci naïf</td><td><code>C(n)</code> proche de <code>φⁿ</code> · <code>O(2ⁿ)</code></td></tr>
+      </table>
+
+      <table class="tbl">
+        <caption>Ordres de grandeur pour n = 10, 20, 64</caption>
+        <tr><th>coût</th><th class="num">n = 10</th><th class="num">n = 20</th><th class="num">n = 64</th></tr>
+        <tr><td><code>O(log₂ n)</code></td><td class="num">4</td><td class="num">5</td><td class="num">6</td></tr>
+        <tr><td><code>O(n)</code></td><td class="num">10</td><td class="num">20</td><td class="num">64</td></tr>
+        <tr><td><code>O(n log₂ n)</code></td><td class="num">33</td><td class="num">86</td><td class="num">384</td></tr>
+        <tr><td><code>O(2ⁿ)</code></td><td class="num">1 024</td><td class="num">1 048 576</td><td class="num">18 446 744 073 709 551 616</td></tr>
+      </table>
+
+      <p>La dernière ligne est celle de Hanoï et de Fibonacci naïf. Pour 64 disques, <code>2⁶⁴</code> vaut 18 446 744 073 709 551 616, soit un de plus que le plus grand <code>uint64_t</code> : le nombre de coups <code>2⁶⁴ − 1</code> est exactement <code>UINT64_MAX</code>. Un compteur <code>uint32_t</code> déborde dès 32 disques.</p>
+
+      <div class="box rule">
+        <div class="lbl">La règle · trois questions</div>
+        <ol>
+          <li><b>Combien d'appels par niveau ?</b> Un : la pile est une chaîne, le coût est linéaire ou logarithmique. Deux : la pile est un arbre, le coût est exponentiel — sauf si un cache intervient.</li>
+          <li><b>De combien la taille diminue-t-elle ?</b> De 1 : <code>n</code> niveaux. Divisée par 2 : <code>log₂ n</code> niveaux. C'est la profondeur de la pile.</li>
+          <li><b>Le travail est-il refait ?</b> Si oui, le cache ramène le coût au nombre de <b>valeurs distinctes</b>, pas au nombre de nœuds.</li>
+        </ol>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p>La dichotomie est le <code>O(log n)</code> du cours : chaque comparaison élimine la moitié du tableau, donc 5 étapes pour 20 éléments et 20 pour un million. Les tris récursifs (fusion, rapide) sont en <code>O(n log n)</code> : <code>log₂ n</code> niveaux, <code>O(n)</code> de travail par niveau. Ces trois familles — linéaire, logarithmique, exponentielle — sont celles qu'un TE demande de reconnaître.</p>
+      </div>
+
+      <details class="try">
+        <summary>Combien d'appels pour l'alerte téléphonique sur 1 024 entrées ?</summary>
+        <div class="ans">1 023 appels, soit <code>size − 1</code> : chaque personne est appelée exactement une fois. Mais la <b>profondeur</b> n'est que de 10 niveaux environ, <code>log₂ 1024</code>. C'est l'intérêt du découpage : beaucoup d'appels, peu de pile.</div>
+      </details>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">profondeur &amp; pile</div></div>
+      <h2>La profondeur de récursion a une limite</h2>
+      <p class="lead">La pile n'est pas infinie : sa taille est fixée au lancement du programme, de l'ordre du mégaoctet. Une récursion qui descend de <code>n</code> niveaux consomme <code>n</code> trames ; quand la pile est pleine, l'écriture suivante touche une zone interdite et le programme s'arrête — c'est le <i>stack overflow</i>.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 280" role="img" aria-label="Une pile de trames qui grandit vers le bas, traverse une ligne pointillée marquant la limite de la pile et provoque un stack overflow.">
+            <g class="c-blue"><rect x="70" y="18" width="250" height="24" rx="5"/><text class="tm" x="195" y="35" text-anchor="middle">main</text></g>
+            <g class="c-blue"><rect x="70" y="46" width="250" height="24" rx="5"/><text class="tm" x="195" y="63" text-anchor="middle">Fact(1000000)</text></g>
+            <g class="c-blue"><rect x="70" y="94" width="250" height="24" rx="5"/><text class="tm" x="195" y="111" text-anchor="middle">Fact(999999)</text></g>
+            <g class="c-blue"><rect x="70" y="142" width="250" height="24" rx="5"/><text class="tm" x="195" y="159" text-anchor="middle">Fact(999998)</text></g>
+            <g class="c-blue"><rect x="70" y="190" width="250" height="24" rx="5"/><text class="tm" x="195" y="207" text-anchor="middle">…</text></g>
+            <g class="c-red"><rect x="70" y="238" width="250" height="24" rx="5"/><text class="tm" x="195" y="255" text-anchor="middle">Fact(1) — jamais atteint</text></g>
+            <line x1="40" y1="230" x2="620" y2="230" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text class="ts" x="470" y="220" fill="var(--red)">limite de la pile</text>
+            <text class="tm" x="40" y="13">adresses hautes</text>
+            <path class="arr" d="M400 24 V 220" marker-end="url(#ar)"/>
+            <text class="ts" x="412" y="120">chaque appel</text>
+            <text class="ts" x="412" y="136">empile une trame</text>
+            <text class="tm" x="40" y="272">adresses basses — au-delà, le système refuse l'écriture</text>
+          </svg>
+        </div>
+        <figcaption>Une récursion de profondeur un million : à 64 octets par trame, il faudrait environ 61 Mio, alors que la pile en compte à peu près un. Le plantage survient pendant la descente, jamais au retour.</figcaption>
+      </figure>
+
+      <table class="tbl">
+        <caption>Profondeur de pile des quatre algorithmes du chapitre</caption>
+        <tr><th>algorithme</th><th>profondeur</th><th>risque</th></tr>
+        <tr><td>factorielle récursive</td><td><code>n</code> trames</td><td>élevé : déborde vers quelques dizaines de milliers</td></tr>
+        <tr><td>tours de Hanoï</td><td><code>n</code> trames</td><td>faible : 64 au maximum dans la légende</td></tr>
+        <tr><td>alerte téléphonique</td><td><code>log₂ n</code> niveaux</td><td>très faible : 20 niveaux pour un million</td></tr>
+        <tr><td>Fibonacci naïf</td><td><code>n</code> trames</td><td>faible en mémoire, mais le temps explose avant</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Combien de trames ?</div>
+        <p>Une trame contient les paramètres, les variables locales, l'adresse de retour et les registres sauvegardés : quelques dizaines d'octets pour une fonction simple, plusieurs centaines si elle déclare des tableaux locaux. C'est la variable à surveiller, pas le nombre d'appels : une fonction récursive appelée en boucle n'empile rien.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>« Ça a marché avec 10 000, donc c'est bon. » La profondeur maximale dépend du compilateur, des optimisations et du système : le même code passe à <code>-O2</code> (récursion terminale transformée en boucle) et plante à <code>-O0</code>. Un test réussi sur une machine ne prouve pas la sûreté ; seule la borne sur <code>n</code> le fait.</p>
+      </div>
+
+      <details class="try">
+        <summary>Pourquoi l'alerte téléphonique ne déborde-t-elle jamais, même avec un million de personnes ?</summary>
+        <div class="ans">Parce que chaque appel divise la liste par deux : la profondeur vaut <code>log₂ n</code>, soit 20 niveaux pour un million. Le nombre d'appels est grand (999 999), mais ils ne sont jamais simultanément empilés. C'est la différence entre <b>nombre d'appels</b> et <b>profondeur</b>.</div>
+      </details>
+    </section>
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">erreurs fréquentes</div></div>
+      <h2>Erreurs fréquentes et comment les repérer</h2>
+      <p class="lead">Une récursion fausse ne se plaint pas à la compilation : elle boucle, elle plante, ou elle rend un nombre plausible mais faux. Voici les erreurs classiques, leur symptôme et le remède.</p>
+
+      <table class="tbl">
+        <caption>Ce qui casse, et pourquoi</caption>
+        <tr><th>erreur</th><th>symptôme</th><th>remède</th></tr>
+        <tr><td>cas de base oublié</td><td><i>stack overflow</i> immédiat, sans affichage</td><td>écrire la condition d'arrêt <b>avant</b> l'appel</td></tr>
+        <tr><td>cas de base faux</td><td>une valeur fausse sur un cas limite : <code>0!</code> ou <code>f(2)</code></td><td>tester 0, 1, 2 et le cas vide quand ils existent</td></tr>
+        <tr><td>réduction qui ne diminue pas</td><td>appel identique : boucle infinie</td><td>vérifier que chaque appel rapproche du cas de base</td></tr>
+        <tr><td>mauvais sens de réduction</td><td><code>n + 1</code> au lieu de <code>n − 1</code></td><td>la taille doit <b>décroître</b> strictement</td></tr>
+        <tr><td><code>return</code> manquant</td><td>valeur indéterminée, souvent 0</td><td>chaque branche rend une valeur, y compris le cas de base</td></tr>
+        <tr><td>recalcul des mêmes sous-problèmes</td><td>très lent alors que le code semble juste</td><td>cache ou LUT : voir la section 7</td></tr>
+        <tr><td>variable globale comme compteur</td><td>résultat qui dépend de l'historique, non réentrant</td><td>passer un pointeur : <code>(*pMoves)++</code></td></tr>
+        <tr><td>débordement de type</td><td><code>21!</code> rend un nombre absurde, sans erreur</td><td>choisir <code>uint64_t</code> et connaître sa borne</td></tr>
+        <tr><td>profondeur non bornée</td><td>plante selon la taille d'entrée, pas selon le code</td><td>borner <code>n</code>, ou passer en boucle</td></tr>
+        <tr><td>cache non rempli</td><td>le cache reste vide, le coût ne change pas</td><td>écrire la case <b>après</b> le calcul et avant le <code>return</code></td></tr>
+      </table>
+
+      <div class="box idea">
+        <div class="lbl">La méthode de vérification</div>
+        <p>Trois questions, dans cet ordre : <b>quel est le cas de base</b>, et que rend-il ? <b>la taille diminue-t-elle</b> à chaque appel ? <b>combien d'appels</b> pour <code>n = 5</code> ? Si les trois réponses sont nettes, le code est probablement juste. Sinon, dérouler à la main sur <code>n = 2</code> ou <code>n = 3</code> : c'est le plus petit cas non trivial, et c'est là que les erreurs apparaissent.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Deux confusions à ne pas faire</div>
+        <p><b>« Récursif » n'est pas « répétitif ».</b> Appeler une fonction récursive dans une boucle ne fait pas grandir la pile : chaque appel repart de zéro, et la profondeur reste celle de la fonction. Une boucle n'ajoute aucune trame. <b>« Profond » n'est pas « long ».</b> Hanoï à 64 disques est très long et très peu profond ; l'alerte téléphonique à un million de personnes est très large et très peu profonde.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">auto-test</div></div>
+      <h2>Auto-test : douze questions</h2>
+      <p class="lead">Une seule réponse par question. Le retour s'affiche immédiatement, avec le pourquoi.</p>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">mémo</div></div>
+      <h2>Mémo et checklist</h2>
+      <p class="lead">Les formules, les coûts et les réflexes à retrouver sans hésiter.</p>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Les quatre formules</h4>
+          <table class="tbl" style="margin:6px 0 0;font-size:12.5px">
+            <tr><th>algorithme</th><th>relation</th><th>résultat</th></tr>
+            <tr><td>factorielle</td><td><code>n! = n·(n−1)!</code></td><td><code>0! = 1</code>, 20! max en 64 bits</td></tr>
+            <tr><td>Hanoï</td><td><code>M(n) = 2M(n−1)+1</code></td><td><code>M(n) = 2ⁿ−1</code></td></tr>
+            <tr><td>Fibonacci</td><td><code>f(n) = f(n−1)+f(n−2)</code></td><td><code>f(1) = f(2) = 1</code></td></tr>
+            <tr><td>alerte</td><td><code>half1 = rest/2</code></td><td><code>half2 = rest − half1</code></td></tr>
+          </table>
+        </div>
+        <div class="minicard">
+          <h4>Les coûts</h4>
+          <table class="tbl" style="margin:6px 0 0;font-size:12.5px">
+            <tr><th>version</th><th>temps</th><th>pile</th></tr>
+            <tr><td>factorielle, boucle</td><td><code>O(n)</code></td><td><code>O(1)</code></td></tr>
+            <tr><td>factorielle, récursion</td><td><code>O(n)</code></td><td><code>O(n)</code></td></tr>
+            <tr><td>Hanoï</td><td><code>O(2ⁿ)</code></td><td><code>O(n)</code></td></tr>
+            <tr><td>Fibonacci naïf</td><td><code>O(2ⁿ)</code></td><td><code>O(n)</code></td></tr>
+            <tr><td>Fibonacci mémoïsé</td><td><code>O(n)</code></td><td><code>O(n)</code> de cache</td></tr>
+            <tr><td>alerte téléphonique</td><td><code>O(n)</code></td><td><code>O(log n)</code></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="minicard" style="margin:12px 0 0">
+        <h4>Checklist avant de rendre un code récursif</h4>
+        <ul>
+          <li>Le cas de base est écrit <b>en premier</b> et couvre tous les cas triviaux (0, 1, ou vide).</li>
+          <li>Chaque appel récursif diminue strictement la taille.</li>
+          <li>Chaque branche a son <code>return</code>.</li>
+          <li>Le nombre d'appels est connu pour <code>n = 5</code>, et vérifié à la main.</li>
+          <li>La profondeur maximale est bornée, et compatible avec la pile.</li>
+          <li>Si deux appels se répètent, un cache est prévu — et effectivement rempli.</li>
+          <li>Aucune variable globale ne porte l'état du calcul.</li>
+          <li>Le type du résultat tient la plus grande valeur attendue.</li>
+        </ul>
+      </div>
+
+      <div class="box idea" style="margin-top:26px">
+        <div class="lbl">À retenir</div>
+        <p>Une fonction récursive tient en trois lignes : le cas de base, la réduction, l'appel. Tout le reste est du comptage — combien d'appels, quelle profondeur, combien de fois le même sous-problème est recalculé. Répondre à ces trois questions, c'est connaître l'algorithme.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const NS = 'http://www.w3.org/2000/svg';
+  let UID = 0;
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint32_t|int16_t|uint8_t|ptrdiff_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function svgEl(name, attrs){
+    const n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function(k){ n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur mémoire : cases + flèches
+     ============================================================ */
+  function makeMemory(root){
+    const groupsEl = root.querySelector('[data-groups]');
+    const stage = root.querySelector('[data-stage]');
+    const svg = root.querySelector('[data-arrows]');
+    if (!groupsEl || !stage || !svg) return { render: function(){} };
+
+    const mid = 'mm' + (++UID);
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="' + mid + 'i" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+        '<marker id="' + mid + 'a" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>';
+
+    let prevIds = new Set();
+    let lastState = null;
+    let lastAnimate = true;
+
+    function cellHTML(c, isNew){
+      const cls = ['cell'];
+      if (c.kind) cls.push('is-' + c.kind);
+      if (c.state) String(c.state).split(/\s+/).forEach(function(t){ if (t) cls.push('is-' + t); });
+      if (isNew) cls.push('is-new');
+
+      let body = '<div class="cname">' + esc(c.name);
+      if (c.type) body += '<span class="ctype">' + esc(c.type) + '</span>';
+      body += '</div>';
+
+      if (c.fields) {
+        body += '<div class="cfields">' + c.fields.map(function(f){
+          return '<div class="cf"><span>' + esc(f.k) + '</span><b>' + esc(f.v) + '</b></div>';
+        }).join('') + '</div>';
+      } else {
+        body += '<div class="cval">' + (c.value === '' || c.value === null || c.value === undefined ? '&nbsp;' : esc(c.value)) + '</div>';
+      }
+      if (c.addr) body += '<div class="caddr">' + esc(c.addr) + '</div>';
+
+      const style = c.w ? ' style="--cw:' + Number(c.w) + 'px"' : '';
+      return '<div class="' + cls.join(' ') + '" data-id="' + esc(c.id) + '"' + style + '>' + body + '</div>';
+    }
+
+    function drawArrows(state, animate){
+      if (!state) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return;
+      const sr = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.querySelectorAll('.arrow,.alabel').forEach(function(n){ n.remove(); });
+
+      (state.arrows || []).forEach(function(a){
+        const fe = groupsEl.querySelector('[data-id="' + a.from + '"]');
+        const te = groupsEl.querySelector('[data-id="' + a.to + '"]');
+        if (!fe || !te) return;
+
+        const fr = fe.getBoundingClientRect();
+        const tr = te.getBoundingClientRect();
+        const f = {x: fr.left - sr.left, y: fr.top - sr.top, w: fr.width, h: fr.height};
+        const t = {x: tr.left - sr.left, y: tr.top - sr.top, w: tr.width, h: tr.height};
+        const fc = {x: f.x + f.w / 2, y: f.y + f.h / 2};
+        const tc = {x: t.x + t.w / 2, y: t.y + t.h / 2};
+        const dx = tc.x - fc.x;
+        const dy = tc.y - fc.y;
+        const vertical = Math.abs(dy) >= Math.abs(dx) * 0.72;
+        const gap = 4;
+        let p1, p2, c1, c2;
+
+        if (vertical) {
+          const dir = dy >= 0 ? 1 : -1;
+          p1 = {x: fc.x, y: dir > 0 ? f.y + f.h + gap : f.y - gap};
+          p2 = {x: tc.x, y: dir > 0 ? t.y - gap : t.y + t.h + gap};
+          const k = Math.max(26, Math.abs(p2.y - p1.y) * 0.46);
+          c1 = {x: p1.x, y: p1.y + dir * k};
+          c2 = {x: p2.x, y: p2.y - dir * k};
+        } else {
+          const dir = dx >= 0 ? 1 : -1;
+          p1 = {x: dir > 0 ? f.x + f.w + gap : f.x - gap, y: fc.y};
+          p2 = {x: dir > 0 ? t.x - gap : t.x + t.w + gap, y: tc.y};
+          const k = Math.max(26, Math.abs(p2.x - p1.x) * 0.46);
+          c1 = {x: p1.x + dir * k, y: p1.y};
+          c2 = {x: p2.x - dir * k, y: p2.y};
+        }
+
+        const path = svgEl('path', {
+          d: 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y,
+          'class': 'arrow' + (a.accent ? ' is-accent' : ''),
+          'marker-end': 'url(#' + mid + (a.accent ? 'a' : 'i') + ')'
+        });
+        svg.appendChild(path);
+
+        const len = path.getTotalLength();
+        if (animate && !reduceMotion.matches) {
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect();
+          path.style.transition = 'stroke-dashoffset .55s ease';
+          path.style.strokeDashoffset = '0';
+        }
+
+        if (a.label) {
+          const pt = path.getPointAtLength(len * 0.52);
+          const label = svgEl('text', {
+            x: pt.x + (vertical ? 7 : 0),
+            y: pt.y + (vertical ? 3 : -6),
+            'class': 'alabel',
+            'text-anchor': vertical ? 'start' : 'middle'
+          });
+          label.textContent = a.label;
+          svg.appendChild(label);
+        }
+      });
+    }
+
+    function render(state, animate){
+      lastState = state;
+      lastAnimate = animate !== false;
+      const nextIds = new Set();
+
+      groupsEl.classList.toggle('is-stack', (state.groups || []).length > 1);
+      const column = root.hasAttribute('data-column');
+      groupsEl.innerHTML = (state.groups || []).map(function(g){
+        const cells = (g.cells || []).map(function(c){
+          nextIds.add(c.id);
+          return cellHTML(c, !prevIds.has(c.id));
+        }).join('');
+        return '<div class="mem-group">' +
+          (g.title ? '<div class="mem-gtitle">' + esc(g.title) + '</div>' : '') +
+          '<div class="cells' + (column ? ' is-column' : '') + '">' + cells + '</div>' +
+          (g.hint ? '<div class="mem-ghint">' + esc(g.hint) + '</div>' : '') +
+        '</div>';
+      }).join('');
+      prevIds = nextIds;
+      requestAnimationFrame(function(){ drawArrows(lastState, lastAnimate); });
+    }
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){
+        if (!lastState) return;
+        requestAnimationFrame(function(){ drawArrows(lastState, false); });
+      });
+      ro.observe(stage);
+    }
+
+    return { render: render };
+  }
+
+  /* ============================================================
+     laboratoire Fibonacci : arbre d'appels (moteur dédié)
+     ============================================================ */
+  const FIB_NODES = [
+    {id:'r', n:5, x:345, y:30,  p:null},
+    {id:'a', n:4, x:210, y:102, p:'r'},
+    {id:'b', n:3, x:480, y:102, p:'r'},
+    {id:'c', n:3, x:120, y:174, p:'a'},
+    {id:'d', n:2, x:300, y:174, p:'a'},
+    {id:'e', n:2, x:420, y:174, p:'b'},
+    {id:'f', n:1, x:540, y:174, p:'b'},
+    {id:'g', n:2, x:60,  y:246, p:'c'},
+    {id:'h', n:1, x:180, y:246, p:'c'}
+  ];
+  const FIB_ORDER = ['r','a','c','g','h','d','b','e','f'];
+  const FIB_BY_ID = {};
+  const FIB_KIDS = {};
+  FIB_NODES.forEach(function(nd){
+    FIB_BY_ID[nd.id] = nd;
+    FIB_KIDS[nd.id] = [];
+  });
+  FIB_NODES.forEach(function(nd){
+    if (nd.p) FIB_KIDS[nd.p].push(nd.id);
+  });
+
+  function fibValue(n){ return n <= 2 ? 1 : fibValue(n - 1) + fibValue(n - 2); }
+
+  function paintFibTree(root, state){
+    const stage = root.querySelector('[data-treestage]');
+    if (!stage) return;
+    const upto = Math.max(1, Math.min(FIB_ORDER.length, state.upto || 1));
+    const seen = {};
+    FIB_ORDER.slice(0, upto).forEach(function(id){ seen[id] = true; });
+    const activeId = FIB_ORDER[upto - 1];
+
+    const done = {};
+    function isDone(id){
+      if (Object.prototype.hasOwnProperty.call(done, id)) return done[id];
+      const kids = FIB_KIDS[id] || [];
+      let ok = Boolean(seen[id]);
+      if (ok && kids.length) ok = kids.every(isDone);
+      done[id] = ok;
+      return ok;
+    }
+    FIB_NODES.forEach(function(nd){ isDone(nd.id); });
+
+    const count = {};
+    const dup = {};
+    FIB_ORDER.forEach(function(id){
+      const n = FIB_BY_ID[id].n;
+      count[n] = (count[n] || 0) + 1;
+      dup[id] = count[n] > 1;
+    });
+
+    let svg = stage.querySelector('svg');
+    if (!svg) {
+      stage.innerHTML = '<svg viewBox="0 0 600 280" role="img" aria-label="Arbre des appels de la suite de Fibonacci"></svg>';
+      svg = stage.querySelector('svg');
+    }
+
+    let out = '';
+    FIB_NODES.forEach(function(nd){
+      if (!nd.p) return;
+      const p = FIB_BY_ID[nd.p];
+      out += '<path class="tedge' + (seen[nd.id] ? ' on' : '') + '" d="M' + p.x + ' ' + (p.y + 19) +
+        ' V' + (p.y + 34) + ' H' + nd.x + ' V' + (nd.y - 19) + '"/>';
+    });
+    FIB_NODES.forEach(function(nd){
+      const cls = ['tnd'];
+      if (!seen[nd.id]) cls.push('off');
+      if (done[nd.id]) cls.push('ok');
+      if (nd.id === activeId) cls.push('on');
+      if (seen[nd.id] && dup[nd.id]) cls.push('dup');
+      const val = done[nd.id] ? '= ' + fibValue(nd.n) : '?';
+      out += '<g class="' + cls.join(' ') + '">' +
+        '<rect x="' + (nd.x - 29) + '" y="' + (nd.y - 19) + '" width="58" height="38" rx="9"/>' +
+        '<text class="tnl" x="' + nd.x + '" y="' + (nd.y - 2) + '" text-anchor="middle">f(' + nd.n + ')</text>' +
+        '<text class="tnv" x="' + nd.x + '" y="' + (nd.y + 13) + '" text-anchor="middle">' + val + '</text>' +
+        '</g>';
+    });
+    svg.innerHTML = out;
+  }
+
+  /* ============================================================
+     contrôleur de laboratoire (étapes, lecture, points)
+     ============================================================ */
+  function mountLab(root, spec){
+    const mem = makeMemory(root);
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const linesEl = root.querySelector('[data-lines]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    if (linesEl && spec.lines) {
+      linesEl.innerHTML = spec.lines.map(function(line, k){
+        return '<li data-line="' + k + '"><span class="ln">' + (k + 1) + '</span><span class="src">' + hl(line) + '</span></li>';
+      }).join('');
+      linesEl.addEventListener('click', function(e){
+        const li = e.target.closest('li[data-line]');
+        if (!li) return;
+        const lineNo = Number(li.getAttribute('data-line'));
+        const idx = states.findIndex(function(s){ return s.line === lineNo; });
+        if (idx >= 0) { stop(); i = idx; paint(); }
+      });
+    }
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(animate){
+      const s = states[i];
+      mem.render(s, animate !== false);
+      if (root.hasAttribute('data-fibtree')) paintFibTree(root, s);
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (linesEl) {
+        Array.prototype.forEach.call(linesEl.children, function(li, k){
+          li.classList.toggle('on', k === s.line);
+        });
+      }
+      setOutput(s.output);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(false); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint(false);
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(false); }
+      }, spec.interval || 2900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(false); });
+
+    paint(false);
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'À quoi sert le cas de base dans une fonction récursive ?',
+     o: ['à arrêter la récursion sans nouvel appel', 'à accélérer le calcul', 'à stocker le résultat dans une globale', 'à éviter le débordement de type'], a: 0,
+     fb: 'Le cas de base est la seule branche qui rend une valeur sans s\u2019appeler. Sans lui, la pile se remplit jusqu\u2019au plantage.'},
+    {q: 'Que contient une trame de pile pour un appel en cours ?',
+     o: ['seulement la valeur de retour', 'les paramètres, les variables locales et l\u2019adresse de retour', 'le code source de la fonction', 'les résultats de tous les appels suivants'], a: 1,
+     fb: 'L\u2019adresse de retour dit à l\u2019appelant où reprendre ; les paramètres et les locales disent avec quelles valeurs. C\u2019est tout ce qu\u2019il faut pour continuer après le retour.'},
+    {q: 'Combien d\u2019appels de <code>FactorialRecursion</code> pour calculer <code>4!</code>, cas de base compris ?',
+     o: ['3', '4', '5', '24'], a: 1,
+     fb: 'Quatre appels : <code>Fact(4)</code>, <code>Fact(3)</code>, <code>Fact(2)</code>, <code>Fact(1)</code>. Le dernier est le cas de base et arrête la descente.'},
+    {q: 'Avec <code>if (number == 1) { return 1u; }</code> comme seule base, que fait <code>FactorialRecursion(0)</code> ?',
+     o: ['elle rend 1', 'elle rend 0', 'elle descend jusqu\u2019au débordement de pile', 'le compilateur refuse le code'], a: 2,
+     fb: '<code>number - 1u</code> sur 0 donne 4 294 967 295 : la récursion repart de très haut et n\u2019atteindra 1 qu\u2019après des milliards d\u2019appels. La base doit être <code>n &lt;= 1</code>.'},
+    {q: 'Combien de coups pour déplacer 3 disques de Hanoï ?',
+     o: ['3', '6', '7', '8'], a: 2,
+     fb: '<code>2³ − 1 = 7</code>. La séquence de l\u2019énoncé le confirme : A→B, A→C, B→C, A→B, C→A, C→B, A→B.'},
+    {q: 'Combien de coups pour les 64 disques de la légende ?',
+     o: ['64', '2⁶⁴', '2⁶⁴ − 1', '64²'], a: 2,
+     fb: '<code>M(n) = 2ⁿ − 1</code>, donc <code>2⁶⁴ − 1 = 18 446 744 073 709 551 615</code>, exactement <code>UINT64_MAX</code>.'},
+    {q: 'Pour l\u2019alerte téléphonique, combien d\u2019appels pour une liste de 15 entrées ?',
+     o: ['7', '14', '15', '28'], a: 1,
+     fb: 'Chaque personne sauf la première est appelée exactement une fois : <code>size − 1 = 14</code>. L\u2019arbre complet a <code>1 + 2 + 4 + 8 = 15</code> entrées.'},
+    {q: 'Dans <code>phoneAlarm</code>, comment se calcule la seconde moitié ?',
+     o: ['<code>(size − half1 − 1) / 2</code>', '<code>half2 = rest − half1</code>', '<code>size / 2</code>', '<code>rest / 2</code>'], a: 1,
+     fb: 'La seconde moitié doit être <b>le reste</b> : <code>half2 = rest − half1</code>. L\u2019autre formule perd des personnes et n\u2019appelle qu\u2019une partie de la liste.'},
+    {q: 'Combien d\u2019appels pour <code>FibRecursion(5)</code> en version naïve ?',
+     o: ['5', '7', '9', '15'], a: 2,
+     fb: 'Neuf appels : <code>f(5)</code> une fois, <code>f(4)</code> une fois, <code>f(3)</code> deux fois, <code>f(2)</code> trois fois, <code>f(1)</code> deux fois. Les quatre derniers sont des recalculs.'},
+    {q: 'Quelle est la complexité de la version naïve de Fibonacci ?',
+     o: ['<code>O(n)</code>', '<code>O(n log n)</code>', '<code>O(2ⁿ)</code>', '<code>O(log n)</code>'], a: 2,
+     fb: 'Le nombre d\u2019appels suit <code>C(n) = C(n−1) + C(n−2) + 1</code> : il double presque à chaque pas. <code>C(30) = 1 664 079</code> pour une valeur de 832 040.'},
+    {q: 'Que change la mémoïsation sur Fibonacci ?',
+     o: ['rien, elle range seulement le résultat', 'le temps passe de <code>O(2ⁿ)</code> à <code>O(n)</code>, contre <code>O(n)</code> de mémoire', 'la mémoire de pile disparaît', 'elle supprime le cas de base'], a: 1,
+     fb: 'Chaque valeur n\u2019est calculée qu\u2019une fois : <code>f(30)</code> passe de 1 664 079 appels à 57. En échange, il faut <code>O(n)</code> cases de cache.'},
+    {q: 'Le standard C garantit-il qu\u2019une récursion terminale ne consomme pas de pile ?',
+     o: ['oui, toujours', 'non : c\u2019est une optimisation facultative du compilateur', 'oui, mais seulement avec <code>static</code>', 'oui, à partir de C11'], a: 1,
+     fb: 'gcc transforme souvent l\u2019appel terminal en boucle à <code>-O2</code>, mais rien ne l\u2019impose. Le même code empile ses trames à <code>-O0</code> : on ne compte pas dessus pour garantir la sûreté.'}
+  ];
+
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

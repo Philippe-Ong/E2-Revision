@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235146b8'/%3E%3Cpath d='M18 20h28M18 32h20M18 44h24' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Exercice 1.5 — Tri à bulles et compte des permutations. Théorie, méthode et QCM.">
+<title>Exercice 1.5 — Tri à bulles et compte des permutations</title>
+<style>
+:root{
+  --bg:#f4f2ec;--card:#fffdf9;--card2:#efede5;--ink:#1b1a17;--muted:#5d5b54;--faint:#8b887e;
+  --line:rgba(27,26,23,.16);--line2:rgba(27,26,23,.08);--accent:#5146b8;--accent-s:#eae8fb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151412;--card:#1e1d1a;--card2:#262420;--ink:#e9e6dd;--muted:#b3afa5;--faint:#8b877c;
+  --line:rgba(255,255,255,.17);--line2:rgba(255,255,255,.075);--accent:#b3abff;--accent-s:#2a2451;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top a{text-decoration:none;font-size:12.5px;color:var(--muted);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.top a:hover{background:var(--card2);color:var(--ink)}
+.top .spacer{flex:1}
+.top .exam{font:650 9.5px/1 var(--mono);letter-spacing:.08em;background:var(--accent-s);color:var(--accent);border-radius:999px;padding:5px 8px}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px 70px}
+.eyebrow{font:650 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.07;letter-spacing:-.03em;font-weight:680;margin:10px 0 12px}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:65ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;font:11.5px/1.4 var(--mono);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:650}
+section{margin-top:34px}
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:650 10px var(--mono)}
+.tag{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+h2{font-size:clamp(20px,3vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 8px}
+h3{font-size:15px;font-weight:650;margin:0 0 4px}
+p{margin:0 0 10px}
+ul,ol{margin:8px 0 10px;padding-left:22px}
+li{margin:5px 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0}
+.box{border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:14px}
+.box.rule{border-left-color:#0e6b55}
+.box.trap{border-left-color:#b33a2b}
+.box .lbl{font:650 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.code{margin:12px 0;border-radius:10px;overflow:hidden;background:#1c1c1a;border:1px solid #2d2d29}
+.code code{background:none;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+.code header{display:flex;justify-content:space-between;padding:7px 11px;background:#242420;color:#a9a79e;font:10.5px var(--mono)}
+.code pre{margin:0;padding:12px 13px;overflow:auto;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.tbl th,.tbl td{border-bottom:1px solid var(--line2);padding:7px 8px;text-align:left;vertical-align:top}
+.tbl th{font:650 10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tbl tr:last-child td{border-bottom:0}
+.result{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:11px 13px;margin:12px 0;font-size:14px}
+.viz{margin:14px 0 4px;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:12px 13px;overflow-x:auto}
+.viz-title{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.viz-caption{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+.viz-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.viz-node{min-width:54px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:7px 9px;text-align:center;font:12px/1.3 var(--mono);color:var(--ink)}
+.viz-node b{display:block;font:9px/1.3 var(--mono);letter-spacing:.04em;color:var(--accent);margin-bottom:2px}
+.viz-arrow{font:14px/1 var(--mono);color:var(--faint);white-space:nowrap}
+.viz-label{font:9.5px/1.4 var(--mono);color:var(--faint);text-align:center}
+.viz-stack{display:flex;flex-direction:column;gap:5px;align-items:center;padding:4px 0}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:5px;padding:4px 0}
+.viz-cell{border:1px solid var(--line2);background:var(--card2);border-radius:6px;padding:6px 5px;text-align:center;font:11px/1.3 var(--mono)}
+.viz-bar{height:10px;border-radius:3px;background:var(--accent);min-width:2px}
+.viz-note{font-size:12px;color:var(--muted);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px}
+.viz svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.qcm{margin-top:12px}
+.q{background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:13px 14px;margin-top:10px}
+.qq{font-weight:600;margin:0 0 9px;font-size:14.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:8px 10px;font:13px/1.45 var(--sans);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{border-color:#0e6b55;background:rgba(14,107,85,.14)}
+.opt.ko{border-color:#b33a2b;background:rgba(179,58,43,.14)}
+.fb{margin-top:9px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:9px}
+.score{font:12px var(--mono);color:var(--faint);margin-top:12px}
+.hero{max-width:860px;margin:0 auto;padding:32px 22px 0}
+.home{max-width:1050px;margin:0 auto;padding:42px 22px 70px}
+.home h1{margin-bottom:8px}
+.group{margin-top:28px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line2);padding-bottom:7px;margin-bottom:11px}
+.group-head h2{font-size:14px;font-weight:650;margin:0}
+.group-head span{font:10.5px var(--mono);color:var(--faint)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.ex-card{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .14s ease}
+.ex-card:hover{transform:translateY(-2px)}
+.ex-card .num{font:650 10px var(--mono);color:var(--accent)}
+.ex-card h3{font-size:15.5px;margin:1px 0 0}
+.ex-card p{font-size:12.5px;line-height:1.45;color:var(--muted);margin:0;flex:1}
+.ex-card .go{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px}
+@media (max-width:640px){
+  .wrap,.hero{padding:24px 15px 55px}
+  .home{padding:28px 15px 60px}
+  .lead{font-size:15.5px}
+  .cards{grid-template-columns:1fr}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:5px 4px}
+  .top{gap:6px;padding:8px 10px}
+  .top a{font-size:11.5px}
+  .top .spacer{display:none}
+  .top .exam{margin-left:auto}
+  .code pre{font-size:11.5px;line-height:1.65}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.001ms!important}}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="index.html">← Tous les exercices</a>
+  <span class="spacer"></span>
+  <a href="../tris/algo-tris-theorie-animee.html">Version théorie · Algorithmes de tri</a>
+  <span class="exam">TE1</span>
+</div>
+<header class="hero">
+  <div class="eyebrow">E2-ALGO · exercice 1.5 · Chapitre 1</div>
+  <h1>Tri à bulles et compte des permutations</h1>
+  <p class="lead">Trier dix nombres avec l'algorithme repeat … until s = 0 et compter les permutations.</p>
+  <div class="chips">
+    <span class="chip">exercice <b>1.5</b></span>
+    <span class="chip">tri à bulles · comparaisons · permutations · inversions · coût</span>
+    <span class="chip">théorie : <b>Algorithmes de tri</b></span>
+  </div>
+</header>
+<main class="wrap">
+  <section>
+    <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
+    <h2>Ce que demande l’exercice</h2>
+    <p>a) Déclarer globalement un tableau de dix nombres choisis non triés et afficher tout son contenu avec printf.</p>
+<p>b) Implémenter l'algorithme de l'énoncé : répéter, remettre s à 0, parcourir de 2 à N, échanger si A[i] est plus petit que A[i−1] et incrémenter s, jusqu'à ce que s vaille 0 ; puis afficher la table triée.</p>
+<p>c) Afficher le nombre de permutations et faire des essais avec d'autres nombres et d'autres ordres.</p>
+<p>La série de l'énoncé est 28, 3, 45, 1, 5, 17, 33, 32, 42 et 2 ; sa sortie annonce 20 permutations.</p>
+    <table class="tbl"><tr><th>ligne</th><th>pseudo-code de l'énoncé</th></tr><tr><td>1</td><td>repeat</td></tr><tr><td>2</td><td>s := 0</td></tr><tr><td>3</td><td>for i is varying from 2 to N do:</td></tr><tr><td>4</td><td>if (A[i] &lt; A[i-1]) then</td></tr><tr><td>5</td><td>swap(A[i], A[i-1])</td></tr><tr><td>6</td><td>s := s+1</td></tr><tr><td>7</td><td>end if</td></tr><tr><td>8</td><td>end for</td></tr><tr><td>9</td><td>until s=0</td></tr></table>
+    <div class="viz"><div class="viz-title">Les barres avant et après le tri</div><div class='viz-grid' style='display:flex;gap:22px;flex-wrap:wrap;font-size:14px;color:#1b1a17'><div style='flex:1 1 300px;min-width:280px'><div style='font-size:13px;color:#5d5b54;margin-bottom:6px'>avant : 28 3 45 1 5 17 33 32 42 2</div><div class='viz-row' style='display:flex;gap:6px;align-items:flex-end'><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>28</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:62%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>3</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:7%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>45</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:100%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>1</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:2%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>5</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:11%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>17</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:38%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>33</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:73%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>32</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:71%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>42</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:93%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>2</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:4%;min-height:5px;background:#5146b8;border-radius:4px 4px 0 0'></div></div></div></div></div><div style='flex:1 1 300px;min-width:280px'><div style='font-size:13px;color:#5d5b54;margin-bottom:6px'>après : 1 2 3 5 17 28 32 33 42 45</div><div class='viz-row' style='display:flex;gap:6px;align-items:flex-end'><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>1</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:2%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>2</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:4%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>3</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:7%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>5</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:11%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>17</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:38%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>28</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:62%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>32</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:71%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>33</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:73%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>42</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:93%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center'><div style='font-size:13px'>45</div><div style='width:100%;height:120px;display:flex;align-items:flex-end'><div class='viz-bar' style='width:100%;height:100%;min-height:5px;background:#0e6b55;border-radius:4px 4px 0 0'></div></div></div></div></div></div><div class='viz-note' style='margin-top:10px;font-size:13px;color:#5d5b54'>Les mêmes dix barres, réordonnées : 20 échanges en 9 passes, la dernière sans échange.</div><div class="viz-caption">La série de l'énoncé, avant et après le tri à bulles : les grandes valeurs remontent à droite, en 9 passes et 20 permutations.</div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
+    <h2>Les notions à mobiliser</h2>
+    <div class="grid"><div class="card"><h3>La bulle</h3><p>Chaque passe compare les voisins de gauche à droite et échange les paires inversées : le plus grand élément atteint la dernière case. Après k passes, les k dernières cases sont définitives.</p></div>
+<div class="card"><h3>Le compteur s</h3><p>s compte les échanges de la passe en cours et repart à 0 au début de chaque passe. Quand une passe entière n'échange rien, s vaut 0 et la boucle repeat s'arrête : le tableau est trié.</p></div>
+<div class="card"><h3>Permutations et inversions</h3><p>Une inversion est une paire d'indices i plus petit que j avec t[i] supérieur à t[j]. Chaque échange de voisins en corrige exactement une : le nombre d'échanges égale le nombre d'inversions, quelle que soit la série.</p></div>
+<div class="card"><h3>Le coût</h3><p>Une passe coûte 4N − 2 pas, un échange 5 (trois écritures et s := s + 1), le test d'arrêt 1 : c = P(4N − 2) + 5I, avec P passes et I permutations. Pour N = 10, une passe vaut 38 pas.</p></div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
+    <h2>Comment procéder</h2>
+    <ol><li>Déclarer le tableau en global et calculer sa taille par sizeof.</li>
+<li>Écrire le do … while : remise de s à 0, puis parcours de l'indice 1 à n−1.</li>
+<li>Échanger deux voisins avec une variable temporaire, puis incrémenter s.</li>
+<li>Cumuler les permutations dans un compteur distinct de s.</li>
+<li>Afficher le tableau de départ, le tableau trié et le total des permutations.</li>
+<li>Rejouer avec une série triée, puis avec l'ordre inverse, pour voir varier passes et échanges.</li></ol>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">04</div><div class="tag">application</div></div>
+    <h2>Application à l’énoncé</h2>
+    <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>/* Tri à bulles du cours : repeat ... until s = 0.
+   Rend le nombre total de permutations. */
+uint32_t triABulles(int16_t t[], size_t n)
+{
+    uint32_t permutations = 0u;
+    uint32_t s;
+    do {
+        s = 0u;                     /* le compteur repart à zéro */
+        for (size_t i = 1u; i &lt; n; i++) {
+            if (t[i] &lt; t[i - 1u]) { /* paire de voisins inversée */
+                int16_t tmp = t[i];
+                t[i] = t[i - 1u];
+                t[i - 1u] = tmp;
+                s++;
+            }
+        }
+        permutations += s;
+    } while (s != 0u);              /* until s = 0 : on s'arrête */
+    return permutations;
+}
+</code></pre></div>
+    <table class="tbl"><tr><th>passe</th><th>s</th><th>cumul</th><th>tableau après la passe</th></tr><tr><td>1</td><td>8</td><td>8</td><td>3 28 1 5 17 33 32 42 2 45</td></tr><tr><td>2</td><td>5</td><td>13</td><td>3 1 5 17 28 32 33 2 42 45</td></tr><tr><td>3</td><td>2</td><td>15</td><td>1 3 5 17 28 32 2 33 42 45</td></tr><tr><td>4</td><td>1</td><td>16</td><td>1 3 5 17 28 2 32 33 42 45</td></tr><tr><td>5</td><td>1</td><td>17</td><td>1 3 5 17 2 28 32 33 42 45</td></tr><tr><td>6</td><td>1</td><td>18</td><td>1 3 5 2 17 28 32 33 42 45</td></tr><tr><td>7</td><td>1</td><td>19</td><td>1 3 2 5 17 28 32 33 42 45</td></tr><tr><td>8</td><td>1</td><td>20</td><td>1 2 3 5 17 28 32 33 42 45</td></tr><tr><td>9</td><td>0</td><td>20</td><td>1 2 3 5 17 28 32 33 42 45</td></tr></table><p>Chaque passe fait exactement 9 comparaisons, quel que soit son nombre d'échanges : 9 × 9 = 81 comparaisons pour 20 permutations. Le coût vaut donc 9 × 38 + 5 × 20 = 442 t.</p>
+    <div class="result"><b>Résultat.</b> Tableau trié : 1 2 3 5 17 28 32 33 42 45, en 20 permutations et 9 passes ; la dernière passe ne change rien.</div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
+    <h2>Les pièges</h2>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Ne pas remettre s à 0 au début de chaque passe : la condition reste vraie et la boucle ne s'arrête jamais.</li>
+<li>Boucler de 0 à n−1 : l'indice i−1 sort du tableau ; le parcours commence à 1.</li>
+<li>Confondre permutations et comparaisons : 20 échanges mais 81 comparaisons sur la série de l'énoncé.</li>
+<li>Prendre 45 pour le résultat de l'énoncé : 45 = 10 × 9 / 2 est le maximum, atteint par l'ordre inverse.</li></ul></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
+    <h2>Trois questions</h2>
+    <div class="qcm" data-qcm>
+<div class="q" data-answer="1" data-why="La série compte 20 inversions, autant que d&#x27;échanges de voisins.">
+<p class="qq">1. Combien de permutations demande la série de l'énoncé ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">9</button>
+<button class="opt" type="button" data-opt="1">20</button>
+<button class="opt" type="button" data-opt="2">45</button>
+<button class="opt" type="button" data-opt="3">81</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="2" data-why="Huit passes échangent, la neuvième trouve s = 0 et arrête la boucle.">
+<p class="qq">2. Combien de passes fait l'algorithme sur cette série ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">1</button>
+<button class="opt" type="button" data-opt="1">8</button>
+<button class="opt" type="button" data-opt="2">9</button>
+<button class="opt" type="button" data-opt="3">10</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="0" data-why="Aucune paire n&#x27;est inversée : une seule passe, neuf comparaisons, zéro échange.">
+<p class="qq">3. Que vaut le nombre de permutations pour un tableau déjà trié ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">0</button>
+<button class="opt" type="button" data-opt="1">1</button>
+<button class="opt" type="button" data-opt="2">9</button>
+<button class="opt" type="button" data-opt="3">45</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 3</div></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-qcm]').forEach(function (qcm) {
+    var score = 0, total = 0;
+    qcm.querySelectorAll('.q').forEach(function (q) {
+      total++;
+      var answer = Number(q.getAttribute('data-answer'));
+      var fb = q.querySelector('.fb');
+      q.querySelectorAll('.opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (q.getAttribute('data-done')) return;
+          q.setAttribute('data-done', '1');
+          var pick = Number(btn.getAttribute('data-opt'));
+          q.querySelectorAll('.opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (i === answer) b.classList.add('ok');
+            if (i === pick && i !== answer) b.classList.add('ko');
+          });
+          fb.hidden = false;
+          fb.innerHTML = (pick === answer ? '<b>Correct.</b> ' : '<b>À revoir.</b> ') + q.getAttribute('data-why');
+          if (pick === answer) score++;
+          var out = qcm.querySelector('.score b');
+          if (out) out.textContent = score;
+        });
+      });
+    });
+    var out = qcm.querySelector('.score b');
+    if (out) out.textContent = '0';
+  });
+})();
+</script>
+
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235146b8'/%3E%3Cpath d='M18 20h28M18 32h20M18 44h24' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Exercice 2.4 — Entrées/sorties utilisateur. Théorie, méthode et QCM.">
+<title>Exercice 2.4 — Entrées/sorties utilisateur</title>
+<style>
+:root{
+  --bg:#f4f2ec;--card:#fffdf9;--card2:#efede5;--ink:#1b1a17;--muted:#5d5b54;--faint:#8b887e;
+  --line:rgba(27,26,23,.16);--line2:rgba(27,26,23,.08);--accent:#5146b8;--accent-s:#eae8fb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151412;--card:#1e1d1a;--card2:#262420;--ink:#e9e6dd;--muted:#b3afa5;--faint:#8b877c;
+  --line:rgba(255,255,255,.17);--line2:rgba(255,255,255,.075);--accent:#b3abff;--accent-s:#2a2451;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top a{text-decoration:none;font-size:12.5px;color:var(--muted);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.top a:hover{background:var(--card2);color:var(--ink)}
+.top .spacer{flex:1}
+.top .exam{font:650 9.5px/1 var(--mono);letter-spacing:.08em;background:var(--accent-s);color:var(--accent);border-radius:999px;padding:5px 8px}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px 70px}
+.eyebrow{font:650 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.07;letter-spacing:-.03em;font-weight:680;margin:10px 0 12px}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:65ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;font:11.5px/1.4 var(--mono);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:650}
+section{margin-top:34px}
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:650 10px var(--mono)}
+.tag{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+h2{font-size:clamp(20px,3vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 8px}
+h3{font-size:15px;font-weight:650;margin:0 0 4px}
+p{margin:0 0 10px}
+ul,ol{margin:8px 0 10px;padding-left:22px}
+li{margin:5px 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0}
+.box{border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:14px}
+.box.rule{border-left-color:#0e6b55}
+.box.trap{border-left-color:#b33a2b}
+.box .lbl{font:650 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.code{margin:12px 0;border-radius:10px;overflow:hidden;background:#1c1c1a;border:1px solid #2d2d29}
+.code code{background:none;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+.code header{display:flex;justify-content:space-between;padding:7px 11px;background:#242420;color:#a9a79e;font:10.5px var(--mono)}
+.code pre{margin:0;padding:12px 13px;overflow:auto;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.tbl th,.tbl td{border-bottom:1px solid var(--line2);padding:7px 8px;text-align:left;vertical-align:top}
+.tbl th{font:650 10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tbl tr:last-child td{border-bottom:0}
+.result{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:11px 13px;margin:12px 0;font-size:14px}
+.viz{margin:14px 0 4px;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:12px 13px;overflow-x:auto}
+.viz-title{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.viz-caption{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+.viz-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.viz-node{min-width:54px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:7px 9px;text-align:center;font:12px/1.3 var(--mono);color:var(--ink)}
+.viz-node b{display:block;font:9px/1.3 var(--mono);letter-spacing:.04em;color:var(--accent);margin-bottom:2px}
+.viz-arrow{font:14px/1 var(--mono);color:var(--faint);white-space:nowrap}
+.viz-label{font:9.5px/1.4 var(--mono);color:var(--faint);text-align:center}
+.viz-stack{display:flex;flex-direction:column;gap:5px;align-items:center;padding:4px 0}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:5px;padding:4px 0}
+.viz-cell{border:1px solid var(--line2);background:var(--card2);border-radius:6px;padding:6px 5px;text-align:center;font:11px/1.3 var(--mono)}
+.viz-bar{height:10px;border-radius:3px;background:var(--accent);min-width:2px}
+.viz-note{font-size:12px;color:var(--muted);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px}
+.viz svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.qcm{margin-top:12px}
+.q{background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:13px 14px;margin-top:10px}
+.qq{font-weight:600;margin:0 0 9px;font-size:14.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:8px 10px;font:13px/1.45 var(--sans);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{border-color:#0e6b55;background:rgba(14,107,85,.14)}
+.opt.ko{border-color:#b33a2b;background:rgba(179,58,43,.14)}
+.fb{margin-top:9px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:9px}
+.score{font:12px var(--mono);color:var(--faint);margin-top:12px}
+.hero{max-width:860px;margin:0 auto;padding:32px 22px 0}
+.home{max-width:1050px;margin:0 auto;padding:42px 22px 70px}
+.home h1{margin-bottom:8px}
+.group{margin-top:28px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line2);padding-bottom:7px;margin-bottom:11px}
+.group-head h2{font-size:14px;font-weight:650;margin:0}
+.group-head span{font:10.5px var(--mono);color:var(--faint)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.ex-card{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .14s ease}
+.ex-card:hover{transform:translateY(-2px)}
+.ex-card .num{font:650 10px var(--mono);color:var(--accent)}
+.ex-card h3{font-size:15.5px;margin:1px 0 0}
+.ex-card p{font-size:12.5px;line-height:1.45;color:var(--muted);margin:0;flex:1}
+.ex-card .go{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px}
+@media (max-width:640px){
+  .wrap,.hero{padding:24px 15px 55px}
+  .home{padding:28px 15px 60px}
+  .lead{font-size:15.5px}
+  .cards{grid-template-columns:1fr}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:5px 4px}
+  .top{gap:6px;padding:8px 10px}
+  .top a{font-size:11.5px}
+  .top .spacer{display:none}
+  .top .exam{margin-left:auto}
+  .code pre{font-size:11.5px;line-height:1.65}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.001ms!important}}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="index.html">← Tous les exercices</a>
+  <span class="spacer"></span>
+  <a href="../fichiers/algo-fichiers-theorie-animee.html">Version théorie · Entrées/sorties et fichiers</a>
+  <span class="exam">TE1</span>
+</div>
+<header class="hero">
+  <div class="eyebrow">E2-ALGO · exercice 2.4 · Chapitre 2</div>
+  <h1>Entrées/sorties utilisateur</h1>
+  <p class="lead">Lire deux flottants au clavier avec une fonction d'invite, gérer les erreurs et afficher la somme au format demandé.</p>
+  <div class="chips">
+    <span class="chip">exercice <b>2.4</b></span>
+    <span class="chip">scanf · fgets · validation · somme · erreurs de saisie</span>
+    <span class="chip">théorie : <b>Entrées/sorties et fichiers</b></span>
+  </div>
+</header>
+<main class="wrap">
+  <section>
+    <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
+    <h2>Ce que demande l’exercice</h2>
+    <p>L'application lit deux nombres à virgule flottante saisis sur la console et affiche leur somme sur celle-ci.</p>
+<p>L'énoncé montre les invites « Please enter first operand: » et « Please enter second operand: », puis « Result of 1.20000 + 3.45000 = 4.65000 ».</p>
+<p>La lecture est d'abord dans main avec scanf, puis déplacée dans une fonction qui reçoit le texte d'invite et retourne la valeur convertie ; l'étape e ajoute le traitement d'erreur.</p>
+    
+    <div class="viz"><div class="viz-title">De la console au résultat</div><div class="viz-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 230" width="100%" role="img" aria-label="console, tampon, scanf ou fgets, résultat" style="max-width:100%;height:auto"><defs><marker id="ar24" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--muted,#5d5b54)"/></marker></defs><text x="76" y="40" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:600">CONSOLE</text><text x="245" y="40" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:600">TAMPON stdin</text><text x="423" y="40" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:600">LECTURE</text><text x="600" y="40" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:600">RÉSULTAT</text><rect x="20" y="50" width="112" height="86" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><rect x="184" y="50" width="122" height="86" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><rect x="356" y="50" width="134" height="86" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><rect x="540" y="50" width="120" height="86" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="76" y="86" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:15px;font-weight:600">1.2</text><text x="76" y="110" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:15px;font-weight:600">3.45</text><text x="245" y="100" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:500">1.2\n3.45\n</text><text x="423" y="82" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">scanf</text><text x="423" y="104" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">fgets</text><text x="423" y="126" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:500">+ strtod</text><text x="600" y="100" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:16px;font-weight:600">4.65000</text><path d="M132 93 H182" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar24)"/><path d="M306 93 H354" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar24)"/><path d="M490 93 H538" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar24)"/><text x="76" y="158" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">frappe</text><text x="245" y="158" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">octets</text><text x="423" y="158" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">conversion</text><text x="600" y="158" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">somme</text><text x="20" y="194" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:400">scanf convertit le début et laisse « abc » dans le tampon.</text><text x="20" y="218" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:400">fgets lit la ligne entière, puis strtod refuse « 1.2abc ».</text></svg></div><div class="viz-caption">La saisie passe par le tampon d'entrée, puis scanf ou fgets + strtod la convertit avant l'affichage de la somme.</div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
+    <h2>Les notions à mobiliser</h2>
+    <div class="grid"><div class="card"><h3>scanf renvoie un compte d'affectations</h3><p><code>scanf("%lf", &amp;v)</code> renvoie 1 en cas de succès, 0 si le texte ne correspond pas au format, <code>EOF</code> avant toute conversion. Le test correct est <code>!= 1</code> ; <code>feof</code> n'aide pas ici.</p></div>
+<div class="card"><h3>scanf ou fgets</h3><p><code>scanf</code> laisse dans le tampon ce qu'il n'a pas consommé. <code>fgets</code> lit une ligne bornée et garde le <code>'\n'</code> ; avec <code>strtod</code>, il refuse « 1.2abc ». L'énoncé impose <code>scanf</code>, <code>fgets</code> est la variante robuste.</p></div>
+<div class="card"><h3>Invite et tampon</h3><p><code>stdout</code> est tamponné : une invite sans <code>'\n'</code> peut rester invisible. <code>fflush(stdout)</code> la force. Après un échec, la saisie fautive reste dans le tampon : sans boucle <code>getchar</code> jusqu'à <code>'\n'</code> ou <code>EOF</code>, la lecture suivante échoue aussi.</p></div>
+<div class="card"><h3>Format de sortie</h3><p>L'énoncé affiche cinq décimales : <code>%.5f</code>. Avec <code>%f</code>, on obtient six décimales (1.200000). La somme 1.2 + 3.45 s'affiche 4.65000.</p></div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
+    <h2>Comment procéder</h2>
+    <ol><li>Écrire lireOperande(const char *invite, double *valeur), qui affiche l'invite et lit un double.</li>
+<li>Appeler fflush(stdout) avant la lecture.</li>
+<li>Tester le retour de scanf : != 1 signale l'échec.</li>
+<li>Vider la ligne avec getchar jusqu'à '\n' ou EOF, puis retourner 0.</li>
+<li>Dans main, deux appels, sortie sur stderr si l'un échoue, affichage avec %.5f.</li></ol>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">04</div><div class="tag">application</div></div>
+    <h2>Application à l’énoncé</h2>
+    <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+/* 1 si la lecture a reussi, 0 sinon */
+static int lireOperande(const char *invite, double *valeur)
+{
+    printf("%s", invite);
+    fflush(stdout);                 /* l'invite n'a pas de '\n' */
+    if (scanf("%lf", valeur) != 1) {
+        int c;
+        while ((c = getchar()) != '\n' &amp;&amp; c != EOF) { }  /* vider la ligne */
+        return 0;
+    }
+    return 1;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    if (!lireOperande("Please enter first operand: ", &amp;a)
+        || !lireOperande("Please enter second operand: ", &amp;b)) {
+        fprintf(stderr, "Valeur invalide.\n");
+        return 1;
+    }
+    printf("Result of %.5f + %.5f = %.5f\n", a, b, a + b);
+    return 0;
+}</code></pre></div>
+    <p>Le programme reproduit la console de l'énoncé ; une saisie invalide part sur <code>stderr</code> et retourne 1.</p><table class="tbl"><tr><th>saisie</th><th>sortie</th><th>code</th></tr><tr><td>1.2 puis 3.45</td><td><code>Result of 1.20000 + 3.45000 = 4.65000</code></td><td>0</td></tr><tr><td>abc</td><td><code>Valeur invalide.</code> (stderr)</td><td>1</td></tr><tr><td>1.2 puis fin de fichier</td><td><code>Valeur invalide.</code> (stderr)</td><td>1</td></tr><tr><td>1.2abc</td><td>1.2 accepté, puis <code>Valeur invalide.</code></td><td>1</td></tr></table><p>Le dernier cas montre la limite de <code>scanf</code> : il s'arrête au premier caractère non numérique et laisse « abc » dans le tampon.</p>
+    <div class="result"><b>Résultat.</b> <code>1.20000 + 3.45000 = 4.65000</code> ; sur « abc », le programme affiche « Valeur invalide. » sur stderr et retourne 1.</div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
+    <h2>Les pièges</h2>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Tester scanf(...) == 0 : EOF (−1) passe pour un succès ; il faut != 1.</li>
+<li>Oublier fflush(stdout) : l'invite reste dans le tampon et le programme semble bloqué.</li>
+<li>Ne pas vider le tampon après une erreur : la lecture suivante échoue sur les mêmes caractères.</li>
+<li>Utiliser %f au lieu de %.5f : la sortie ne correspond plus à l'énoncé.</li></ul></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
+    <h2>Trois questions</h2>
+    <div class="qcm" data-qcm>
+<div class="q" data-answer="1" data-why="Aucune affectation n&#x27;a eu lieu : le retour vaut 0 et « abc » reste dans le tampon.">
+<p class="qq">1. Que renvoie scanf("%lf", &amp;v) si la saisie est « abc » ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">1</button>
+<button class="opt" type="button" data-opt="1">0</button>
+<button class="opt" type="button" data-opt="2">EOF</button>
+<button class="opt" type="button" data-opt="3">−1</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="1" data-why="&lt;code&gt;stdout&lt;/code&gt; est tamponné : sans &lt;code&gt;fflush&lt;/code&gt;, l&#x27;invite peut rester invisible.">
+<p class="qq">2. Pourquoi appeler fflush(stdout) après l'invite ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">pour vider le tampon d'entrée</button>
+<button class="opt" type="button" data-opt="1">pour afficher l'invite qui ne finit pas par un retour à la ligne</button>
+<button class="opt" type="button" data-opt="2">pour convertir la saisie en double</button>
+<button class="opt" type="button" data-opt="3">pour fermer stdout</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="1" data-why="La conversion s&#x27;arrête au premier caractère non numérique : le retour vaut 1 et le reste n&#x27;est pas consommé.">
+<p class="qq">3. Avec scanf("%lf", &amp;v) et la saisie « 1.2abc », que se passe-t-il ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">scanf renvoie 0 et v reste inchangé</button>
+<button class="opt" type="button" data-opt="1">scanf renvoie 1, v vaut 1.2 et « abc » reste dans le tampon</button>
+<button class="opt" type="button" data-opt="2">scanf renvoie EOF</button>
+<button class="opt" type="button" data-opt="3">scanf consomme toute la ligne</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 3</div></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-qcm]').forEach(function (qcm) {
+    var score = 0, total = 0;
+    qcm.querySelectorAll('.q').forEach(function (q) {
+      total++;
+      var answer = Number(q.getAttribute('data-answer'));
+      var fb = q.querySelector('.fb');
+      q.querySelectorAll('.opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (q.getAttribute('data-done')) return;
+          q.setAttribute('data-done', '1');
+          var pick = Number(btn.getAttribute('data-opt'));
+          q.querySelectorAll('.opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (i === answer) b.classList.add('ok');
+            if (i === pick && i !== answer) b.classList.add('ko');
+          });
+          fb.hidden = false;
+          fb.innerHTML = (pick === answer ? '<b>Correct.</b> ' : '<b>À revoir.</b> ') + q.getAttribute('data-why');
+          if (pick === answer) score++;
+          var out = qcm.querySelector('.score b');
+          if (out) out.textContent = score;
+        });
+      });
+    });
+    var out = qcm.querySelector('.score b');
+    if (out) out.textContent = '0';
+  });
+})();
+</script>
+
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Transformateur monophasé — E2-ELMEC1</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-int{background:var(--blue-s);border-color:var(--blue)}
+  .sw-char{background:var(--green-s);border-color:var(--green)}
+  .sw-ptr{background:var(--accent-s);border-color:var(--accent)}
+  .sw-heap{background:var(--coral-s);border-color:var(--coral)}
+  .sw-free{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- traducteur de déclarations ---------- */
+  .translator{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px;background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:16px;margin:22px 0;box-shadow:var(--shadow);align-items:start}
+  .trans-list{display:grid;gap:4px;align-content:start}
+  .trans-list button{text-align:left;border:1px solid transparent;background:var(--card2);border-radius:7px;padding:5px 8px;font:11.5px/1.5 var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s,color .15s;overflow-wrap:anywhere}
+  .trans-list button:hover{color:var(--ink);background:var(--card)}
+  .trans-list button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .trans-list button code{background:none;border:0;padding:0;font-size:12px;color:inherit}
+  .trans-out{background:var(--card2);border-radius:10px;padding:12px 14px;min-height:150px}
+  .trans-out .decl{font:12px var(--mono);color:var(--accent);margin-bottom:6px;overflow-wrap:anywhere}
+  .trans-out .fr{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:550;max-width:40ch}
+  .trans-out .why{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;max-width:46ch}
+  @media (max-width:760px){
+    .translator{grid-template-columns:1fr;padding:13px}
+    .trans-list{grid-template-columns:1fr 1fr}
+    .trans-out{min-height:120px}
+  }
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .mem-stage{position:relative;padding:12px 4px 4px;margin-top:2px}
+  .mem-groups{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;justify-content:center}
+  .mem-groups.is-stack{flex-direction:column;align-items:center;gap:24px}
+  .mem-groups.is-stack .mem-group{width:100%;position:relative;padding-top:16px}
+  .mem-groups.is-stack .mem-gtitle{position:absolute;left:0;top:0;text-align:left}
+  .mem-group{display:grid;justify-items:center;gap:6px;min-width:0}
+  .mem-gtitle{font:650 9.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .mem-ghint{font-size:11px;color:var(--faint);line-height:1.35;text-align:center;max-width:230px}
+  .cells{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:flex-start}
+  .cells.is-column{flex-direction:column;gap:44px;align-items:center}
+  .cell{--cw:108px;width:var(--cw);max-width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:7px 8px 6px;text-align:center;position:relative;transition:border-color .22s,background .22s,box-shadow .22s,opacity .22s}
+  .cell.is-ptr{border-color:var(--accent);background:linear-gradient(var(--accent-s),var(--card) 72%)}
+  .cell.is-char{border-color:var(--green);background:linear-gradient(var(--green-s),var(--card) 78%)}
+  .cell.is-heap{border-color:var(--coral);background:linear-gradient(var(--coral-s),var(--card) 78%)}
+  .cell.is-active{box-shadow:0 0 0 3px var(--accent-s);border-color:var(--accent)}
+  .cell.is-changed{animation:flash .9s ease}
+  .cell.is-new{animation:pop .34s ease}
+  .cell.is-freed{opacity:.62;border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px)}
+  .cell.is-freed .cval{text-decoration:line-through}
+  .cell.is-err{border-color:var(--red);background:var(--red-s)}
+  .cell.is-null .cval{color:var(--faint)}
+  .cname{display:flex;align-items:center;justify-content:center;gap:4px;font:650 11.5px/1.2 var(--mono);color:var(--ink);min-height:16px}
+  .ctype{font:8.5px/1 var(--mono);text-transform:none;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:2px 3px;font-weight:400}
+  .cval{font:700 18px/1.18 var(--mono);margin:4px 0 1px;min-height:21px;overflow-wrap:anywhere}
+  .is-ptr .cval{font-size:13.5px;font-weight:650;color:var(--accent);letter-spacing:-.02em}
+  .caddr{font:9.5px/1.15 var(--mono);color:var(--faint);letter-spacing:.01em}
+  .cfields{display:grid;gap:1px;margin:4px 0 2px}
+  .cf{display:flex;justify-content:space-between;gap:8px;font:11px/1.5 var(--mono);border-bottom:1px dotted var(--line2);padding:1px 2px}
+  .cf:last-child{border-bottom:0}
+  .cf span{color:var(--faint)}
+  .cf b{font-weight:650}
+  .cell.w-node{--cw:158px}
+  .cell.w-wide{--cw:150px}
+
+  .arrow-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .arrow{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .arrow.is-accent{stroke:var(--accent);stroke-width:2}
+  .alabel{font:10px/1 var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- simulateur de code ---------- */
+  .codesim .sim{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+  .sim-code{list-style:none;margin:0;padding:8px 0;background:#1c1c1a;border-radius:11px;font:12px/1.72 var(--mono);overflow:auto;min-height:150px}
+  .sim-code li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:1px 11px 1px 6px;border-left:3px solid transparent;color:#cfccc4;white-space:pre;cursor:pointer}
+  .sim-code li:hover{background:rgba(255,255,255,.045)}
+  .sim-code li .ln{color:#67655f;text-align:right;user-select:none}
+  .sim-code li.on{background:rgba(255,255,255,.09);border-left-color:var(--accent-2);color:#fff}
+  .sim-code li.on .ln{color:#b9b6ad}
+  .sim-code .k{color:#9ec7f3} .sim-code .n{color:#e7b06a} .sim-code .s{color:#a7d8a9} .sim-code .c{color:#8b8880} .sim-code .f{color:#c6a9f8}
+  .sim-side{min-width:0}
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:9px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+  @media (max-width:880px){
+    .codesim .sim{grid-template-columns:1fr}
+    .codesim .sim-code{min-height:0}
+  }
+
+  /* ---------- explorateur d'adresses ---------- */
+  .addrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .addr-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0 13px}
+  .byte{border:1px solid var(--line2);border-radius:7px;background:var(--card2);padding:4px 3px 3px;text-align:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+  .byte:hover{transform:translateY(-1px);border-color:var(--line)}
+  .byte .ba{display:block;font:8.5px/1.2 var(--mono);color:var(--faint)}
+  .byte .bv{display:block;font:650 12px/1.3 var(--mono);color:var(--ink)}
+  .byte.v-x{background:var(--blue-s);border-color:var(--blue)}
+  .byte.v-c{background:var(--green-s);border-color:var(--green)}
+  .byte.v-p{background:var(--accent-s);border-color:var(--accent)}
+  .byte.pad{opacity:.5;background:transparent;border-style:dashed;cursor:default}
+  .byte.pad:hover{transform:none;border-color:var(--line2)}
+  .byte.sel{outline:2px solid var(--ink);outline-offset:1px}
+  .addr-vars{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+  .addr-vars button{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:6px 9px;font:12px var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s}
+  .addr-vars button:hover{background:var(--card)}
+  .addr-vars button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .addr-info{font-size:13px;line-height:1.55;color:var(--muted);background:var(--card2);border-radius:9px;padding:9px 11px;min-height:3.1em}
+  .addr-info b{color:var(--ink)}
+  .addr-info .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- widget tableau ---------- */
+  .arrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .arr-stage{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;align-items:center;padding:34px 0 6px;min-height:120px}
+  .arr-p{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:6px 8px;text-align:center}
+  .arr-p .n{font:650 11px/1.2 var(--mono);color:var(--ink)}
+  .arr-p .v{font:650 13px/1.2 var(--mono);color:var(--accent);margin:2px 0}
+  .arr-p .ty{font:9px/1 var(--mono);color:var(--faint)}
+  .arr-track{position:relative;display:flex;gap:0;min-width:0}
+  .arr-cell{flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--card);padding:7px 3px 6px;text-align:center;position:relative;transition:background .2s,border-color .2s,transform .2s}
+  .arr-cell:first-child{border-radius:9px 0 0 9px}
+  .arr-cell:last-child{border-radius:0 9px 9px 0}
+  .arr-cell .av{font:700 17px/1.2 var(--mono);color:var(--ink)}
+  .arr-cell .ai{font:9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+  .arr-cell.sel{background:var(--teal-s);border-color:var(--teal);transform:translateY(-2px)}
+  .arr-cell.sel .av{color:var(--teal)}
+  .arr-cur{position:absolute;top:-31px;transform:translateX(-50%);text-align:center;font:650 10.5px/1 var(--mono);color:var(--teal);transition:left .28s ease;white-space:nowrap}
+  .arr-cur::after{content:"";display:block;width:1.5px;height:16px;background:var(--teal);margin:4px auto 0}
+  .arr-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .arr-formula{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px;margin-top:8px}
+  .arr-formula b{color:var(--ink)}
+  .arr-formula .ok{color:var(--teal)} .arr-formula .ko{color:var(--red)}
+  .arr-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .arr-ctrl input[type=range]{flex:1 1 160px;accent-color:var(--teal);min-width:120px}
+  .arr-ctrl output{font:12px var(--mono);color:var(--faint);min-width:58px;text-align:right}
+
+  /* ---------- const ---------- */
+  .constgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:20px 0}
+  @media (max-width:800px){.constgrid{grid-template-columns:1fr}}
+  .const-card{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .const-card code{display:block;font-size:12px;background:var(--card2);white-space:nowrap;overflow-x:auto}
+  .const-viz{display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);color:var(--muted);flex-wrap:wrap;min-height:38px}
+  .cv-box{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 6px}
+  .cv-ptr{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .cv-lock{color:var(--red);font-size:12px}
+  .cv-arrow{color:var(--faint)}
+  .const-btns{display:flex;flex-wrap:wrap;gap:5px}
+  .const-btns button{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:5px 8px;font:10.5px var(--mono);color:var(--muted);cursor:pointer}
+  .const-btns button:hover{background:var(--card);color:var(--ink)}
+  .const-fb{font-size:11.5px;line-height:1.4;min-height:2.6em;color:var(--faint)}
+  .const-fb.ok{color:var(--teal)} .const-fb.ko{color:var(--red)}
+
+  /* ---------- pointeur de fonction ---------- */
+  .fplab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .fp-stage{display:flex;flex-direction:column;align-items:center;gap:26px;padding:10px 0;position:relative}
+  .fp-op{background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:8px 11px;text-align:center;min-width:110px}
+  .fp-op .n{font:650 11px/1.2 var(--mono)}
+  .fp-op .v{font:650 12.5px/1.3 var(--mono);color:var(--accent);margin-top:2px}
+  .fp-fns{display:flex;gap:8px;flex-wrap:wrap}
+  .fp-fn{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:8px 10px;font:11.5px/1.4 var(--mono);color:var(--muted);cursor:pointer;text-align:left;transition:border-color .18s,background .18s}
+  .fp-fn b{display:block;color:var(--ink);font-size:12.5px}
+  .fp-fn span{color:var(--faint);font-size:10px}
+  .fp-fn.on{border-color:var(--teal);background:var(--teal-s);color:var(--teal)}
+  .fp-fn.on b{color:var(--teal)}
+  .fp-out{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px}
+  .fp-out b{color:var(--ink)}
+  .fp-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:flex;gap:9px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .mem-groups{gap:20px}
+    .cell{--cw:98px}
+    .addr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+    .arr-stage{grid-template-columns:1fr;gap:0;padding:8px 0 6px}
+    .arr-p{justify-self:start;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start;padding:5px 8px;margin-bottom:54px;width:auto}
+    .arr-p .v{margin:0}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.addrlab,.arrlab,.fplab,.quiz,.box{box-shadow:none}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+
+  /* ---------- formules (fiches ELMEC1) ---------- */
+  .math{font:16.5px/1.9 "Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:11px 15px;margin:14px 0;overflow-x:auto;white-space:pre-wrap;color:var(--ink);max-width:100%}
+  .math .ml{display:block;font:650 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+  .math i,.fx i{font-style:italic}
+  .math sub,.math sup,.fx sub,.fx sup{font-size:.72em;line-height:0}
+  .fx{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:0 5px;white-space:nowrap}
+  .mono{font-family:var(--mono);font-size:12.5px}
+
+  /* ---------- schemas electromagnetiques ---------- */
+  .core{fill:var(--card2);stroke:var(--muted);stroke-width:2;stroke-linejoin:round}
+  .core-hot{fill:var(--amber-s);stroke:var(--amber)}
+  .wire{fill:none;stroke:var(--ink);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .wire-d{fill:none;stroke:var(--faint);stroke-width:1.4;stroke-dasharray:5 4;stroke-linecap:round}
+  .flux{fill:none;stroke:var(--accent);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .flux2{fill:none;stroke:var(--teal);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .coil{fill:none;stroke:var(--coral);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  .ax{stroke:var(--faint);stroke-width:1;stroke-dasharray:3 3}
+  .lgd{font:10px var(--mono);fill:var(--faint)}
+  .figgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+  @media (max-width:720px){.figgrid{grid-template-columns:1fr}}
+  .figgrid figure{margin:0}
+  .sw-core{background:var(--card2);border-color:var(--muted)}
+  .sw-flux{background:var(--accent-s);border-color:var(--accent)}
+  .sw-coil{background:var(--coral-s);border-color:var(--coral)}
+  .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+  .legend .sw-t{font-size:12px;color:var(--faint)}
+  .tbl.wide{max-width:none}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ELMEC1</div>
+        <div class="brandsub">Transformateur monophasé<br>Fiche de révision · TE2</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>Deux circuits couplés</a>
+      <a href="#s2"><i>02</i>Grandeurs et conventions</a>
+      <a href="#s3"><i>03</i>Transformateur idéal</a>
+      <a href="#s4"><i>04</i>Équations des enroulements</a>
+      <a href="#s5"><i>05</i>Flux, fuites, dispersion</a>
+      <a href="#s6"><i>06</i>Schéma équivalent en T</a>
+      <a href="#s7"><i>07</i>Essai à vide</a>
+      <a href="#s8"><i>08</i>Essai en court-circuit</a>
+      <a href="#s9"><i>09</i>Charge et rendement</a>
+      <a href="#s10"><i>10</i>Pertes fer</a>
+      <a href="#s11"><i>11</i>Transformateur de courant</a>
+      <a href="#s12"><i>12</i>Formule 4,44</a>
+      <a href="#s13"><i>13</i>Erreurs, QCM et mémo</a>
+    </nav>
+    <div class="sidefoot"><b>TE2</b> · chapitres 3–4<br><span>13 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ELMEC1 · chapitre 3 · transformateur monophasé</div>
+      <h1>Transformateur <em>monophasé</em></h1>
+      <p class="sub">Deux circuits couplés par un flux commun, le transformateur idéal puis réel, le schéma équivalent en T, les trois essais du banc LMA-T-7A et les pertes fer.</p>
+      <div class="meta">
+        <span class="chip"><b>13</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires pas à pas</span>
+        <span class="chip">formulaire A4 autorisé</span>
+        <span class="chip">TE2 · ch. 3–4</span>
+        <span class="chip">plaque 400 V / 125 V · 1000 VA</span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Deux circuits couplés</h3><p>Noyau commun, isolation, transport en haute tension.</p></a>
+        <a class="step" href="#s3"><div class="n">02</div><h3>Transformateur idéal</h3><p>Rapport k, puissances, impédance ramenée.</p></a>
+        <a class="step" href="#s6"><div class="n">03</div><h3>Schéma équivalent</h3><p>Modèle en T ramené au primaire.</p></a>
+        <a class="step" href="#s7"><div class="n">04</div><h3>Essais à vide et en court-circuit</h3><p>Pertes fer, R_fer, X_m, R_cc, X_cc.</p></a>
+        <a class="step" href="#s9"><div class="n">05</div><h3>Charge et rendement</h3><p>Chute de tension, bilan de puissance.</p></a>
+        <a class="step" href="#s12"><div class="n">06</div><h3>Formule 4,44</h3><p>Flux, section, dimensionnement.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-core"></i>matériau doux / circuit magnétique</span>
+        <span><i class="sw sw-flux"></i>flux principal</span>
+        <span><i class="sw sw-coil"></i>bobinage</span>
+        <span><i class="sw sw-air"></i>fuite / dispersion</span>
+        <span class="sw-t">flèche = sens du flux</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b>, et le compteur indique l'état courant ; le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche. Convention de la fiche : indice 1 au primaire, indice 2 au secondaire, prime pour une grandeur secondaire ramenée au primaire (<span class="fx">R′₂ = k²R₂</span>).</p>
+    </div>
+
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1</span>
+      <span class="doc-ref" title="Document du cours non publié">2</span>
+      <span class="doc-ref" title="Document du cours non publié">3</span>
+      <span class="doc-ref" title="Document du cours non publié">4</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">l'idée</div></div>
+      <h2>Deux bobinages sur un même noyau, sans liaison électrique</h2>
+      <p class="lead">Le transformateur monophasé comporte deux enroulements placés sur un circuit magnétique fermé : le primaire reçoit l'énergie, le secondaire la restitue. Le flux variable qui traverse les deux enroulements est le seul lien entre eux ; il n'existe aucun contact galvanique entre primaire et secondaire.</p>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 270" role="img" aria-label="Deux enroulements sur un noyau fermé, reliés par le flux commun">
+            <rect x="150" y="36" width="340" height="30" class="core"/>
+            <rect x="150" y="182" width="340" height="30" class="core"/>
+            <rect x="150" y="66" width="30" height="116" class="core"/>
+            <rect x="460" y="66" width="30" height="116" class="core"/>
+            <path class="coil" d="M180 78 q22 11 0 22 q22 11 0 22 q22 11 0 22 q22 11 0 22"/>
+            <path class="coil" d="M460 78 q-22 11 0 22 q-22 11 0 22 q-22 11 0 22 q-22 11 0 22"/>
+            <path d="M165 150 L165 90 Q165 51 200 51 L440 51 Q475 51 475 90 L475 150" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar-accent)"/>
+            <path class="wire" d="M180 78 L105 78"/>
+            <path class="wire" d="M180 166 L105 166"/>
+            <path class="wire" d="M460 78 L535 78"/>
+            <path class="wire" d="M460 166 L535 166"/>
+            <circle cx="105" cy="78" r="3.5" fill="var(--ink)"/>
+            <circle cx="105" cy="166" r="3.5" fill="var(--ink)"/>
+            <circle cx="535" cy="78" r="3.5" fill="var(--ink)"/>
+            <circle cx="535" cy="166" r="3.5" fill="var(--ink)"/>
+            <path class="arr" d="M88 80 L88 160" marker-end="url(#ar)"/>
+            <path class="arr" d="M552 80 L552 160" marker-end="url(#ar)"/>
+            <text class="t" x="88" y="176" text-anchor="middle">U₁</text>
+            <text class="t" x="552" y="176" text-anchor="middle">U₂</text>
+            <text class="ts" x="205" y="130">N₁</text>
+            <text class="ts" x="435" y="130" text-anchor="end">N₂</text>
+            <text class="tm" x="320" y="28" text-anchor="middle">flux commun Φ</text>
+            <text class="ts" x="320" y="250" text-anchor="middle">aucune liaison électrique entre les deux enroulements</text>
+          </svg>
+        </div>
+        <figcaption>Le flux principal se referme dans le noyau et traverse les deux enroulements. Le primaire et le secondaire restent électriquement isolés : la puissance passe par le champ magnétique.</figcaption>
+      </figure>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Transporter une puissance <span class="fx">S = UI</span> sous une tension élevée réduit le courant : les pertes en ligne, proportionnelles à <span class="fx">I²</span>, diminuent comme le carré du rapport de tension. C'est la raison d'être du transformateur dans le réseau.</p>
+      </div>
+
+      <h3>Ce que le transformateur transmet, ce qu'il ne modifie pas</h3>
+      <table class="tbl">
+        <caption>Bilan qualitatif d'un transformateur monophasé</caption>
+        <thead><tr><th>Grandeur</th><th>Comportement</th></tr></thead>
+        <tbody>
+          <tr><td>Tension</td><td>transformée dans le rapport des nombres de spires ; montée ou abaissée</td></tr>
+          <tr><td>Courant</td><td>transformé dans le rapport inverse (à puissance conservée)</td></tr>
+          <tr><td>Puissance apparente</td><td>conservée dans le modèle idéal, <span class="fx">S₁ = S₂</span> ; un peu réduite dans le transformateur réel par les pertes</td></tr>
+          <tr><td>Fréquence</td><td>inchangée : le secondaire reproduit la fréquence du primaire</td></tr>
+          <tr><td>Isolation</td><td>assurée : aucun conducteur commun entre les enroulements</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p>Transport et distribution de l'énergie, alimentation des appareils, isolement de sécurité, mesure de tensions et de courants (transformateurs de tension et de courant), adaptation d'impédance.</p>
+      </div>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">le modèle</div></div>
+      <h2>Nommer les grandeurs avant d'écrire les équations</h2>
+      <p class="lead">Le chapitre 2 a introduit le flux de champ principal, le flux totalisé et la solénation. Le chapitre 3 les applique à deux enroulements : <span class="fx">N₁</span> spires au primaire, <span class="fx">N₂</span> au secondaire, traversées par le même flux principal <span class="fx">Φ</span>.</p>
+
+      <div class="math"><span class="ml">Grandeurs des deux enroulements</span>
+Ψ₁ = N₁ Φ        Ψ₂ = N₂ Φ        Θ = N₁ i₁ − N₂ i₂
+u = R i + dΨ/dt    (convention récepteur)
+      </div>
+
+      <p><span class="fx">Ψ</span> est le flux totalisé (webers-tours), <span class="fx">Φ</span> le flux par spire (webers), <span class="fx">Θ</span> la solénation (ampères-tours). Le signe du terme <span class="fx">N₂i₂</span> dépend du sens des courants et des enroulements.</p>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 230" role="img" aria-label="Convention des bornes homologues et sens des courants">
+            <path class="coil" d="M180 50 q-18 12 0 24 q-18 12 0 24 q-18 12 0 24 q-18 12 0 24"/>
+            <path class="coil" d="M460 50 q18 12 0 24 q18 12 0 24 q18 12 0 24 q18 12 0 24"/>
+            <path class="wire" d="M110 50 L180 50"/>
+            <path class="wire" d="M110 146 L180 146"/>
+            <path class="wire" d="M460 50 L530 50"/>
+            <path class="wire" d="M460 146 L530 146"/>
+            <circle cx="170" cy="50" r="4" fill="var(--coral)"/>
+            <circle cx="470" cy="50" r="4" fill="var(--coral)"/>
+            <path class="arr" d="M118 50 L150 50" marker-end="url(#ar)"/>
+            <path class="arr" d="M490 50 L522 50" marker-end="url(#ar)"/>
+            <text class="t" x="134" y="40" text-anchor="middle">i₁</text>
+            <text class="t" x="506" y="40" text-anchor="middle">i₂</text>
+            <path class="arr" d="M95 52 L95 144" marker-end="url(#ar)"/>
+            <path class="arr" d="M545 52 L545 144" marker-end="url(#ar)"/>
+            <text class="t" x="80" y="152" text-anchor="middle">u₁</text>
+            <text class="t" x="560" y="152" text-anchor="middle">u₂</text>
+            <text class="tm" x="320" y="24" text-anchor="middle">bornes homologues marquées par un point</text>
+            <text class="ts" x="320" y="198" text-anchor="middle">les courants entrant par les points créent des flux de même sens</text>
+          </svg>
+        </div>
+        <figcaption>Le point repère la borne homologue : un courant qui entre par le point au primaire produit un flux orienté de la même façon qu'un courant qui entre par le point au secondaire. Retourner un enroulement inverse le signe de <span class="fx">u₂</span> dans les équations.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Au primaire, convention récepteur : <span class="fx">u₁ = R₁i₁ + dΨ₁/dt</span>. Au secondaire qui débite, convention générateur : <span class="fx">u₂ = −R₂i₂ − dΨ₂/dt</span>. Les deux relations ne sont valables qu'avec des sens de référence explicités.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Écrire <span class="fx">u₂ = R₂i₂ + dΨ₂/dt</span> sans préciser la convention puis changer de signe au milieu du calcul : une erreur de sens se propage jusqu'au schéma équivalent et fausse la chute de tension.</p>
+      </div>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">le modèle</div></div>
+      <h2>Le transformateur idéal : k = N₁/N₂ et S₁ = S₂</h2>
+      <p class="lead">Le modèle idéal suppose des résistances nulles, aucune fuite, aucune perte et une perméabilité infinie : le courant magnétisant est nul et toute la puissance passe du primaire au secondaire. Le rapport de transformation relie tensions et courants.</p>
+
+      <div class="math"><span class="ml">Transformateur idéal</span>
+k = N₁/N₂ = U₁/U₂ = I₂/I₁
+S₁ = U₁ I₁ = U₂ I₂ = S₂
+Z′₂ = k² Z₂        Z₂ = Z′₂/k²
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>La plaque du banc LMA-T-7A donne 400 V / 2,6 A au primaire et 125 V / 8 A au secondaire, pour 1000 VA et 50 Hz. Le rapport vaut <span class="fx">k = 400/125 = 3,2</span>, et <span class="fx">k² = 10,24</span>.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Cohérence des valeurs de plaque du LMA-T-7A</caption>
+        <thead><tr><th>Vérification</th><th class="num">Calcul</th><th class="num">Plaque</th></tr></thead>
+        <tbody>
+          <tr><td>Rapport de transformation</td><td class="num">400 / 125 = 3,2</td><td class="num">3,2</td></tr>
+          <tr><td>Puissance au secondaire</td><td class="num">125 × 8 = 1000 VA</td><td class="num">1000 VA</td></tr>
+          <tr><td>Produit primaire</td><td class="num">400 × 2,6 = 1040 VA</td><td class="num">1000 VA</td></tr>
+          <tr><td>Écart relatif sur la puissance</td><td class="num">4,00 %</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+
+      <p class="small">Le courant primaire exact pour 1000 VA vaut 1000/400 = 2,50 A ; la plaque arrondit à 2,6 A. L'écart de 4,00 % vient de ces arrondis : il ne s'interprète pas comme un rendement.</p>
+
+      <div class="lab" data-lab="ideal">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · transformateur idéal sur la plaque du banc</div><div class="lab-sub">six états — rapport, tensions, courants, puissances</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Deux enroulements de <b>N₁ = 320</b> et <b>N₂ = 100</b> spires : le rapport vaut <b>k = 3,2</b>. La plaque ne donne pas le nombre de spires, seulement le rapport 400/125 V.","code":"k = N₁ / N₂","groups":[{"title":"Enroulements","cells":[
+            {"id":"n1","name":"N₁","value":"320","type":"spires"},
+            {"id":"n2","name":"N₂","value":"100","type":"spires"},
+            {"id":"k","name":"k","value":"3,2","type":"rapport","state":"new"}]}],"arrows":[]},
+          {"label":"On applique <b>400 V</b> au primaire : le secondaire délivre <b>U₂ = 400/3,2 = 125,0 V</b>. Aucune chute dans le modèle idéal.","code":"U₂ = U₁ / k","groups":[{"title":"Tensions","cells":[
+            {"id":"u1","name":"U₁","value":"400 V","type":"primaire"},
+            {"id":"u2","name":"U₂","value":"125,0 V","type":"secondaire","state":"changed"},
+            {"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"u1","to":"u2","accent":true}]},
+          {"label":"La charge appelle <b>8,00 A</b> au secondaire : le primaire appelle <b>I₁ = 8,00/3,2 = 2,50 A</b>. Le courant diminue quand la tension augmente.","code":"I₁ = I₂ / k","groups":[{"title":"Courants","cells":[
+            {"id":"i1","name":"I₁","value":"2,50 A","type":"primaire","state":"changed"},
+            {"id":"i2","name":"I₂","value":"8,00 A","type":"secondaire"},
+            {"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"i2","to":"i1","accent":true}]},
+          {"label":"Puissance apparente conservée : <b>S₁ = 400 × 2,50 = 1000 VA</b> et <b>S₂ = 125,0 × 8,00 = 1000 VA</b>.","code":"S₁ = U₁ I₁ = U₂ I₂ = S₂","groups":[{"title":"Puissances","cells":[
+            {"id":"s1","name":"S₁","value":"1000 VA","type":"primaire"},
+            {"id":"s2","name":"S₂","value":"1000 VA","type":"secondaire","state":"changed"}]}],"arrows":[{"from":"s1","to":"s2","label":"S","accent":true}]},
+          {"label":"La charge vaut <b>15,6 Ω</b> au secondaire ; vue du primaire elle vaut <b>Z′₂ = k²Z₂ = 10,24 × 15,6 = 160 Ω</b>. Vérification : 400 V / 2,50 A = 160 Ω.","code":"Z′₂ = k² Z₂","groups":[{"title":"Impédance ramenée","cells":[
+            {"id":"z2","name":"Z₂","value":"15,6 Ω","type":"secondaire"},
+            {"id":"z2p","name":"Z′₂","value":"160 Ω","type":"primaire","state":"new"},
+            {"id":"k2","name":"k²","value":"10,24","type":"facteur"}]}],"arrows":[{"from":"z2","to":"z2p","accent":true}]},
+          {"label":"Contrôle de la plaque : <b>400 × 2,6 = 1040 VA</b> contre <b>1000 VA</b> annoncés, soit <b>4,00 %</b> d'écart. Le courant exact pour 1000 VA est 2,50 A : la plaque arrondit.","code":"plaque : 400 V · 2,6 A · 1000 VA","groups":[{"title":"Plaque","cells":[
+            {"id":"sp","name":"S plaque","value":"1000 VA","type":"apparente"},
+            {"id":"sc","name":"U₁ I₁n","value":"1040 VA","type":"produit","state":"changed"},
+            {"id":"ec","name":"écart","value":"4,00 %","type":"relatif","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Les grandeurs ramenées au primaire sont <b>multipliées par k²</b> : <span class="fx">Z′₂ = k²Z₂</span>, pas <span class="fx">Z₂/k²</span>. Dans l'autre sens, une impédance primaire ramenée au secondaire vaut <span class="fx">Z₂ = Z₁/k²</span>.</p>
+      </div>
+
+      <details class="try">
+        <summary>Une charge de 15,6 Ω est branchée au secondaire d'un transformateur 400/125 V. Quelle impédance voit le primaire ?</summary>
+        <div class="ans"><span class="fx">Z′₂ = k²Z₂ = 10,24 × 15,6 = 160 Ω</span>. Le primaire « voit » une charge de 160 Ω, ce qui donne bien 400 V / 160 Ω = 2,50 A.</div>
+      </details>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">équations</div></div>
+      <h2>Résistances et fuites : ce qui s'ajoute à la force électromotrice</h2>
+      <p class="lead">Le flux totalisé d'un enroulement comprend le flux principal, commun aux deux enroulements, et un flux de fuite qui ne traverse qu'un seul enroulement. Les équations de tension séparent ces deux contributions et la chute ohmique.</p>
+
+      <div class="math"><span class="ml">Équations des deux enroulements</span>
+u₁ = R₁ i₁ + N₁ dΦ_h/dt + dΨ_σ1/dt
+u₂ = −R₂ i₂ − N₂ dΦ_h/dt − dΨ_σ2/dt
+u_i = dΨ/dt = N dΦ/dt    (force électromotrice induite)
+      </div>
+
+      <p>Le terme <span class="fx">N dΦ_h/dt</span> est commun aux deux enroulements : c'est lui qui réalise le couplage. Le produit <span class="fx">Ri</span> décrit la chute ohmique du cuivre, et <span class="fx">dΨ_σ/dt</span> la chute due aux fuites.</p>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 280" role="img" aria-label="Modèle physique des deux enroulements avec résistances et fuites">
+            <rect x="305" y="70" width="30" height="160" class="core"/>
+            <path class="coil" d="M305 100 q-18 12 0 24 q-18 12 0 24 q-18 12 0 24 q-18 12 0 24"/>
+            <path class="coil" d="M335 100 q18 12 0 24 q18 12 0 24 q18 12 0 24 q18 12 0 24"/>
+            <path class="wire" d="M40 90 L70 90"/>
+            <rect x="70" y="80" width="45" height="20" class="core"/>
+            <path class="wire" d="M115 90 L135 90"/>
+            <path class="coil" d="M135 90 q12 -18 24 0 q12 -18 24 0 q12 -18 24 0"/>
+            <path class="wire" d="M207 90 L305 90"/>
+            <path class="wire" d="M305 90 L305 100"/>
+            <path class="wire" d="M305 196 L305 230 L40 230"/>
+            <path class="wire" d="M335 90 L390 90"/>
+            <path class="coil" d="M390 90 q12 -18 24 0 q12 -18 24 0 q12 -18 24 0"/>
+            <path class="wire" d="M462 90 L500 90"/>
+            <rect x="500" y="80" width="45" height="20" class="core"/>
+            <path class="wire" d="M545 90 L590 90"/>
+            <path class="wire" d="M335 90 L335 100"/>
+            <path class="wire" d="M335 196 L335 230 L590 230"/>
+            <circle cx="40" cy="90" r="3.5" fill="var(--ink)"/>
+            <circle cx="40" cy="230" r="3.5" fill="var(--ink)"/>
+            <circle cx="590" cy="90" r="3.5" fill="var(--ink)"/>
+            <circle cx="590" cy="230" r="3.5" fill="var(--ink)"/>
+            <path d="M320 190 L320 112" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar-accent)"/>
+            <path class="arr" d="M30 92 L30 228" marker-end="url(#ar)"/>
+            <path class="arr" d="M608 92 L608 228" marker-end="url(#ar)"/>
+            <text class="t" x="30" y="248" text-anchor="middle">U₁</text>
+            <text class="t" x="608" y="248" text-anchor="middle">U₂</text>
+            <text class="tm" x="92" y="72" text-anchor="middle">R₁</text>
+            <text class="tm" x="171" y="72" text-anchor="middle">X_σ1</text>
+            <text class="tm" x="522" y="72" text-anchor="middle">R₂</text>
+            <text class="tm" x="426" y="72" text-anchor="middle">X_σ2</text>
+            <text class="ts" x="290" y="248" text-anchor="end">N₁</text>
+            <text class="ts" x="350" y="248" text-anchor="start">N₂</text>
+            <text class="tm" x="320" y="60" text-anchor="middle">Φ_h</text>
+            <text class="ts" x="320" y="272" text-anchor="middle">u_i = N dΦ_h/dt est commun aux deux enroulements</text>
+          </svg>
+        </div>
+        <figcaption>Le noyau porte les deux enroulements. <span class="fx">R₁</span> et <span class="fx">R₂</span> modélisent le cuivre, <span class="fx">X_σ1</span> et <span class="fx">X_σ2</span> les fuites ; la force électromotrice commune vient de <span class="fx">dΦ_h/dt</span>.</figcaption>
+      </figure>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Pour une inductance seule, <span class="fx">u_i = L di/dt</span> : la pente de <span class="fx">u_i(i)</span> vaut <span class="fx">L</span> et l'aire sous <span class="fx">u_i dt</span> vaut le flux totalisé <span class="fx">Ψ</span>. Ces deux lectures graphiques sont une autre façon de dire <span class="fx">u_i = dΨ/dt</span>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>La loi de Faraday s'écrit <span class="fx">e = −dΨ/dt</span> ; le cours note <span class="fx">u_i = dΨ/dt</span> avec une flèche de tension orientée dans le sens du courant. Le signe est absorbé par le choix de la flèche : ce n'est pas une contradiction, mais il faut fixer la convention une fois pour toutes.</p>
+      </div>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">fuites</div></div>
+      <h2>Tout le flux ne traverse pas les deux enroulements</h2>
+      <p class="lead">Une partie du flux créé par un enroulement se referme sans traverser l'autre : c'est le flux de fuite. Il ne participe pas au couplage et se comporte comme une inductance en série avec l'enroulement.</p>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 250" role="img" aria-label="Flux principal traversant les deux enroulements et flux de fuite autour de chaque enroulement">
+            <rect x="150" y="36" width="340" height="30" class="core"/>
+            <rect x="150" y="182" width="340" height="30" class="core"/>
+            <rect x="150" y="66" width="30" height="116" class="core"/>
+            <rect x="460" y="66" width="30" height="116" class="core"/>
+            <path class="coil" d="M180 78 q22 11 0 22 q22 11 0 22 q22 11 0 22 q22 11 0 22"/>
+            <path class="coil" d="M460 78 q-22 11 0 22 q-22 11 0 22 q-22 11 0 22 q-22 11 0 22"/>
+            <path d="M165 160 L165 90 Q165 51 200 51 L440 51 Q475 51 475 90 L475 160" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar-accent)"/>
+            <ellipse cx="196" cy="122" rx="26" ry="52" class="flux2"/>
+            <ellipse cx="444" cy="122" rx="26" ry="52" class="flux2"/>
+            <text class="tm" x="320" y="26" text-anchor="middle">flux principal : traverse les deux enroulements</text>
+            <text class="tm" x="320" y="238" text-anchor="middle">pointillés turquoise : flux de fuite, refermé sur un seul enroulement</text>
+            <text class="ts" x="232" y="140">Ψ_σ1</text>
+            <text class="ts" x="408" y="140" text-anchor="end">Ψ_σ2</text>
+          </svg>
+        </div>
+        <figcaption>Le flux principal <span class="fx">Φ_h</span> (trait plein indigo) traverse les deux enroulements ; chaque enroulement a en plus son flux de fuite <span class="fx">Ψ_σ</span> (pointillés turquoise), qui ne sert qu'à son propre couplage.</figcaption>
+      </figure>
+
+      <div class="math"><span class="ml">Flux totalisé, fuites, dispersion</span>
+Ψ₁ = N₁ Φ_h + Ψ_σ1        Ψ₂ = N₂ Φ_h + Ψ_σ2
+L_σ1 = Ψ_σ1/i₁            L_σ2 = Ψ_σ2/i₂
+σ = 1 − k_c²        avec        k_c = M/√(L₁L₂)
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Le cours utilise deux coefficients notés <span class="fx">k</span> : le rapport de transformation <span class="fx">k = N₁/N₂</span> (chapitre 3) et le coefficient de couplage <span class="fx">k_c = M/√(L₁L₂)</span> (chapitre 2). Le facteur de dispersion s'écrit avec le second : pour <span class="fx">k_c = 0,98</span> on obtient <span class="fx">σ = 1 − 0,98² = 3,96 %</span>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Les fuites n'existent pas seulement en charge : elles sont proportionnelles au courant. À vide le courant est faible, donc la chute due aux fuites est négligeable ; en charge elle devient visible et fait baisser la tension secondaire. C'est <span class="fx">X_σ1</span> et <span class="fx">X′_σ2</span> du schéma équivalent.</p>
+      </div>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">schéma</div></div>
+      <h2>Le schéma équivalent en T, ramené au primaire</h2>
+      <p class="lead">Toutes les grandeurs du secondaire sont ramenées au primaire et le transformateur idéal disparaît : il ne reste qu'un circuit en T. Le modèle sépare ce qui est physique (résistances, fuites) de ce qui est ramené par le rapport de transformation.</p>
+
+      <div class="math"><span class="ml">Éléments du modèle ramené au primaire</span>
+Z₁ = R₁ + jX_σ1          Z′₂ = R′₂ + jX′_σ2
+Z_cc = Z₁ + Z′₂ = R_cc + jX_cc
+R′₂ = k² R₂              X′_σ2 = k² X_σ2
+U′₂ = k U₂               I′₂ = I₂/k
+Z′_L = k² Z_L
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 700 340" role="img" aria-label="Schéma équivalent en T ramené au primaire">
+            <path class="wire" d="M30 90 L70 90"/>
+            <rect x="70" y="80" width="45" height="20" class="core"/>
+            <path class="wire" d="M115 90 L140 90"/>
+            <path class="coil" d="M140 90 q12 -18 24 0 q12 -18 24 0 q12 -18 24 0"/>
+            <path class="wire" d="M212 90 L270 90"/>
+            <path class="wire" d="M270 90 L270 115 M240 115 L270 115 M300 115 L270 115"/>
+            <path class="wire" d="M240 115 L240 130"/>
+            <path class="coil" d="M240 130 q-15 12 0 24 q15 12 0 24 q-15 12 0 24"/>
+            <path class="wire" d="M240 202 L240 230 M300 115 L300 130"/>
+            <rect x="290" y="140" width="20" height="60" class="core"/>
+            <path class="wire" d="M300 200 L300 230 M240 230 L300 230 M270 230 L270 280"/>
+            <path class="wire" d="M270 90 L350 90"/>
+            <rect x="350" y="80" width="50" height="20" class="core"/>
+            <path class="wire" d="M400 90 L425 90"/>
+            <path class="coil" d="M425 90 q12 -18 24 0 q12 -18 24 0 q12 -18 24 0"/>
+            <path class="wire" d="M497 90 L540 90"/>
+            <path class="wire" d="M540 90 L540 130 M540 240 L540 280"/>
+            <path class="coil" d="M540 130 q-14 14 0 28 q-14 14 0 28 q-14 14 0 28 q-14 14 0 26"/>
+            <path class="wire" d="M575 90 L575 130 M575 240 L575 280"/>
+            <path class="coil" d="M575 130 q14 14 0 28 q14 14 0 28 q14 14 0 28 q14 14 0 26"/>
+            <path class="wire" d="M575 90 L660 90 M575 280 L660 280"/>
+            <path class="wire" d="M660 90 L660 160 M660 210 L660 280"/>
+            <rect x="650" y="160" width="20" height="50" class="core"/>
+            <path class="wire" d="M30 90 L30 280 L270 280"/>
+            <rect x="520" y="110" width="90" height="150" class="ax" fill="none"/>
+            <circle cx="30" cy="90" r="3.5" fill="var(--ink)"/>
+            <circle cx="30" cy="280" r="3.5" fill="var(--ink)"/>
+            <path class="arr" d="M18 92 L18 276" marker-end="url(#ar)"/>
+            <text class="t" x="14" y="188" text-anchor="middle">U₁</text>
+            <text class="tm" x="92" y="72" text-anchor="middle">R₁</text>
+            <text class="tm" x="176" y="72" text-anchor="middle">X_σ1</text>
+            <text class="tm" x="232" y="168" text-anchor="end">X_m</text>
+            <text class="tm" x="318" y="168">R_fer</text>
+            <text class="tm" x="375" y="72" text-anchor="middle">R′₂</text>
+            <text class="tm" x="461" y="72" text-anchor="middle">X′_σ2</text>
+            <text class="tm" x="565" y="100" text-anchor="middle">k : 1</text>
+            <text class="tm" x="660" y="152" text-anchor="middle">Z_L</text>
+            <text class="ts" x="350" y="324" text-anchor="middle">Z_cc = Z₁ + Z′₂ ; U′₂ = kU₂ ; I′₂ = I₂/k ; R′₂ = k²R₂</text>
+          </svg>
+        </div>
+        <figcaption>Schéma en T ramené au primaire : <span class="fx">Z₁</span> en série, la branche magnétisante <span class="fx">R_fer ∥ jX_m</span>, puis <span class="fx">Z′₂</span> ; le transformateur idéal <span class="fx">k:1</span>, en pointillé, rétablit les grandeurs réelles du secondaire, où est branchée la charge <span class="fx">Z_L</span> (côté primaire, <span class="fx">Z′_L = k²Z_L</span>).</figcaption>
+      </figure>
+
+      <div class="lab" data-lab="equivalent">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · construction du schéma en T</div><div class="lab-sub">six états — du transformateur réel au modèle en T</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Première étape : l'enroulement primaire n'est pas idéal. Il porte une <b>résistance R₁ = 1,33 Ω</b> et une <b>réactance de fuite X_σ1 = 2,56 Ω</b>. Valeurs d'exemple issues de la répartition de l'essai en court-circuit.","code":"Z₁ = R₁ + jX_σ1","groups":[{"title":"Enroulement primaire","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[]},
+          {"label":"Les pertes fer se modélisent par une résistance placée en parallèle sur le flux : <b>R_fer = 6,70 kΩ</b>, déduite de l'essai à vide à 402,7 V.","code":"R_fer = U₀²/P₀","groups":[{"title":"Enroulement primaire","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
+            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"}]}],"arrows":[]},
+          {"label":"Le courant magnétisant ajoute une réactance en parallèle : <b>X_m = 6,77 kΩ</b>. L'ensemble <b>R_fer ∥ X_m</b> absorbe le courant à vide mesuré.","code":"R_fer ∥ jX_m","groups":[{"title":"Enroulement primaire","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
+            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
+            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"}]}],"arrows":[]},
+          {"label":"Le secondaire se ramène au primaire : <b>R′₂ = k²R₂ = 10,24 × 0,130 = 1,33 Ω</b> et <b>X′_σ2 = k²X_σ2 = 2,56 Ω</b>. Le modèle devient un T.","code":"R′₂ = k² R₂","groups":[{"title":"Enroulement primaire","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
+            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
+            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[
+            {"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω","state":"new"},
+            {"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[]},
+          {"label":"La charge se ramène elle aussi : <b>Z′_L = k²Z_L = 160 Ω</b> pour 15,6 Ω au secondaire. Le primaire voit Z₁ en série avec Z_h1 ∥ (Z′₂ + Z′_L).","code":"Z′_L = k² Z_L","groups":[{"title":"Enroulement primaire","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
+            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
+            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[
+            {"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω"},
+            {"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω"},
+            {"id":"zl","name":"Z′_L","value":"160 Ω","type":"charge","state":"new"}]}],"arrows":[]},
+          {"label":"Hypothèse de Kapp : à vide <b>I_m</b> est faible, la branche magnétisante est négligée pour les chutes. Le modèle se réduit à <b>Z_cc = Z₁ + Z′₂ = 5,77 Ω</b>.","code":"Z_cc = Z₁ + Z′₂","groups":[{"title":"Modèle de Kapp","cells":[
+            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},
+            {"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω"},
+            {"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <h3>Quelles grandeurs le modèle permet-il de mesurer ?</h3>
+      <table class="tbl">
+        <caption>Éléments du schéma équivalent et accès expérimental</caption>
+        <thead><tr><th>Élément</th><th>Mesurable</th><th>Comment</th></tr></thead>
+        <tbody>
+          <tr><td>R_cc = R₁ + R′₂</td><td>oui, en bloc</td><td>essai en court-circuit : R_cc = P_cc/I_cc²</td></tr>
+          <tr><td>X_cc = X_σ1 + X′_σ2</td><td>oui, en bloc</td><td>essai en court-circuit : X_cc = √(Z_cc² − R_cc²)</td></tr>
+          <tr><td>R_fer</td><td>oui</td><td>essai à vide : R_fer = U₀²/P₀</td></tr>
+          <tr><td>X_m</td><td>oui</td><td>essai à vide : X_m = U₀²/Q₀</td></tr>
+          <tr><td>R₁ et R′₂ séparés</td><td>non</td><td>hypothèse de répartition R₁ ≈ R′₂ ≈ R_cc/2</td></tr>
+          <tr><td>X_σ1 et X′_σ2 séparés</td><td>non</td><td>hypothèse X_σ1 ≈ X′_σ2 ≈ X_cc/2</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le schéma en T est un modèle : seules les combinaisons mesurables sont accessibles (Z_cc, R_fer, X_m). Les séparations <span class="fx">R₁ ≈ R′₂</span> et <span class="fx">X_σ1 ≈ X′_σ2</span> sont des hypothèses, valables pour un transformateur de puissance.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Contrôle de cohérence : <span class="fx">R_fer ∥ jX_m</span> donne <span class="fx">|Z_h1| = 4,76 kΩ</span> ; le courant correspondant, <span class="fx">I_m = U₀/|Z_h1| = 84,5 mA</span>, est très proche du courant à vide mesuré (84,54 mA). La chute dans <span class="fx">Z₁</span> à ce courant est négligeable, ce qui justifie <span class="fx">P₀ ≈ P_fer</span>.</p>
+      </div>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">essai</div></div>
+      <h2>L'essai à vide : pertes fer et courant magnétisant</h2>
+      <p class="lead">Secondaire ouvert, on applique la tension nominale au primaire et on mesure <span class="fx">U₀</span>, <span class="fx">I₀</span> et <span class="fx">P₀</span>. Comme le courant à vide est faible, la chute ohmique est négligeable et la puissance active absorbée est presque entièrement perdue dans le fer.</p>
+
+      <div class="math"><span class="ml">Exploitation de l'essai à vide</span>
+S₀ = U₀ I₀        cos φ₀ = P₀/S₀        Q₀ = √(S₀² − P₀²)
+P₀ ≈ P_fer = U₀²/R_fer        R_fer ≈ U₀²/P₀
+X_m ≈ U₀²/Q₀        L_m = X_m/(2πf)
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 200" role="img" aria-label="Montage simplifié de l'essai à vide">
+            <rect x="20" y="70" width="60" height="60" class="core"/>
+            <path class="wire" d="M80 100 L100 100"/>
+            <rect x="100" y="70" width="80" height="60" class="core"/>
+            <path class="wire" d="M180 100 L205 100"/>
+            <rect x="205" y="85" width="34" height="30" class="core"/>
+            <path class="wire" d="M239 100 L270 100"/>
+            <rect x="270" y="70" width="50" height="60" class="core"/>
+            <path class="wire" d="M320 100 L340 100"/>
+            <rect x="340" y="55" width="110" height="90" class="core"/>
+            <path class="wire" d="M450 80 L505 80"/>
+            <circle cx="520" cy="80" r="14" class="core"/>
+            <path class="wire" d="M534 80 L545 80 L545 120 L450 120"/>
+            <text class="ts" x="50" y="105" text-anchor="middle">réseau</text>
+            <text class="tm" x="50" y="150" text-anchor="middle">3×400 V</text>
+            <text class="ts" x="140" y="105" text-anchor="middle">variac</text>
+            <text class="tm" x="140" y="150" text-anchor="middle">0…450 V</text>
+            <text class="tm" x="222" y="105" text-anchor="middle">A</text>
+            <text class="tm" x="222" y="150" text-anchor="middle">I₀</text>
+            <text class="tm" x="295" y="105" text-anchor="middle">W</text>
+            <text class="tm" x="295" y="150" text-anchor="middle">P₀</text>
+            <text class="ts" x="395" y="100" text-anchor="middle">LMA-T-7A</text>
+            <text class="tm" x="395" y="135" text-anchor="middle">400 V / 125 V</text>
+            <text class="tm" x="520" y="86" text-anchor="middle">V</text>
+            <text class="ts" x="505" y="178" text-anchor="middle">secondaire ouvert</text>
+          </svg>
+        </div>
+        <figcaption>Chaîne de mesure simplifiée : réseau, variac, ampèremètre et wattmètre au primaire, transformateur du banc, voltmètre au secondaire resté ouvert. Le protocole relève aussi <span class="fx">U₂₀</span> pour contrôler le rapport.</figcaption>
+      </figure>
+
+      <h3>Les onze paliers mesurés sur le banc</h3>
+      <table class="tbl">
+        <caption>Essai à vide du LMA-T-7A : 11 paliers, secondaire ouvert</caption>
+        <thead><tr><th>U₀ (V)</th><th class="num">I₀ (mA)</th><th class="num">P₀ (W)</th><th class="num">S₀ (VA)</th><th class="num">cos φ₀</th></tr></thead>
+        <tbody>
+          <tr><td>51,17</td><td class="num">27,586</td><td class="num">0,616</td><td class="num">1,41</td><td class="num">0,436</td></tr>
+          <tr><td>99,78</td><td class="num">41,566</td><td class="num">2,477</td><td class="num">4,15</td><td class="num">0,597</td></tr>
+          <tr><td>200,77</td><td class="num">56,264</td><td class="num">7,834</td><td class="num">11,3</td><td class="num">0,694</td></tr>
+          <tr><td>250,9</td><td class="num">61,397</td><td class="num">10,992</td><td class="num">15,4</td><td class="num">0,714</td></tr>
+          <tr><td>300,7</td><td class="num">68,02</td><td class="num">14,75</td><td class="num">20,5</td><td class="num">0,721</td></tr>
+          <tr><td>350,2</td><td class="num">75,37</td><td class="num">18,93</td><td class="num">26,4</td><td class="num">0,717</td></tr>
+          <tr><td>402,7</td><td class="num">84,54</td><td class="num">24,19</td><td class="num">34,0</td><td class="num">0,711</td></tr>
+          <tr><td>449,4</td><td class="num">96,97</td><td class="num">29,40</td><td class="num">43,6</td><td class="num">0,675</td></tr>
+          <tr><td>500,1</td><td class="num">116,88</td><td class="num">35,96</td><td class="num">58,5</td><td class="num">0,615</td></tr>
+          <tr><td>549,6</td><td class="num">143,92</td><td class="num">42,94</td><td class="num">79,1</td><td class="num">0,543</td></tr>
+          <tr><td>600,2</td><td class="num">184,00</td><td class="num">50,91</td><td class="num">110</td><td class="num">0,461</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Les trois premières colonnes sont les mesures du banc ; <span class="fx">S₀</span> et <span class="fx">cos φ₀</span> sont recalculés à partir d'elles. Au-delà de 450 V, <span class="fx">I₀</span> croît plus vite que <span class="fx">U₀</span> : le fer approche de la saturation.</p>
+
+      <div class="lab" data-lab="vide">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · l'essai à vide point par point</div><div class="lab-sub">six états — des mesures aux éléments du modèle</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Premier palier, <b>51,17 V</b> : le courant vaut 27,586 mA et la puissance 0,616 W, d'où <b>S₀ = 1,41 VA</b> et <b>cos φ₀ = 0,436</b>. Le courant est surtout magnétisant, d'où un facteur de puissance faible.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[
+            {"id":"u0","name":"U₀","value":"51,17 V","type":"mesure"},
+            {"id":"i0","name":"I₀","value":"27,586 mA","type":"mesure"},
+            {"id":"p0","name":"P₀","value":"0,616 W","type":"mesure"}]},{"title":"Calculs","cells":[
+            {"id":"s0","name":"S₀","value":"1,41 VA","type":"calcul","state":"new"},
+            {"id":"cos","name":"cos φ₀","value":"0,436","type":"calcul","state":"new"}]}],"arrows":[]},
+          {"label":"À <b>250,9 V</b> : 61,397 mA et 10,992 W donnent <b>S₀ = 15,4 VA</b> et <b>cos φ₀ = 0,714</b>. Les pertes fer augmentent avec la tension.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[
+            {"id":"u0","name":"U₀","value":"250,9 V","type":"mesure"},
+            {"id":"i0","name":"I₀","value":"61,397 mA","type":"mesure"},
+            {"id":"p0","name":"P₀","value":"10,992 W","type":"mesure"}]},{"title":"Calculs","cells":[
+            {"id":"s0","name":"S₀","value":"15,4 VA","type":"calcul","state":"changed"},
+            {"id":"cos","name":"cos φ₀","value":"0,714","type":"calcul","state":"changed"}]}],"arrows":[]},
+          {"label":"Au point nominal <b>402,7 V ≈ U₁n</b> : 84,54 mA et 24,19 W, soit <b>S₀ = 34,0 VA</b>, <b>cos φ₀ = 0,711</b> et <b>Q₀ = 24,0 var</b>.","code":"Q₀ = √(S₀² − P₀²)","groups":[{"title":"Point nominal","cells":[
+            {"id":"u0","name":"U₀","value":"402,7 V","type":"mesure"},
+            {"id":"i0","name":"I₀","value":"84,54 mA","type":"mesure"},
+            {"id":"p0","name":"P₀","value":"24,19 W","type":"mesure"}]},{"title":"Calculs","cells":[
+            {"id":"s0","name":"S₀","value":"34,0 VA","type":"calcul","state":"changed"},
+            {"id":"q0","name":"Q₀","value":"24,0 var","type":"calcul","state":"new"},
+            {"id":"cos","name":"cos φ₀","value":"0,711","type":"calcul"}]}],"arrows":[]},
+          {"label":"À <b>500,1 V</b> : 116,88 mA et 35,96 W donnent <b>S₀ = 58,5 VA</b>. Le courant à vide vaut déjà 1,38 fois sa valeur nominale : le fer sature.","code":"S₀ = U₀ I₀","groups":[{"title":"Mesures du banc","cells":[
+            {"id":"u0","name":"U₀","value":"500,1 V","type":"mesure"},
+            {"id":"i0","name":"I₀","value":"116,88 mA","type":"mesure","state":"changed"},
+            {"id":"p0","name":"P₀","value":"35,96 W","type":"mesure"}]},{"title":"Calculs","cells":[
+            {"id":"s0","name":"S₀","value":"58,5 VA","type":"calcul","state":"changed"},
+            {"id":"cos","name":"cos φ₀","value":"0,615","type":"calcul","state":"changed"}]}],"arrows":[]},
+          {"label":"À <b>600,2 V</b> : 184,00 mA et 50,91 W, soit <b>S₀ = 110 VA</b>. La tension n'a augmenté que de 1,49 fois mais le courant à vide de 2,18 fois : le noyau est saturé.","code":"U₀ ↑ 1,49 ; I₀ ↑ 2,18","groups":[{"title":"Mesures du banc","cells":[
+            {"id":"u0","name":"U₀","value":"600,2 V","type":"mesure","state":"changed"},
+            {"id":"i0","name":"I₀","value":"184,00 mA","type":"mesure","state":"changed"},
+            {"id":"p0","name":"P₀","value":"50,91 W","type":"mesure"}]},{"title":"Calculs","cells":[
+            {"id":"s0","name":"S₀","value":"110 VA","type":"calcul","state":"changed"},
+            {"id":"cos","name":"cos φ₀","value":"0,461","type":"calcul","state":"changed"}]}],"arrows":[]},
+          {"label":"Au point nominal, on retient <b>P_fer ≈ P₀ = 24,2 W</b>, <b>R_fer = 6,70 kΩ</b> et <b>X_m = 6,77 kΩ</b> ; le courant à vide vaut <b>3,25 %</b> du courant nominal. Ces éléments ne sont valables qu'au voisinage du point nominal.","code":"R_fer = U₀²/P₀ ; X_m = U₀²/Q₀","groups":[{"title":"Modèle déduit","cells":[
+            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"},
+            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"},
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes","state":"new"},
+            {"id":"pct","name":"I₀/I₁n","value":"3,25 %","type":"relatif","state":"new"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Utiliser <span class="fx">R_fer = U₀²/P₀</span> avec une puissance en milliwatts ou un courant en ampères mélangés : <span class="fx">P₀</span> est en watts, <span class="fx">U₀</span> en volts, <span class="fx">I₀</span> en ampères. 24,19 W et 84,54 mA ne se divisent pas directement.</p>
+      </div>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">essai</div></div>
+      <h2>L'essai en court-circuit : R_cc, X_cc et la chute interne</h2>
+      <p class="lead">Secondaire court-circuité, on applique une tension réduite jusqu'à faire circuler le courant nominal au primaire. La tension appliquée est faible, donc le flux et le courant magnétisant le sont aussi : la puissance active absorbée est presque entièrement dissipée dans les résistances des enroulements.</p>
+
+      <div class="math"><span class="ml">Exploitation de l'essai en court-circuit</span>
+Z_cc = U_cc/I_cc        R_cc = P_cc/I_cc²        X_cc = √(Z_cc² − R_cc²)
+P_cc ≈ P_cu = R_cc I_cc²
+hypothèse : R₁ ≈ R′₂ ≈ R_cc/2        X_σ1 ≈ X′_σ2 ≈ X_cc/2
+R₂ = R′₂/k²        X_σ2 = X′_σ2/k²
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 200" role="img" aria-label="Montage simplifié de l'essai en court-circuit">
+            <rect x="20" y="70" width="60" height="60" class="core"/>
+            <path class="wire" d="M80 100 L100 100"/>
+            <rect x="100" y="70" width="80" height="60" class="core"/>
+            <path class="wire" d="M180 100 L205 100"/>
+            <rect x="205" y="85" width="34" height="30" class="core"/>
+            <path class="wire" d="M239 100 L270 100"/>
+            <rect x="270" y="70" width="50" height="60" class="core"/>
+            <path class="wire" d="M320 100 L340 100"/>
+            <rect x="340" y="55" width="110" height="90" class="core"/>
+            <path class="wire" d="M450 80 L505 80"/>
+            <circle cx="520" cy="80" r="14" class="core"/>
+            <path class="wire" d="M534 80 L545 80 L545 120 L450 120"/>
+            <text class="ts" x="50" y="105" text-anchor="middle">réseau</text>
+            <text class="tm" x="50" y="150" text-anchor="middle">3×400 V</text>
+            <text class="ts" x="140" y="105" text-anchor="middle">variac</text>
+            <text class="tm" x="140" y="150" text-anchor="middle">tension réduite</text>
+            <text class="tm" x="222" y="105" text-anchor="middle">A</text>
+            <text class="tm" x="222" y="150" text-anchor="middle">I_cc</text>
+            <text class="tm" x="295" y="105" text-anchor="middle">W</text>
+            <text class="tm" x="295" y="150" text-anchor="middle">P_cc</text>
+            <text class="ts" x="395" y="100" text-anchor="middle">LMA-T-7A</text>
+            <text class="tm" x="395" y="135" text-anchor="middle">400 V / 125 V</text>
+            <text class="tm" x="520" y="86" text-anchor="middle">A</text>
+            <text class="ts" x="500" y="178" text-anchor="middle">secondaire en court-circuit</text>
+          </svg>
+        </div>
+        <figcaption>Le secondaire est court-circuité par un ampèremètre. On part d'une tension nulle, on monte lentement jusqu'à <span class="fx">I₁ = I₁n</span>, on relève <span class="fx">U_cc</span>, <span class="fx">I_cc</span> et <span class="fx">P_cc</span>, puis on revient à zéro.</figcaption>
+      </figure>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Les valeurs qui suivent forment un <b>exemple de calcul explicite</b>, cohérent avec un transformateur de 1000 VA, et non une mesure du banc : <span class="fx">U_cc = 15,0 V</span>, <span class="fx">I_cc = 2,6 A</span>, <span class="fx">P_cc = 18,0 W</span>. Elles servent à dérouler les formules et à alimenter le modèle de charge du § 9.</p>
+      </div>
+
+      <div class="math"><span class="ml">Exemple de calcul (valeurs d'exemple, pas une mesure)</span>
+Z_cc = 15,0/2,6 = 5,77 Ω        R_cc = 18,0/2,6² = 2,66 Ω
+X_cc = √(5,77² − 2,66²) = 5,12 Ω        cos φ_cc = 18,0/(15,0 × 2,6) = 0,462
+Q_cc = √(S_cc² − P_cc²) = 34,6 var        u_cc = 100 × 15,0/400 = 3,75 %
+      </div>
+
+      <p>La répartition hypothétique donne <span class="fx">R₁ ≈ R′₂ ≈ 1,33 Ω</span> et <span class="fx">X_σ1 ≈ X′_σ2 ≈ 2,56 Ω</span>. Côté secondaire, les vraies valeurs sont <span class="fx">R₂ = 0,130 Ω</span> et <span class="fx">X_σ2 = 0,250 Ω</span>.</p>
+
+      <div class="lab" data-lab="court-circuit">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · l'essai en court-circuit</div><div class="lab-sub">six états — de U_cc, I_cc, P_cc à R_cc, X_cc</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Variac à zéro : le secondaire est déjà court-circuité, mais aucune tension n'est appliquée. <b>U = 0</b>, <b>I = 0</b>, <b>P = 0</b>.","code":"U = 0 ; I = 0 ; P = 0","groups":[{"title":"Données d'exemple","cells":[
+            {"id":"ucc","name":"U_cc","value":"0 V","type":"exemple"},
+            {"id":"icc","name":"I_cc","value":"0 A","type":"exemple"},
+            {"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[]},
+          {"label":"On augmente lentement la tension jusqu'à <b>I_cc = 2,6 A</b> au primaire : la tension nécessaire reste faible, <b>U_cc = 15,0 V</b>. Le flux est réduit, donc le courant magnétisant aussi.","code":"U_cc = 15,0 V ; I_cc = 2,6 A","groups":[{"title":"Données d'exemple","cells":[
+            {"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple","state":"new"},
+            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple","state":"new"},
+            {"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[]},
+          {"label":"La puissance active absorbée vaut <b>P_cc = 18,0 W</b> : elle part presque entièrement dans les résistances des enroulements.","code":"P_cc ≈ P_cu","groups":[{"title":"Données d'exemple","cells":[
+            {"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple"},
+            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"},
+            {"id":"pcc","name":"P_cc","value":"18,0 W","type":"exemple","state":"changed"}]}],"arrows":[]},
+          {"label":"On divise la puissance par le carré du courant : <b>R_cc = P_cc/I_cc² = 18,0/6,76 = 2,66 Ω</b>.","code":"R_cc = P_cc / I_cc²","groups":[{"title":"Impédances","cells":[
+            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω","state":"new"},
+            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"}]}],"arrows":[]},
+          {"label":"Le module vient de la tension : <b>Z_cc = U_cc/I_cc = 5,77 Ω</b>. La réactance se déduit du triangle : <b>X_cc = √(5,77² − 2,66²) = 5,12 Ω</b>.","code":"Z_cc = U_cc/I_cc ; X_cc = √(Z_cc² − R_cc²)","groups":[{"title":"Impédances","cells":[
+            {"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"new"},
+            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},
+            {"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω","state":"new"}]}],"arrows":[{"from":"rcc","to":"xcc","accent":true}]},
+          {"label":"Répartition : <b>R₁ ≈ R′₂ ≈ 1,33 Ω</b>, <b>X_σ1 ≈ X′_σ2 ≈ 2,56 Ω</b>, puis <b>R₂ = 0,130 Ω</b> et <b>X_σ2 = 0,250 Ω</b>. Tension de court-circuit : <b>u_cc = 3,75 %</b>.","code":"R₂ = R′₂/k² ; X_σ2 = X′_σ2/k²","groups":[{"title":"Enroulements séparés (hypothèse)","cells":[
+            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},
+            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"},
+            {"id":"r2","name":"R₂","value":"0,130 Ω","type":"Ω","state":"new"},
+            {"id":"xs2","name":"X_σ2","value":"0,250 Ω","type":"Ω","state":"new"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">P_cc</span> n'est pas la puissance du transformateur : c'est la puissance active absorbée à tension réduite, qui représente les pertes cuivre au courant nominal. La confondre avec <span class="fx">P₀</span> fausse le rendement et peut donner <span class="fx">η &gt; 1</span>.</p>
+      </div>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">charge</div></div>
+      <h2>En charge : chute de tension, bilan de puissance et rendement</h2>
+      <p class="lead">En charge, le courant secondaire crée des chutes dans <span class="fx">R_cc</span> et <span class="fx">X_cc</span> : la tension secondaire baisse d'autant plus que le courant et la puissance réactive demandée sont grands. Le rendement se lit sur un bilan de puissances.</p>
+
+      <div class="math"><span class="ml">Chute de tension et rendement</span>
+U′₂ ≈ U₁ − Z_cc I′₂        ΔU ≈ R_cc I′₂ cos φ₂ + X_cc I′₂ sin φ₂
+P₁ = P₂ + P_fer + P_cu        η = P₂/P₁ = P₂/(P₂ + P_fer + P_cu)
+P_cu = R_cc I′₂²        η maximal quand P_cu = P_fer
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Diagramme de Fresnel simplifié de la chute de tension">
+            <path class="ax" d="M60 250 L580 250"/>
+            <path class="ax" d="M60 250 L60 40"/>
+            <text class="tm" x="588" y="256">I′₂</text>
+            <path d="M110 250 L420 250" fill="none" stroke="var(--teal)" stroke-width="2" marker-end="url(#ar)"/>
+            <text class="ts" x="300" y="268" fill="var(--teal)">I′₂ (référence)</text>
+            <path d="M110 250 L350 242" fill="none" stroke="var(--ink)" stroke-width="2" marker-end="url(#ar)"/>
+            <text class="ts" x="330" y="228">U′₂</text>
+            <path d="M350 242 L385 238" fill="none" stroke="var(--coral)" stroke-width="2" marker-end="url(#ar)"/>
+            <text class="tm" x="372" y="258">R_cc I′₂</text>
+            <path d="M385 238 L385 196" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar-accent)"/>
+            <text class="tm" x="392" y="212">jX_cc I′₂</text>
+            <path d="M110 250 L385 196" fill="none" stroke="var(--purple)" stroke-width="2" marker-end="url(#ar)"/>
+            <text class="ts" x="250" y="186">U₁</text>
+            <path class="ax" d="M110 250 C 180 250, 230 248, 300 244"/>
+            <text class="tm" x="240" y="236">φ₂</text>
+            <text class="ts" x="320" y="292" text-anchor="middle">diagramme qualitatif : l'échelle des chutes est exagérée</text>
+          </svg>
+        </div>
+        <figcaption>La tension primaire <span class="fx">U₁</span> est la somme vectorielle de <span class="fx">U′₂</span>, de la chute ohmique <span class="fx">R_ccI′₂</span> et de la chute réactive <span class="fx">jX_ccI′₂</span>. Pour une charge inductive la chute réactive s'ajoute ; pour une charge capacitive elle se retranche et <span class="fx">U₂</span> peut monter au-dessus de sa valeur à vide.</figcaption>
+      </figure>
+
+      <h3>Exemple de calcul sur le modèle d'exemple du § 8</h3>
+      <table class="tbl">
+        <caption>Charge résistive (cos φ₂ = 1) : courant secondaire croissant de 0 à 8,00 A</caption>
+        <thead><tr><th>I₂ (A)</th><th class="num">U₂ (V)</th><th class="num">P₂ (W)</th><th class="num">P_cu (W)</th><th class="num">η (%)</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td class="num">125,0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+          <tr><td>2,00</td><td class="num">124,5</td><td class="num">249</td><td class="num">1,04</td><td class="num">90,8</td></tr>
+          <tr><td>4,00</td><td class="num">124,0</td><td class="num">496</td><td class="num">4,16</td><td class="num">94,6</td></tr>
+          <tr><td>6,00</td><td class="num">123,4</td><td class="num">741</td><td class="num">9,36</td><td class="num">95,7</td></tr>
+          <tr><td>8,00</td><td class="num">122,9</td><td class="num">983</td><td class="num">16,6</td><td class="num">96,0</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Valeurs de calcul, avec <span class="fx">P_fer = 24,2 W</span> et les éléments d'exemple du § 8 ; ce ne sont pas des mesures du banc. À 8,00 A la chute relative vaut 1,66 %.</p>
+
+      <div class="lab" data-lab="charge">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · chute de tension et rendement en charge</div><div class="lab-sub">six états — courant secondaire de 0 à 8,00 A</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"À vide (<b>I₂ = 0</b>) : le secondaire est à <b>125,0 V</b>, la puissance secondaire est nulle. Le rendement est nul et seules les pertes fer, <b>24,2 W</b>, sont consommées.","code":"I₂ = 0 ; η = 0","groups":[{"title":"Grandeurs secondaires","cells":[
+            {"id":"i2","name":"I₂","value":"0 A","type":"courant"},
+            {"id":"u2","name":"U₂","value":"125,0 V","type":"tension"},
+            {"id":"p2","name":"P₂","value":"0 W","type":"puissance"}]},{"title":"Bilan","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"pcu","name":"P_cu","value":"0 W","type":"pertes"},
+            {"id":"eta","name":"η","value":"0 %","type":"rendement"}]}],"arrows":[]},
+          {"label":"À <b>I₂ = 2,00 A</b> (25 % du nominal) : la chute ohmique réduit la tension à <b>124,5 V</b>. <b>P₂ = 249 W</b>, <b>P_cu = 1,04 W</b>, <b>η = 90,8 %</b>.","code":"ΔU ≈ R_cc I′₂","groups":[{"title":"Grandeurs secondaires","cells":[
+            {"id":"i2","name":"I₂","value":"2,00 A","type":"courant","state":"changed"},
+            {"id":"u2","name":"U₂","value":"124,5 V","type":"tension","state":"changed"},
+            {"id":"p2","name":"P₂","value":"249 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"pcu","name":"P_cu","value":"1,04 W","type":"pertes","state":"changed"},
+            {"id":"eta","name":"η","value":"90,8 %","type":"rendement","state":"changed"}]}],"arrows":[]},
+          {"label":"À <b>I₂ = 4,00 A</b> : <b>U₂ = 124,0 V</b>, <b>P₂ = 496 W</b>, <b>P_cu = 4,16 W</b> et <b>η = 94,6 %</b>. Les pertes fer restent constantes.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[
+            {"id":"i2","name":"I₂","value":"4,00 A","type":"courant","state":"changed"},
+            {"id":"u2","name":"U₂","value":"124,0 V","type":"tension","state":"changed"},
+            {"id":"p2","name":"P₂","value":"496 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"pcu","name":"P_cu","value":"4,16 W","type":"pertes","state":"changed"},
+            {"id":"eta","name":"η","value":"94,6 %","type":"rendement","state":"changed"}]}],"arrows":[]},
+          {"label":"À <b>I₂ = 6,00 A</b> : <b>U₂ = 123,4 V</b>, <b>P₂ = 741 W</b>, <b>P_cu = 9,36 W</b> et <b>η = 95,7 %</b>. Les pertes cuivre augmentent comme le carré du courant.","code":"P_cu = R_cc I′₂²","groups":[{"title":"Grandeurs secondaires","cells":[
+            {"id":"i2","name":"I₂","value":"6,00 A","type":"courant","state":"changed"},
+            {"id":"u2","name":"U₂","value":"123,4 V","type":"tension","state":"changed"},
+            {"id":"p2","name":"P₂","value":"741 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"pcu","name":"P_cu","value":"9,36 W","type":"pertes","state":"changed"},
+            {"id":"eta","name":"η","value":"95,7 %","type":"rendement","state":"changed"}]}],"arrows":[]},
+          {"label":"À <b>I₂ = 8,00 A</b> (courant nominal) : <b>U₂ = 122,9 V</b>, <b>P₂ = 983 W</b>, <b>P_cu = 16,6 W</b> et <b>η = 96,0 %</b>. La chute relative atteint 1,66 %.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[
+            {"id":"i2","name":"I₂","value":"8,00 A","type":"courant","state":"changed"},
+            {"id":"u2","name":"U₂","value":"122,9 V","type":"tension","state":"changed"},
+            {"id":"p2","name":"P₂","value":"983 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"pcu","name":"P_cu","value":"16,6 W","type":"pertes","state":"changed"},
+            {"id":"eta","name":"η","value":"96,0 %","type":"rendement","state":"changed"}]}],"arrows":[]},
+          {"label":"Le rendement est maximal quand <b>P_cu = P_fer</b>, soit <b>I₂ = 9,65 A</b> : au-delà du courant nominal de 8,00 A. Sur ce banc, les pertes fer dominent encore à pleine charge (24,2 W contre 16,6 W).","code":"P_cu = P_fer ; chute = 1,66 %","groups":[{"title":"Optimum","cells":[
+            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
+            {"id":"iopt","name":"I₂ optimal","value":"9,65 A","type":"courant","state":"new"},
+            {"id":"chute","name":"chute","value":"1,66 %","type":"relatif","state":"new"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Le classeur du TP1 contient trois lignes de mesure en charge R, L puis C dont la colonne <span class="fx">V</span> (5,3 V pour 8 A, soit |Z| ≈ 0,67 Ω) ne recoupe pas les charges imposées par l'énoncé (environ 8 Ω). La réserve signalée dans le README du TP reste ouverte : ces lignes ne sont pas utilisées pour calculer ici.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un rendement supérieur à 1 signale une erreur de bilan : <span class="fx">P₁ = P₂ + P_fer + P_cu</span> et <span class="fx">P₂ &lt; P₁</span>. À vide <span class="fx">P₂ = 0</span>, donc <span class="fx">η = 0</span> : un rendement nul n'est pas une erreur.</p>
+      </div>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">pertes</div></div>
+      <h2>Deux pertes fer : hystérésis et courants de Foucault</h2>
+      <p class="lead">Les pertes fer proviennent du matériau magnétique soumis à un flux alternatif : le cycle d'hystérésis dissipe de l'énergie à chaque période, et les courants induits dans la masse du noyau dissipent de l'énergie par effet Joule.</p>
+
+      <div class="math"><span class="ml">Pertes fer</span>
+P_h ∝ f B̂ⁿ        avec n ≈ 1,6 … 2        (hystérésis)
+P_F ∝ f² B̂²        (courants de Foucault)
+P_fe = P_h + P_F
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Courbe du courant à vide en fonction de la tension, montrant le coude de saturation">
+            <path class="ax" d="M70 250 L600 250"/>
+            <path class="ax" d="M70 250 L70 50"/>
+            <path class="ax" d="M70 202 L590 202"/>
+            <path class="ax" d="M70 155 L590 155"/>
+            <path class="ax" d="M70 107 L590 107"/>
+            <path class="ax" d="M224 250 L224 60"/>
+            <path class="ax" d="M378 250 L378 60"/>
+            <path class="ax" d="M532 250 L532 60"/>
+            <polyline points="109.4,223.8 146.8,210.5 224.4,196.5 263.0,191.7 301.3,185.4 339.4,178.4 379.8,169.7 415.7,157.9 454.7,139.0 492.8,113.3 531.7,75.2" fill="none" stroke="var(--accent)" stroke-width="2.2"/>
+            <circle cx="109.4" cy="223.8" r="3" fill="var(--accent)"/>
+            <circle cx="146.8" cy="210.5" r="3" fill="var(--accent)"/>
+            <circle cx="224.4" cy="196.5" r="3" fill="var(--accent)"/>
+            <circle cx="263.0" cy="191.7" r="3" fill="var(--accent)"/>
+            <circle cx="301.3" cy="185.4" r="3" fill="var(--accent)"/>
+            <circle cx="339.4" cy="178.4" r="3" fill="var(--accent)"/>
+            <circle cx="379.8" cy="169.7" r="3" fill="var(--accent)"/>
+            <circle cx="415.7" cy="157.9" r="3" fill="var(--accent)"/>
+            <circle cx="454.7" cy="139.0" r="3" fill="var(--accent)"/>
+            <circle cx="492.8" cy="113.3" r="3" fill="var(--accent)"/>
+            <circle cx="531.7" cy="75.2" r="3" fill="var(--accent)"/>
+            <text class="tm" x="70" y="268" text-anchor="middle">0</text>
+            <text class="tm" x="224" y="268" text-anchor="middle">200</text>
+            <text class="tm" x="378" y="268" text-anchor="middle">400</text>
+            <text class="tm" x="532" y="268" text-anchor="middle">600</text>
+            <text class="ts" x="606" y="256">U₀ (V)</text>
+            <text class="tm" x="70" y="40">I₀ (mA)</text>
+            <text class="tm" x="58" y="206" text-anchor="end">50</text>
+            <text class="tm" x="58" y="159" text-anchor="end">100</text>
+            <text class="tm" x="58" y="111" text-anchor="end">150</text>
+            <text class="tm" x="58" y="254" text-anchor="end">0</text>
+            <text class="tm" x="455" y="66">coude ≈ 450 V</text>
+            
+          </svg>
+        </div>
+        <figcaption>Les onze points mesurés de l'essai à vide. Jusqu'à 450 V environ, <span class="fx">I₀</span> croît lentement ; au-delà, le coude marque la saturation du fer et le courant magnétisant s'emballe.</figcaption>
+      </figure>
+
+      <table class="tbl">
+        <caption>Lois d'échelle des pertes fer et remèdes</caption>
+        <thead><tr><th>Pertes</th><th>Dépendance</th><th>Remède</th></tr></thead>
+        <tbody>
+          <tr><td>Hystérésis P_h</td><td><span class="fx">f B̂ⁿ</span>, n ≈ 1,6 à 2</td><td>matériau à cycle étroit (tôles au silicium), induction de travail modérée</td></tr>
+          <tr><td>Foucault P_F</td><td><span class="fx">f² B̂²</span></td><td>feuilletage du noyau : tôles minces isolées, orientées</td></tr>
+          <tr><td>Totales P_fe</td><td>tension et fréquence, pas le courant de charge</td><td>dimensionner pour rester sous le coude de saturation</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Ordre de grandeur mesuré sur ce banc : à 500,1 V le flux vaut 1,24 fois celui de 402,7 V et <span class="fx">P₀</span> 1,49 fois (1,54 attendu par une loi en <span class="fx">B̂²</span>) ; à 600,2 V le flux vaut 1,49 fois et <span class="fx">P₀</span> 2,10 fois (2,22 attendu). Les pertes augmentent donc plus vite qu'une loi linéaire, d'où l'échauffement à tension élevée.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Les pertes fer dépendent de la tension et de la fréquence, pas du courant de charge : en charge, <span class="fx">P_fer</span> reste sensiblement égal à <span class="fx">P₀</span>. Les pertes cuivre, elles, dépendent du courant et valent <span class="fx">P_cc</span> au courant nominal.</p>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">mesure</div></div>
+      <h2>Le transformateur de courant : un diviseur de courant</h2>
+      <p class="lead">Un transformateur de courant (TC) utilise le même couplage, mais son secondaire fonctionne presque en court-circuit. Le rapport de transformation porte alors sur les courants, dans le rapport inverse des nombres de spires.</p>
+
+      <div class="math"><span class="ml">Transformateur de courant</span>
+I₁/I₂ = N₂/N₁        soit        I₁ N₁ = I₂ N₂
+I₂ = I₁ N₁/N₂
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 240" role="img" aria-label="Transformateur de courant : conducteur primaire traversant un noyau, secondaire en court-circuit sur un ampèremètre">
+            <rect x="200" y="40" width="200" height="30" class="core"/>
+            <rect x="200" y="170" width="200" height="30" class="core"/>
+            <rect x="200" y="70" width="25" height="100" class="core"/>
+            <rect x="375" y="70" width="25" height="100" class="core"/>
+            <path d="M300 8 L300 232" fill="none" stroke="var(--ink)" stroke-width="6"/>
+            <path class="coil" d="M400 80 q16 10 0 20 q16 10 0 20 q16 10 0 20 q16 10 0 20"/>
+            <path class="wire" d="M400 80 L450 80 L450 96"/>
+            <circle cx="450" cy="112" r="16" class="core"/>
+            <path class="wire" d="M450 128 L450 170 L400 170 L400 160"/>
+            <path class="arr" d="M312 60 L312 20" marker-end="url(#ar)"/>
+            <text class="ts" x="322" y="26">I₁ = 1000 A</text>
+            <text class="tm" x="450" y="118" text-anchor="middle">A</text>
+            <text class="tm" x="258" y="150" text-anchor="end">noyau</text>
+            <text class="tm" x="500" y="212" text-anchor="middle">secondaire court-circuité</text>
+            <text class="ts" x="412" y="58">N₂ = 250 spires</text>
+            <text class="tm" x="170" y="220" text-anchor="middle">primaire = 1 conducteur traversant</text>
+          </svg>
+        </div>
+        <figcaption>Le primaire est un simple conducteur traversant le noyau (<span class="fx">N₁ = 1</span>) ; le secondaire à <span class="fx">N₂ = 250</span> spires est bouclé sur un ampèremètre. Avec <span class="fx">I₁ = 1000 A</span>, le secondaire délivre <span class="fx">I₂ = 4,00 A</span> (rapport 250).</figcaption>
+      </figure>
+
+      <table class="tbl">
+        <caption>Transformateur de courant et transformateur de tension</caption>
+        <thead><tr><th>Critère</th><th>Transformateur de courant (TC)</th><th>Transformateur de tension (TP)</th></tr></thead>
+        <tbody>
+          <tr><td>Grandeur imposée</td><td>courant primaire</td><td>tension primaire</td></tr>
+          <tr><td>Secondaire</td><td>quasi court-circuit (charge de mesure faible)</td><td>quasi ouvert (voltmètre à haute impédance)</td></tr>
+          <tr><td>Rapport</td><td><span class="fx">I₁/I₂ = N₂/N₁</span></td><td><span class="fx">U₁/U₂ = N₁/N₂</span></td></tr>
+          <tr><td>Précaution</td><td>ne jamais ouvrir le secondaire sous tension</td><td>ne jamais court-circuiter le secondaire</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le secondaire d'un TC ne doit jamais être ouvert quand le primaire est sous tension : le courant magnétisant n'est plus compensé par le secondaire, le flux atteint la saturation et la tension secondaire devient dangereuse pour l'opérateur et pour l'isolation.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>La pince FLUKE 345 du banc est une variante du transformateur de courant : elle mesure le courant sans ouvrir le circuit et sans contact électrique, par le champ qu'il crée. La pince est aussi un transformateur de courant dont le secondaire alimente le mesureur.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Appliquer au TC la formule du transformateur de tension : le rapport de courant est l'inverse, <span class="fx">I₁/I₂ = N₂/N₁</span>. Un TC 1000/5 A a donc beaucoup plus de spires au secondaire qu'au primaire, contrairement à un transformateur abaisseur de tension.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">dimensionnement</div></div>
+      <h2>La formule 4,44 fixe le flux par la tension et la fréquence</h2>
+      <p class="lead">Le flux est imposé par la tension appliquée et la fréquence : c'est la loi de Faraday intégrée sur une période. La formule 4,44 relie la valeur efficace de la force électromotrice au flux maximal, au nombre de spires et à la fréquence.</p>
+
+      <div class="math"><span class="ml">Démonstration courte</span>
+Φ(t) = Φ̂ sin ωt        u_i = N dΦ/dt = ω N Φ̂ cos ωt
+Û_i = ω N Φ̂        U_i(RMS) = Û_i/√2 = (2π/√2) N f Φ̂
+2π/√2 = 4,4429 ≈ 4,44        U_i(RMS) = 4,44 N f Φ̂
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 640 220" role="img" aria-label="Flux sinusoïdal et force électromotrice en quadrature">
+            <path class="ax" d="M70 110 L590 110"/>
+            <path class="ax" d="M320 30 L320 190"/>
+            <polyline points="70,110.0 75,105.7 80,101.5 85,97.5 90,93.6 95,90.0 100,86.7 105,83.8 110,81.3 115,79.2 120,77.7 125,76.6 130,76.1 135,76.1 140,76.6 145,77.7 150,79.2 155,81.3 160,83.8 165,86.7 170,90.0 175,93.6 180,97.5 185,101.5 190,105.7 195,110.0 200,114.3 205,118.5 210,122.5 215,126.4 220,130.0 225,133.3 230,136.2 235,138.7 240,140.8 245,142.3 250,143.4 255,143.9 260,143.9 265,143.4 270,142.3 275,140.8 280,138.7 285,136.2 290,133.3 295,130.0 300,126.4 305,122.5 310,118.5 315,114.3 320,110.0 325,105.7 330,101.5 335,97.5 340,93.6 345,90.0 350,86.7 355,83.8 360,81.3 365,79.2 370,77.7 375,76.6 380,76.1 385,76.1 390,76.6 395,77.7 400,79.2 405,81.3 410,83.8 415,86.7 420,90.0 425,93.6 430,97.5 435,101.5 440,105.7 445,110.0 450,114.3 455,118.5 460,122.5 465,126.4 470,130.0 475,133.3 480,136.2 485,138.7 490,140.8 495,142.3 500,143.4 505,143.9 510,143.9 515,143.4 520,142.3 525,140.8 530,138.7 535,136.2 540,133.3 545,130.0 550,126.4 555,122.5 560,118.5 565,114.3 570,110.0" fill="none" stroke="var(--teal)" stroke-width="2"/>
+            <polyline points="70,58.0 75,58.4 80,59.6 85,61.7 90,64.4 95,67.9 100,72.1 105,76.9 110,82.1 115,87.9 120,93.9 125,100.3 130,106.7 135,113.3 140,119.7 145,126.1 150,132.1 155,137.9 160,143.1 165,147.9 170,152.1 175,155.6 180,158.3 185,160.4 190,161.6 195,162.0 200,161.6 205,160.4 210,158.3 215,155.6 220,152.1 225,147.9 230,143.1 235,137.9 240,132.1 245,126.1 250,119.7 255,113.3 260,106.7 265,100.3 270,93.9 275,87.9 280,82.1 285,76.9 290,72.1 295,67.9 300,64.4 305,61.7 310,59.6 315,58.4 320,58.0 325,58.4 330,59.6 335,61.7 340,64.4 345,67.9 350,72.1 355,76.9 360,82.1 365,87.9 370,93.9 375,100.3 380,106.7 385,113.3 390,119.7 395,126.1 400,132.1 405,137.9 410,143.1 415,147.9 420,152.1 425,155.6 430,158.3 435,160.4 440,161.6 445,162.0 450,161.6 455,160.4 460,158.3 465,155.6 470,152.1 475,147.9 480,143.1 485,137.9 490,132.1 495,126.1 500,119.7 505,113.3 510,106.7 515,100.3 520,93.9 525,87.9 530,82.1 535,76.9 540,72.1 545,67.9 550,64.4 555,61.7 560,59.6 565,58.4 570,58.0" fill="none" stroke="var(--coral)" stroke-width="2"/>
+            <text class="tm" x="132" y="66" text-anchor="middle" fill="var(--teal)">Φ(t)</text>
+            <text class="tm" x="320" y="44" text-anchor="middle" fill="var(--coral)">u_i(t)</text>
+            <text class="tm" x="330" y="196">t</text>
+            <text class="ts" x="320" y="212" text-anchor="middle">une période complète du flux correspond à une période de la force électromotrice, décalée d'un quart</text>
+          </svg>
+        </div>
+        <figcaption>Le flux et la force électromotrice sont en quadrature : quand le flux passe par son maximum, <span class="fx">u_i</span> est nulle, et inversement. La valeur efficace se déduit de l'amplitude par <span class="fx">Û/√2</span>.</figcaption>
+      </figure>
+
+      <div class="math"><span class="ml">Application numérique (spires choisies pour l'exemple)</span>
+N₁ = 320 spires ; f = 50 Hz ; U₁ = 400 V
+Φ̂ = U₁/(4,44 N₁ f) = 400/(4,44 × 320 × 50) = 5,63 mWb
+Ψ̂₁ = N₁ Φ̂ = 1,80 Wb·tours
+N₂ = 100 → U₂ = 4,44 × 100 × 50 × 5,63·10⁻³ = 125,0 V
+      </div>
+
+      <p>Le nombre de spires n'est pas donné par la plaque : seuls le rapport 400/125 V et le produit 1000 VA le sont. Les 320 et 100 spires ci-dessus sont donc un choix d'exemple cohérent avec <span class="fx">k = 3,2</span>.</p>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le flux est fixé par le rapport <span class="fx">U/f</span> : 400 V à 50 Hz donnent 8,00 V/Hz. À 60 Hz, le même enroulement supporterait 480 V à flux égal. À tension constante, baisser la fréquence augmente le flux et sature le noyau.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>La formule <span class="fx">4,44 N f Φ̂</span> donne une valeur <b>efficace</b>. Pour une amplitude, il faut <span class="fx">Û = 2π N f Φ̂</span>, soit √2 fois plus. Confondre les deux fausse le flux d'un facteur 1,414.</p>
+      </div>
+
+      <details class="try">
+        <summary>Le même noyau est alimenté à 50 Hz puis à 60 Hz sous 400 V. Que devient le flux ?</summary>
+        <div class="ans">À tension égale, <span class="fx">Φ̂ = U/(4,44 N f)</span> varie comme <span class="fx">1/f</span> : il diminue dans le rapport 50/60. Inversement, à 60 Hz la tension maximale à flux constant vaut <span class="fx">400 × 60/50 = 480 V</span>.</div>
+      </details>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p>Dimensionnement : la section du noyau fixe le flux admissible (<span class="fx">Φ̂ = B̂ A</span>), donc le nombre de spires à tension et fréquence données. Un transformateur 50 Hz alimenté en 60 Hz garde sa tension mais a plus de marge avant saturation ; l'inverse est risqué.</p>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">synthèse</div></div>
+      <h2>Erreurs fréquentes, QCM et mémo</h2>
+      <p class="lead">Les erreurs ci-dessous reviennent dans les exercices et les essais. Les corriger avant de manipuler les formules évite la plupart des calculs faux.</p>
+
+      <h3>Erreurs fréquentes</h3>
+      <table class="tbl">
+        <caption>Erreurs classiques et corrections</caption>
+        <thead><tr><th>Erreur</th><th>Conséquence</th><th>Correction</th></tr></thead>
+        <tbody>
+          <tr><td>Confondre k et 1/k</td><td>tension et courant inversés</td><td><span class="fx">k = U₁/U₂ = I₂/I₁</span></td></tr>
+          <tr><td>Oublier √2 dans la formule 4,44</td><td>flux faux d'un facteur 1,414</td><td>4,44 donne une valeur efficace ; l'amplitude vaut <span class="fx">Û = 2πNfΦ̂</span></td></tr>
+          <tr><td>Donner un rendement supérieur à 1</td><td>bilan de puissances incohérent</td><td><i>η</i> = <i>P</i>₂/(<i>P</i>₂ + <i>P</i><sub>fer</sub> + <i>P</i><sub>cu</sub>) &lt; 1</td></tr>
+          <tr><td>Confondre P₀ et P_cc</td><td>pertes fer et cuivre interverties</td><td><span class="fx">P₀ ≈ P_fer</span> ; <span class="fx">P_cc ≈ P_cu</span> au courant nominal</td></tr>
+          <tr><td>Oublier le k² en ramenant R₂</td><td>impédance 10 fois trop petite</td><td><span class="fx">R′₂ = k²R₂</span> et <span class="fx">Z′₂ = k²Z₂</span></td></tr>
+          <tr><td>Utiliser la formule du TP pour un TC</td><td>rapport de courant inversé</td><td><span class="fx">I₁/I₂ = N₂/N₁</span> pour un transformateur de courant</td></tr>
+          <tr><td>Calculer avec les lignes R/L/C du classeur</td><td>résultats incohérents avec les charges imposées</td><td>réserve du README non levée : ne pas les exploiter</td></tr>
+        </tbody>
+      </table>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Mémo — formules</h4>
+          <ul>
+            <li><span class="fx">k = N₁/N₂ = U₁/U₂ = I₂/I₁</span> ; <span class="fx">Z′₂ = k²Z₂</span>.</li>
+            <li>À vide : <span class="fx">S₀ = U₀I₀</span>, <span class="fx">cos φ₀ = P₀/S₀</span>, <span class="fx">R_fer = U₀²/P₀</span>, <span class="fx">X_m = U₀²/Q₀</span>.</li>
+            <li>Court-circuit : <span class="fx">Z_cc = U_cc/I_cc</span>, <span class="fx">R_cc = P_cc/I_cc²</span>, <span class="fx">X_cc = √(Z_cc² − R_cc²)</span>.</li>
+            <li>Charge : <span class="fx">η = P₂/(P₂ + P_fer + P_cu)</span>, <span class="fx">P_cu = R_cc I′₂²</span>.</li>
+            <li>4,44 : <span class="fx">U_i = 4,44 N f Φ̂</span> (efficace).</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Mémo — checklist</h4>
+          <ul>
+            <li>Essai à vide : secondaire ouvert, <span class="fx">P₀ ≈ P_fer</span>.</li>
+            <li>Essai en court-circuit : tension réduite, <span class="fx">P_cc ≈ P_cu</span>.</li>
+            <li>Ramener une grandeur secondaire : tensions et impédances × k², courants ÷ k.</li>
+            <li>Vérifier <span class="fx">η ≤ 1</span> et la cohérence des unités (mA → A).</li>
+            <li>TC : secondaire jamais ouvert sous tension.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const NS = 'http://www.w3.org/2000/svg';
+  let UID = 0;
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint32_t|int16_t|uint8_t|ptrdiff_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function svgEl(name, attrs){
+    const n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function(k){ n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur mémoire : cases + flèches
+     ============================================================ */
+  function makeMemory(root){
+    const groupsEl = root.querySelector('[data-groups]');
+    const stage = root.querySelector('[data-stage]');
+    const svg = root.querySelector('[data-arrows]');
+    if (!groupsEl || !stage || !svg) return { render: function(){} };
+
+    const mid = 'mm' + (++UID);
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="' + mid + 'i" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+        '<marker id="' + mid + 'a" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>';
+
+    let prevIds = new Set();
+    let lastState = null;
+    let lastAnimate = true;
+
+    function cellHTML(c, isNew){
+      const cls = ['cell'];
+      if (c.kind) cls.push('is-' + c.kind);
+      if (c.state) String(c.state).split(/\s+/).forEach(function(t){ if (t) cls.push('is-' + t); });
+      if (isNew) cls.push('is-new');
+
+      let body = '<div class="cname">' + esc(c.name);
+      if (c.type) body += '<span class="ctype">' + esc(c.type) + '</span>';
+      body += '</div>';
+
+      if (c.fields) {
+        body += '<div class="cfields">' + c.fields.map(function(f){
+          return '<div class="cf"><span>' + esc(f.k) + '</span><b>' + esc(f.v) + '</b></div>';
+        }).join('') + '</div>';
+      } else {
+        body += '<div class="cval">' + (c.value === '' || c.value === null || c.value === undefined ? '&nbsp;' : esc(c.value)) + '</div>';
+      }
+      if (c.addr) body += '<div class="caddr">' + esc(c.addr) + '</div>';
+
+      const style = c.w ? ' style="--cw:' + Number(c.w) + 'px"' : '';
+      return '<div class="' + cls.join(' ') + '" data-id="' + esc(c.id) + '"' + style + '>' + body + '</div>';
+    }
+
+    function drawArrows(state, animate){
+      if (!state) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return;
+      const sr = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.querySelectorAll('.arrow,.alabel').forEach(function(n){ n.remove(); });
+
+      (state.arrows || []).forEach(function(a){
+        const fe = groupsEl.querySelector('[data-id="' + a.from + '"]');
+        const te = groupsEl.querySelector('[data-id="' + a.to + '"]');
+        if (!fe || !te) return;
+
+        const fr = fe.getBoundingClientRect();
+        const tr = te.getBoundingClientRect();
+        const f = {x: fr.left - sr.left, y: fr.top - sr.top, w: fr.width, h: fr.height};
+        const t = {x: tr.left - sr.left, y: tr.top - sr.top, w: tr.width, h: tr.height};
+        const fc = {x: f.x + f.w / 2, y: f.y + f.h / 2};
+        const tc = {x: t.x + t.w / 2, y: t.y + t.h / 2};
+        const dx = tc.x - fc.x;
+        const dy = tc.y - fc.y;
+        const vertical = Math.abs(dy) >= Math.abs(dx) * 0.72;
+        const gap = 4;
+        let p1, p2, c1, c2;
+
+        if (vertical) {
+          const dir = dy >= 0 ? 1 : -1;
+          p1 = {x: fc.x, y: dir > 0 ? f.y + f.h + gap : f.y - gap};
+          p2 = {x: tc.x, y: dir > 0 ? t.y - gap : t.y + t.h + gap};
+          const k = Math.max(26, Math.abs(p2.y - p1.y) * 0.46);
+          c1 = {x: p1.x, y: p1.y + dir * k};
+          c2 = {x: p2.x, y: p2.y - dir * k};
+        } else {
+          const dir = dx >= 0 ? 1 : -1;
+          p1 = {x: dir > 0 ? f.x + f.w + gap : f.x - gap, y: fc.y};
+          p2 = {x: dir > 0 ? t.x - gap : t.x + t.w + gap, y: tc.y};
+          const k = Math.max(26, Math.abs(p2.x - p1.x) * 0.46);
+          c1 = {x: p1.x + dir * k, y: p1.y};
+          c2 = {x: p2.x - dir * k, y: p2.y};
+        }
+
+        const path = svgEl('path', {
+          d: 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y,
+          'class': 'arrow' + (a.accent ? ' is-accent' : ''),
+          'marker-end': 'url(#' + mid + (a.accent ? 'a' : 'i') + ')'
+        });
+        svg.appendChild(path);
+
+        const len = path.getTotalLength();
+        if (animate && !reduceMotion.matches) {
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect();
+          path.style.transition = 'stroke-dashoffset .55s ease';
+          path.style.strokeDashoffset = '0';
+        }
+
+        if (a.label) {
+          const pt = path.getPointAtLength(len * 0.52);
+          const label = svgEl('text', {
+            x: pt.x + (vertical ? 7 : 0),
+            y: pt.y + (vertical ? 3 : -6),
+            'class': 'alabel',
+            'text-anchor': vertical ? 'start' : 'middle'
+          });
+          label.textContent = a.label;
+          svg.appendChild(label);
+        }
+      });
+    }
+
+    function render(state, animate){
+      lastState = state;
+      lastAnimate = animate !== false;
+      const nextIds = new Set();
+
+      groupsEl.classList.toggle('is-stack', (state.groups || []).length > 1);
+      const column = root.hasAttribute('data-column');
+      groupsEl.innerHTML = (state.groups || []).map(function(g){
+        const cells = (g.cells || []).map(function(c){
+          nextIds.add(c.id);
+          return cellHTML(c, !prevIds.has(c.id));
+        }).join('');
+        return '<div class="mem-group">' +
+          (g.title ? '<div class="mem-gtitle">' + esc(g.title) + '</div>' : '') +
+          '<div class="cells' + (column ? ' is-column' : '') + '">' + cells + '</div>' +
+          (g.hint ? '<div class="mem-ghint">' + esc(g.hint) + '</div>' : '') +
+        '</div>';
+      }).join('');
+      prevIds = nextIds;
+      requestAnimationFrame(function(){ drawArrows(lastState, lastAnimate); });
+    }
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){
+        if (!lastState) return;
+        requestAnimationFrame(function(){ drawArrows(lastState, false); });
+      });
+      ro.observe(stage);
+    }
+
+    return { render: render };
+  }
+
+  /* ============================================================
+     contrôleur de laboratoire (étapes, lecture, points)
+     ============================================================ */
+  function mountLab(root, spec){
+    const mem = makeMemory(root);
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const linesEl = root.querySelector('[data-lines]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    if (linesEl && spec.lines) {
+      linesEl.innerHTML = spec.lines.map(function(line, k){
+        return '<li data-line="' + k + '"><span class="ln">' + (k + 1) + '</span><span class="src">' + hl(line) + '</span></li>';
+      }).join('');
+      linesEl.addEventListener('click', function(e){
+        const li = e.target.closest('li[data-line]');
+        if (!li) return;
+        const lineNo = Number(li.getAttribute('data-line'));
+        const idx = states.findIndex(function(s){ return s.line === lineNo; });
+        if (idx >= 0) { stop(); i = idx; paint(); }
+      });
+    }
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(animate){
+      const s = states[i];
+      mem.render(s, animate !== false);
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (linesEl) {
+        Array.prototype.forEach.call(linesEl.children, function(li, k){
+          li.classList.toggle('on', k === s.line);
+        });
+      }
+      setOutput(s.output);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(false); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint(false);
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(false); }
+      }, spec.interval || 2900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(false); });
+
+    paint(false);
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     traducteur de déclarations
+     ============================================================ */
+  const DECLS = [
+    {d: 'int *p', fr: 'p est un <b>pointeur vers un int</b>.', why: 'Une étoile, un saut : <code>*p</code> est un int.'},
+    {d: 'int **pp', fr: 'pp est un <b>pointeur vers un pointeur vers int</b>.', why: 'Deux étoiles, deux sauts : <code>**pp</code> est un int.'},
+    {d: 'int *p[5]', fr: 'p est un <b>tableau de 5 pointeurs vers int</b>.', why: '<code>[]</code> est prioritaire sur <code>*</code> : d’abord un tableau, ensuite des pointeurs.'},
+    {d: 'int (*p)[5]', fr: 'p est un <b>pointeur vers un tableau de 5 int</b>.', why: 'Les parenthèses forcent <code>*</code> d’abord : un seul pointeur, qui avance de 20 octets.'},
+    {d: 'int *f(int)', fr: 'f est une <b>fonction</b> qui renvoie un <b>pointeur vers int</b>.', why: '<code>f</code> est suivi de <code>(int)</code> : c’est une fonction, pas un pointeur.'},
+    {d: 'int (*f)(int, int)', fr: 'f est un <b>pointeur vers une fonction</b> prenant deux int et renvoyant un int.', why: 'Les parenthèses autour de <code>*f</code> font de f un pointeur ; la fonction est la cible.'},
+    {d: 'const int *p', fr: 'p est un pointeur vers un <b>int constant</b>.', why: 'On ne peut pas modifier <code>*p</code>, mais on peut réaffecter <code>p</code>.'},
+    {d: 'int *const p', fr: 'p est un <b>pointeur constant</b> vers un int.', why: 'On peut modifier <code>*p</code>, mais pas réaffecter <code>p</code>.'},
+    {d: 'void *p', fr: 'p est un <b>pointeur générique</b>, sans type de cible.', why: 'On ne peut pas le déréférencer tel quel : il faut le convertir, <code>*(int *)p</code>.'},
+    {d: 'char *argv[]', fr: 'argv est un <b>tableau de pointeurs vers char</b>.', why: 'Dans une liste de paramètres, <code>char *argv[]</code> équivaut à <code>char **argv</code>.'},
+    {d: 'struct Point *p', fr: 'p est un <b>pointeur vers une struct Point</b>.', why: 'On accède aux membres avec <code>p-&gt;x</code> ou <code>(*p).x</code>.'}
+  ];
+
+  (function(){
+    const root = document.querySelector('[data-translator]');
+    if (!root) return;
+    const list = root.querySelector('[data-translist]');
+    const out = root.querySelector('[data-transout]');
+    const buttons = [];
+
+    DECLS.forEach(function(x, k){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<code>' + esc(x.d) + '</code>';
+      b.addEventListener('click', function(){ select(k); });
+      list.appendChild(b);
+      buttons.push(b);
+    });
+
+    function select(k){
+      buttons.forEach(function(b, n){ b.classList.toggle('on', n === k); });
+      const x = DECLS[k];
+      out.innerHTML = '<div class="decl">' + esc(x.d) + '</div>' +
+        '<div class="fr">' + x.fr + '</div>' +
+        '<div class="why">' + x.why + '</div>';
+    }
+
+    select(0);
+  })();
+
+  /* ============================================================
+     explorateur d'octets
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-addrlab]');
+    if (!root) return;
+    const grid = root.querySelector('[data-bytes]');
+    const info = root.querySelector('[data-info]');
+    const buttons = Array.prototype.slice.call(root.querySelectorAll('[data-var]'));
+
+    const BYTES = ['2A','00','00','00','41','··','··','··','00','10','00','00','00','00','00','00'];
+    const OWNER = ['x','x','x','x','c',null,null,null,'p','p','p','p','p','p','p','p'];
+    const META = {
+      x: {name:'x', type:'int', size:4, addr:'0x1000', value:'42 (0x2A)', bytes:'2A 00 00 00', note:'Petit-boutisme : l’octet de poids faible est le premier. 0x0000002A = 42.'},
+      c: {name:'c', type:'char', size:1, addr:'0x1004', value:"'A' (0x41)", bytes:'41', note:'Un seul octet. Les octets 0x1005 à 0x1007 sont du bourrage, pour aligner p.'},
+      p: {name:'p', type:'int *', size:8, addr:'0x1008', value:'0x1000', bytes:'00 10 00 00 00 00 00 00', note:'p contient l’adresse de x : c’est exactement ce qu’on appelle un pointeur.'}
+    };
+    let selected = 'x';
+
+    function paint(sel){
+      selected = sel;
+      grid.innerHTML = BYTES.map(function(b, i){
+        const owner = OWNER[i];
+        const cls = ['byte'];
+        if (owner) cls.push('v-' + owner); else cls.push('pad');
+        if (sel && owner === sel) cls.push('sel');
+        const addr = '0x10' + i.toString(16).toUpperCase().padStart(2, '0');
+        return '<div class="' + cls.join(' ') + '" data-byte="' + i + '">' +
+          '<span class="ba">' + addr + '</span><span class="bv">' + b + '</span></div>';
+      }).join('');
+
+      buttons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-var') === sel); });
+      if (!sel) return;
+      const m = META[sel];
+      info.innerHTML = '<b>' + m.name + '</b> · ' + m.type + ' · ' + m.size + ' ' + (m.size > 1 ? 'octets' : 'octet') + ' · adresse ' +
+        '<span class="mono">' + m.addr + '</span><br>valeur : <span class="mono">' + m.value +
+        '</span> — octets : <span class="mono">' + m.bytes + '</span><br>' + m.note;
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ paint(b.getAttribute('data-var')); });
+    });
+
+    grid.addEventListener('click', function(e){
+      const el = e.target.closest('[data-byte]');
+      if (!el) return;
+      const owner = OWNER[Number(el.getAttribute('data-byte'))];
+      if (owner) paint(owner);
+    });
+
+    paint('x');
+  })();
+
+  /* ============================================================
+     widget tableau : p + i
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-arrlab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-arrstage]');
+    const track = root.querySelector('[data-arrtrack]');
+    const cells = Array.prototype.slice.call(root.querySelectorAll('.arr-cell'));
+    const cur = root.querySelector('[data-cur]');
+    const range = root.querySelector('[data-range]');
+    const iout = root.querySelector('[data-iout]');
+    const formula = root.querySelector('[data-formula]');
+    const svg = root.querySelector('[data-arrsvg]');
+    const pcard = root.querySelector('.arr-p');
+
+    const BASE = 0x1000;
+    const VALUES = [10, 20, 30, 40];
+    let i = 2;
+
+    function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const pr = pcard.getBoundingClientRect();
+      const ar = cells[0].getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      let d;
+      if (window.matchMedia('(max-width: 620px)').matches) {
+        const x1 = pr.left + pr.width / 2 - sr.left;
+        const y1 = pr.bottom - sr.top + 3;
+        const x2 = ar.left + ar.width / 2 - sr.left;
+        const y2 = ar.top - sr.top - 5;
+        const my = (y1 + y2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = pr.right - sr.left + 4;
+        const y1 = pr.top - sr.top + pr.height / 2;
+        const x2 = ar.left - sr.left - 5;
+        const y2 = ar.top - sr.top + ar.height / 2;
+        const mx = (x1 + x2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + mx + ' ' + y1 + ', ' + mx + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      }
+      svg.innerHTML = '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ar-accent)"/>';
+    }
+
+    function layout(){
+      const idx = Math.min(i, 3);
+      const cell = cells[idx];
+      let x;
+      if (i < 4) {
+        x = cell.offsetLeft + cell.offsetWidth / 2;
+      } else {
+        const last = cells[3];
+        x = last.offsetLeft + last.offsetWidth + 13;
+      }
+      cur.style.left = x + 'px';
+      cur.textContent = 'p + ' + i;
+      cells.forEach(function(c, k){ c.classList.toggle('sel', k === i); });
+      range.value = i;
+      iout.textContent = 'i = ' + i;
+
+      if (i < 4) {
+        formula.innerHTML = 'p + ' + i + ' = <b>' + hex(BASE + 4 * i) + '</b> → <b>*(p + ' + i + ')</b> = a[' + i + '] = <b>' + VALUES[i] + '</b> <span class="ok">✓</span>';
+      } else {
+        formula.innerHTML = 'p + 4 = <b>' + hex(BASE + 16) + '</b> : adresse juste après le tableau. <b>Valide</b> pour comparer, <span class="ko">interdit</span> à déréférencer.';
+      }
+      drawArrow();
+    }
+
+    range.addEventListener('input', function(){
+      i = Math.max(0, Math.min(4, parseInt(range.value, 10) || 0));
+      layout();
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(layout); });
+      ro.observe(stage);
+    }
+
+    requestAnimationFrame(layout);
+  })();
+
+  /* ============================================================
+     widget const
+     ============================================================ */
+  (function(){
+    document.querySelectorAll('.const-card').forEach(function(card){
+      const kind = card.getAttribute('data-case');
+      const fb = card.querySelector('[data-fb]');
+      if (!fb) return;
+      card.querySelectorAll('[data-act]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          const act = btn.getAttribute('data-act');
+          let ok = false;
+          let msg = '';
+          if (kind === 'c1') {
+            if (act === 'val') { ok = false; msg = '✗ error: assignment of read-only location ‘*p’ — la cible est const.'; }
+            else { ok = true; msg = '✓ p = &y est permis : le pointeur lui-même n’est pas const.'; }
+          } else if (kind === 'c2') {
+            if (act === 'val') { ok = true; msg = '✓ *p = 5 est permis : la cible n’est pas const.'; }
+            else { ok = false; msg = '✗ error: assignment of read-only variable ‘p’ — le pointeur est const.'; }
+          } else {
+            ok = false;
+            msg = act === 'val'
+              ? '✗ *p est const : la cible est protégée.'
+              : '✗ p est const : le pointeur est protégé.';
+          }
+          fb.textContent = msg;
+          fb.className = 'const-fb ' + (ok ? 'ok' : 'ko');
+        });
+      });
+    });
+  })();
+
+  /* ============================================================
+     widget pointeur de fonction
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-fplab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-fpstage]');
+    const svg = root.querySelector('[data-fpsvg]');
+    const opval = root.querySelector('[data-opval]');
+    const out = root.querySelector('[data-fpout]');
+    const fnButtons = Array.prototype.slice.call(root.querySelectorAll('.fp-fn'));
+
+    const FUNCS = {
+      add: {addr: '0x401000', value: 7},
+      mul: {addr: '0x401040', value: 12}
+    };
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const op = root.querySelector('.fp-op').getBoundingClientRect();
+      const targetEl = root.querySelector('.fp-fn.on');
+      if (!targetEl) return;
+      const target = targetEl.getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      const x1 = op.left + op.width / 2 - sr.left;
+      const y1 = op.bottom - sr.top + 3;
+      const x2 = target.left + target.width / 2 - sr.left;
+      const y2 = target.top - sr.top - 5;
+      const my = (y1 + y2) / 2;
+      svg.innerHTML = '<path d="M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2 +
+        '" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ar-accent)"/>';
+    }
+
+    function pick(k){
+      const f = FUNCS[k];
+      if (!f) return;
+      opval.textContent = f.addr;
+      out.innerHTML = 'op(3, 4) = <b>' + f.value + '</b>';
+      fnButtons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fn') === k); });
+      requestAnimationFrame(drawArrow);
+    }
+
+    root.querySelectorAll('[data-fn]').forEach(function(b){
+      b.addEventListener('click', function(){ pick(b.getAttribute('data-fn')); });
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(drawArrow); });
+      ro.observe(stage);
+    }
+
+    pick('add');
+  })();
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'Le rapport de transformation d’un transformateur idéal s’écrit…',
+     o: ['<span class="fx">k = N₂/N₁ = U₁/U₂ = I₂/I₁</span>', '<span class="fx">k = N₁/N₂ = U₂/U₁ = I₁/I₂</span>', '<span class="fx">k = N₁/N₂ = U₁/U₂ = I₂/I₁</span>', '<span class="fx">k = N₁/N₂ = U₁/U₂ = I₁/I₂</span>'], a: 2,
+     fb: 'Le rapport vaut k = N₁/N₂ = U₁/U₂ et, à puissance conservée, le courant varie dans le rapport inverse : I₂/I₁ = k. Avec la plaque 400 V / 125 V du banc, k = 3,2.'},
+    {q: 'Un transformateur idéal 400/125 V alimente une charge qui appelle 8,00 A au secondaire. Le courant primaire vaut…',
+     o: ['2,50 A', '8,00 A', '25,6 A', '0,400 A'], a: 0,
+     fb: 'La puissance est conservée : I₁ = I₂/k = 8,00/3,2 = 2,50 A. Le courant diminue quand la tension augmente ; le produit U₁I₁ reste égal à U₂I₂.'},
+    {q: 'Une charge de 15,6 Ω est branchée au secondaire (k = 3,2). Quelle impédance voit le primaire ?',
+     o: ['15,6 Ω', '160 Ω', '50,0 Ω', '1,52 Ω'], a: 1,
+     fb: 'Les impédances se ramènent par k² : Z′₂ = k²Z₂ = 10,24 × 15,6 = 160 Ω. On vérifie sur le circuit : 400 V / 2,50 A = 160 Ω.'},
+    {q: 'À vide, la puissance active P₀ mesurée représente principalement…',
+     o: ['les pertes cuivre des enroulements', 'la puissance utile au secondaire', 'la puissance réactive absorbée', 'les pertes fer du noyau'], a: 3,
+     fb: 'À vide le secondaire est ouvert, donc P₂ = 0 ; le courant à vide est faible et la chute R₁I₀² est négligeable. La puissance active absorbée sert presque entièrement aux pertes fer : P₀ ≈ P_fer.'},
+    {q: 'Au point à vide nominal (402,7 V ; 84,54 mA ; 24,19 W), que valent S₀ et cos φ₀ ?',
+     o: ['34,0 VA et 0,711', '34,0 VA et 0,024', '24,2 VA et 0,711', '3,40 VA et 0,711'], a: 0,
+     fb: 'S₀ = U₀I₀ = 402,7 × 0,08454 = 34,0 VA, puis cos φ₀ = P₀/S₀ = 24,19/34,0 = 0,711. Le courant à vide vaut 3,25 % du courant nominal.'},
+    {q: 'Toujours au point nominal (Q₀ = 24,0 var), que valent R_fer et X_m ?',
+     o: ['6,70 kΩ et 6,70 kΩ', '16,6 kΩ et 24,0 kΩ', '6,70 kΩ et 6,77 kΩ', '6,77 kΩ et 6,70 kΩ'], a: 2,
+     fb: 'R_fer = U₀²/P₀ = 402,7²/24,19 = 6,70 kΩ ; X_m = U₀²/Q₀ = 402,7²/24,0 = 6,77 kΩ. Les deux valeurs se déduisent du même point à vide.'},
+    {q: 'En court-circuit, la puissance active P_cc mesurée représente principalement…',
+     o: ['les pertes fer du noyau', 'les pertes cuivre des enroulements', 'la puissance utile', 'la puissance magnétisante'], a: 1,
+     fb: 'La tension appliquée est réduite, donc le flux et le courant magnétisant sont faibles : les pertes fer deviennent négligeables. P_cc ≈ P_cu = R_cc·I_cc².'},
+    {q: 'Essai en court-circuit (exemple de calcul) : U_cc = 15,0 V, I_cc = 2,6 A, P_cc = 18,0 W. Que valent R_cc, Z_cc et X_cc ?',
+     o: ['2,66 Ω · 5,77 Ω · 5,12 Ω', '6,66 Ω · 5,77 Ω · 5,12 Ω', '2,66 Ω · 15,0 Ω · 14,8 Ω', '0,462 Ω · 5,77 Ω · 5,12 Ω'], a: 0,
+     fb: 'R_cc = P_cc/I_cc² = 18,0/6,76 = 2,66 Ω ; Z_cc = U_cc/I_cc = 15,0/2,6 = 5,77 Ω ; X_cc = √(5,77² − 2,66²) = 5,12 Ω. Ces valeurs sont un exemple, pas une mesure du banc.'},
+    {q: 'La formule 4,44 N f Φ̂ donne…',
+     o: ['une amplitude de tension', 'une fréquence de résonance', 'une puissance apparente', 'une valeur efficace de tension, avec 4,44 ≈ 2π/√2'], a: 3,
+     fb: 'On obtient la valeur efficace U_i(RMS) ; l’amplitude vaut ωNΦ̂ = √2 × 4,44 N f Φ̂. La constante exacte est 2π/√2 = 4,4429, arrondie à 4,44.'},
+    {q: 'Le rendement d’un transformateur s’écrit…',
+     o: ['η = P₁/P₂', 'η = P₂/(P₂ + P_fer + P_cu)', 'η = P₂/P_fer', 'η = (P₂ + P_fer)/P_cu'], a: 1,
+     fb: 'Le bilan donne P₁ = P₂ + P_fer + P_cu, donc η = P₂/P₁. Le rendement reste inférieur à 1 et vaut 0 à vide, puisque P₂ = 0.'},
+    {q: 'Les pertes fer varient…',
+     o: ['comme I² dans les deux cas', 'comme f²B̂² pour l’hystérésis et f·B̂ⁿ pour Foucault', 'comme f·B̂ⁿ (n ≈ 1,6 à 2) pour l’hystérésis et f²B̂² pour Foucault', 'indépendamment de la fréquence'], a: 2,
+     fb: 'L’hystérésis suit f·B̂ⁿ avec n ≈ 1,6 à 2 ; les courants de Foucault suivent f²B̂². Le feuilletage du noyau réduit Foucault, le choix du matériau réduit l’hystérésis.'},
+    {q: 'Un transformateur de courant a N₁ = 1, N₂ = 250 et I₁ = 1000 A. Le secondaire…',
+     o: ['délivre 4,00 A et ne doit jamais être ouvert sous tension', 'délivre 250 A', 'délivre 0,250 A et peut rester ouvert', 'délivre 4,00 A et peut être ouvert sans danger'], a: 0,
+     fb: 'Pour un TC, I₁/I₂ = N₂/N₁, soit I₂ = I₁·N₁/N₂ = 1000/250 = 4,00 A. Ouvert, le secondaire ne compense plus le courant magnétisant : le flux sature et la tension secondaire devient dangereuse.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ELMEC1">← E2-ELMEC1</a>
+</body>
+</html>

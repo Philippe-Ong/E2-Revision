@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Champs et équations de Maxwell — E2-ELMEC1</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-int{background:var(--blue-s);border-color:var(--blue)}
+  .sw-char{background:var(--green-s);border-color:var(--green)}
+  .sw-ptr{background:var(--accent-s);border-color:var(--accent)}
+  .sw-heap{background:var(--coral-s);border-color:var(--coral)}
+  .sw-free{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- traducteur de déclarations ---------- */
+  .translator{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px;background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:16px;margin:22px 0;box-shadow:var(--shadow);align-items:start}
+  .trans-list{display:grid;gap:4px;align-content:start}
+  .trans-list button{text-align:left;border:1px solid transparent;background:var(--card2);border-radius:7px;padding:5px 8px;font:11.5px/1.5 var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s,color .15s;overflow-wrap:anywhere}
+  .trans-list button:hover{color:var(--ink);background:var(--card)}
+  .trans-list button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .trans-list button code{background:none;border:0;padding:0;font-size:12px;color:inherit}
+  .trans-out{background:var(--card2);border-radius:10px;padding:12px 14px;min-height:150px}
+  .trans-out .decl{font:12px var(--mono);color:var(--accent);margin-bottom:6px;overflow-wrap:anywhere}
+  .trans-out .fr{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:550;max-width:40ch}
+  .trans-out .why{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;max-width:46ch}
+  @media (max-width:760px){
+    .translator{grid-template-columns:1fr;padding:13px}
+    .trans-list{grid-template-columns:1fr 1fr}
+    .trans-out{min-height:120px}
+  }
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .mem-stage{position:relative;padding:12px 4px 4px;margin-top:2px}
+  .mem-groups{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;justify-content:center}
+  .mem-groups.is-stack{flex-direction:column;align-items:center;gap:24px}
+  .mem-groups.is-stack .mem-group{width:100%;position:relative;padding-top:16px}
+  .mem-groups.is-stack .mem-gtitle{position:absolute;left:0;top:0;text-align:left}
+  .mem-group{display:grid;justify-items:center;gap:6px;min-width:0}
+  .mem-gtitle{font:650 9.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .mem-ghint{font-size:11px;color:var(--faint);line-height:1.35;text-align:center;max-width:230px}
+  .cells{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:flex-start}
+  .cells.is-column{flex-direction:column;gap:44px;align-items:center}
+  .cell{--cw:108px;width:var(--cw);max-width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:7px 8px 6px;text-align:center;position:relative;transition:border-color .22s,background .22s,box-shadow .22s,opacity .22s}
+  .cell.is-ptr{border-color:var(--accent);background:linear-gradient(var(--accent-s),var(--card) 72%)}
+  .cell.is-char{border-color:var(--green);background:linear-gradient(var(--green-s),var(--card) 78%)}
+  .cell.is-heap{border-color:var(--coral);background:linear-gradient(var(--coral-s),var(--card) 78%)}
+  .cell.is-active{box-shadow:0 0 0 3px var(--accent-s);border-color:var(--accent)}
+  .cell.is-changed{animation:flash .9s ease}
+  .cell.is-new{animation:pop .34s ease}
+  .cell.is-freed{opacity:.62;border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px)}
+  .cell.is-freed .cval{text-decoration:line-through}
+  .cell.is-err{border-color:var(--red);background:var(--red-s)}
+  .cell.is-null .cval{color:var(--faint)}
+  .cname{display:flex;align-items:center;justify-content:center;gap:4px;font:650 11.5px/1.2 var(--mono);color:var(--ink);min-height:16px}
+  .ctype{font:8.5px/1 var(--mono);text-transform:none;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:2px 3px;font-weight:400}
+  .cval{font:700 18px/1.18 var(--mono);margin:4px 0 1px;min-height:21px;overflow-wrap:anywhere}
+  .is-ptr .cval{font-size:13.5px;font-weight:650;color:var(--accent);letter-spacing:-.02em}
+  .caddr{font:9.5px/1.15 var(--mono);color:var(--faint);letter-spacing:.01em}
+  .cfields{display:grid;gap:1px;margin:4px 0 2px}
+  .cf{display:flex;justify-content:space-between;gap:8px;font:11px/1.5 var(--mono);border-bottom:1px dotted var(--line2);padding:1px 2px}
+  .cf:last-child{border-bottom:0}
+  .cf span{color:var(--faint)}
+  .cf b{font-weight:650}
+  .cell.w-node{--cw:158px}
+  .cell.w-wide{--cw:150px}
+
+  .arrow-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .arrow{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .arrow.is-accent{stroke:var(--accent);stroke-width:2}
+  .alabel{font:10px/1 var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- simulateur de code ---------- */
+  .codesim .sim{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+  .sim-code{list-style:none;margin:0;padding:8px 0;background:#1c1c1a;border-radius:11px;font:12px/1.72 var(--mono);overflow:auto;min-height:150px}
+  .sim-code li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:1px 11px 1px 6px;border-left:3px solid transparent;color:#cfccc4;white-space:pre;cursor:pointer}
+  .sim-code li:hover{background:rgba(255,255,255,.045)}
+  .sim-code li .ln{color:#67655f;text-align:right;user-select:none}
+  .sim-code li.on{background:rgba(255,255,255,.09);border-left-color:var(--accent-2);color:#fff}
+  .sim-code li.on .ln{color:#b9b6ad}
+  .sim-code .k{color:#9ec7f3} .sim-code .n{color:#e7b06a} .sim-code .s{color:#a7d8a9} .sim-code .c{color:#8b8880} .sim-code .f{color:#c6a9f8}
+  .sim-side{min-width:0}
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:9px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+  @media (max-width:880px){
+    .codesim .sim{grid-template-columns:1fr}
+    .codesim .sim-code{min-height:0}
+  }
+
+  /* ---------- explorateur d'adresses ---------- */
+  .addrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .addr-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0 13px}
+  .byte{border:1px solid var(--line2);border-radius:7px;background:var(--card2);padding:4px 3px 3px;text-align:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+  .byte:hover{transform:translateY(-1px);border-color:var(--line)}
+  .byte .ba{display:block;font:8.5px/1.2 var(--mono);color:var(--faint)}
+  .byte .bv{display:block;font:650 12px/1.3 var(--mono);color:var(--ink)}
+  .byte.v-x{background:var(--blue-s);border-color:var(--blue)}
+  .byte.v-c{background:var(--green-s);border-color:var(--green)}
+  .byte.v-p{background:var(--accent-s);border-color:var(--accent)}
+  .byte.pad{opacity:.5;background:transparent;border-style:dashed;cursor:default}
+  .byte.pad:hover{transform:none;border-color:var(--line2)}
+  .byte.sel{outline:2px solid var(--ink);outline-offset:1px}
+  .addr-vars{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+  .addr-vars button{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:6px 9px;font:12px var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s}
+  .addr-vars button:hover{background:var(--card)}
+  .addr-vars button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .addr-info{font-size:13px;line-height:1.55;color:var(--muted);background:var(--card2);border-radius:9px;padding:9px 11px;min-height:3.1em}
+  .addr-info b{color:var(--ink)}
+  .addr-info .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- widget tableau ---------- */
+  .arrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .arr-stage{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;align-items:center;padding:34px 0 6px;min-height:120px}
+  .arr-p{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:6px 8px;text-align:center}
+  .arr-p .n{font:650 11px/1.2 var(--mono);color:var(--ink)}
+  .arr-p .v{font:650 13px/1.2 var(--mono);color:var(--accent);margin:2px 0}
+  .arr-p .ty{font:9px/1 var(--mono);color:var(--faint)}
+  .arr-track{position:relative;display:flex;gap:0;min-width:0}
+  .arr-cell{flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--card);padding:7px 3px 6px;text-align:center;position:relative;transition:background .2s,border-color .2s,transform .2s}
+  .arr-cell:first-child{border-radius:9px 0 0 9px}
+  .arr-cell:last-child{border-radius:0 9px 9px 0}
+  .arr-cell .av{font:700 17px/1.2 var(--mono);color:var(--ink)}
+  .arr-cell .ai{font:9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+  .arr-cell.sel{background:var(--teal-s);border-color:var(--teal);transform:translateY(-2px)}
+  .arr-cell.sel .av{color:var(--teal)}
+  .arr-cur{position:absolute;top:-31px;transform:translateX(-50%);text-align:center;font:650 10.5px/1 var(--mono);color:var(--teal);transition:left .28s ease;white-space:nowrap}
+  .arr-cur::after{content:"";display:block;width:1.5px;height:16px;background:var(--teal);margin:4px auto 0}
+  .arr-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .arr-formula{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px;margin-top:8px}
+  .arr-formula b{color:var(--ink)}
+  .arr-formula .ok{color:var(--teal)} .arr-formula .ko{color:var(--red)}
+  .arr-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .arr-ctrl input[type=range]{flex:1 1 160px;accent-color:var(--teal);min-width:120px}
+  .arr-ctrl output{font:12px var(--mono);color:var(--faint);min-width:58px;text-align:right}
+
+  /* ---------- const ---------- */
+  .constgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:20px 0}
+  @media (max-width:800px){.constgrid{grid-template-columns:1fr}}
+  .const-card{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .const-card code{display:block;font-size:12px;background:var(--card2);white-space:nowrap;overflow-x:auto}
+  .const-viz{display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);color:var(--muted);flex-wrap:wrap;min-height:38px}
+  .cv-box{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 6px}
+  .cv-ptr{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .cv-lock{color:var(--red);font-size:12px}
+  .cv-arrow{color:var(--faint)}
+  .const-btns{display:flex;flex-wrap:wrap;gap:5px}
+  .const-btns button{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:5px 8px;font:10.5px var(--mono);color:var(--muted);cursor:pointer}
+  .const-btns button:hover{background:var(--card);color:var(--ink)}
+  .const-fb{font-size:11.5px;line-height:1.4;min-height:2.6em;color:var(--faint)}
+  .const-fb.ok{color:var(--teal)} .const-fb.ko{color:var(--red)}
+
+  /* ---------- pointeur de fonction ---------- */
+  .fplab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .fp-stage{display:flex;flex-direction:column;align-items:center;gap:26px;padding:10px 0;position:relative}
+  .fp-op{background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:8px 11px;text-align:center;min-width:110px}
+  .fp-op .n{font:650 11px/1.2 var(--mono)}
+  .fp-op .v{font:650 12.5px/1.3 var(--mono);color:var(--accent);margin-top:2px}
+  .fp-fns{display:flex;gap:8px;flex-wrap:wrap}
+  .fp-fn{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:8px 10px;font:11.5px/1.4 var(--mono);color:var(--muted);cursor:pointer;text-align:left;transition:border-color .18s,background .18s}
+  .fp-fn b{display:block;color:var(--ink);font-size:12.5px}
+  .fp-fn span{color:var(--faint);font-size:10px}
+  .fp-fn.on{border-color:var(--teal);background:var(--teal-s);color:var(--teal)}
+  .fp-fn.on b{color:var(--teal)}
+  .fp-out{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px}
+  .fp-out b{color:var(--ink)}
+  .fp-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:flex;gap:9px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .mem-groups{gap:20px}
+    .cell{--cw:98px}
+    .addr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+    .arr-stage{grid-template-columns:1fr;gap:0;padding:8px 0 6px}
+    .arr-p{justify-self:start;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start;padding:5px 8px;margin-bottom:54px;width:auto}
+    .arr-p .v{margin:0}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.addrlab,.arrlab,.fplab,.quiz,.box{box-shadow:none}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+
+  /* ---------- formules (fiches ELMEC1) ---------- */
+  .math{font:16.5px/1.9 "Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:11px 15px;margin:14px 0;overflow-x:auto;white-space:pre-wrap;color:var(--ink);max-width:100%}
+  .math .ml{display:block;font:650 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+  .math i,.fx i{font-style:italic}
+  .math sub,.math sup,.fx sub,.fx sup{font-size:.72em;line-height:0}
+  .fx{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:0 5px;white-space:nowrap}
+  .mono{font-family:var(--mono);font-size:12.5px}
+
+  /* ---------- schemas electromagnetiques ---------- */
+  .core{fill:var(--card2);stroke:var(--muted);stroke-width:2;stroke-linejoin:round}
+  .core-hot{fill:var(--amber-s);stroke:var(--amber)}
+  .wire{fill:none;stroke:var(--ink);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .wire-d{fill:none;stroke:var(--faint);stroke-width:1.4;stroke-dasharray:5 4;stroke-linecap:round}
+  .flux{fill:none;stroke:var(--accent);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .flux2{fill:none;stroke:var(--teal);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .coil{fill:none;stroke:var(--coral);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  .ax{stroke:var(--faint);stroke-width:1;stroke-dasharray:3 3}
+  .lgd{font:10px var(--mono);fill:var(--faint)}
+  .figgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+  @media (max-width:720px){.figgrid{grid-template-columns:1fr}}
+  .figgrid figure{margin:0}
+  .sw-core{background:var(--card2);border-color:var(--muted)}
+  .sw-flux{background:var(--accent-s);border-color:var(--accent)}
+  .sw-coil{background:var(--coral-s);border-color:var(--coral)}
+  .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+  .legend .sw-t{font-size:12px;color:var(--faint)}
+  .tbl.wide{max-width:none}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ELMEC1</div>
+        <div class="brandsub">Champs et équations de Maxwell<br>Fiche de révision · TE1</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>Convertir l'énergie</a>
+      <a href="#s2"><i>02</i>Décrire un champ</a>
+      <a href="#s3"><i>03</i>Le gradient</a>
+      <a href="#s4"><i>04</i>La divergence</a>
+      <a href="#s5"><i>05</i>Le rotationnel</a>
+      <a href="#s6"><i>06</i>Opérateurs du second ordre</a>
+      <a href="#s7"><i>07</i>Théorème de la divergence</a>
+      <a href="#s8"><i>08</i>Stokes et Ampère</a>
+      <a href="#s9"><i>09</i>Équations de Maxwell</a>
+      <a href="#s10"><i>10</i>Milieux matériels</a>
+      <a href="#s11"><i>11</i>Formes intégrales</a>
+      <a href="#s12"><i>12</i>Faraday, Lenz et énergie</a>
+      <a href="#s13"><i>13</i>Erreurs, QCM et mémo</a>
+    </nav>
+    <div class="sidefoot"><b>TE1</b> · vendredi 27.11.2026<br><span>13 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ELMEC1 · chapitre 1 · champs et Maxwell</div>
+      <h1>Champs et équations de Maxwell</h1>
+      <p class="sub">Champs scalaires et vectoriels, opérateurs du premier et du second ordre, théorèmes intégraux, équations de Maxwell locales et intégrales, milieux matériels, induction et énergie magnétique.</p>
+      <div class="meta">
+        <span class="chip"><b>13</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires pas à pas</span>
+        <span class="chip">formulaire A4 autorisé</span>
+        <span class="chip">TE1 · 27.11.2026</span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Le convertisseur</h3><p>Matériaux, feuilletage, familles de machines.</p></a>
+        <a class="step" href="#s2"><div class="n">02</div><h3>Décrire un champ</h3><p>Scalaire, vectoriel, flux et circulation.</p></a>
+        <a class="step" href="#s3"><div class="n">03</div><h3>Les opérateurs</h3><p>Gradient, divergence, rotationnel.</p></a>
+        <a class="step" href="#s7"><div class="n">04</div><h3>Théorèmes intégraux</h3><p>Divergence, Stokes, conservation du flux.</p></a>
+        <a class="step" href="#s9"><div class="n">05</div><h3>Maxwell</h3><p>Quatre équations, milieux, formes intégrales.</p></a>
+        <a class="step" href="#s12"><div class="n">06</div><h3>Induction et énergie</h3><p>Faraday, Lenz, flux totalisé, énergie.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-int"></i>champ scalaire</span>
+        <span><i class="sw sw-ptr"></i>champ de vecteurs</span>
+        <span><i class="sw sw-flux"></i>ligne de champ</span>
+        <span><i class="sw sw-coil"></i>spire, contour</span>
+        <span class="sw-t">flèche = sens du champ</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b> ; le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche.</p>
+      <p>Les valeurs des états sont des calculs, pas des mesures ; les formules sont en coordonnées cartésiennes, seules demandées au TE1.</p>
+    </div>
+
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1</span>
+      <span class="doc-ref" title="Document du cours non publié">1B</span>
+      <span class="doc-ref" title="Document du cours non publié">2</span>
+      <span class="doc-ref" title="Document du cours non publié">3</span>
+      <span class="doc-ref" title="Document du cours non publié">4</span>
+      <span class="doc-ref" title="Document du cours non publié">4B</span>
+      <span class="doc-ref" title="Document du cours non publié">3 scan</span>
+      <span class="doc-ref" title="Document du cours non publié">5</span>
+      <span class="doc-ref" title="Document du cours non publié">6</span>
+      <span class="doc-ref" title="Document du cours non publié">7</span>
+      <span class="doc-ref" title="Document du cours non publié">8</span>
+      <span class="doc-ref" title="Document du cours non publié">9</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">matériaux</div></div>
+      <h2>Un convertisseur électromécanique se lit par ses matériaux</h2>
+      <p class="lead">Un convertisseur électromécanique transforme de l'énergie électrique en énergie mécanique, ou l'inverse, en passant par un champ magnétique. Les matériaux ne sont pas interchangeables : chacun remplit une fonction précise dans la conversion.</p>
+
+      <table class="tbl">
+        <thead><tr><th>Famille</th><th>Rôle dans le convertisseur</th><th>Exemples</th></tr></thead>
+        <tbody>
+          <tr><td>Ferromagnétiques doux</td><td>Canaliser et concentrer le flux magnétique ; réduire le courant nécessaire à créer un champ donné.</td><td>tôles FeSi, fer Armco, noyaux feuilletés</td></tr>
+          <tr><td>Conducteurs</td><td>Conduire le courant et créer les champs ; porter les enroulements.</td><td>cuivre, aluminium</td></tr>
+          <tr><td>Isolants</td><td>Séparer électriquement conducteurs, spires et masse ; tenir les contraintes électriques, thermiques et mécaniques.</td><td>émail, vernis, résines, films</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>Éléments actifs :</b> circuit magnétique, enroulements électriques, aimants permanents lorsqu'ils existent. <b>Éléments passifs :</b> carcasse, arbre, paliers : ils transmettent ou supportent, sans participer à la conversion.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Le fer <em>canalise</em> le flux comme un fil canalise le courant ; le cuivre <em>crée</em> le champ ; l'isolant <em>sépare</em>. Cette répartition suffit pour expliquer l'essentiel des chapitres 2 à 4.</p>
+      </div>
+
+      <h3>Pourquoi le circuit magnétique est feuilleté</h3>
+      <p>Un flux variable induit dans la masse du fer des courants de Foucault qui échauffent le noyau. On découpe le circuit en tôles minces, isolées les unes des autres : la subdivision augmente la résistance des chemins de courant induit et limite les pertes.</p>
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Ne pas confondre les deux pertes fer : les courants de Foucault, combattus par le feuilletage, et l'hystérésis, qui dépend de l'aire du cycle d'aimantation du matériau. Le feuilletage ne réduit pas l'hystérésis.</p>
+      </div>
+
+      <h3>Quatre niveaux de modèle</h3>
+      <p>Le cours distingue quatre niveaux, du champ local au système complet. Choisir le bon niveau est la première décision d'un problème de modélisation.</p>
+      <ul>
+        <li><b>Niveau 1 — modèle continu (Maxwell) :</b> où se trouve le champ ? Répartition spatiale, souvent résolue par éléments finis.</li>
+        <li><b>Niveau 2 — éléments localisés (Kirchhoff) :</b> quels éléments composent le schéma équivalent ? Résistances, inductances, réluctances.</li>
+        <li><b>Niveau 3 — schémas fonctionnels :</b> comment évoluent entrées et sorties ? Vitesse, courant, couple.</li>
+        <li><b>Niveau 4 — modèle système :</b> comment organiser l'entraînement complet ? Consigne, régulateur, convertisseur, machine, charge.</li>
+      </ul>
+      <p class="small">Familles de machines traitées dans le cours : transformateurs (convertisseurs statiques), machines tournantes synchrones et asynchrones, machine à courant continu à aimants permanents.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 640 280" role="img" aria-label="Coupe d'une machine tournante : stator, rotor, entrefer, conducteurs et arbre">
+            <circle cx="190" cy="140" r="112" class="core"/>
+            <circle cx="190" cy="140" r="85" fill="var(--bg)" stroke="var(--muted)" stroke-width="2"/>
+            <circle cx="190" cy="140" r="70" class="core"/>
+            <circle cx="190" cy="140" r="36" class="core"/>
+            <circle cx="190" cy="140" r="36" fill="var(--card2)" stroke="var(--muted)" stroke-width="2"/>
+            <g fill="var(--coral)">
+              <circle cx="288" cy="126" r="4.5"/><circle cx="269" cy="71" r="4.5"/><circle cx="218" cy="41" r="4.5"/><circle cx="162" cy="41" r="4.5"/><circle cx="111" cy="71" r="4.5"/><circle cx="92" cy="126" r="4.5"/><circle cx="92" cy="155" r="4.5"/><circle cx="111" cy="209" r="4.5"/><circle cx="162" cy="239" r="4.5"/><circle cx="218" cy="239" r="4.5"/><circle cx="269" cy="209" r="4.5"/><circle cx="288" cy="155" r="4.5"/>
+              <circle cx="236" cy="176" r="3.5"/><circle cx="214" cy="204" r="3.5"/><circle cx="166" cy="204" r="3.5"/><circle cx="144" cy="176" r="3.5"/>
+            </g>
+            <path d="M298 104 L326 73" class="ax"/>
+            <path d="M294 122 L326 110" class="ax"/>
+            <path d="M266 153 L326 151" class="ax"/>
+            <path d="M239 162 L326 190" class="ax"/>
+            <path d="M240 181 L326 229" class="ax"/>
+            <text class="ts" x="332" y="77">stator : circuit magnétique</text>
+            <text class="ts" x="332" y="114">conducteurs statoriques</text>
+            <text class="ts" x="332" y="155">entrefer δ</text>
+            <text class="ts" x="332" y="194">rotor : circuit magnétique</text>
+            <text class="ts" x="332" y="233">conducteurs rotoriques</text>
+            <text class="tm" x="190" y="144" text-anchor="middle">arbre</text>
+          </svg>
+        </div>
+        <figcaption>Les douze points périphériques figurent les conducteurs logés dans les encoches du stator ; les quatre points intérieurs, les conducteurs du rotor. Le flux traverse le fer du stator, l'entrefer puis le fer du rotor.</figcaption>
+      </figure>
+
+      <details class="try">
+        <summary>Quel niveau de modèle pour régler un régulateur de vitesse d'une MCC ?</summary>
+        <div class="ans">Niveau 4 (modèle système) : il faut l'organisation complète consigne → régulateur → convertisseur → moteur → charge. Le niveau 3 sert ensuite à étudier la dynamique de cette commande.</div>
+      </details>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">le modèle</div></div>
+      <h2>Un champ associe une valeur à chaque point de l'espace</h2>
+      <p class="lead">Un champ remplace l'action à distance : la valeur en un point ne dépend que du voisinage immédiat, et une perturbation se propage de proche en proche à vitesse finie. Une seule valeur par point donne un champ scalaire ; une flèche par point donne un champ vectoriel.</p>
+
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Ce que porte chaque point</th><th>Exemples et unités</th></tr></thead>
+        <tbody>
+          <tr><td>Champ scalaire</td><td>Un nombre réel : une seule composante.</td><td>température T en °C, pression en Pa, altitude en m</td></tr>
+          <tr><td>Champ vectoriel</td><td>Un vecteur : direction, sens et module, trois composantes réelles.</td><td>vitesse v en m/s, champ E en V/m, B en T, H en A/m</td></tr>
+        </tbody>
+      </table>
+
+      <p>Deux quantités intègrent un champ sur une région : le <b>flux</b> à travers une surface et la <b>circulation</b> le long d'un contour. Ce sont elles que les théorèmes intégraux transforment en intégrales de volume ou de surface.</p>
+
+      <div class="math"><span class="ml">Flux et circulation</span>
+Φ = ∬<sub>S</sub> <i>X</i> · d<i>A</i>          <i>C</i> = ∮<sub>L</sub> <i>X</i> · d<i>l</i>
+</div>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>La notion de champ est le pas de Maxwell après l'intuition de Faraday (lignes de force) : les équations deviennent locales, aux dérivées partielles, et la lumière apparaît comme une onde électromagnétique.</p>
+      </div>
+
+      <p>Une <b>ligne de champ</b> est une courbe tangente en chaque point au vecteur du champ. Un <b>tube de flux</b> est l'ensemble des lignes qui s'appuient sur un contour fermé : si la divergence est nulle, le flux est le même à travers toute section du tube.</p>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Vocabulaire utile au TE1 : <em>source</em> (le flux sort), <em>puits</em> (le flux entre), <em>conservatif</em> (flux nul à travers une surface fermée), <em>irrotationnel</em> (circulation nulle sur tout contour fermé).</p>
+      </div>
+
+      <details class="try">
+        <summary>Un champ uniforme <span class="fx">X = 10 e<sub>x</sub></span> : que valent sa divergence et son rotationnel ?</summary>
+        <div class="ans">Les deux sont nuls : toutes les dérivées d'un champ constant sont nulles. Un champ uniforme n'a ni source ni tourbillon, et pourtant il n'est pas nul — c'est le piège de la section 4.</div>
+      </details>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">opérateur</div></div>
+      <h2>Le gradient donne la direction de la plus forte croissance</h2>
+      <p class="lead">Le gradient d'un champ scalaire est le vecteur de ses dérivées partielles. Il pointe vers la croissance la plus rapide et sa norme est la pente maximale, par unité de longueur.</p>
+
+      <div class="math"><span class="ml">Gradient et différentielle</span>
+∇<i>f</i> = (∂<i>f</i>/∂<i>x</i> ; ∂<i>f</i>/∂<i>y</i> ; ∂<i>f</i>/∂<i>z</i>)
+d<i>f</i> = ∇<i>f</i> · d<i>l</i> = (∂<i>f</i>/∂<i>x</i>) d<i>x</i> + (∂<i>f</i>/∂<i>y</i>) d<i>y</i> + (∂<i>f</i>/∂<i>z</i>) d<i>z</i>
+</div>
+
+      <p>Pour dériver, on tient les deux autres variables constantes. Le terme constant disparaît, un coefficient multiplicatif reste en facteur.</p>
+
+      <div class="math"><span class="ml">Exemple guidé — exercice 2, question 1</span>
+<i>f</i> = 3<i>x</i>² + 8<i>y</i> − 7e<sup><i>z</i></sup> + 9
+∇<i>f</i> = (6<i>x</i> ; 8 ; −7e<sup><i>z</i></sup>)
+au point (2 ; 4 ; 1) :  ∇<i>f</i> = (12 ; 8 ; −19,0)      |∇<i>f</i>| = 23,9
+</div>
+
+      <ul>
+        <li>∂<i>f</i>/∂<i>x</i> = 6<i>x</i> : le 9 disparaît, 8<i>y</i> ne dépend pas de <i>x</i>.</li>
+        <li>∂<i>f</i>/∂<i>y</i> = 8 : constante, la pente selon <i>y</i> est la même partout.</li>
+        <li>∂<i>f</i>/∂<i>z</i> = −7e<sup><i>z</i></sup> : la dérivée de e<sup><i>z</i></sup> est e<sup><i>z</i></sup>, le −7 reste.</li>
+      </ul>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Le gradient d'un scalaire est un <b>vecteur</b>, pas un nombre. Écrire « ∇f = 12 » n'a pas de sens : il faut donner les trois composantes ou préciser « la composante selon x vaut 12 ». Et ∂f/∂x se calcule toujours à y et z constants.</p>
+      </div>
+
+      <div class="lab" data-lab="grad">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · gradient pas à pas</div><div class="lab-sub">différences finies puis dérivées exactes</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"On évalue le champ scalaire au point <b>P(2 ; 4 ; 1)</b> : <b>f = 33,97</b>.","code":"f = 3x² + 8y − 7e^z + 9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97","state":"active"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"scalaire","value":"—"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
+          {"label":"Déplacement de <b>Δx = 0,1</b> : f passe de 33,97 à <b>35,20</b>, donc Δf/Δx = <b>12,3</b>.","code":"Δf/Δx = (35,20 − 33,97) / 0,1 = 12,3","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2,1"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"35,20","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
+          {"label":"Déplacement de <b>Δy = 0,1</b> : f passe à <b>34,77</b>, donc Δf/Δy = <b>8,00</b>.","code":"Δf/Δy = (34,77 − 33,97) / 0,1 = 8,00","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4,1"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"34,77","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
+          {"label":"Déplacement de <b>Δz = 0,1</b> : f diminue à <b>31,97</b>, donc Δf/Δz = <b>−20,0</b> ; le champ décroît quand z augmente.","code":"Δf/Δz = (31,97 − 33,97) / 0,1 = −20,0","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1,1"}]},{"id":"f","name":"f","type":"scalaire","value":"31,97","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00"},{"id":"gz","name":"∂f/∂z","type":"différence finie","value":"−20,0","state":"changed"}]}],"arrows":[]},
+          {"label":"Les dérivées exactes en P donnent <b>∇f = (12 ; 8 ; −19,0)</b> ; les différences finies du pas 0,1 en sont proches.","code":"∇f = (6x ; 8 ; −7e^z)","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0","state":"changed"}]}],"arrows":[]},
+          {"label":"Résultat au point P : <b>∇f = (12 ; 8 ; −19,0)</b> et <b>|∇f| = 23,9</b> ; le gradient pointe vers la croissance la plus rapide de f.","code":"|∇f| = √(12² + 8² + (−19,0)²) = 23,9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">opérateur</div></div>
+      <h2>La divergence compte le flux qui sort d'un point</h2>
+      <p class="lead">La divergence d'un champ vectoriel est le flux net sortant par unité de volume autour du point. Elle est positive sur une source, négative sur un puits et nulle dans un écoulement conservatif.</p>
+
+      <div class="math"><span class="ml">Divergence</span>
+div <i>X</i> = ∂<i>X</i><sub>x</sub>/∂<i>x</i> + ∂<i>X</i><sub>y</sub>/∂<i>y</i> + ∂<i>X</i><sub>z</sub>/∂<i>z</i>
+div <i>X</i> = lim<sub><i>V</i>→0</sub> (1/<i>V</i>) ∯<sub><i>S</i>(<i>V</i>)</sub> <i>X</i> · d<i>A</i>
+</div>
+
+      <div class="math"><span class="ml">Exemple guidé — exercice 2, question 2</span>
+<i>u</i> = (3<i>x</i> − 2<i>z</i> ; 8<i>x</i>² − 9√<i>y</i> + 3<i>yz</i> ; 7<i>x</i> − 2<i>y</i>³)
+div <i>u</i> = 3 − 9/(2√<i>y</i>) + 3<i>z</i>        (<i>y</i> &gt; 0)
+au point (2 ; 4 ; 1) :  3 + 0,75 + 0 = 3,75
+</div>
+
+      <p>Composante par composante : ∂<i>u</i><sub>x</sub>/∂<i>x</i> = 3, ∂<i>u</i><sub>y</sub>/∂<i>y</i> = −9/(2√<i>y</i>) + 3<i>z</i> (soit 0,75 au point), ∂<i>u</i><sub>z</sub>/∂<i>z</i> = 0. Le domaine <i>y</i> &gt; 0 vient de la racine.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Quatre champs lus sur un dessin : source radiale, puits, tourbillon, champ uniforme">
+            <g stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)">
+              <path d="M105 120 L139 120"/><path d="M95 137 L112 167"/><path d="M75 137 L58 167"/><path d="M65 120 L31 120"/><path d="M75 103 L58 73"/><path d="M95 103 L112 73"/>
+              <path d="M289 120 L255 120"/><path d="M262 167 L245 137"/><path d="M208 167 L225 137"/><path d="M181 120 L215 120"/><path d="M208 73 L225 103"/><path d="M262 73 L245 103"/>
+              <path d="M505 75 L560 75"/><path d="M505 93 L560 93"/><path d="M505 111 L560 111"/><path d="M505 129 L560 129"/><path d="M505 147 L560 147"/><path d="M505 165 L560 165"/>
+            </g>
+            <g class="flux" marker-end="url(#ar-accent)">
+              <path d="M423 120 L416 98"/><path d="M404 153 L419 136"/><path d="M366 153 L388 158"/><path d="M347 120 L354 142"/><path d="M366 87 L351 106"/><path d="M404 87 L382 82"/>
+            </g>
+            <circle cx="85" cy="120" r="2.5" fill="var(--ink)"/>
+            <circle cx="235" cy="120" r="2.5" fill="var(--ink)"/>
+            <circle cx="385" cy="120" r="2.5" fill="var(--accent)"/>
+            <text class="ts" x="85" y="215" text-anchor="middle">A · source</text>
+            <text class="tm" x="85" y="237" text-anchor="middle">div &gt; 0 ; rot = 0</text>
+            <text class="ts" x="235" y="215" text-anchor="middle">B · puits</text>
+            <text class="tm" x="235" y="237" text-anchor="middle">div &lt; 0 ; rot = 0</text>
+            <text class="ts" x="385" y="215" text-anchor="middle">C · tourbillon</text>
+            <text class="tm" x="385" y="237" text-anchor="middle">div = 0 ; rot ≠ 0</text>
+            <text class="ts" x="535" y="215" text-anchor="middle">D · uniforme</text>
+            <text class="tm" x="535" y="237" text-anchor="middle">div = 0 ; rot = 0</text>
+          </svg>
+        </div>
+        <figcaption>Les flèches radiales qui s'écartent (A) signalent une source, celles qui convergent (B) un puits. Les flèches tangentes à des cercles (C) signalent un tourbillon. Des flèches identiques partout (D) donnent une divergence et un rotationnel nuls.</figcaption>
+      </figure>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>div <i>X</i> = 0 ne signifie pas <i>X</i> = 0 : un champ uniforme a une divergence nulle et pourtant il n'est pas nul. De même, une divergence nulle ne dit rien du rotationnel : les deux propriétés sont indépendantes.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>En mécanique des fluides, div <i>v</i> = 0 traduit l'incompressibilité ; en électromagnétisme, div <i>D</i> = ρ<sub>f</sub> dit que les charges libres sont les sources de <i>D</i> et div <i>B</i> = 0 qu'il n'existe pas de charge magnétique.</p>
+      </div>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">opérateur</div></div>
+      <h2>Le rotationnel mesure la rotation locale du champ</h2>
+      <p class="lead">Le rotationnel d'un champ vectoriel est un vecteur : sa composante selon un axe mesure la rotation du champ autour de cet axe. Une petite roue à aubes posée au point tourne si et seulement si le rotationnel y est non nul.</p>
+
+      <div class="math"><span class="ml">Rotationnel</span>
+rot <i>X</i> = ( ∂<i>X</i><sub>z</sub>/∂<i>y</i> − ∂<i>X</i><sub>y</sub>/∂<i>z</i> ;  ∂<i>X</i><sub>x</sub>/∂<i>z</i> − ∂<i>X</i><sub>z</sub>/∂<i>x</i> ;  ∂<i>X</i><sub>y</sub>/∂<i>x</i> − ∂<i>X</i><sub>x</sub>/∂<i>y</i> )
+</div>
+
+      <div class="math"><span class="ml">Exemple guidé — exercice 2, question 3</span>
+<i>v</i> = (3<i>xy</i> − 5<i>z</i> ; <i>xz</i>² − 2<i>y</i>² ; <i>x</i> + 3e<sup><i>z</i></sup>)
+rot <i>v</i> = (−2<i>xz</i> ; −6 ; <i>z</i>² − 3<i>x</i>)
+au point (2 ; 4 ; 1) :  rot <i>v</i> = (−4 ; −6 ; −5)
+</div>
+
+      <p>La composante <i>x</i> ne contient jamais de ∂/∂<i>x</i> : elle croise les deux autres variables. Le −6 vient de −5 − 1, les deux dérivées se cumulent avec le signe de la formule.</p>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 640 250" role="img" aria-label="Roue à aubes dans un cisaillement, qui tourne, et dans un champ uniforme, qui reste immobile">
+            <g stroke="var(--ink)" stroke-width="1.4" fill="none" marker-end="url(#ar)">
+              <path d="M95 55 L125 55"/><path d="M95 75 L132 75"/><path d="M95 95 L139 95"/><path d="M95 115 L146 115"/><path d="M95 135 L153 135"/><path d="M95 155 L160 155"/><path d="M95 175 L167 175"/>
+              <path d="M420 55 L470 55"/><path d="M420 75 L470 75"/><path d="M420 95 L470 95"/><path d="M420 115 L470 115"/><path d="M420 135 L470 135"/><path d="M420 155 L470 155"/><path d="M420 175 L470 175"/>
+            </g>
+            <circle cx="175" cy="115" r="17" class="wire"/>
+            <path d="M175 98 L175 132 M158 115 L192 115" class="wire-d"/>
+            <path d="M192 102 A 20 20 0 1 1 175 95" class="flux" marker-end="url(#ar-accent)"/>
+            <circle cx="500" cy="115" r="17" class="wire"/>
+            <path d="M500 98 L500 132 M483 115 L517 115" class="wire-d"/>
+            <text class="ts" x="150" y="222" text-anchor="middle">cisaillement : lignes droites</text>
+            <text class="tm" x="150" y="242" text-anchor="middle">div = 0 ; rot ≠ 0 : la roue tourne</text>
+            <text class="ts" x="500" y="222" text-anchor="middle">champ uniforme</text>
+            <text class="tm" x="500" y="242" text-anchor="middle">div = 0 ; rot = 0 : la roue reste fixe</text>
+          </svg>
+        </div>
+        <figcaption>La rotation se lit localement, avec deux flèches voisines, pas avec la courbure d'ensemble des lignes. Un cisaillement a des lignes droites et un rotationnel non nul.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Deux tests visuels suffisent sur un dessin : flèches qui s'écartent ou convergent → divergence non nulle, rotationnel nul ; flèches tangentes à des cercles ou cisaillement → rotationnel non nul. Flèches identiques partout → les deux nuls.</p>
+      </div>
+
+      <p>Dépouillement de la feuille de l'exercice 3, seize champs A à P : 3 champs à divergence positive (A, K, O), 2 à divergence négative (B, L), 11 à divergence nulle ; 9 rotationnels nuls et 7 non nuls, dont 5 horaires et 2 antihoraires.</p>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Le rotationnel n'est pas la courbure des lignes. Un tourbillon peut avoir un rotationnel nul au centre s'il est singulier en ce point, et un cisaillement à lignes droites a un rotationnel non nul. On lit la rotation <em>locale</em>.</p>
+      </div>
+
+      <div class="lab" data-lab="divrot">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · lire la divergence et le rotationnel</div><div class="lab-sub">six champs types, verdict local</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Les flèches s'écartent du centre : c'est une source. Pour <b>v = (x ; y ; 0)</b>, div v = <b>2</b> et rot v = <b>0</b>.","code":"div v = ∂x x + ∂y y = 1 + 1 = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x"},{"k":"vy","v":"y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"active"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[]},
+          {"label":"Les flèches convergent : c'est un puits. Pour <b>v = (−x ; −y ; 0)</b>, div v = <b>−2</b> et rot v = <b>0</b>.","code":"div v = −1 − 1 = −2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−x"},{"k":"vy","v":"−y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"−2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[]},
+          {"label":"Les flèches tournent : pour <b>v = (−y ; x ; 0)</b>, div v = <b>0</b> et rot v = <b>(0 ; 0 ; 2)</b> ; la roue tourne, le flux ne sort pas.","code":"rot v = ∂x(x) − ∂y(−y) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−y"},{"k":"vy","v":"x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[]},
+          {"label":"Flèches identiques partout : <b>v = (1 ; 0 ; 0)</b> donne div v = <b>0</b> et rot v = <b>0</b>. Un champ uniforme n'a ni source ni tourbillon.","code":"div v = 0 ; rot v = 0","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"1"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0","state":"changed"}]}],"arrows":[]},
+          {"label":"Cisaillement <b>v = (y ; 0 ; 0)</b> : div v = <b>0</b> mais rot v = <b>(0 ; 0 ; −1)</b>. Lignes droites, roue qui tourne : le rotationnel ne se lit pas sur la courbure.","code":"rot v = ∂x(0) − ∂y(y) = −1","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"y"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;−1)","state":"changed"}]}],"arrows":[]},
+          {"label":"Un champ peut cumuler les deux : <b>v = (x − y ; y + x ; 0)</b> donne div v = <b>2</b> et rot v = <b>(0 ; 0 ; 2)</b>.","code":"div v = 1 + 1 = 2 ; rot v = 1 − (−1) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x − y"},{"k":"vy","v":"y + x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">opérateurs du second ordre</div></div>
+      <h2>Deux identités annulent les opérateurs composés</h2>
+      <p class="lead">Les dérivées croisées commutent (théorème de Schwarz). Il en découle deux identités valables pour tout champ assez régulier, et une troisième quantité, le laplacien, qui n'est pas nulle en général.</p>
+
+      <div class="math"><span class="ml">Identités et laplacien</span>
+rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
+Δ<i>f</i> = div(grad <i>f</i>) = ∂²<i>f</i>/∂<i>x</i>² + ∂²<i>f</i>/∂<i>y</i>² + ∂²<i>f</i>/∂<i>z</i>²
+</div>
+
+      <table class="tbl">
+        <thead><tr><th>Composé</th><th>Résultat</th><th>Conséquence</th></tr></thead>
+        <tbody>
+          <tr><td>rot(grad f)</td><td>0</td><td>un gradient est irrotationnel</td></tr>
+          <tr><td>div(rot u)</td><td>0</td><td>un rotationnel est à flux conservatif</td></tr>
+          <tr><td>div(grad f)</td><td>Δf</td><td>pas nul en général : c'est le laplacien</td></tr>
+          <tr><td>rot(rot u)</td><td>grad(div u) − Δu</td><td>pas nul en général</td></tr>
+        </tbody>
+      </table>
+
+      <p>Conséquence directe en électromagnétisme : en prenant la divergence de Maxwell–Faraday, on obtient ∂<sub>t</sub> div <i>B</i> = −div(rot <i>E</i>) = 0. L'absence de charge magnétique se maintient dans le temps, elle n'a pas à être réimposée.</p>
+
+      <p><b>Décomposition de Helmholtz–Hodge :</b> tout champ vectoriel assez régulier se découpe en une partie longitudinale (un gradient) et une partie transverse (un rotationnel), plus un terme harmonique. <span class="fx"><i>X</i> = grad φ + rot <i>A</i> + <i>h</i></span>. L'unicité exige de préciser le domaine, les conditions aux bords et la jauge ; le terme <i>h</i> est nul sur ℝ³ pour un champ qui décroît assez vite.</p>
+
+      <details class="try">
+        <summary>Pour <span class="fx">f = 3x² + 8y − 7e<sup>z</sup> + 9</span>, que vaut le laplacien au point (2 ; 4 ; 1) ?</summary>
+        <div class="ans">Δf = 6 + 0 − 7e<sup>z</sup> = 6 − 7e = <b>−13,0</b> en z = 1. Positif dans la direction x, négatif selon z : le laplacien n'est pas nul.</div>
+      </details>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Ne pas généraliser à zéro : rot(grad f) = 0 et div(rot u) = 0 sont des identités, mais div(grad f) et rot(rot u) ne le sont pas. Écrire « div u = 0 donc u = 0 » est faux, et « rot u = 0 donc u est constant » aussi (u peut être un gradient).</p>
+      </div>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">théorème</div></div>
+      <h2>Le flux sortant d'une surface fermée est la somme des sources</h2>
+      <p class="lead">Le théorème de la divergence relie le flux d'un champ à travers une surface fermée à l'intégrale de sa divergence dans le volume intérieur. La normale pointe vers l'extérieur.</p>
+
+      <div class="math"><span class="ml">Théorème de la divergence</span>
+∯<sub><i>S</i></sub> <i>X</i> · d<i>A</i> = ∭<sub><i>V</i></sub> div <i>X</i> dv          <i>S</i> ferme <i>V</i>, d<i>A</i> sortant
+</div>
+
+      <p>Cas particulier utilisé au chapitre 2 : avec <i>X</i> = <i>B</i>, on obtient ∯<i>B</i> · d<i>A</i> = ∭ div <i>B</i> dv = 0, c'est-à-dire la conservation du flux (Maxwell–Thomson).</p>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le théorème suppose une surface fermée, orientée vers l'extérieur, et un champ dérivable. Pour une surface ouverte, le flux a un sens mais l'égalité ne s'applique pas : on utilise alors Stokes.</p>
+      </div>
+
+      <h3>Exemple guidé — exercice 6, flux d'un champ non uniforme</h3>
+      <p><span class="fx"><i>B</i>(<i>x</i>) = <i>B</i><sub>0</sub>(1 + <i>x</i>/<i>a</i>) <i>e</i><sub>z</sub></span> sur le rectangle 0 ≤ <i>x</i> ≤ <i>a</i>, 0 ≤ <i>y</i> ≤ <i>b</i>, avec <i>B</i><sub>0</sub> = 0,5 T, <i>a</i> = 10 cm et <i>b</i> = 5 cm. Le champ est perpendiculaire à la surface, d<i>A</i> = d<i>x</i> d<i>y</i> <i>e</i><sub>z</sub>.</p>
+      <ul>
+        <li>Bords : <i>B</i>(0) = 0,5 T, <i>B</i>(<i>a</i>) = 1,0 T ; le champ croît linéairement selon x.</li>
+        <li>Intégrale en x : ∫<sub>0</sub><sup><i>a</i></sup> <i>B</i><sub>0</sub>(1 + <i>x</i>/<i>a</i>) d<i>x</i> = <i>B</i><sub>0</sub>(<i>a</i> + <i>a</i>/2) = 1,5 <i>B</i><sub>0</sub> <i>a</i> = 0,075 T·m.</li>
+        <li>Intégrale en y : le champ ne dépend pas de y, il reste le facteur <i>b</i>. Φ = 1,5 <i>B</i><sub>0</sub> <i>a</i> <i>b</i> = <b>3,75·10⁻³ Wb</b>.</li>
+        <li>Comparaison : un champ uniforme <i>B</i><sub>0</sub> donnerait Φ = <i>B</i><sub>0</sub> <i>a</i> <i>b</i> = 2,50·10⁻³ Wb, soit 1,5 fois moins.</li>
+        <li>Contrôle : div <i>B</i> = ∂<i>B</i><sub>z</sub>/∂<i>z</i> = 0, car <i>B</i><sub>z</sub> ne dépend que de x. Le flux est conservé.</li>
+      </ul>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 640 260" role="img" aria-label="Champ B croissant linéairement selon x, perpendiculaire à une surface rectangulaire">
+            <path d="M60 200 L360 200" class="wire"/>
+            <g class="arr" marker-end="url(#ar)">
+              <path d="M75 200 L75 160"/><path d="M125 200 L125 151"/><path d="M185 200 L185 141"/><path d="M245 200 L245 131"/><path d="M305 200 L305 121"/><path d="M355 200 L355 111"/>
+            </g>
+            <path d="M55 205 L365 205" class="flux2" marker-end="url(#ar)"/>
+            <text class="tm" x="60" y="232">0 ≤ x ≤ a = 10 cm</text>
+            <text class="tm" x="365" y="232" text-anchor="end">0 ≤ y ≤ b = 5 cm</text>
+            <text class="ts" x="78" y="140">B₀ = 0,5 T</text>
+            <text class="ts" x="358" y="103" text-anchor="end">B(a) = 1,0 T</text>
+            <text class="tm" x="210" y="66">B = B₀ (1 + x/a) e_z</text>
+            <text class="tm" x="470" y="120">Φ = ∬ B · dA</text>
+            <text class="tm" x="470" y="145">dA = dx dy e_z</text>
+            <text class="tm" x="470" y="170">Φ = 3,75 mWb</text>
+          </svg>
+        </div>
+        <figcaption>Le champ est perpendiculaire au plan de la surface : le produit scalaire se réduit à B<sub>z</sub> dx dy. La longueur des flèches traduit la croissance linéaire de B selon x.</figcaption>
+      </figure>
+
+      <div class="lab" data-lab="flux">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · intégrer un flux non uniforme</div><div class="lab-sub">exercice 6, de dA au résultat</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"La surface est le rectangle 0 ≤ x ≤ a, 0 ≤ y ≤ b ; la normale est e_z, donc <b>dA = dx dy e_z</b>.","code":"dA = dx dy e_z","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
+          {"label":"Aux bords : <b>B(0) = 0,5 T</b> et <b>B(a) = 1,0 T</b> ; le champ croît linéairement selon x.","code":"B(0) = B₀ = 0,5 T ; B(a) = 2 B₀ = 1,0 T","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B(0)","v":"0,5 T"},{"k":"B(a)","v":"1,0 T"},{"k":"type","v":"linéaire"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
+          {"label":"Intégrale en x : <b>∫₀ᵃ B₀(1 + x/a) dx = B₀(a + a/2) = 1,5 B₀ a = 0,075 T·m</b>.","code":"∫₀ᵃ (1 + x/a) dx = a + a/2 = 1,5 a","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075","state":"active"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
+          {"label":"Intégrale en y : B ne dépend pas de y, il reste b. <b>Φ = 1,5 B₀ a b = 3,75·10⁻³ Wb</b>.","code":"Φ = 1,5 × 0,5 × 0,10 × 0,05 = 3,75·10⁻³ Wb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075"},{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"}]}],"arrows":[]},
+          {"label":"Comparaison : un champ uniforme donnerait <b>Φ = B₀ a b = 2,50·10⁻³ Wb</b> ; le rapport vaut 1,5, moyenne de 1 + x/a sur [0 ; a].","code":"Φ_uniforme = B₀ a b = 2,50 mWb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[]},
+          {"label":"Contrôle : <b>div B = 0</b>, car B_z ne dépend que de x. Le flux est conservé et le théorème de la divergence s'applique au volume.","code":"div B = ∂Bz/∂z = 0","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"div B","v":"0"},{"k":"Bz","v":"f(x)"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Écrire Φ = <i>B</i> <i>A</i> avec un champ non uniforme est l'erreur classique : ici 0,5 × 0,10 × 0,05 = 2,50 mWb, alors que le flux vaut 3,75 mWb. La longueur du solénoïde ne sert jamais au flux : seule la section compte.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p>Au chapitre 2, ∯<i>B</i> · d<i>A</i> = 0 sur un nœud de circuit magnétique donne la loi des nœuds sur les flux, et le théorème de Stokes appliqué à <i>H</i> donnera la loi des mailles ; au chapitre 3, le même théorème justifie la section du noyau d'un transformateur.</p>
+      </div>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">théorème</div></div>
+      <h2>Stokes transforme une circulation en flux de rotationnel</h2>
+      <p class="lead">La circulation d'un champ le long d'un contour fermé est égale au flux de son rotationnel à travers une surface qui s'appuie sur ce contour. Le sens du contour et celui de la normale sont liés par la règle de la main droite.</p>
+
+      <div class="math"><span class="ml">Théorème de Stokes et théorème d'Ampère</span>
+∮<sub><i>C</i></sub> <i>X</i> · d<i>l</i> = ∬<sub><i>S</i></sub> rot <i>X</i> · d<i>A</i>
+∮<sub><i>C</i></sub> <i>H</i> · d<i>l</i> = <i>I</i><sub>enlacé</sub>
+</div>
+
+      <h3>Exercice 5 : du rotationnel à la densité de courant</h3>
+      <p><span class="fx"><i>H</i> = −<i>k</i><i>y</i> <i>e</i><sub>x</sub> + <i>k</i><i>x</i> <i>e</i><sub>y</sub></span>, avec <i>k</i> = 2,5·10⁶ A/m². En magnétostatique, rot <i>H</i> = <i>J</i> :</p>
+      <ul>
+        <li>Composantes : <i>H</i><sub>x</sub> = −<i>k</i><i>y</i>, <i>H</i><sub>y</sub> = +<i>k</i><i>x</i>, <i>H</i><sub>z</sub> = 0 ; rien ne dépend de z.</li>
+        <li>(rot <i>H</i>)<sub>z</sub> = ∂<sub>x</sub><i>H</i><sub>y</sub> − ∂<sub>y</sub><i>H</i><sub>x</sub> = <i>k</i> − (−<i>k</i>) = 2<i>k</i>, d'où <b><i>J</i> = 5,0·10⁶ <i>e</i><sub>z</sub> A/m²</b> (5,0 A/mm²).</li>
+        <li>Contrôle sur un cercle de rayon <i>a</i> = 1 mm : circulation 2π<i>k</i><i>a</i>² = 15,7 A et flux 2<i>k</i>π<i>a</i>² = 15,7 A ; les deux membres d'Ampère coïncident.</li>
+      </ul>
+      <p class="small">Le schéma de l'énoncé n'est pas une circulation : les flèches du haut et du bas pointent dans le même sens. Le sens du champ se lit sur la formule, pas sur le dessin.</p>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Choisir le contour selon la symétrie de la distribution : fil rectiligne infini → cercles centrés sur le fil ; tore → cercles dans le tore. Sans cette symétrie, la circulation ne se calcule pas et le théorème ne sert à rien.</p>
+      </div>
+
+      <h3>Exercice 8 : champ d'un fil puis d'un éclair</h3>
+      <p>Un fil rectiligne de rayon <i>a</i> et de densité de courant uniforme <i>J</i> donne <i>B</i>(<i>r</i>) = μ₀<i>J</i><i>r</i>/2 = μ₀<i>I</i><i>r</i>/(2π<i>a</i>²) pour <i>r</i> &lt; <i>a</i>, et <i>B</i>(<i>r</i>) = μ₀<i>I</i>/(2π<i>r</i>) pour <i>r</i> ≥ <i>a</i>. Les deux expressions coïncident en <i>r</i> = <i>a</i>.</p>
+      <ul>
+        <li>Pour <i>I</i> = 1 A à <i>r</i> = 1 cm : <i>B</i> = 2,0·10⁻⁵ T = 20 µT, l'ordre de grandeur du champ magnétique terrestre.</li>
+        <li>Éclair de <i>I</i> = 1,0·10⁵ A, <i>a</i> = 12 cm : <i>B</i>(<i>a</i>) = 0,167 T.</li>
+        <li>Seuil de désaimantation d'une boussole, 2,4·10⁻³ T : atteint à <i>r</i> = μ₀<i>I</i>/(2π × 2,4·10⁻³) = 8,33 m.</li>
+      </ul>
+
+      <div class="lab" data-lab="ampere">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · contour d'Ampère sur un conducteur</div><div class="lab-sub">fil de rayon a = 12 cm, éclair de 10⁵ A</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"La symétrie de révolution impose des lignes de champ circulaires autour de l'axe ; on choisit un contour circulaire de rayon r, parcouru dans le sens du champ.","code":"∮ H · dl = 2 π r H(r)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"à choisir"},{"id":"ien","name":"I enlacé","type":"A","value":"—"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[]},
+          {"label":"À l'intérieur (<b>r = 6 cm &lt; a = 12 cm</b>), le contour n'enlace que la fraction du courant <b>J πr² = 2,5·10⁴ A</b>.","code":"I enlacé = J π r² = I r² / a²","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[]},
+          {"label":"Alors <b>B(r) = μ₀ I r/(2π a²) = 0,0833 T</b> : le champ croît linéairement et s'annule sur l'axe du conducteur.","code":"B(r) = μ₀ J r / 2 = μ₀ I r / (2 π a²)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A"},{"id":"B","name":"B(r)","type":"T","value":"0,0833 T","state":"changed"}]}],"arrows":[]},
+          {"label":"Sur la surface (<b>r = a = 12 cm</b>), le contour enlace tout le courant : <b>I enlacé = 1,0·10⁵ A</b> et <b>B(a) = 0,167 T</b>.","code":"B(a) = μ₀ I / (2 π a)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"12 cm","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"0,167 T","state":"changed"}]}],"arrows":[]},
+          {"label":"À l'extérieur (<b>r &gt; a</b>), tout le courant est enlacé : <b>B(r) = μ₀ I/(2π r) = 0,02/r</b>. En r = a, les deux formules donnent 0,167 T.","code":"B(r) = μ₀ I / (2 π r) = 0,02 / r","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"r ≥ 12 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"0,02/r"}]}],"arrows":[]},
+          {"label":"Application : le seuil de 2,4·10⁻³ T est atteint à <b>r = μ₀ I/(2π B) = 8,33 m</b> pour l'éclair de 10⁵ A.","code":"r = μ₀ I / (2 π B) = 8,33 m","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"I","v":"1,0·10⁵ A"},{"k":"B seuil","v":"2,4 mT"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"8,33 m","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"2,4·10⁻³ T","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>À l'intérieur du conducteur, le contour n'enlace pas <i>I</i> mais <i>J</i>π<i>r</i>². Écrire 2π<i>rH</i> = <i>I</i> pour <i>r</i> &lt; <i>a</i> donne un champ faux d'un facteur <i>r</i>²/<i>a</i>² et casse la continuité en <i>r</i> = <i>a</i>. Et sans symétrie, on ne peut pas sortir <i>H</i> de l'intégrale.</p>
+      </div>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">équations</div></div>
+      <h2>Quatre équations locales disent qui crée quoi</h2>
+      <p class="lead">Maxwell–Gauss, Maxwell–Thomson, Maxwell–Faraday et Maxwell–Ampère relient les champs à leurs sources, charges et courants. Toutes sont locales : elles relient le champ en un point à ses dérivées en ce même point.</p>
+
+      <table class="tbl">
+        <thead><tr><th>Équation</th><th>Forme locale</th><th>Forme intégrale</th></tr></thead>
+        <tbody>
+          <tr><td>Maxwell–Gauss</td><td>div <i>D</i> = ρ<sub>f</sub></td><td>∯ <i>D</i> · d<i>A</i> = <i>Q</i><sub>f</sub></td></tr>
+          <tr><td>Maxwell–Thomson</td><td>div <i>B</i> = 0</td><td>∯ <i>B</i> · d<i>A</i> = 0</td></tr>
+          <tr><td>Maxwell–Faraday</td><td>rot <i>E</i> = −∂<i>B</i>/∂<i>t</i></td><td>∮ <i>E</i> · d<i>l</i> = −dΦ/d<i>t</i></td></tr>
+          <tr><td>Maxwell–Ampère</td><td>rot <i>H</i> = <i>J</i><sub>f</sub> + ∂<i>D</i>/∂<i>t</i></td><td>∮ <i>H</i> · d<i>l</i> = <i>I</i><sub>f</sub> + dΦ<sub>D</sub>/d<i>t</i></td></tr>
+        </tbody>
+      </table>
+
+      <ul>
+        <li>Une charge libre crée <i>D</i> ; il n'existe pas de charge magnétique, donc <i>B</i> n'a pas de source scalaire.</li>
+        <li>Un <i>B</i> variable crée <i>E</i> ; un courant, et un <i>E</i> variable, créent <i>H</i>.</li>
+        <li>Le courant de déplacement ∂<i>D</i>/∂<i>t</i> est négligeable à 50 Hz devant <i>J</i> : c'est le terme omis au chapitre 2.</li>
+      </ul>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Cycle des quatre équations de Maxwell, avec les relations de matériau">
+            <g class="c-blue"><rect x="30" y="118" width="180" height="64" rx="10"/><text class="t" x="120" y="146" text-anchor="middle">rot E = −∂B/∂t</text><text class="ts" x="120" y="166" text-anchor="middle">Maxwell–Faraday</text></g>
+            <g class="c-purple"><rect x="230" y="22" width="180" height="64" rx="10"/><text class="t" x="320" y="50" text-anchor="middle">B = μ H</text><text class="ts" x="320" y="70" text-anchor="middle">aimantation</text></g>
+            <g class="c-coral"><rect x="430" y="118" width="180" height="64" rx="10"/><text class="t" x="520" y="146" text-anchor="middle">rot H = J + ∂D/∂t</text><text class="ts" x="520" y="166" text-anchor="middle">Maxwell–Ampère</text></g>
+            <g class="c-teal"><rect x="230" y="214" width="180" height="64" rx="10"/><text class="t" x="320" y="242" text-anchor="middle">D = ε E</text><text class="ts" x="320" y="262" text-anchor="middle">conduction J = σ E</text></g>
+            <path d="M150 118 C 165 85, 195 62, 228 56" class="arr" marker-end="url(#ar)"/>
+            <path d="M410 56 C 445 62, 475 85, 490 116" class="arr" marker-end="url(#ar)"/>
+            <path d="M520 182 C 500 215, 470 240, 412 246" class="arr" marker-end="url(#ar)"/>
+            <path d="M230 246 C 195 240, 165 215, 150 182" class="arr" marker-end="url(#ar)"/>
+            <text class="th" x="320" y="140" text-anchor="middle">div D = ρf</text>
+            <text class="th" x="320" y="163" text-anchor="middle">div B = 0</text>
+          </svg>
+        </div>
+        <figcaption>Le cycle des quatre équations : un B variable crée un E, un E met les charges en mouvement, un courant crée un H, et le matériau amplifie H en B. Les deux divergences disent les sources.</figcaption>
+      </figure>
+
+      <div class="math"><span class="ml">Célérité et constantes</span>
+<i>c</i> = 1/√(ε₀ μ₀) = 2,998·10⁸ m/s
+μ₀ = 4π·10⁻⁷ = 1,257·10⁻⁶ H/m        ε₀ = 8,854·10⁻¹² F/m
+</div>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Maxwell remplace l'action à distance par une dynamique locale : une perturbation se propage de proche en proche, à vitesse finie, et l'onde électromagnétique transverse se propage à <i>c</i>. Repères : Ørsted 1820, Faraday 1831, Maxwell 1873, Michelson 1887.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>rot <i>E</i> = 0 n'est vrai qu'en statique. Dès qu'un flux magnétique varie, rot <i>E</i> = −∂<i>B</i>/∂<i>t</i> : un champ électrique peut exister sans charge, et sa circulation autour d'un contour fermé n'est plus nulle.</p>
+      </div>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">milieux</div></div>
+      <h2>Dans un milieu, D et H ne gardent que les sources libres</h2>
+      <p class="lead">Les charges liées et les courants liés des atomes se cachent dans les champs <i>D</i> et <i>H</i>. Les équations de Maxwell n'écrivent alors que les sources libres, celles que l'on contrôle avec une source de tension ou un bobinage.</p>
+
+      <div class="math"><span class="ml">Relations de matériau</span>
+<i>D</i> = ε₀<i>E</i> + <i>P</i> = ε<i>E</i>        avec ε = ε₀ ε<sub>r</sub>
+<i>B</i> = μ₀(<i>H</i> + <i>M</i>) = μ<i>H</i>      avec μ = μ₀ μ<sub>r</sub>
+<i>J</i> = σ<i>E</i>          (loi d'Ohm locale)
+</div>
+
+      <table class="tbl">
+        <thead><tr><th>Grandeur</th><th>Définition</th><th>Unité</th></tr></thead>
+        <tbody>
+          <tr><td>Polarisation P</td><td>densité de moments dipolaires électriques liés</td><td>C/m²</td></tr>
+          <tr><td>Aimantation M</td><td>densité de moments magnétiques liés</td><td>A/m</td></tr>
+          <tr><td>D</td><td>induction électrique, source : charges libres</td><td>C/m²</td></tr>
+          <tr><td>H</td><td>excitation magnétique, source : courants libres</td><td>A/m</td></tr>
+          <tr><td>B</td><td>induction magnétique, grandeur physique du flux</td><td>T</td></tr>
+        </tbody>
+      </table>
+
+      <p>Méthode : on calcule <i>H</i> avec les courants des bobines (théorème d'Ampère), puis <i>B</i> avec la réponse du matériau. Le fer ne fait pas que multiplier <i>H</i> : il sature.</p>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Exemple de contrôle : μ<sub>r</sub> = 2000 et <i>H</i> = 1000 A/m donneraient <i>B</i> = μ₀μ<sub>r</sub><i>H</i> = <b>2,51 T</b>, au-delà de la saturation du fer (environ 2 T). Le modèle linéaire n'est pas valable à ce niveau : μ<sub>r</sub> effectif chute, et c'est le chapitre 2 qui traite la courbe B(H) et la droite de charge.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Ne pas confondre <i>B</i> et <i>H</i> : <i>B</i> en teslas décrit le flux, <i>H</i> en ampères par mètre décrit l'excitation. Les unités servent de contrôle : Φ en Wb, Ψ en Wb·tr, <i>W</i><sub>L</sub> en J, <i>w</i> en J/m³.</p>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">récapitulatif</div></div>
+      <h2>Quatre théorèmes intégraux, quatre grandeurs conservées</h2>
+      <p class="lead">Chaque forme intégrale se déduit de la forme locale par le théorème de la divergence ou celui de Stokes. Le tableau donne, pour chacune, la grandeur qui reste constante et le domaine qui la porte.</p>
+
+      <table class="tbl wide">
+        <thead><tr><th>Théorème</th><th>Forme intégrale</th><th>Grandeur conservée</th><th>Domaine</th></tr></thead>
+        <tbody>
+          <tr><td>Gauss</td><td>∯ <i>D</i> · d<i>A</i> = <i>Q</i><sub>f</sub></td><td>charge libre enfermée</td><td>surface fermée</td></tr>
+          <tr><td>Thomson</td><td>∯ <i>B</i> · d<i>A</i> = 0</td><td>flux magnétique : pas de monopôle</td><td>surface fermée</td></tr>
+          <tr><td>Faraday</td><td>∮ <i>E</i> · d<i>l</i> = −dΦ/d<i>t</i></td><td>flux à travers la surface du contour</td><td>contour fermé + surface</td></tr>
+          <tr><td>Ampère</td><td>∮ <i>H</i> · d<i>l</i> = <i>I</i><sub>f</sub> + dΦ<sub>D</sub>/d<i>t</i></td><td>courant enlacé + déplacement</td><td>contour fermé + surface</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Deux orientations à fixer avant tout calcul : la normale sortante pour une surface fermée, et la règle de la main droite entre le contour et la normale de sa surface pour Stokes. Un signe faux vient presque toujours de là.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p>Au chapitre 2, les deux théorèmes deviennent les lois du circuit magnétique : conservation du flux aux nœuds (Thomson) et loi des mailles (Ampère). Les grandeurs Φ, Ψ, Λ, ℜ et Θ y réapparaissent avec les mêmes unités qu'ici.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">induction</div></div>
+      <h2>Une variation de flux induit une fém, le champ stocke de l'énergie</h2>
+      <p class="lead">Le flux à travers une spire donne Φ ; <i>N</i> spires donnent le flux totalisé Ψ = <i>N</i>Φ. La fém induite vaut <i>u</i><sub>i</sub> = −dΨ/d<i>t</i> ; le signe est fixé par Lenz : le courant induit s'oppose à la <em>variation</em> du flux.</p>
+
+      <div class="math"><span class="ml">Faraday, Lenz et énergie</span>
+Ψ = <i>N</i> Φ          <i>u</i><sub>i</sub> = −dΨ/d<i>t</i> = −<i>N</i> dΦ/d<i>t</i>
+<i>W</i><sub>L</sub> = ½ <i>L</i> <i>i</i>² = ∭<sub><i>V</i></sub> <i>B</i>²/(2μ) dv          <i>w</i> = <i>B</i>²/(2μ)          (J/m³)
+</div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Flux qui augmente : le courant induit crée un champ opposé au flux. Flux qui diminue : il crée un champ dans le même sens que le flux. Dans tous les cas il s'oppose à la variation, pas au flux lui-même.</p>
+      </div>
+
+      <h3>Exercice 7 : solénoïde de 100 spires</h3>
+      <p>Rayon <i>r</i> = 5 cm, <i>B</i> passe de 0,5 à 1,0 T en 0,2 s, perpendiculaire à la spire, <i>R</i> = 2 Ω. Section <i>A</i> = π<i>r</i>² = 7,854·10⁻³ m² ; Φ₁ = 3,927·10⁻³ Wb, Φ₂ = 7,854·10⁻³ Wb, donc ΔΦ = 3,927·10⁻³ Wb.</p>
+      <ul>
+        <li>La longueur du solénoïde ne sert pas : seule la section intervient.</li>
+        <li>fém : |<i>u</i><sub>i</sub>| = <i>N</i>ΔΦ/Δ<i>t</i> = 1,96 V ; le signe est négatif avec la normale orientée selon <i>B</i> croissant.</li>
+        <li>Courant : |<i>u</i><sub>i</sub>|/<i>R</i> = <b>0,982 A</b> ; la résistance ne change pas la fém, seulement le courant.</li>
+      </ul>
+
+      <div class="lab" data-lab="faraday">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · fém induite dans un solénoïde</div><div class="lab-sub">exercice 7, du flux au courant</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Le solénoïde a <b>N = 100 spires</b> de rayon r = 5 cm : la section vaut <b>A = πr² = 7,854·10⁻³ m²</b>.","code":"A = π r² = π × 0,05²","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"—"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"—"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
+          {"label":"Flux initial : <b>Φ₁ = B₁A = 3,927·10⁻³ Wb</b> par spire, soit <b>Ψ₁ = NΦ₁ = 0,3927 Wb·tr</b>.","code":"Φ = B A ; Ψ = N Φ","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
+          {"label":"Flux final : <b>Φ₂ = B₂A = 7,854·10⁻³ Wb</b>, soit <b>Ψ₂ = 0,7854 Wb·tr</b> ; le flux a doublé.","code":"Φ₂ = 1,0 × 7,854·10⁻³","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"7,85 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,785","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
+          {"label":"Variation : <b>ΔΦ = 3,927·10⁻³ Wb</b> par spire, soit <b>ΔΨ = 0,3927 Wb·tr</b>, pendant <b>Δt = 0,2 s</b>.","code":"ΔΨ = N ΔΦ = 0,3927 Wb·tr","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
+          {"label":"La fém induite vaut <b>|u_i| = ΔΨ/Δt = 1,96 V</b> ; le signe vient de Lenz : flux croissant, champ induit opposé.","code":"u_i = − dΨ/dt = − N dΦ/dt","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393"},{"id":"fem","name":"u induite","type":"V","value":"1,96 V","state":"changed"}]}],"arrows":[]},
+          {"label":"Le courant vaut <b>i = |u_i|/R = 0,982 A</b> ; il circule dans le sens qui crée un champ opposé à la croissance du flux.","code":"i = |u_i| / R = 1,96 / 2 ≈ 0,982 A","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 → 7,85 mWb"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393 → 0,785"},{"id":"fem","name":"i induit","type":"A","value":"0,982 A","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <h3>Exercice 9 et énergie magnétique</h3>
+      <p>Une bobine de 20 spires voit son flux passer de 0 à 5·10⁻³ Wb en 0,01 s : <b>|<i>u</i><sub>i</sub>| = <i>N</i>ΔΦ/Δ<i>t</i> = 20 × 5·10⁻³ / 0,01 = 10 V</b>. Dans l'air, la densité d'énergie vaut <i>w</i> = <i>B</i>²/(2μ₀) = <b>398 kJ/m³</b> à 1 T et <b>895 kJ/m³</b> à 1,5 T : doubler <i>B</i> quadruple l'énergie stockée.</p>
+      <p class="small">Application TP1 : pour un secondaire de 125 V à 50 Hz, l'amplitude du flux totalisé vaut Ψ<sub>max</sub> = √2·<i>U</i>₂/(2π<i>f</i>) = 0,563 Wb·tr ; la tension est maximale quand Ψ passe par zéro.</p>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un flux énorme mais constant n'induit rien : seule la variation compte. Et la fém vaut −dΨ/d<i>t</i> pour une bobine, pas −ΔΦ/<i>t</i> sans le <i>N</i>. Deux conventions coexistent dans le cours : <i>u</i><sub>i</sub> = −dΦ/d<i>t</i> (générateur, chapitre 1) et <i>u</i> = <i>R</i><i>i</i> + dΨ/d<i>t</i> (récepteur, chapitre 2) ; préciser celle qu'on utilise.</p>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">bilan</div></div>
+      <h2>Erreurs fréquentes, QCM et mémo</h2>
+      <p class="lead">Les erreurs ci-dessous reviennent à chaque correction. Le QCM vérifie la reconnaissance des formules et des pièges ; le mémo tient en deux cartes.</p>
+
+      <table class="tbl">
+        <thead><tr><th>Erreur</th><th>Correction</th></tr></thead>
+        <tbody>
+          <tr><td>Confondre <i>B</i> et <i>H</i></td><td><i>B</i> en T décrit le flux ; <i>H</i> en A/m décrit l'excitation, liée aux courants libres.</td></tr>
+          <tr><td>Oublier le signe de Lenz</td><td>Le courant induit s'oppose à la <em>variation</em> du flux, pas au flux : flux croissant → champ induit opposé.</td></tr>
+          <tr><td>Appliquer un théorème intégral hors symétrie</td><td>Le contour ou la surface se choisissent d'après la symétrie ; sinon <i>H</i> ne sort pas de l'intégrale.</td></tr>
+          <tr><td>Écrire Φ = <i>B</i><i>A</i> pour un champ non uniforme</td><td>Intégrer : ici 3,75 mWb et non 2,50 mWb.</td></tr>
+          <tr><td>Oublier <i>N</i> dans la fém</td><td><i>u</i><sub>i</sub> = −dΨ/d<i>t</i> avec Ψ = <i>N</i>Φ : sans <i>N</i>, la fém est cent fois trop faible.</td></tr>
+          <tr><td>Conclure « champ nul » d'une divergence ou d'un rotationnel nul</td><td>Un champ uniforme a les deux nuls ; un gradient a un rotationnel nul sans être nul.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Formules</h4>
+          <ul>
+            <li>∇<i>f</i> = (∂<sub>x</sub><i>f</i> ; ∂<sub>y</sub><i>f</i> ; ∂<sub>z</sub><i>f</i>)</li>
+            <li>div <i>X</i> = ∂<sub>x</sub><i>X</i><sub>x</sub> + ∂<sub>y</sub><i>X</i><sub>y</sub> + ∂<sub>z</sub><i>X</i><sub>z</sub></li>
+            <li>rot <i>X</i> = (∂<sub>y</sub><i>X</i><sub>z</sub> − ∂<sub>z</sub><i>X</i><sub>y</sub> ; ∂<sub>z</sub><i>X</i><sub>x</sub> − ∂<sub>x</sub><i>X</i><sub>z</sub> ; ∂<sub>x</sub><i>X</i><sub>y</sub> − ∂<sub>y</sub><i>X</i><sub>x</sub>)</li>
+            <li>rot(grad <i>f</i>) = 0 ; div(rot <i>u</i>) = 0 ; Δ<i>f</i> = div(grad <i>f</i>)</li>
+            <li>∯<i>X</i>·d<i>A</i> = ∭div <i>X</i> dv ; ∮<i>X</i>·d<i>l</i> = ∬rot <i>X</i>·d<i>A</i></li>
+            <li>Ψ = <i>N</i>Φ ; <i>u</i><sub>i</sub> = −dΨ/d<i>t</i> ; <i>W</i><sub>L</sub> = ½<i>L</i><i>i</i>²</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Checklist</h4>
+          <ul>
+            <li>Unités : A/m pour <i>H</i>, T pour <i>B</i>, Wb pour Φ, Wb·tr pour Ψ, J pour <i>W</i><sub>L</sub>.</li>
+            <li>Divergence : positive source, négative puits, nulle sinon.</li>
+            <li>Rotationnel : roue à aubes posée au point, pas la courbure des lignes.</li>
+            <li>Sur une surface fermée, la normale pointe vers l'extérieur.</li>
+            <li>Contour de Stokes orienté par la main droite autour de la normale.</li>
+            <li>Fer saturé : <i>B</i> = μ<i>H</i> ne vaut que pour μ<sub>r</sub> constant (chapitre 2).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const NS = 'http://www.w3.org/2000/svg';
+  let UID = 0;
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint32_t|int16_t|uint8_t|ptrdiff_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function svgEl(name, attrs){
+    const n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function(k){ n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur mémoire : cases + flèches
+     ============================================================ */
+  function makeMemory(root){
+    const groupsEl = root.querySelector('[data-groups]');
+    const stage = root.querySelector('[data-stage]');
+    const svg = root.querySelector('[data-arrows]');
+    if (!groupsEl || !stage || !svg) return { render: function(){} };
+
+    const mid = 'mm' + (++UID);
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="' + mid + 'i" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+        '<marker id="' + mid + 'a" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>';
+
+    let prevIds = new Set();
+    let lastState = null;
+    let lastAnimate = true;
+
+    function cellHTML(c, isNew){
+      const cls = ['cell'];
+      if (c.kind) cls.push('is-' + c.kind);
+      if (c.state) String(c.state).split(/\s+/).forEach(function(t){ if (t) cls.push('is-' + t); });
+      if (isNew) cls.push('is-new');
+
+      let body = '<div class="cname">' + esc(c.name);
+      if (c.type) body += '<span class="ctype">' + esc(c.type) + '</span>';
+      body += '</div>';
+
+      if (c.fields) {
+        body += '<div class="cfields">' + c.fields.map(function(f){
+          return '<div class="cf"><span>' + esc(f.k) + '</span><b>' + esc(f.v) + '</b></div>';
+        }).join('') + '</div>';
+      } else {
+        body += '<div class="cval">' + (c.value === '' || c.value === null || c.value === undefined ? '&nbsp;' : esc(c.value)) + '</div>';
+      }
+      if (c.addr) body += '<div class="caddr">' + esc(c.addr) + '</div>';
+
+      const style = c.w ? ' style="--cw:' + Number(c.w) + 'px"' : '';
+      return '<div class="' + cls.join(' ') + '" data-id="' + esc(c.id) + '"' + style + '>' + body + '</div>';
+    }
+
+    function drawArrows(state, animate){
+      if (!state) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return;
+      const sr = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.querySelectorAll('.arrow,.alabel').forEach(function(n){ n.remove(); });
+
+      (state.arrows || []).forEach(function(a){
+        const fe = groupsEl.querySelector('[data-id="' + a.from + '"]');
+        const te = groupsEl.querySelector('[data-id="' + a.to + '"]');
+        if (!fe || !te) return;
+
+        const fr = fe.getBoundingClientRect();
+        const tr = te.getBoundingClientRect();
+        const f = {x: fr.left - sr.left, y: fr.top - sr.top, w: fr.width, h: fr.height};
+        const t = {x: tr.left - sr.left, y: tr.top - sr.top, w: tr.width, h: tr.height};
+        const fc = {x: f.x + f.w / 2, y: f.y + f.h / 2};
+        const tc = {x: t.x + t.w / 2, y: t.y + t.h / 2};
+        const dx = tc.x - fc.x;
+        const dy = tc.y - fc.y;
+        const vertical = Math.abs(dy) >= Math.abs(dx) * 0.72;
+        const gap = 4;
+        let p1, p2, c1, c2;
+
+        if (vertical) {
+          const dir = dy >= 0 ? 1 : -1;
+          p1 = {x: fc.x, y: dir > 0 ? f.y + f.h + gap : f.y - gap};
+          p2 = {x: tc.x, y: dir > 0 ? t.y - gap : t.y + t.h + gap};
+          const k = Math.max(26, Math.abs(p2.y - p1.y) * 0.46);
+          c1 = {x: p1.x, y: p1.y + dir * k};
+          c2 = {x: p2.x, y: p2.y - dir * k};
+        } else {
+          const dir = dx >= 0 ? 1 : -1;
+          p1 = {x: dir > 0 ? f.x + f.w + gap : f.x - gap, y: fc.y};
+          p2 = {x: dir > 0 ? t.x - gap : t.x + t.w + gap, y: tc.y};
+          const k = Math.max(26, Math.abs(p2.x - p1.x) * 0.46);
+          c1 = {x: p1.x + dir * k, y: p1.y};
+          c2 = {x: p2.x - dir * k, y: p2.y};
+        }
+
+        const path = svgEl('path', {
+          d: 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y,
+          'class': 'arrow' + (a.accent ? ' is-accent' : ''),
+          'marker-end': 'url(#' + mid + (a.accent ? 'a' : 'i') + ')'
+        });
+        svg.appendChild(path);
+
+        const len = path.getTotalLength();
+        if (animate && !reduceMotion.matches) {
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect();
+          path.style.transition = 'stroke-dashoffset .55s ease';
+          path.style.strokeDashoffset = '0';
+        }
+
+        if (a.label) {
+          const pt = path.getPointAtLength(len * 0.52);
+          const label = svgEl('text', {
+            x: pt.x + (vertical ? 7 : 0),
+            y: pt.y + (vertical ? 3 : -6),
+            'class': 'alabel',
+            'text-anchor': vertical ? 'start' : 'middle'
+          });
+          label.textContent = a.label;
+          svg.appendChild(label);
+        }
+      });
+    }
+
+    function render(state, animate){
+      lastState = state;
+      lastAnimate = animate !== false;
+      const nextIds = new Set();
+
+      groupsEl.classList.toggle('is-stack', (state.groups || []).length > 1);
+      const column = root.hasAttribute('data-column');
+      groupsEl.innerHTML = (state.groups || []).map(function(g){
+        const cells = (g.cells || []).map(function(c){
+          nextIds.add(c.id);
+          return cellHTML(c, !prevIds.has(c.id));
+        }).join('');
+        return '<div class="mem-group">' +
+          (g.title ? '<div class="mem-gtitle">' + esc(g.title) + '</div>' : '') +
+          '<div class="cells' + (column ? ' is-column' : '') + '">' + cells + '</div>' +
+          (g.hint ? '<div class="mem-ghint">' + esc(g.hint) + '</div>' : '') +
+        '</div>';
+      }).join('');
+      prevIds = nextIds;
+      requestAnimationFrame(function(){ drawArrows(lastState, lastAnimate); });
+    }
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){
+        if (!lastState) return;
+        requestAnimationFrame(function(){ drawArrows(lastState, false); });
+      });
+      ro.observe(stage);
+    }
+
+    return { render: render };
+  }
+
+  /* ============================================================
+     contrôleur de laboratoire (étapes, lecture, points)
+     ============================================================ */
+  function mountLab(root, spec){
+    const mem = makeMemory(root);
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const linesEl = root.querySelector('[data-lines]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    if (linesEl && spec.lines) {
+      linesEl.innerHTML = spec.lines.map(function(line, k){
+        return '<li data-line="' + k + '"><span class="ln">' + (k + 1) + '</span><span class="src">' + hl(line) + '</span></li>';
+      }).join('');
+      linesEl.addEventListener('click', function(e){
+        const li = e.target.closest('li[data-line]');
+        if (!li) return;
+        const lineNo = Number(li.getAttribute('data-line'));
+        const idx = states.findIndex(function(s){ return s.line === lineNo; });
+        if (idx >= 0) { stop(); i = idx; paint(); }
+      });
+    }
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(animate){
+      const s = states[i];
+      mem.render(s, animate !== false);
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (linesEl) {
+        Array.prototype.forEach.call(linesEl.children, function(li, k){
+          li.classList.toggle('on', k === s.line);
+        });
+      }
+      setOutput(s.output);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(false); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint(false);
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(false); }
+      }, spec.interval || 2900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(false); });
+
+    paint(false);
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     traducteur de déclarations
+     ============================================================ */
+  const DECLS = [
+    {d: 'int *p', fr: 'p est un <b>pointeur vers un int</b>.', why: 'Une étoile, un saut : <code>*p</code> est un int.'},
+    {d: 'int **pp', fr: 'pp est un <b>pointeur vers un pointeur vers int</b>.', why: 'Deux étoiles, deux sauts : <code>**pp</code> est un int.'},
+    {d: 'int *p[5]', fr: 'p est un <b>tableau de 5 pointeurs vers int</b>.', why: '<code>[]</code> est prioritaire sur <code>*</code> : d’abord un tableau, ensuite des pointeurs.'},
+    {d: 'int (*p)[5]', fr: 'p est un <b>pointeur vers un tableau de 5 int</b>.', why: 'Les parenthèses forcent <code>*</code> d’abord : un seul pointeur, qui avance de 20 octets.'},
+    {d: 'int *f(int)', fr: 'f est une <b>fonction</b> qui renvoie un <b>pointeur vers int</b>.', why: '<code>f</code> est suivi de <code>(int)</code> : c’est une fonction, pas un pointeur.'},
+    {d: 'int (*f)(int, int)', fr: 'f est un <b>pointeur vers une fonction</b> prenant deux int et renvoyant un int.', why: 'Les parenthèses autour de <code>*f</code> font de f un pointeur ; la fonction est la cible.'},
+    {d: 'const int *p', fr: 'p est un pointeur vers un <b>int constant</b>.', why: 'On ne peut pas modifier <code>*p</code>, mais on peut réaffecter <code>p</code>.'},
+    {d: 'int *const p', fr: 'p est un <b>pointeur constant</b> vers un int.', why: 'On peut modifier <code>*p</code>, mais pas réaffecter <code>p</code>.'},
+    {d: 'void *p', fr: 'p est un <b>pointeur générique</b>, sans type de cible.', why: 'On ne peut pas le déréférencer tel quel : il faut le convertir, <code>*(int *)p</code>.'},
+    {d: 'char *argv[]', fr: 'argv est un <b>tableau de pointeurs vers char</b>.', why: 'Dans une liste de paramètres, <code>char *argv[]</code> équivaut à <code>char **argv</code>.'},
+    {d: 'struct Point *p', fr: 'p est un <b>pointeur vers une struct Point</b>.', why: 'On accède aux membres avec <code>p-&gt;x</code> ou <code>(*p).x</code>.'}
+  ];
+
+  (function(){
+    const root = document.querySelector('[data-translator]');
+    if (!root) return;
+    const list = root.querySelector('[data-translist]');
+    const out = root.querySelector('[data-transout]');
+    const buttons = [];
+
+    DECLS.forEach(function(x, k){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<code>' + esc(x.d) + '</code>';
+      b.addEventListener('click', function(){ select(k); });
+      list.appendChild(b);
+      buttons.push(b);
+    });
+
+    function select(k){
+      buttons.forEach(function(b, n){ b.classList.toggle('on', n === k); });
+      const x = DECLS[k];
+      out.innerHTML = '<div class="decl">' + esc(x.d) + '</div>' +
+        '<div class="fr">' + x.fr + '</div>' +
+        '<div class="why">' + x.why + '</div>';
+    }
+
+    select(0);
+  })();
+
+  /* ============================================================
+     explorateur d'octets
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-addrlab]');
+    if (!root) return;
+    const grid = root.querySelector('[data-bytes]');
+    const info = root.querySelector('[data-info]');
+    const buttons = Array.prototype.slice.call(root.querySelectorAll('[data-var]'));
+
+    const BYTES = ['2A','00','00','00','41','··','··','··','00','10','00','00','00','00','00','00'];
+    const OWNER = ['x','x','x','x','c',null,null,null,'p','p','p','p','p','p','p','p'];
+    const META = {
+      x: {name:'x', type:'int', size:4, addr:'0x1000', value:'42 (0x2A)', bytes:'2A 00 00 00', note:'Petit-boutisme : l’octet de poids faible est le premier. 0x0000002A = 42.'},
+      c: {name:'c', type:'char', size:1, addr:'0x1004', value:"'A' (0x41)", bytes:'41', note:'Un seul octet. Les octets 0x1005 à 0x1007 sont du bourrage, pour aligner p.'},
+      p: {name:'p', type:'int *', size:8, addr:'0x1008', value:'0x1000', bytes:'00 10 00 00 00 00 00 00', note:'p contient l’adresse de x : c’est exactement ce qu’on appelle un pointeur.'}
+    };
+    let selected = 'x';
+
+    function paint(sel){
+      selected = sel;
+      grid.innerHTML = BYTES.map(function(b, i){
+        const owner = OWNER[i];
+        const cls = ['byte'];
+        if (owner) cls.push('v-' + owner); else cls.push('pad');
+        if (sel && owner === sel) cls.push('sel');
+        const addr = '0x10' + i.toString(16).toUpperCase().padStart(2, '0');
+        return '<div class="' + cls.join(' ') + '" data-byte="' + i + '">' +
+          '<span class="ba">' + addr + '</span><span class="bv">' + b + '</span></div>';
+      }).join('');
+
+      buttons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-var') === sel); });
+      if (!sel) return;
+      const m = META[sel];
+      info.innerHTML = '<b>' + m.name + '</b> · ' + m.type + ' · ' + m.size + ' ' + (m.size > 1 ? 'octets' : 'octet') + ' · adresse ' +
+        '<span class="mono">' + m.addr + '</span><br>valeur : <span class="mono">' + m.value +
+        '</span> — octets : <span class="mono">' + m.bytes + '</span><br>' + m.note;
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ paint(b.getAttribute('data-var')); });
+    });
+
+    grid.addEventListener('click', function(e){
+      const el = e.target.closest('[data-byte]');
+      if (!el) return;
+      const owner = OWNER[Number(el.getAttribute('data-byte'))];
+      if (owner) paint(owner);
+    });
+
+    paint('x');
+  })();
+
+  /* ============================================================
+     widget tableau : p + i
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-arrlab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-arrstage]');
+    const track = root.querySelector('[data-arrtrack]');
+    const cells = Array.prototype.slice.call(root.querySelectorAll('.arr-cell'));
+    const cur = root.querySelector('[data-cur]');
+    const range = root.querySelector('[data-range]');
+    const iout = root.querySelector('[data-iout]');
+    const formula = root.querySelector('[data-formula]');
+    const svg = root.querySelector('[data-arrsvg]');
+    const pcard = root.querySelector('.arr-p');
+
+    const BASE = 0x1000;
+    const VALUES = [10, 20, 30, 40];
+    let i = 2;
+
+    function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const pr = pcard.getBoundingClientRect();
+      const ar = cells[0].getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      let d;
+      if (window.matchMedia('(max-width: 620px)').matches) {
+        const x1 = pr.left + pr.width / 2 - sr.left;
+        const y1 = pr.bottom - sr.top + 3;
+        const x2 = ar.left + ar.width / 2 - sr.left;
+        const y2 = ar.top - sr.top - 5;
+        const my = (y1 + y2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = pr.right - sr.left + 4;
+        const y1 = pr.top - sr.top + pr.height / 2;
+        const x2 = ar.left - sr.left - 5;
+        const y2 = ar.top - sr.top + ar.height / 2;
+        const mx = (x1 + x2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + mx + ' ' + y1 + ', ' + mx + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      }
+      svg.innerHTML = '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ar-accent)"/>';
+    }
+
+    function layout(){
+      const idx = Math.min(i, 3);
+      const cell = cells[idx];
+      let x;
+      if (i < 4) {
+        x = cell.offsetLeft + cell.offsetWidth / 2;
+      } else {
+        const last = cells[3];
+        x = last.offsetLeft + last.offsetWidth + 13;
+      }
+      cur.style.left = x + 'px';
+      cur.textContent = 'p + ' + i;
+      cells.forEach(function(c, k){ c.classList.toggle('sel', k === i); });
+      range.value = i;
+      iout.textContent = 'i = ' + i;
+
+      if (i < 4) {
+        formula.innerHTML = 'p + ' + i + ' = <b>' + hex(BASE + 4 * i) + '</b> → <b>*(p + ' + i + ')</b> = a[' + i + '] = <b>' + VALUES[i] + '</b> <span class="ok">✓</span>';
+      } else {
+        formula.innerHTML = 'p + 4 = <b>' + hex(BASE + 16) + '</b> : adresse juste après le tableau. <b>Valide</b> pour comparer, <span class="ko">interdit</span> à déréférencer.';
+      }
+      drawArrow();
+    }
+
+    range.addEventListener('input', function(){
+      i = Math.max(0, Math.min(4, parseInt(range.value, 10) || 0));
+      layout();
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(layout); });
+      ro.observe(stage);
+    }
+
+    requestAnimationFrame(layout);
+  })();
+
+  /* ============================================================
+     widget const
+     ============================================================ */
+  (function(){
+    document.querySelectorAll('.const-card').forEach(function(card){
+      const kind = card.getAttribute('data-case');
+      const fb = card.querySelector('[data-fb]');
+      if (!fb) return;
+      card.querySelectorAll('[data-act]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          const act = btn.getAttribute('data-act');
+          let ok = false;
+          let msg = '';
+          if (kind === 'c1') {
+            if (act === 'val') { ok = false; msg = '✗ error: assignment of read-only location ‘*p’ — la cible est const.'; }
+            else { ok = true; msg = '✓ p = &y est permis : le pointeur lui-même n’est pas const.'; }
+          } else if (kind === 'c2') {
+            if (act === 'val') { ok = true; msg = '✓ *p = 5 est permis : la cible n’est pas const.'; }
+            else { ok = false; msg = '✗ error: assignment of read-only variable ‘p’ — le pointeur est const.'; }
+          } else {
+            ok = false;
+            msg = act === 'val'
+              ? '✗ *p est const : la cible est protégée.'
+              : '✗ p est const : le pointeur est protégé.';
+          }
+          fb.textContent = msg;
+          fb.className = 'const-fb ' + (ok ? 'ok' : 'ko');
+        });
+      });
+    });
+  })();
+
+  /* ============================================================
+     widget pointeur de fonction
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-fplab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-fpstage]');
+    const svg = root.querySelector('[data-fpsvg]');
+    const opval = root.querySelector('[data-opval]');
+    const out = root.querySelector('[data-fpout]');
+    const fnButtons = Array.prototype.slice.call(root.querySelectorAll('.fp-fn'));
+
+    const FUNCS = {
+      add: {addr: '0x401000', value: 7},
+      mul: {addr: '0x401040', value: 12}
+    };
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const op = root.querySelector('.fp-op').getBoundingClientRect();
+      const targetEl = root.querySelector('.fp-fn.on');
+      if (!targetEl) return;
+      const target = targetEl.getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      const x1 = op.left + op.width / 2 - sr.left;
+      const y1 = op.bottom - sr.top + 3;
+      const x2 = target.left + target.width / 2 - sr.left;
+      const y2 = target.top - sr.top - 5;
+      const my = (y1 + y2) / 2;
+      svg.innerHTML = '<path d="M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2 +
+        '" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ar-accent)"/>';
+    }
+
+    function pick(k){
+      const f = FUNCS[k];
+      if (!f) return;
+      opval.textContent = f.addr;
+      out.innerHTML = 'op(3, 4) = <b>' + f.value + '</b>';
+      fnButtons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fn') === k); });
+      requestAnimationFrame(drawArrow);
+    }
+
+    root.querySelectorAll('[data-fn]').forEach(function(b){
+      b.addEventListener('click', function(){ pick(b.getAttribute('data-fn')); });
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(drawArrow); });
+      ro.observe(stage);
+    }
+
+    pick('add');
+  })();
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'Un champ scalaire associe à chaque point de l’espace…',
+     o: ['un vecteur à trois composantes', 'une seule valeur réelle', 'une direction et un sens', 'une densité de flux'],
+     a: 1,
+     fb: 'Un champ scalaire ne porte qu’un nombre par point : température, pression, altitude. Un champ de vecteurs porte trois composantes, avec direction, sens et module.'},
+    {q: 'Le gradient de <span class="fx">f = 3x² + 8y − 7e<sup>z</sup> + 9</span> vaut…',
+     o: ['<span class="fx">(3x ; 8 ; −7e<sup>z</sup>)</span>', '<span class="fx">(6x ; 8 ; 7e<sup>z</sup>)</span>', '<span class="fx">(6x ; 8 ; −7e<sup>z</sup>)</span>', '<span class="fx">(6x ; 8y ; −7e<sup>z</sup>)</span>'],
+     a: 2,
+     fb: 'On dérive à deux variables constantes : le 9 disparaît, 8y donne 8, et −7e<sup>z</sup> donne −7e<sup>z</sup>. Au point (2 ; 4 ; 1) : (12 ; 8 ; −19,0).'},
+    {q: 'Au point (2 ; 4 ; 1), la divergence de <span class="fx">u = (3x − 2z ; 8x² − 9√y + 3yz ; 7x − 2y³)</span> vaut…',
+     o: ['0,75', '12', '4,50', '3,75'],
+     a: 3,
+     fb: 'div u = 3 − 9/(2√y) + 3z, soit 3 + 0,75 + 0 = 3,75 en y = 4 et z = 1. La composante y vaut 0,75 et la composante z est nulle.'},
+    {q: 'Le rotationnel de <span class="fx">v = (3xy − 5z ; xz² − 2y² ; x + 3e<sup>z</sup>)</span> vaut…',
+     o: ['<span class="fx">(−2xz ; −6 ; z² + 3x)</span>', '<span class="fx">(−2xz ; −6 ; z² − 3x)</span>', '<span class="fx">(2xz ; −6 ; z² − 3x)</span>', '<span class="fx">(−2xz ; −4 ; z² − 3x)</span>'],
+     a: 1,
+     fb: 'Composante x : 0 − 2xz ; composante y : −5 − 1 = −6 ; composante z : z² − 3x. Au point (2 ; 4 ; 1) : (−4 ; −6 ; −5).'},
+    {q: 'Quelle identité est vraie pour tout champ assez régulier ?',
+     o: ['<span class="fx">rot(grad f) = 0</span>', '<span class="fx">div(grad f) = 0</span>', '<span class="fx">rot(rot u) = 0</span>', '<span class="fx">div u = 0</span>'],
+     a: 0,
+     fb: 'Les dérivées croisées commutent (Schwarz) : rot(grad f) = 0 et div(rot u) = 0. En revanche div(grad f) = Δf n’est pas nul en général.'},
+    {q: 'Le théorème de la divergence s’écrit…',
+     o: ['<span class="fx">∮ X·dl = ∬ rot X·dA</span>', '<span class="fx">∯ X·dA = ∬ rot X·dA</span>', '<span class="fx">∯ X·dA = ∭ div X dv</span>', '<span class="fx">∭ div X dv = 0</span>'],
+     a: 2,
+     fb: 'Le flux sortant à travers une surface fermée égale l’intégrale de la divergence dans le volume. La première proposition est le théorème de Stokes.'},
+    {q: 'Pour <span class="fx">B(x) = B₀(1 + x/a) e<sub>z</sub></span> sur le rectangle a × b (B₀ = 0,5 T, a = 10 cm, b = 5 cm), le flux vaut…',
+     o: ['2,50 mWb', '0,375 mWb', '5,00 mWb', '3,75 mWb'],
+     a: 3,
+     fb: '∫₀ᵃ B₀(1 + x/a) dx = 1,5 B₀ a, puis Φ = 1,5 B₀ a b = 3,75·10⁻³ Wb. Écrire BA donnerait 2,50 mWb : c’est l’erreur classique.'},
+    {q: 'En magnétostatique, <span class="fx">rot H = 2k e<sub>z</sub></span> avec k = 2,5·10⁶ A/m² donne une densité de courant…',
+     o: ['<span class="fx">J = 5,0·10⁶ A/m² selon +z</span>', '<span class="fx">J = 2,5·10⁶ A/m² selon +z</span>', '<span class="fx">J = 5,0·10⁶ A/m² selon −z</span>', '<span class="fx">J = 0 : le champ est constant</span>'],
+     a: 0,
+     fb: 'Le facteur 2 vient des signes opposés : ∂<sub>x</sub>H<sub>y</sub> = +k et ∂<sub>y</sub>H<sub>x</sub> = −k, donc 2k = 5,0·10⁶ A/m², porté par +z.'},
+    {q: 'Maxwell–Faraday s’écrit, en régime variable…',
+     o: ['<span class="fx">∇×E = 0</span>', '<span class="fx">∇×E = −∂B/∂t</span>', '<span class="fx">∇·E = 0</span>', '<span class="fx">∇×B = −∂E/∂t</span>'],
+     a: 1,
+     fb: 'Un B variable crée un E. rot E = 0 n’est vrai qu’en statique ; la forme intégrale est ∮E·dl = −dΦ/dt.'},
+    {q: 'Dans un milieu de μ<sub>r</sub> = 2000, H = 1000 A/m donne B = μ₀μ<sub>r</sub>H = 2,51 T. Que conclure ?',
+     o: ['le calcul est faux : B = μ₀H', 'B = 2,51 T reste valable, μ<sub>r</sub> est constant', 'l’hypothèse linéaire échoue : le fer sature vers 2 T', 'le fer n’est pas magnétique'],
+     a: 2,
+     fb: '2,51 T dépasse la saturation du fer (environ 2 T) : la perméabilité relative effective chute. B = μH ne vaut que pour μ<sub>r</sub> constant, et le chapitre 2 traite la courbe B(H).'},
+    {q: 'Un flux constant de 5 mWb traverse 20 spires. La fém induite vaut…',
+     o: ['1,0 V', '10 V', '100 V', '0 V'],
+     a: 3,
+     fb: 'Seule la variation du flux induit une fém : u<sub>i</sub> = −N dΦ/dt. Un flux constant, même grand, ne donne aucune tension.'},
+    {q: 'Les 20 spires voient le flux passer de 0 à 5 mWb en 0,01 s. La fém induite vaut…',
+     o: ['10 V', '1,0 V', '0,1 V', '100 V'],
+     a: 0,
+     fb: '|u<sub>i</sub>| = N ΔΦ/Δt = 20 × 5·10⁻³ / 0,01 = 10 V. Le signe est donné par Lenz : le courant induit s’oppose à la croissance du flux.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ELMEC1">← E2-ELMEC1</a>
+</body>
+</html>

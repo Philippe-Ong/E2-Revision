@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235146b8'/%3E%3Cpath d='M18 20h28M18 32h20M18 44h24' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Exercice 1.10 — Tours de Hanoï. Théorie, méthode et QCM.">
+<title>Exercice 1.10 — Tours de Hanoï</title>
+<style>
+:root{
+  --bg:#f4f2ec;--card:#fffdf9;--card2:#efede5;--ink:#1b1a17;--muted:#5d5b54;--faint:#8b887e;
+  --line:rgba(27,26,23,.16);--line2:rgba(27,26,23,.08);--accent:#5146b8;--accent-s:#eae8fb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151412;--card:#1e1d1a;--card2:#262420;--ink:#e9e6dd;--muted:#b3afa5;--faint:#8b877c;
+  --line:rgba(255,255,255,.17);--line2:rgba(255,255,255,.075);--accent:#b3abff;--accent-s:#2a2451;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top a{text-decoration:none;font-size:12.5px;color:var(--muted);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.top a:hover{background:var(--card2);color:var(--ink)}
+.top .spacer{flex:1}
+.top .exam{font:650 9.5px/1 var(--mono);letter-spacing:.08em;background:var(--accent-s);color:var(--accent);border-radius:999px;padding:5px 8px}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px 70px}
+.eyebrow{font:650 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.07;letter-spacing:-.03em;font-weight:680;margin:10px 0 12px}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:65ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;font:11.5px/1.4 var(--mono);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:650}
+section{margin-top:34px}
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:650 10px var(--mono)}
+.tag{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+h2{font-size:clamp(20px,3vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 8px}
+h3{font-size:15px;font-weight:650;margin:0 0 4px}
+p{margin:0 0 10px}
+ul,ol{margin:8px 0 10px;padding-left:22px}
+li{margin:5px 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0}
+.box{border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:14px}
+.box.rule{border-left-color:#0e6b55}
+.box.trap{border-left-color:#b33a2b}
+.box .lbl{font:650 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.code{margin:12px 0;border-radius:10px;overflow:hidden;background:#1c1c1a;border:1px solid #2d2d29}
+.code code{background:none;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+.code header{display:flex;justify-content:space-between;padding:7px 11px;background:#242420;color:#a9a79e;font:10.5px var(--mono)}
+.code pre{margin:0;padding:12px 13px;overflow:auto;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.tbl th,.tbl td{border-bottom:1px solid var(--line2);padding:7px 8px;text-align:left;vertical-align:top}
+.tbl th{font:650 10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tbl tr:last-child td{border-bottom:0}
+.result{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:11px 13px;margin:12px 0;font-size:14px}
+.viz{margin:14px 0 4px;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:12px 13px;overflow-x:auto}
+.viz-title{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.viz-caption{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+.viz-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.viz-node{min-width:54px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:7px 9px;text-align:center;font:12px/1.3 var(--mono);color:var(--ink)}
+.viz-node b{display:block;font:9px/1.3 var(--mono);letter-spacing:.04em;color:var(--accent);margin-bottom:2px}
+.viz-arrow{font:14px/1 var(--mono);color:var(--faint);white-space:nowrap}
+.viz-label{font:9.5px/1.4 var(--mono);color:var(--faint);text-align:center}
+.viz-stack{display:flex;flex-direction:column;gap:5px;align-items:center;padding:4px 0}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:5px;padding:4px 0}
+.viz-cell{border:1px solid var(--line2);background:var(--card2);border-radius:6px;padding:6px 5px;text-align:center;font:11px/1.3 var(--mono)}
+.viz-bar{height:10px;border-radius:3px;background:var(--accent);min-width:2px}
+.viz-note{font-size:12px;color:var(--muted);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px}
+.viz svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.qcm{margin-top:12px}
+.q{background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:13px 14px;margin-top:10px}
+.qq{font-weight:600;margin:0 0 9px;font-size:14.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:8px 10px;font:13px/1.45 var(--sans);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{border-color:#0e6b55;background:rgba(14,107,85,.14)}
+.opt.ko{border-color:#b33a2b;background:rgba(179,58,43,.14)}
+.fb{margin-top:9px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:9px}
+.score{font:12px var(--mono);color:var(--faint);margin-top:12px}
+.hero{max-width:860px;margin:0 auto;padding:32px 22px 0}
+.home{max-width:1050px;margin:0 auto;padding:42px 22px 70px}
+.home h1{margin-bottom:8px}
+.group{margin-top:28px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line2);padding-bottom:7px;margin-bottom:11px}
+.group-head h2{font-size:14px;font-weight:650;margin:0}
+.group-head span{font:10.5px var(--mono);color:var(--faint)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.ex-card{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .14s ease}
+.ex-card:hover{transform:translateY(-2px)}
+.ex-card .num{font:650 10px var(--mono);color:var(--accent)}
+.ex-card h3{font-size:15.5px;margin:1px 0 0}
+.ex-card p{font-size:12.5px;line-height:1.45;color:var(--muted);margin:0;flex:1}
+.ex-card .go{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px}
+@media (max-width:640px){
+  .wrap,.hero{padding:24px 15px 55px}
+  .home{padding:28px 15px 60px}
+  .lead{font-size:15.5px}
+  .cards{grid-template-columns:1fr}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:5px 4px}
+  .top{gap:6px;padding:8px 10px}
+  .top a{font-size:11.5px}
+  .top .spacer{display:none}
+  .top .exam{margin-left:auto}
+  .code pre{font-size:11.5px;line-height:1.65}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.001ms!important}}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="index.html">← Tous les exercices</a>
+  <span class="spacer"></span>
+  <a href="../recursivite/algo-recursivite-theorie-animee.html">Version théorie · Récursivité</a>
+  <span class="exam">TE1</span>
+</div>
+<header class="hero">
+  <div class="eyebrow">E2-ALGO · exercice 1.10 · Chapitre 1</div>
+  <h1>Tours de Hanoï</h1>
+  <p class="lead">Déplacer n disques de A vers B selon les règles, puis compter les coups sans variable globale.</p>
+  <div class="chips">
+    <span class="chip">exercice <b>1.10</b></span>
+    <span class="chip">récursivité · 2^n − 1 · pile d'appels · compteur</span>
+    <span class="chip">théorie : <b>Récursivité</b></span>
+  </div>
+</header>
+<main class="wrap">
+  <section>
+    <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
+    <h2>Ce que demande l’exercice</h2>
+    <p>L'algorithme « Tower of Hanoi » déplace n disques de l'aiguille A vers B, avec C comme auxiliaire : un disque à la fois, jamais un grand sur un petit.</p>
+<p>a) Implémenter la fonction de façon récursive et la tester avec plusieurs valeurs de n.</p>
+<p>b) Afficher le nombre de mouvements après l'appel de toh, sans variable globale.</p>
+<p>Pseudo-code de l'énoncé : si disk vaut 1, déplacer le disque ; sinon toh(disk − 1, source, aux, dest), déplacer, puis toh(disk − 1, aux, dest, source).</p>
+<p>Pour n = 3, la sortie affiche 7 déplacements : « For n=3, 7 moves were necessary ».</p>
+    
+    <div class="viz"><div class="viz-title">Trois aiguilles, un déplacement</div><svg viewBox="0 0 640 300" role="img" aria-label="Trois aiguilles de Hanoï avant et après le déplacement du disque 1 de A vers B" style="max-width:100%;height:auto;font-family:inherit"><rect x="0" y="0" width="640" height="300" rx="10" fill="#fffdf9" stroke="#e7e3d8" stroke-width="1"/><text x="18" y="26" font-size="14" font-weight="600" fill="#1b1a17">départ</text><text x="338" y="26" font-size="14" font-weight="600" fill="#1b1a17">après le coup 1 : disque 1 de A vers B</text><line x1="12" y1="236" x2="318" y2="236" stroke="#8b887e" stroke-width="3"/><rect x="67" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><rect x="182" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><rect x="297" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><text x="70" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">A</text><text x="185" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">B</text><text x="300" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">C</text><line x1="330" y1="236" x2="636" y2="236" stroke="#8b887e" stroke-width="3"/><rect x="387" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><rect x="502" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><rect x="617" y="96" width="6" height="140" rx="2" fill="#b9b5a8"/><text x="390" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">A</text><text x="505" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">B</text><text x="620" y="258" text-anchor="middle" font-size="14" fill="#5d5b54">C</text><rect x="15" y="212" width="110" height="18" rx="6" fill="#d8d4c8" stroke="#8b887e" stroke-width="1.5"/><text x="70" y="226" text-anchor="middle" font-size="12" fill="#1b1a17">3</text><rect x="28" y="192" width="84" height="18" rx="6" fill="#c9c4ee" stroke="#5146b8" stroke-width="1.5"/><text x="70" y="206" text-anchor="middle" font-size="12" fill="#1b1a17">2</text><rect x="41" y="172" width="58" height="18" rx="6" fill="#bfe0d3" stroke="#0e6b55" stroke-width="1.5"/><text x="70" y="186" text-anchor="middle" font-size="12" fill="#1b1a17">1</text><rect x="335" y="212" width="110" height="18" rx="6" fill="#d8d4c8" stroke="#8b887e" stroke-width="1.5"/><text x="390" y="226" text-anchor="middle" font-size="12" fill="#1b1a17">3</text><rect x="348" y="192" width="84" height="18" rx="6" fill="#c9c4ee" stroke="#5146b8" stroke-width="1.5"/><text x="390" y="206" text-anchor="middle" font-size="12" fill="#1b1a17">2</text><rect x="476" y="212" width="58" height="18" rx="6" fill="#bfe0d3" stroke="#0e6b55" stroke-width="1.5"/><text x="505" y="226" text-anchor="middle" font-size="12" fill="#1b1a17">1</text><text x="18" y="286" font-size="12.5" fill="#5d5b54">n = 3 : 7 coups = 2³ − 1 ; le disque 1 est le plus petit.</text></svg><div class="viz-caption">Avant et après le coup 1 : le disque 1 quitte A pour B, les disques 2 et 3 restent empilés sur A.</div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
+    <h2>Les notions à mobiliser</h2>
+    <div class="grid"><div class="card"><h3>Cas simple et réduction</h3><p>Le cas de base est <code>disk == 1</code> : un déplacement, aucune récursion. Pour n &gt; 1, on déplace n − 1 disques sur l'auxiliaire, le plus grand sur la destination, puis les n − 1 par-dessus.</p></div>
+<div class="card"><h3>M(n) = 2 M(n−1) + 1 = 2^n − 1</h3><p>Chaque niveau double le travail précédent : 1, 3, 7, 15, 31 coups. Complexité O(2^n) en temps, O(n) en pile, la profondeur valant n.</p></div>
+<div class="card"><h3>L'ordre des paramètres</h3><p><code>toh(disk, source, dest, aux)</code> : le premier appel échange <code>dest</code> et <code>aux</code>, puisque les n − 1 disques visent l'auxiliaire ; le second échange <code>source</code> et <code>aux</code>. Un mauvais paramètre produit des déplacements illégaux.</p></div>
+<div class="card"><h3>Un compteur, pas une globale</h3><p><code>moveDisk</code> reçoit <code>uint32_t *pMoves</code> et fait <code>(*pMoves)++</code> : la fonction reste réentrante et l'appelant choisit où vit le compteur.</p></div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
+    <h2>Comment procéder</h2>
+    <ol><li>Écrire le cas simple : disk == 1, un seul moveDisk de source vers dest.</li>
+<li>Sinon, déplacer disk − 1 disques de source vers aux, avec dest comme auxiliaire.</li>
+<li>Déplacer le disque disk de source vers dest.</li>
+<li>Déplacer les disk − 1 disques de aux vers dest, avec source comme auxiliaire.</li>
+<li>Compter dans (*pMoves)++ et vérifier n = 3 → 7, n = 10 → 1 023.</li></ol>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">04</div><div class="tag">application</div></div>
+    <h2>Application à l’énoncé</h2>
+    <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+static void moveDisk(uint32_t disk, char from, char to,
+                     uint32_t *pMoves)
+{
+    printf("Move disk %u from %c to %c\n",
+           (unsigned)disk, from, to);
+    (*pMoves)++;        /* b) compteur sans variable globale */
+}
+
+/* Ex. 1.10 : pseudo-code de l'énoncé ; *pMoves compte */
+void toh(uint32_t disk, char source, char dest, char aux,
+         uint32_t *pMoves)
+{
+    if (disk == 1u) {                          /* cas simple */
+        moveDisk(1u, source, dest, pMoves);
+    } else {
+        toh(disk - 1u, source, aux, dest, pMoves); /* -&gt; aux */
+        moveDisk(disk, source, dest, pMoves);    /* le grand */
+        toh(disk - 1u, aux, dest, source, pMoves); /* -&gt; dest */
+    }
+}</code></pre></div>
+    <table class="tbl"><tr><th>coup</th><th>disque</th><th>départ</th><th>arrivée</th></tr><tr><td class="num">1</td><td class="num">1</td><td>A</td><td>B</td></tr><tr><td class="num">2</td><td class="num">2</td><td>A</td><td>C</td></tr><tr><td class="num">3</td><td class="num">1</td><td>B</td><td>C</td></tr><tr><td class="num">4</td><td class="num">3</td><td>A</td><td>B</td></tr><tr><td class="num">5</td><td class="num">1</td><td>C</td><td>A</td></tr><tr><td class="num">6</td><td class="num">2</td><td>C</td><td>B</td></tr><tr><td class="num">7</td><td class="num">1</td><td>A</td><td>B</td></tr></table><p>Les coups 1 à 3 déplacent deux disques de A vers C, le coup 4 place le disque 3 sur B, les coups 5 à 7 répètent de C vers B.</p><p>2^3 − 1 = 7, 2^10 − 1 = 1 023, 2^64 − 1 = 18 446 744 073 709 551 615.</p>
+    <div class="result"><b>Résultat.</b> n = 3 : 7 coups et 3 niveaux d'appels ; n = 10 : 1 023 coups ; n = 64 : 18 446 744 073 709 551 615 coups, soit environ 585 ans à 10^9 coups par seconde.</div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
+    <h2>Les pièges</h2>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Inverser dest et aux dans le premier appel : les disques visent la mauvaise aiguille.</li>
+<li>Compter avec une globale rend la fonction non réentrante ; passer uint32_t *pMoves.</li>
+<li>Croire le coût linéaire : 2^n − 1, soit 585 ans à 10^9 coups/s pour 64 disques.</li></ul></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
+    <h2>Trois questions</h2>
+    <div class="qcm" data-qcm>
+<div class="q" data-answer="1" data-why="M(n) = 2^n − 1 : 2^4 − 1 = 15.">
+<p class="qq">1. Combien de déplacements pour 4 disques ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">7</button>
+<button class="opt" type="button" data-opt="1">15</button>
+<button class="opt" type="button" data-opt="2">16</button>
+<button class="opt" type="button" data-opt="3">31</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="3" data-why="Deux appels par niveau, M(n) = 2 M(n−1) + 1 : le nombre de coups est en O(2ⁿ).">
+<p class="qq">2. Quelle est la complexité en temps de toh(n) ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">O(n)</button>
+<button class="opt" type="button" data-opt="1">O(n log n)</button>
+<button class="opt" type="button" data-opt="2">O(n²)</button>
+<button class="opt" type="button" data-opt="3">O(2ⁿ)</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="1" data-why="Le compteur vit chez l&#x27;appelant : la fonction reste réentrante.">
+<p class="qq">3. Comment compter les coups sans variable globale ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">avec une globale</button>
+<button class="opt" type="button" data-opt="1">avec uint32_t *pMoves et (*pMoves)++</button>
+<button class="opt" type="button" data-opt="2">en affichant n × n</button>
+<button class="opt" type="button" data-opt="3">en comptant les printf de main</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 3</div></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-qcm]').forEach(function (qcm) {
+    var score = 0, total = 0;
+    qcm.querySelectorAll('.q').forEach(function (q) {
+      total++;
+      var answer = Number(q.getAttribute('data-answer'));
+      var fb = q.querySelector('.fb');
+      q.querySelectorAll('.opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (q.getAttribute('data-done')) return;
+          q.setAttribute('data-done', '1');
+          var pick = Number(btn.getAttribute('data-opt'));
+          q.querySelectorAll('.opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (i === answer) b.classList.add('ok');
+            if (i === pick && i !== answer) b.classList.add('ko');
+          });
+          fb.hidden = false;
+          fb.innerHTML = (pick === answer ? '<b>Correct.</b> ' : '<b>À revoir.</b> ') + q.getAttribute('data-why');
+          if (pick === answer) score++;
+          var out = qcm.querySelector('.score b');
+          if (out) out.textContent = score;
+        });
+      });
+    });
+    var out = qcm.querySelector('.score b');
+    if (out) out.textContent = '0';
+  });
+})();
+</script>
+
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

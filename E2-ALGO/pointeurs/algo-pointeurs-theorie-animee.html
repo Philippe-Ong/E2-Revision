@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Pointeurs en C — théorie et laboratoires</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-int{background:var(--blue-s);border-color:var(--blue)}
+  .sw-char{background:var(--green-s);border-color:var(--green)}
+  .sw-ptr{background:var(--accent-s);border-color:var(--accent)}
+  .sw-heap{background:var(--coral-s);border-color:var(--coral)}
+  .sw-free{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- traducteur de déclarations ---------- */
+  .translator{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px;background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:16px;margin:22px 0;box-shadow:var(--shadow);align-items:start}
+  .trans-list{display:grid;gap:4px;align-content:start}
+  .trans-list button{text-align:left;border:1px solid transparent;background:var(--card2);border-radius:7px;padding:5px 8px;font:11.5px/1.5 var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s,color .15s;overflow-wrap:anywhere}
+  .trans-list button:hover{color:var(--ink);background:var(--card)}
+  .trans-list button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .trans-list button code{background:none;border:0;padding:0;font-size:12px;color:inherit}
+  .trans-out{background:var(--card2);border-radius:10px;padding:12px 14px;min-height:150px}
+  .trans-out .decl{font:12px var(--mono);color:var(--accent);margin-bottom:6px;overflow-wrap:anywhere}
+  .trans-out .fr{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:550;max-width:40ch}
+  .trans-out .why{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;max-width:46ch}
+  @media (max-width:760px){
+    .translator{grid-template-columns:1fr;padding:13px}
+    .trans-list{grid-template-columns:1fr 1fr}
+    .trans-out{min-height:120px}
+  }
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .mem-stage{position:relative;padding:12px 4px 4px;margin-top:2px}
+  .mem-groups{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;justify-content:center}
+  .mem-groups.is-stack{flex-direction:column;align-items:center;gap:24px}
+  .mem-groups.is-stack .mem-group{width:100%;position:relative;padding-top:16px}
+  .mem-groups.is-stack .mem-gtitle{position:absolute;left:0;top:0;text-align:left}
+  .mem-group{display:grid;justify-items:center;gap:6px;min-width:0}
+  .mem-gtitle{font:650 9.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .mem-ghint{font-size:11px;color:var(--faint);line-height:1.35;text-align:center;max-width:230px}
+  .cells{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:flex-start}
+  .cells.is-column{flex-direction:column;gap:44px;align-items:center}
+  .cell{--cw:108px;width:var(--cw);max-width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:7px 8px 6px;text-align:center;position:relative;transition:border-color .22s,background .22s,box-shadow .22s,opacity .22s}
+  .cell.is-ptr{border-color:var(--accent);background:linear-gradient(var(--accent-s),var(--card) 72%)}
+  .cell.is-char{border-color:var(--green);background:linear-gradient(var(--green-s),var(--card) 78%)}
+  .cell.is-heap{border-color:var(--coral);background:linear-gradient(var(--coral-s),var(--card) 78%)}
+  .cell.is-active{box-shadow:0 0 0 3px var(--accent-s);border-color:var(--accent)}
+  .cell.is-changed{animation:flash .9s ease}
+  .cell.is-new{animation:pop .34s ease}
+  .cell.is-freed{opacity:.62;border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px)}
+  .cell.is-freed .cval{text-decoration:line-through}
+  .cell.is-err{border-color:var(--red);background:var(--red-s)}
+  .cell.is-null .cval{color:var(--faint)}
+  .cname{display:flex;align-items:center;justify-content:center;gap:4px;font:650 11.5px/1.2 var(--mono);color:var(--ink);min-height:16px}
+  .ctype{font:8.5px/1 var(--mono);text-transform:none;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:2px 3px;font-weight:400}
+  .cval{font:700 18px/1.18 var(--mono);margin:4px 0 1px;min-height:21px;overflow-wrap:anywhere}
+  .is-ptr .cval{font-size:13.5px;font-weight:650;color:var(--accent);letter-spacing:-.02em}
+  .caddr{font:9.5px/1.15 var(--mono);color:var(--faint);letter-spacing:.01em}
+  .cfields{display:grid;gap:1px;margin:4px 0 2px}
+  .cf{display:flex;justify-content:space-between;gap:8px;font:11px/1.5 var(--mono);border-bottom:1px dotted var(--line2);padding:1px 2px}
+  .cf:last-child{border-bottom:0}
+  .cf span{color:var(--faint)}
+  .cf b{font-weight:650}
+  .cell.w-node{--cw:158px}
+  .cell.w-wide{--cw:150px}
+
+  .arrow-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .arrow{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .arrow.is-accent{stroke:var(--accent);stroke-width:2}
+  .alabel{font:10px/1 var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- simulateur de code ---------- */
+  .codesim .sim{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+  .sim-code{list-style:none;margin:0;padding:8px 0;background:#1c1c1a;border-radius:11px;font:12px/1.72 var(--mono);overflow:auto;min-height:150px}
+  .sim-code li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:1px 11px 1px 6px;border-left:3px solid transparent;color:#cfccc4;white-space:pre;cursor:pointer}
+  .sim-code li:hover{background:rgba(255,255,255,.045)}
+  .sim-code li .ln{color:#67655f;text-align:right;user-select:none}
+  .sim-code li.on{background:rgba(255,255,255,.09);border-left-color:var(--accent-2);color:#fff}
+  .sim-code li.on .ln{color:#b9b6ad}
+  .sim-code .k{color:#9ec7f3} .sim-code .n{color:#e7b06a} .sim-code .s{color:#a7d8a9} .sim-code .c{color:#8b8880} .sim-code .f{color:#c6a9f8}
+  .sim-side{min-width:0}
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:9px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+  @media (max-width:880px){
+    .codesim .sim{grid-template-columns:1fr}
+    .codesim .sim-code{min-height:0}
+  }
+
+  /* ---------- explorateur d'adresses ---------- */
+  .addrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .addr-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0 13px}
+  .byte{border:1px solid var(--line2);border-radius:7px;background:var(--card2);padding:4px 3px 3px;text-align:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+  .byte:hover{transform:translateY(-1px);border-color:var(--line)}
+  .byte .ba{display:block;font:8.5px/1.2 var(--mono);color:var(--faint)}
+  .byte .bv{display:block;font:650 12px/1.3 var(--mono);color:var(--ink)}
+  .byte.v-x{background:var(--blue-s);border-color:var(--blue)}
+  .byte.v-c{background:var(--green-s);border-color:var(--green)}
+  .byte.v-p{background:var(--accent-s);border-color:var(--accent)}
+  .byte.pad{opacity:.5;background:transparent;border-style:dashed;cursor:default}
+  .byte.pad:hover{transform:none;border-color:var(--line2)}
+  .byte.sel{outline:2px solid var(--ink);outline-offset:1px}
+  .addr-vars{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+  .addr-vars button{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:6px 9px;font:12px var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s}
+  .addr-vars button:hover{background:var(--card)}
+  .addr-vars button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .addr-info{font-size:13px;line-height:1.55;color:var(--muted);background:var(--card2);border-radius:9px;padding:9px 11px;min-height:3.1em}
+  .addr-info b{color:var(--ink)}
+  .addr-info .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- widget tableau ---------- */
+  .arrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .arr-stage{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;align-items:center;padding:34px 0 6px;min-height:120px}
+  .arr-p{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:6px 8px;text-align:center}
+  .arr-p .n{font:650 11px/1.2 var(--mono);color:var(--ink)}
+  .arr-p .v{font:650 13px/1.2 var(--mono);color:var(--accent);margin:2px 0}
+  .arr-p .ty{font:9px/1 var(--mono);color:var(--faint)}
+  .arr-track{position:relative;display:flex;gap:0;min-width:0}
+  .arr-cell{flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--card);padding:7px 3px 6px;text-align:center;position:relative;transition:background .2s,border-color .2s,transform .2s}
+  .arr-cell:first-child{border-radius:9px 0 0 9px}
+  .arr-cell:last-child{border-radius:0 9px 9px 0}
+  .arr-cell .av{font:700 17px/1.2 var(--mono);color:var(--ink)}
+  .arr-cell .ai{font:9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+  .arr-cell.sel{background:var(--teal-s);border-color:var(--teal);transform:translateY(-2px)}
+  .arr-cell.sel .av{color:var(--teal)}
+  .arr-cur{position:absolute;top:-31px;transform:translateX(-50%);text-align:center;font:650 10.5px/1 var(--mono);color:var(--teal);transition:left .28s ease;white-space:nowrap}
+  .arr-cur::after{content:"";display:block;width:1.5px;height:16px;background:var(--teal);margin:4px auto 0}
+  .arr-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .arr-formula{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px;margin-top:8px}
+  .arr-formula b{color:var(--ink)}
+  .arr-formula .ok{color:var(--teal)} .arr-formula .ko{color:var(--red)}
+  .arr-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .arr-ctrl input[type=range]{flex:1 1 160px;accent-color:var(--teal);min-width:120px}
+  .arr-ctrl output{font:12px var(--mono);color:var(--faint);min-width:58px;text-align:right}
+
+  /* ---------- const ---------- */
+  .constgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:20px 0}
+  @media (max-width:800px){.constgrid{grid-template-columns:1fr}}
+  .const-card{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .const-card code{display:block;font-size:12px;background:var(--card2);white-space:nowrap;overflow-x:auto}
+  .const-viz{display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);color:var(--muted);flex-wrap:wrap;min-height:38px}
+  .cv-box{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 6px}
+  .cv-ptr{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .cv-lock{color:var(--red);font-size:12px}
+  .cv-arrow{color:var(--faint)}
+  .const-btns{display:flex;flex-wrap:wrap;gap:5px}
+  .const-btns button{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:5px 8px;font:10.5px var(--mono);color:var(--muted);cursor:pointer}
+  .const-btns button:hover{background:var(--card);color:var(--ink)}
+  .const-fb{font-size:11.5px;line-height:1.4;min-height:2.6em;color:var(--faint)}
+  .const-fb.ok{color:var(--teal)} .const-fb.ko{color:var(--red)}
+
+  /* ---------- pointeur de fonction ---------- */
+  .fplab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .fp-stage{display:flex;flex-direction:column;align-items:center;gap:26px;padding:10px 0;position:relative}
+  .fp-op{background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:8px 11px;text-align:center;min-width:110px}
+  .fp-op .n{font:650 11px/1.2 var(--mono)}
+  .fp-op .v{font:650 12.5px/1.3 var(--mono);color:var(--accent);margin-top:2px}
+  .fp-fns{display:flex;gap:8px;flex-wrap:wrap}
+  .fp-fn{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:8px 10px;font:11.5px/1.4 var(--mono);color:var(--muted);cursor:pointer;text-align:left;transition:border-color .18s,background .18s}
+  .fp-fn b{display:block;color:var(--ink);font-size:12.5px}
+  .fp-fn span{color:var(--faint);font-size:10px}
+  .fp-fn.on{border-color:var(--teal);background:var(--teal-s);color:var(--teal)}
+  .fp-fn.on b{color:var(--teal)}
+  .fp-out{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px}
+  .fp-out b{color:var(--ink)}
+  .fp-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:flex;gap:9px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .mem-groups{gap:20px}
+    .cell{--cw:98px}
+    .addr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+    .arr-stage{grid-template-columns:1fr;gap:0;padding:8px 0 6px}
+    .arr-p{justify-self:start;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start;padding:5px 8px;margin-bottom:54px;width:auto}
+    .arr-p .v{margin:0}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.addrlab,.arrlab,.fplab,.quiz,.box{box-shadow:none}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ALGO</div>
+        <div class="brandsub">Pointeurs en C<br>Fiche de révision · TE1</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>L'idée</a>
+      <a href="#s2"><i>02</i>La mémoire</a>
+      <a href="#s3"><i>03</i>&amp; et *</a>
+      <a href="#s4"><i>04</i>Lire un type</a>
+      <a href="#s5"><i>05</i>Le simulateur</a>
+      <a href="#s6"><i>06</i>Tableaux</a>
+      <a href="#s7"><i>07</i>Chaînes</a>
+      <a href="#s8"><i>08</i>Structures</a>
+      <a href="#s9"><i>09</i>Fonctions</a>
+      <a href="#s10"><i>10</i>Pointeur de pointeur</a>
+      <a href="#s11"><i>11</i>const</a>
+      <a href="#s12"><i>12</i>Pile &amp; tas</a>
+      <a href="#s13"><i>13</i>Pointeur de fonction</a>
+      <a href="#s14"><i>14</i>Pièges &amp; test</a>
+    </nav>
+    <div class="sidefoot"><b>TE1</b> · vendredi 20.11.2026<br><span>14 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ALGO · chapitre 1 · pointeurs en C</div>
+      <h1>Pointeurs en C</h1>
+      <p class="sub">Adresse, déréférencement, tableaux, fonctions et mémoire dynamique : le cours et ses laboratoires pas à pas.</p>
+      <div class="meta">
+        <span class="chip"><b>14</b> sections</span>
+        <span class="chip"><b>6</b> laboratoires pas à pas</span>
+        <span class="chip">C11 · <b>gcc</b></span>
+        <span class="chip">adresses <b>symboliques</b></span>
+        <span class="chip">TE1 · <b>20.11.2026</b></span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Fondations</h3><p>L'idée, la mémoire, <code>&amp;</code>, <code>*</code>, les types.</p></a>
+        <a class="step" href="#s5"><div class="n">02</div><h3>Le simulateur</h3><p>Sept lignes de C, sept états mémoire.</p></a>
+        <a class="step" href="#s6"><div class="n">03</div><h3>Tableaux &amp; textes</h3><p>Décroissance, arithmétique, chaînes.</p></a>
+        <a class="step" href="#s9"><div class="n">04</div><h3>Fonctions</h3><p>Valeur contre adresse, <code>swap</code>, double pointeur.</p></a>
+        <a class="step" href="#s11"><div class="n">05</div><h3>Contrats &amp; tas</h3><p><code>const</code>, <code>malloc</code>, durée de vie.</p></a>
+        <a class="step" href="#s14"><div class="n">06</div><h3>Pièges &amp; test</h3><p>Les erreurs classiques, le QCM, le mémo.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-int"></i>entier</span>
+        <span><i class="sw sw-char"></i>caractère</span>
+        <span><i class="sw sw-ptr"></i>pointeur</span>
+        <span><i class="sw sw-heap"></i>tas</span>
+        <span><i class="sw sw-free"></i>libéré</span>
+        <span>flèche = « contient l'adresse de »</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b>. Les adresses (0x1000, 0x2000…) sont symboliques ; le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche.</p>
+    </div>
+
+    
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1.11</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">l'idée</div></div>
+      <h2>Un pointeur n'est pas une valeur : c'est une adresse</h2>
+      <p class="lead">La définition du cours tient en une ligne : un pointeur est une variable qui contient l'adresse d'une autre donnée — une variable, un tableau, une structure, une fonction, ou même un registre du matériel.</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Une variable ordinaire est une <b>boîte</b> avec une étiquette et une valeur. Un pointeur est une <b>boîte qui contient le numéro d'une autre boîte</b>. Le papier sur lequel tu écris « 0x1000 » n'est pas la maison : il te dit seulement où aller. Deux papiers peuvent porter la même adresse, et déchirer un papier ne démolit pas la maison.</p>
+      </div>
+
+      <figure>
+        <div class="figcard">
+          <svg viewBox="0 0 680 225" role="img" aria-label="La variable x contient 42 à l'adresse 0x1000 ; le pointeur p contient 0x1000 et pointe vers x.">
+            <g class="c-blue"><rect x="54" y="58" width="148" height="76" rx="11"/><text class="th" x="128" y="86" text-anchor="middle">x</text><text class="t" x="128" y="114" text-anchor="middle">42</text></g>
+            <text class="tm" x="54" y="154">adresse 0x1000 · int · 4 octets</text>
+            <g class="c-purple"><rect x="402" y="58" width="204" height="76" rx="11"/><text class="th" x="504" y="86" text-anchor="middle">p</text><text class="t" x="504" y="114" text-anchor="middle">0x1000</text></g>
+            <text class="tm" x="402" y="154">adresse 0x2000 · int * · 8 octets</text>
+            <path d="M402 96 C 322 96, 292 96, 210 96" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="306" y="84" text-anchor="middle">contient l'adresse de x</text>
+            <text class="ts" x="54" y="197">La boîte x contient la valeur 42. La boîte p contient le numéro de la boîte x : c'est tout.</text>
+          </svg>
+        </div>
+        <figcaption>Deux boîtes, deux adresses. La flèche n'est pas stockée en mémoire : elle est la <b>lecture</b> de la valeur de <code>p</code>. La machine, elle, ne voit qu'un nombre.</figcaption>
+      </figure>
+
+      <h3>Pourquoi le C en a besoin</h3>
+      <p>Le cours donne trois raisons, et elles couvrent tout le reste :</p>
+      <ul>
+        <li><b>Retourner un résultat par une fonction</b> — une fonction ne renvoie qu'une valeur avec <code>return</code> ; avec une adresse, elle peut remplir plusieurs cases de l'appelant.</li>
+        <li><b>Créer et traiter des objets dynamiquement</b> — la taille d'un tableau n'est pas toujours connue à la compilation ; <code>malloc</code> rend une adresse, pas une boîte.</li>
+        <li><b>Accéder aux registres du matériel</b> — un registre n'a pas de nom en C, seulement une adresse. On écrit <code>*(volatile uint32_t *)0x40000000 = 1;</code> et la carte répond.</li>
+      </ul>
+
+      <div class="box note">
+        <div class="lbl">Le vocabulaire du cours</div>
+        <p><b>Pointeur</b> : la variable qui contient l'adresse. <b>Cible</b> ou <b>objet pointé</b> : la donnée à cette adresse. <b>Déréférencement</b> : lire ou écrire la cible à travers le pointeur. <b>Pointeur nul</b> : <code>NULL</code>, l'adresse « aucune » — on ne la déréférence jamais.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>« Un pointeur, c'est la valeur » : non. Si <code>x = 42</code> et <code>p = &amp;x</code>, alors <code>p</code> ne vaut pas 42, il vaut <code>0x1000</code>. Et <code>*p</code> vaut 42. Confondre les deux, c'est confondre le numéro de la maison avec le contenu du salon.</p>
+      </div>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">la mémoire</div></div>
+      <h2>La mémoire est un ruban d'octets numérotés</h2>
+      <p class="lead">Chaque octet a une adresse. Une variable occupe <code>sizeof(type)</code> octets consécutifs, et son adresse est celle de son <b>premier</b> octet. Un pointeur n'est qu'un nombre de ce ruban, rangé dans une case de ce même ruban.</p>
+
+      <p>Sur une machine 64 bits, un <code>int</code> occupe 4 octets et un pointeur 8. Sur une machine 32 bits, le pointeur occuperait 4 octets. C'est pour cela qu'on n'écrit jamais « un pointeur fait 4 octets » : on écrit <code>sizeof(int *)</code>.</p>
+
+      <div class="addrlab" data-addrlab>
+        <div class="lab-head">
+          <div><div class="lab-title">Explorateur d'octets</div><div class="lab-sub">clique sur une variable pour voir ses octets</div></div>
+          <span class="lab-tag">interactif</span>
+        </div>
+        <div class="addr-grid" data-bytes></div>
+        <div class="addr-vars" data-vars>
+          <button type="button" data-var="x">x · int</button>
+          <button type="button" data-var="c">c · char</button>
+          <button type="button" data-var="p">p · int *</button>
+        </div>
+        <div class="addr-info" data-info aria-live="polite">Clique sur <b>x</b>, <b>c</b> ou <b>p</b> : la case mémoire s'allume et le détail s'affiche ici.</div>
+      </div>
+
+      <p>Dans l'explorateur, <code>x</code> vaut 42 et <code>p</code> contient l'adresse de <code>x</code>, <code>0x1000</code>. Les quatre octets de <code>x</code> sont <code>2A 00 00 00</code> : c'est du <b>petit-boutisme</b> (<i>little endian</i>), l'ordre utilisé par x86 et ARM. La valeur se lit à l'envers : <code>0x0000002A</code> = 42.</p>
+
+      <table class="tbl">
+        <caption>Les tailles à connaître (64 bits, sauf mention)</caption>
+        <tr><th>type</th><th>sizeof</th><th>ce que ça change</th></tr>
+        <tr><td><code>char</code></td><td class="num">1</td><td>un octet, une lettre, un octet de fichier</td></tr>
+        <tr><td><code>int</code></td><td class="num">4</td><td>la case entière par défaut</td></tr>
+        <tr><td><code>double</code></td><td class="num">8</td><td>flottant double précision</td></tr>
+        <tr><td><code>int *</code></td><td class="num">8</td><td>une adresse : 4 sur une machine 32 bits</td></tr>
+        <tr><td><code>struct Point { int x, y; }</code></td><td class="num">8</td><td>deux int, sans trou ici</td></tr>
+        <tr><td><code>struct Mixte { char c; int i; }</code></td><td class="num">8</td><td>3 octets de <b>bourrage</b> (alignement), pas 5</td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p><code>&amp;x</code> a le type <code>int *</code> et vaut l'adresse du premier octet de <code>x</code>. <code>&amp;x + 1</code> ne vaut pas « l'octet suivant » : l'arithmétique des pointeurs avance par <b>pas de <code>sizeof(*p)</code></b>, donc de 4 octets ici.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Deux confusions classiques</div>
+        <p><code>sizeof(p)</code> donne la taille du <b>pointeur</b> (8), pas celle de la cible. Pour la cible, écris <code>sizeof(*p)</code>. Et <code>sizeof(a)</code> pour un tableau donne la taille du <b>tableau</b> (4 × 4 = 16), sauf dans une fonction où <code>a</code> est devenu un pointeur.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Pour les embedded</div>
+        <p>Un registre matériel est une adresse comme une autre, mais le compilateur ne doit pas optimiser les accès : on le déclare <code>volatile</code>. <code>volatile uint32_t * const pReg = (uint32_t *)0x40000000;</code> puis <code>*pReg = 1u;</code> — le pointeur est constant, la cible est volatile.</p>
+      </div>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">les deux gestes</div></div>
+      <h2>Deux gestes : <code>&amp;</code> prend l'adresse, <code>*</code> accède à la valeur</h2>
+      <p class="lead"><code>&amp;x</code> fabrique l'adresse de <code>x</code>. <code>*p</code> lit ou écrit la case dont <code>p</code> contient l'adresse. Le premier geste part d'une variable ; le second part d'un pointeur. Tout le reste du chapitre n'est que la combinaison de ces deux-là.</p>
+
+      <div class="code"><header><span>dereferencement.c</span><button data-copy>copier</button></header><pre><code data-hl>char var1 = 'A';
+char *pVar = &amp;var1;   /* pVar reçoit l'adresse de var1 */
+*pVar = 'B';          /* écrire à cette adresse, c'est écrire dans var1 */
+printf("%c\n", var1); /* affiche B */</code></pre></div>
+
+      <div class="lab" data-lab="deref" data-column>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · déréférencement</div><div class="lab-sub">une seule case mémoire, deux chemins pour y accéder</div></div>
+          <span class="lab-tag">6 étapes</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Une case d'un octet, à l'adresse 0x03c2. La variable s'appelle <b>var1</b> et contient le caractère <b>'A'</b>.","code":"char var1 = 'A';","groups":[{"cells":[{"id":"var1","name":"var1","value":"'A'","type":"char","addr":"@ 0x03c2","kind":"char"}]}],"arrows":[]},
+          {"label":"<b>pVar</b> est une <i>seconde</i> case, à l'adresse 0x02f0. Elle contient l'adresse 0x03c2. La flèche est la lecture de cette valeur : rien de plus n'est stocké.","code":"char *pVar = &var1;","groups":[{"cells":[{"id":"var1","name":"var1","value":"'A'","type":"char","addr":"@ 0x03c2","kind":"char"},{"id":"pVar","name":"pVar","value":"0x03c2","type":"char *","addr":"@ 0x02f0","kind":"ptr"}]}],"arrows":[{"from":"pVar","to":"var1","label":"0x03c2","accent":true}]},
+          {"label":"On écrit à l'adresse contenue dans pVar : c'est <b>var1</b> qui change. pVar, lui, n'a pas bougé.","code":"*pVar = 'B';","groups":[{"cells":[{"id":"var1","name":"var1","value":"'B'","type":"char","addr":"@ 0x03c2","kind":"char","state":"changed"},{"id":"pVar","name":"pVar","value":"0x03c2","type":"char *","addr":"@ 0x02f0","kind":"ptr"}]}],"arrows":[{"from":"pVar","to":"var1","label":"0x03c2","accent":true}]},
+          {"label":"Il n'y a jamais eu deux 'A' : une seule case, vue par deux chemins. <code>var1</code> et <code>*pVar</code> désignent exactement le même octet.","code":"printf(\"%c\", var1);","output":"B","groups":[{"cells":[{"id":"var1","name":"var1","value":"'B'","type":"char","addr":"@ 0x03c2","kind":"char"},{"id":"pVar","name":"pVar","value":"0x03c2","type":"char *","addr":"@ 0x02f0","kind":"ptr"}]}],"arrows":[{"from":"pVar","to":"var1","label":"0x03c2","accent":true}]},
+          {"label":"On peut réaffecter le pointeur sans toucher la cible : pVar ne contient plus d'adresse. <b>NULL</b> est l'adresse 0, celle qu'on ne déréférence jamais.","code":"pVar = NULL;","groups":[{"cells":[{"id":"var1","name":"var1","value":"'B'","type":"char","addr":"@ 0x03c2","kind":"char"},{"id":"pVar","name":"pVar","value":"NULL","type":"char *","addr":"@ 0x02f0","kind":"ptr","state":"null"}]}],"arrows":[]},
+          {"label":"<span class='warn'>Déréférencer NULL</span> : comportement indéfini. En pratique, le programme reçoit un segmentation fault et s'arrête. La case var1, elle, reste intacte.","code":"*pVar = 'C';   /* interdit */","groups":[{"cells":[{"id":"var1","name":"var1","value":"'B'","type":"char","addr":"@ 0x03c2","kind":"char"},{"id":"pVar","name":"pVar","value":"NULL","type":"char *","addr":"@ 0x02f0","kind":"ptr","state":"err"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <p>Le tableau suivant est le cœur du chapitre. Il se lit avec <code>int x = 42; int *p = &amp;x; int **pp = &amp;p;</code>, et des adresses symboliques : <code>x</code> à 0x1000, <code>p</code> à 0x2000, <code>pp</code> à 0x2008.</p>
+
+      <table class="tbl">
+        <caption>Ce que chaque expression désigne</caption>
+        <tr><th>expression</th><th>type</th><th>valeur</th><th>sens</th></tr>
+        <tr><td><code>x</code></td><td><code>int</code></td><td>42</td><td>la valeur, directement</td></tr>
+        <tr><td><code>&amp;x</code></td><td><code>int *</code></td><td>0x1000</td><td>l'adresse de la case</td></tr>
+        <tr><td><code>p</code></td><td><code>int *</code></td><td>0x1000</td><td>la même adresse, rangée ailleurs</td></tr>
+        <tr><td><code>*p</code></td><td><code>int</code></td><td>42</td><td>la valeur à cette adresse</td></tr>
+        <tr><td><code>&amp;p</code></td><td><code>int **</code></td><td>0x2000</td><td>l'adresse du pointeur lui-même</td></tr>
+        <tr><td><code>**pp</code></td><td><code>int</code></td><td>42</td><td>deux sauts : pp → p → x</td></tr>
+        <tr><td><code>*&amp;x</code></td><td><code>int</code></td><td>42</td><td>exactement <code>x</code></td></tr>
+        <tr><td><code>&amp;*p</code></td><td><code>int *</code></td><td>0x1000</td><td>exactement <code>p</code> (si p est valide)</td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle des deux étoiles</div>
+        <p>Dans une <b>déclaration</b>, <code>*</code> appartient au type : <code>int *p</code> se lit « p est un pointeur vers int ». Dans une <b>expression</b>, <code>*</code> est un opérateur : <code>*p</code> se lit « la valeur à l'adresse p ». Même symbole, deux grammaires différentes.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Ce qui provoque un comportement indéfini</div>
+        <p>Déréférencer <code>NULL</code> ; déréférencer un pointeur non initialisé (il contient une adresse quelconque) ; déréférencer un pointeur après <code>free</code> ; déréférencer un pointeur vers une variable locale qui n'existe plus. Dans tous ces cas, le compilateur ne dit rien : c'est le programme qui casse, parfois loin de la faute.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Afficher une adresse</div>
+        <p><code>printf("%p\n", (void *)p);</code> — le format <code>%p</code> attend un <code>void *</code>, d'où le cast. <code>%d</code> sur un pointeur est une erreur de format : le comportement n'est pas défini.</p>
+      </div>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">lire un type</div></div>
+      <h2>Lire une déclaration sans se tromper</h2>
+      <p class="lead">La difficulté du C n'est pas le pointeur, c'est sa <b>déclaration</b>. Une étoile, des crochets et des parenthèses peuvent décrire un tableau de pointeurs ou un pointeur vers un tableau — et ce n'est pas la même chose. La bonne nouvelle : une seule règle suffit.</p>
+
+      <div class="box idea">
+        <div class="lbl">La méthode</div>
+        <p>Pars du <b>nom</b>, va vers la <b>droite</b> en lisant <code>[]</code> (tableau) et <code>()</code> (fonction), puis remonte vers la <b>gauche</b> en lisant <code>*</code> (pointeur). Les parenthèses forcent la priorité, exactement comme en arithmétique. <code>int *p[5]</code> : p, puis <code>[5]</code> → tableau de 5, puis <code>*</code> → de pointeurs vers int.</p>
+      </div>
+
+      <div class="translator" data-translator>
+        <div class="trans-list" data-translist></div>
+        <div class="trans-out" data-transout aria-live="polite"></div>
+      </div>
+
+      <div class="code"><header><span>anatomie.c</span><button data-copy>copier</button></header><pre><code data-hl>int   *   p   =   &amp;x;
+/*  ↑   ↑   ↑       ↑
+    |   |   |       └── l'adresse d'un int (type int *)
+    |   |   └────────── le nom de la variable
+    |   └────────────── « pointeur vers »
+    └────────────────── le type de la cible                     */</code></pre></div>
+
+      <p>Cette anatomie explique pourquoi <code>int *p</code> et <code>int* p</code> sont <b>identiques</b> pour le compilateur : l'espacement ne change rien. Ce qui change tout, c'est l'endroit de l'étoile par rapport aux crochets et aux parenthèses.</p>
+
+      <table class="tbl">
+        <caption>Les six déclarations qui tombent à l'examen</caption>
+        <tr><th>déclaration</th><th>lecture</th><th>piège</th></tr>
+        <tr><td><code>int *p</code></td><td>pointeur vers int</td><td>la cible est un int, pas un pointeur</td></tr>
+        <tr><td><code>int *p[5]</code></td><td>tableau de 5 pointeurs vers int</td><td>5 cases de 8 octets = 40 octets</td></tr>
+        <tr><td><code>int (*p)[5]</code></td><td>pointeur vers un tableau de 5 int</td><td>un seul pointeur ; <code>p+1</code> saute 20 octets</td></tr>
+        <tr><td><code>int *f(int)</code></td><td>fonction qui renvoie un pointeur vers int</td><td>pas un pointeur de fonction</td></tr>
+        <tr><td><code>int (*f)(int)</code></td><td>pointeur vers une fonction prenant un int</td><td>les parenthèses changent tout</td></tr>
+        <tr><td><code>int **pp</code></td><td>pointeur vers un pointeur vers int</td><td>deux déréférencements pour atteindre l'int</td></tr>
+      </table>
+
+      <div class="box trap">
+        <div class="lbl">Le piège de la virgule</div>
+        <p><code>int* a, b;</code> ne déclare <b>pas</b> deux pointeurs : <code>a</code> est un <code>int *</code>, <code>b</code> est un <code>int</code>. L'étoile se colle à la variable, pas au type. Écris une déclaration par ligne, ou utilise un <code>typedef</code>.</p>
+      </div>
+
+      <div class="code"><header><span>typedef.c</span><button data-copy>copier</button></header><pre><code data-hl>typedef int *IntPtr;   /* IntPtr est un type : pointeur vers int */
+IntPtr a, b;           /* a et b sont deux pointeurs        */
+
+typedef int (*BinOp)(int, int);  /* pointeur de fonction, lisible */
+BinOp op = add;</code></pre></div>
+
+      <div class="box plus">
+        <div class="lbl">Le pointeur générique</div>
+        <p><code>void *p</code> peut contenir l'adresse de n'importe quel objet. On ne peut pas le déréférencer tel quel : il faut d'abord le convertir, <code>*(int *)p</code>. C'est le type de retour de <code>malloc</code>, et le type des callbacks de <code>qsort</code>.</p>
+      </div>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">le simulateur</div></div>
+      <h2>Sept lignes, sept états mémoire</h2>
+      <p class="lead">Voici le programme minimum qui contient tout : déclarer, pointer, écrire à travers le pointeur, relire la variable, puis casser volontairement le pointeur. Avance ligne par ligne : la case qui change clignote, la flèche apparaît et disparaît.</p>
+
+      <div class="lab codesim" data-lab="sim" data-column>
+        <div class="lab-head">
+          <div><div class="lab-title">Simulateur · <code>x</code>, <code>p</code> et <code>*p</code></div><div class="lab-sub">clique sur une ligne ou utilise les boutons</div></div>
+          <span class="lab-tag">8 états</span>
+        </div>
+        <div class="sim">
+          <ol class="sim-code" data-lines></ol>
+          <div class="sim-side">
+            <div class="mem-stage" data-stage>
+              <div class="mem-groups" data-groups></div>
+              <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+            </div>
+            <div class="sim-out"><span>Sortie</span><code data-out>—</code></div>
+          </div>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "lines":[ "int x = 42;", "int *p = &x;", "*p = 7;", "x = x + 1;", "printf(\"%d %d\\n\", x, *p);", "p = NULL;", "*p = 3;   /* interdit */" ],
+          "states":[
+            {"label":"Avant l'exécution, la pile est vide. Les deux variables vont naître l'une après l'autre.","line":-1,"groups":[{"title":"Pile (stack)","cells":[]}],"arrows":[]},
+            {"label":"La ligne 1 crée <b>x</b> et y range 42. La case occupe 4 octets à partir de 0x1000.","line":0,"groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"42","type":"int","addr":"@ 0x1000","kind":"int","state":"new"}]}],"arrows":[]},
+            {"label":"La ligne 2 crée <b>p</b> à l'adresse 0x2000 et y copie l'adresse de x : <code>0x1000</code>. p pointe maintenant vers x.","line":1,"groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"42","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"new"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true}]},
+            {"label":"La ligne 3 écrit <b>7</b> à l'adresse contenue dans p. C'est x qui change : il n'y a qu'une seule case.","line":2,"groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"7","type":"int","addr":"@ 0x1000","kind":"int","state":"changed"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true}]},
+            {"label":"La ligne 4 incrémente x : 7 + 1 = <b>8</b>. <code>*p</code> vaut donc aussi 8, sans que p ait bougé.","line":3,"groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"8","type":"int","addr":"@ 0x1000","kind":"int","state":"changed"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true}]},
+            {"label":"La ligne 5 lit x et *p : les deux chemins donnent <b>8</b>. La sortie l'affiche.","line":4,"output":"8 8","groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"8","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true}]},
+            {"label":"La ligne 6 réaffecte le pointeur : p vaut <b>NULL</b>. x reste à 8 — on n'a touché qu'au papier, pas à la maison.","line":5,"output":"8 8","groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"8","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"NULL","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"null"}]}],"arrows":[]},
+            {"label":"<span class='warn'>La ligne 7 déréférence NULL.</span> Comportement indéfini : ici, segmentation fault. La sortie précédente reste affichée, le programme s'arrête.","line":6,"output":"8 8","groups":[{"title":"Pile (stack)","cells":[{"id":"x","name":"x","value":"8","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"NULL","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"err null"}]}],"arrows":[]}
+          ]
+        }
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">Le point clé</div>
+        <p><code>x</code> et <code>*p</code> désignent <b>le même octet</b>. Écrire dans l'un, c'est écrire dans l'autre. En revanche, <code>p</code> et <code>*p</code> sont deux objets différents : <code>p</code> est une case de 8 octets à 0x2000, <code>*p</code> est la case de 4 octets à 0x1000.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Modifier le pointeur ou la cible ?</div>
+        <p><code>p = NULL;</code> change le <b>pointeur</b> (la flèche). <code>*p = 0;</code> change la <b>cible</b> (la valeur au bout de la flèche). Les deux s'écrivent presque pareil et n'ont rien à voir. C'est la question numéro un des QCM.</p>
+      </div>
+
+      <p>Le pointeur a lui aussi une adresse, une taille et une durée de vie. <code>&amp;p</code> est de type <code>int **</code> et vaut 0x2000 dans le simulateur. Cette adresse ne change pas tant que <code>p</code> existe ; seule sa <b>valeur</b> change quand on le réaffecte.</p>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">tableaux</div></div>
+      <h2>Un tableau est un bloc contigu</h2>
+      <p class="lead">Les éléments d'un tableau <code>int a[4]</code> sont rangés côte à côte, sans trou : 4 octets chacun. Le nom <code>a</code> désigne le premier élément dans une expression. De là vient l'équivalence <code>a[i] == *(a + i)</code>, et toute l'arithmétique des pointeurs.</p>
+
+      <div class="arrlab" data-arrlab>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · avancer dans un tableau</div><div class="lab-sub">déplace le curseur : l'adresse avance de 4 octets par pas</div></div>
+          <span class="lab-tag">interactif</span>
+        </div>
+        <div class="arr-stage" data-arrstage>
+          <div class="arr-p"><span class="n">p</span><span class="v">0x1000</span><span class="ty">int *</span></div>
+          <div class="arr-track" data-arrtrack>
+            <div class="arr-cell" data-i="0"><div class="av">10</div><div class="ai">0x1000</div></div>
+            <div class="arr-cell" data-i="1"><div class="av">20</div><div class="ai">0x1004</div></div>
+            <div class="arr-cell" data-i="2"><div class="av">30</div><div class="ai">0x1008</div></div>
+            <div class="arr-cell" data-i="3"><div class="av">40</div><div class="ai">0x100c</div></div>
+            <div class="arr-cur" data-cur>p + 2</div>
+          </div>
+          <svg class="arr-svg" data-arrsvg aria-hidden="true"></svg>
+        </div>
+        <div class="arr-ctrl">
+          <input type="range" min="0" max="4" step="1" value="2" data-range aria-label="indice i">
+          <output data-iout>i = 2</output>
+        </div>
+        <div class="arr-formula" data-formula></div>
+      </div>
+
+      <div class="code"><header><span>tableau.c</span><button data-copy>copier</button></header><pre><code data-hl>int a[4] = {10, 20, 30, 40};
+int *p = a;              /* identique à &amp;a[0] */
+
+printf("%d\n", a[2]);    /* 30 */
+printf("%d\n", *(a+2));  /* 30 : exactement la même chose */
+printf("%d\n", *(p+2));  /* 30 : p pointe sur a[0] */
+printf("%d\n", p[2]);    /* 30 : p[i] est permis aussi */</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">La règle d'or</div>
+        <p><code>a[i]</code> est défini comme <code>*(a + i)</code>. L'addition est commutative, donc <code>*(a+i) == *(i+a)</code>, et <code>i[a]</code> est légal (mais illisible). <code>p[i]</code> marche aussi : un pointeur n'a pas besoin d'être un tableau pour être indexé, il suffit qu'il pointe sur un bloc assez grand.</p>
+      </div>
+
+      <p>Le pas de l'addition dépend du <b>type pointé</b>, pas de la valeur. <code>p + 1</code> ajoute <code>sizeof(*p)</code> octets : 4 pour un <code>int *</code>, 1 pour un <code>char *</code>, 8 pour un <code>double *</code>. C'est le compilateur qui fait la multiplication ; toi, tu écris seulement <code>+ 1</code>.</p>
+
+      <table class="tbl">
+        <caption>Arithmétique sur <code>int *p = a</code> (a à 0x1000)</caption>
+        <tr><th>expression</th><th>adresse</th><th>valeur</th><th>commentaire</th></tr>
+        <tr><td><code>p</code></td><td>0x1000</td><td>10</td><td>premier élément</td></tr>
+        <tr><td><code>p + 1</code></td><td>0x1004</td><td>20</td><td>+ 4 octets</td></tr>
+        <tr><td><code>p + 2</code></td><td>0x1008</td><td>30</td><td>+ 8 octets</td></tr>
+        <tr><td><code>p + 4</code></td><td>0x1010</td><td>—</td><td>juste après le tableau : adresse valide, déréférencement interdit</td></tr>
+        <tr><td><code>p - a</code></td><td>—</td><td>0</td><td>différence de deux pointeurs : <code>ptrdiff_t</code> (nombre d'éléments)</td></tr>
+      </table>
+
+      <div class="box trap">
+        <div class="lbl">Trois pièges d'examen</div>
+        <ul>
+          <li><b><code>sizeof(a)</code> contre <code>sizeof(p)</code></b> : 16 contre 8 ici. Dans une fonction, <code>a</code> reçu en paramètre est un pointeur : <code>sizeof(a)</code> vaut 8, et <code>sizeof(a)/sizeof(a[0])</code> vaut 2, pas 4. Il faut passer la longueur séparément.</li>
+          <li><b><code>&amp;a</code> contre <code>a</code></b> : même adresse, types différents. <code>a + 1</code> avance de 4 octets ; <code>&amp;a + 1</code> avance de <b>16</b> octets, car le type est <code>int (*)[4]</code>.</li>
+          <li><b>Un-past-end</b> : <code>a + 4</code> est permis pour comparer ou calculer une fin de boucle, mais <code>*(a + 4)</code> lit hors du tableau : comportement indéfini.</li>
+        </ul>
+      </div>
+
+      <h3><code>*p++</code>, <code>(*p)++</code>, <code>*++p</code> : le tableau des priorités</h3>
+      <p>Le suffixe <code>++</code> est plus prioritaire que l'étoile ; le préfixe <code>++</code> et l'étoile ont la même priorité et s'associent de droite à gauche. D'où quatre effets différents qu'il faut savoir lire instantanément :</p>
+
+      <table class="tbl">
+        <tr><th>écriture</th><th>décomposition</th><th>effet</th></tr>
+        <tr><td><code>*p</code></td><td>—</td><td>lit la valeur pointée</td></tr>
+        <tr><td><code>(*p)++</code></td><td>incrémente <code>*p</code></td><td>la <b>valeur</b> augmente, p ne bouge pas</td></tr>
+        <tr><td><code>*p++</code></td><td><code>*(p++)</code></td><td>lit <code>*p</code>, <b>puis</b> avance p d'un élément</td></tr>
+        <tr><td><code>*++p</code></td><td><code>*(++p)</code></td><td>avance p, <b>puis</b> lit le nouvel élément</td></tr>
+        <tr><td><code>++*p</code></td><td><code>++(*p)</code></td><td>incrémente la valeur pointée</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Tableaux à deux dimensions</div>
+        <p><code>int m[3][4]</code> est un tableau de 3 tableaux de 4 int, contigus. Dans une expression, <code>m</code> se convertit en <code>int (*)[4]</code> (pointeur vers une ligne) ; <code>m[i]</code> est un tableau de 4 int qui se convertit en <code>int *</code> vers le premier élément de la ligne. Et <code>m[i][j] == *(*(m + i) + j)</code>. Un pointeur de ligne s'écrit <code>int (*ligne)[4] = m;</code> : <code>ligne + 1</code> saute 16 octets.</p>
+      </div>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">chaînes</div></div>
+      <h2>Chaînes : un tableau et un pointeur ne sont pas la même chose</h2>
+      <p class="lead">En C, une chaîne n'est pas un type : c'est une suite de <code>char</code> terminée par l'octet nul <code>'\0'</code>. On peut la ranger dans un tableau (une copie modifiable) ou pointer vers un littéral (souvent en lecture seule). Les deux s'écrivent presque pareil et se comportent très différemment.</p>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 680 268" role="img" aria-label="Comparaison entre un tableau de char modifiable et un pointeur vers un littéral en lecture seule.">
+            <text class="th" x="40" y="24">char s[] = "abc";</text>
+            <text class="ts" x="220" y="24">un tableau : la copie vit sur la pile, elle est modifiable</text>
+            <g class="c-green">
+              <rect x="40" y="38" width="54" height="46" rx="6"/><rect x="94" y="38" width="54" height="46" rx="6"/><rect x="148" y="38" width="54" height="46" rx="6"/><rect x="202" y="38" width="54" height="46" rx="6"/>
+            </g>
+            <g class="c-green">
+              <text class="t" x="67" y="67" text-anchor="middle">'a'</text><text class="t" x="121" y="67" text-anchor="middle">'b'</text><text class="t" x="175" y="67" text-anchor="middle">'c'</text><text class="t" x="229" y="67" text-anchor="middle">'\0'</text>
+            </g>
+            <text class="tm" x="40" y="101">0x1000</text><text class="tm" x="94" y="101">0x1001</text><text class="tm" x="148" y="101">0x1002</text><text class="tm" x="202" y="101">0x1003</text>
+            <text class="ts" x="40" y="126">sizeof(s) = 4 · strlen(s) = 3 · s[0] = 'x' est permis</text>
+
+            <text class="th" x="40" y="168">char *t = "abc";</text>
+            <text class="ts" x="220" y="168">un pointeur : le littéral est ailleurs, en lecture seule</text>
+            <g class="c-purple"><rect x="40" y="182" width="110" height="46" rx="6"/><text class="th" x="95" y="202" text-anchor="middle">t</text><text class="t" x="95" y="220" text-anchor="middle">0x3000</text></g>
+            <text class="tm" x="40" y="245">@ 0x2000 · 8 octets</text>
+            <path d="M150 205 C 224 205, 250 205, 322 205" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="236" y="194" text-anchor="middle">pointe vers</text>
+            <g class="c-gray">
+              <rect x="330" y="182" width="54" height="46" rx="6"/><rect x="384" y="182" width="54" height="46" rx="6"/><rect x="438" y="182" width="54" height="46" rx="6"/><rect x="492" y="182" width="54" height="46" rx="6"/>
+            </g>
+            <g class="c-gray">
+              <text class="t" x="357" y="211" text-anchor="middle">'a'</text><text class="t" x="411" y="211" text-anchor="middle">'b'</text><text class="t" x="465" y="211" text-anchor="middle">'c'</text><text class="t" x="519" y="211" text-anchor="middle">'\0'</text>
+            </g>
+            <text class="tm" x="330" y="245">0x3000 · .rodata · t[0] = 'x' interdit</text>
+          </svg>
+        </div>
+        <figcaption>À gauche, <code>s</code> <b>est</b> les quatre octets ; on peut les modifier. À droite, <code>t</code> <b>contient</b> l'adresse des quatre octets ; modifier <code>t[0]</code> modifie un littéral, ce qui est un comportement indéfini — en pratique, souvent un crash.</figcaption>
+      </figure>
+
+      <div class="code"><header><span>chaines.c</span><button data-copy>copier</button></header><pre><code data-hl>char s[] = "abc";       /* 4 octets : 'a','b','c','\0' — copie modifiable */
+char *t  = "abc";       /* pointeur vers un littéral : lecture seule     */
+
+s[0] = 'x';             /* OK : s est un tableau                          */
+/* t[0] = 'x'; */       /* UB : le littéral n'est pas modifiable          */
+
+t = s;                  /* OK : t pointe maintenant vers le tableau s     */
+printf("%zu %zu\n", sizeof(s), sizeof(t));  /* 4 puis 8              */</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">Les trois tailles</div>
+        <p><code>sizeof(s)</code> = 4 (le tableau, terminateur compris) ; <code>strlen(s)</code> = 3 (sans le terminateur) ; <code>sizeof(t)</code> = 8 (le pointeur). <code>strlen</code> compte les octets jusqu'au premier <code>'\0'</code> : si le terminateur manque, elle continue dans la mémoire voisine.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le tableau trop court</div>
+        <p><code>char s[4] = "abcd";</code> est légal en C, mais le <code>'\0'</code> n'a pas de place : <code>strlen(s)</code> lit au-delà du tableau. Prévois toujours <code>strlen + 1</code>. Et <code>char *t = "abc";</code> ne copie rien : c'est un pointeur vers un bloc que tu n'as pas le droit de modifier.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Le lien avec <code>argv</code></div>
+        <p><code>int main(int argc, char *argv[])</code> : <code>argv</code> est un <b>tableau de pointeurs vers char</b>. <code>argv[i]</code> est un <code>char *</code> (une chaîne), <code>argv[i][0]</code> est son premier caractère, et <code>argv[argc]</code> vaut <code>NULL</code> par convention. C'est exactement le même mécanisme que <code>char **</code>.</p>
+      </div>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">structures</div></div>
+      <h2>Structures : <code>p-&gt;x</code> est un raccourci pour <code>(*p).x</code></h2>
+      <p class="lead">Un pointeur de structure est le cas le plus fréquent en C : les listes, les arbres, les tampons et les registres embarqués en sont pleins. La flèche <code>-&gt;</code> n'est pas un opérateur magique : elle déréférence puis accède au membre, en un seul geste.</p>
+
+      <div class="lab" data-lab="struct" data-column>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · écrire dans une structure par pointeur</div><div class="lab-sub">deux écritures, un seul effet</div></div>
+          <span class="lab-tag">4 étapes</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"La structure <b>pt</b> occupe 8 octets contigus : <code>x</code> à +0, <code>y</code> à +4.","code":"struct Point { int x; int y; };\nstruct Point pt = {12, 34};","groups":[{"cells":[{"id":"pt","name":"pt","value":"","type":"struct Point","addr":"@ 0x1000","fields":[{"k":"x","v":"12"},{"k":"y","v":"34"}],"kind":"int"}]}],"arrows":[]},
+          {"label":"<b>p</b> reçoit l'adresse de la structure : 0x1000. Aucune copie des 8 octets.","code":"struct Point *p = &pt;","groups":[{"cells":[{"id":"pt","name":"pt","value":"","type":"struct Point","addr":"@ 0x1000","fields":[{"k":"x","v":"12"},{"k":"y","v":"34"}],"kind":"int"},{"id":"p","name":"p","value":"0x1000","type":"struct Point *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"pt","label":"0x1000","accent":true}]},
+          {"label":"<code>p-&gt;x = 10</code> : on déréférence p, puis on écrit dans le membre x. La case x de pt passe de 12 à 10.","code":"p->x = 10;","groups":[{"cells":[{"id":"pt","name":"pt","value":"","type":"struct Point","addr":"@ 0x1000","fields":[{"k":"x","v":"10"},{"k":"y","v":"34"}],"kind":"int","state":"changed"},{"id":"p","name":"p","value":"0x1000","type":"struct Point *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"pt","label":"0x1000","accent":true}]},
+          {"label":"<code>(*p).y = 30</code> fait exactement la même chose pour y. Les parenthèses sont obligatoires : <code>*p.y</code> se lirait <code>*(p.y)</code>.","code":"(*p).y = 30;   /* identique à p->y = 30 */","output":"(10, 30)","groups":[{"cells":[{"id":"pt","name":"pt","value":"","type":"struct Point","addr":"@ 0x1000","fields":[{"k":"x","v":"10"},{"k":"y","v":"30"}],"kind":"int","state":"changed"},{"id":"p","name":"p","value":"0x1000","type":"struct Point *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"pt","label":"0x1000","accent":true}]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">Pourquoi les parenthèses</div>
+        <p>L'opérateur <code>.</code> est plus prioritaire que <code>*</code>. Donc <code>*p.x</code> se lit <code>*(p.x)</code> : on cherche un membre <code>x</code> dans le pointeur, ce qui n'a pas de sens. Pour atteindre le membre, il faut <code>(*p).x</code> — ou, par définition, <code>p-&gt;x</code>.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Trois notations, un seul objet</caption>
+        <tr><th>écriture</th><th>sens</th><th>quand l'utiliser</th></tr>
+        <tr><td><code>pt.x</code></td><td>membre de la structure elle-même</td><td>on a la structure sous la main</td></tr>
+        <tr><td><code>(*p).x</code></td><td>déréférencement puis membre</td><td>pour comprendre ce qui se passe</td></tr>
+        <tr><td><code>p-&gt;x</code></td><td>exactement <code>(*p).x</code></td><td>l'écriture idiomatique du C</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Copie ou pointeur ?</div>
+        <p><code>struct Point q = pt;</code> copie les 8 octets : modifier <code>q.x</code> ne touche pas <code>pt.x</code>. Passer une structure à une fonction par valeur la copie aussi. Pour les grosses structures, on passe <code>const struct Point *p</code> : pas de copie, et la lecture seule est garantie.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le bourrage</div>
+        <p><code>sizeof(struct { char c; int i; })</code> vaut souvent 8, pas 5 : le compilateur insère 3 octets de bourrage pour aligner <code>i</code> sur 4 octets. Ne calcule jamais la taille d'une structure en additionnant ses membres ; utilise <code>sizeof</code>, et <code>offsetof</code> pour localiser un champ.</p>
+      </div>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">fonctions</div></div>
+      <h2>Passage par valeur : l'adresse est la seule façon de modifier l'appelant</h2>
+      <p class="lead">En C, <b>tous</b> les arguments sont passés par valeur : la fonction reçoit une copie. Pour modifier la variable de l'appelant, il faut lui donner son adresse — et c'est le pointeur qui fait le travail. Le <code>swap</code> est l'exemple canonique, et le cours le montre avec quatre variantes.</p>
+
+      <div class="lab" data-lab="swap">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · le swap qui échoue, le swap qui réussit</div><div class="lab-sub">deux cadres de pile, deux stratégies</div></div>
+          <span class="lab-tag">11 étapes</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Dans <b>main</b>, deux variables ordinaires : x = 1 et y = 2.","code":"int main(void) { int x = 1, y = 2; ... }","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]}],"arrows":[]},
+          {"label":"<code>swap_bad(x, y)</code> crée deux <b>nouvelles</b> cases a et b, et y copie 1 et 2. Ce sont des copies, pas les originales.","code":"swap_bad(x, y);","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_bad","cells":[{"id":"ba","name":"a","value":"1","type":"int","addr":"@ 0x0f00","kind":"int","state":"new"},{"id":"bb","name":"b","value":"2","type":"int","addr":"@ 0x0f04","kind":"int","state":"new"}]}],"arrows":[]},
+          {"label":"La fonction échange ses copies : <code>t</code> mémorise a, puis a reçoit b, puis b reçoit t.","code":"int t = a;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_bad","cells":[{"id":"ba","name":"a","value":"1","type":"int","addr":"@ 0x0f00","kind":"int"},{"id":"bb","name":"b","value":"2","type":"int","addr":"@ 0x0f04","kind":"int"},{"id":"bt","name":"t","value":"1","type":"int","addr":"@ 0x0f08","kind":"int","state":"new"}]}],"arrows":[]},
+          {"label":"<code>a = b</code> : a vaut maintenant 2, dans le cadre de la fonction.","code":"a = b;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_bad","cells":[{"id":"ba","name":"a","value":"2","type":"int","addr":"@ 0x0f00","kind":"int","state":"changed"},{"id":"bb","name":"b","value":"2","type":"int","addr":"@ 0x0f04","kind":"int"},{"id":"bt","name":"t","value":"1","type":"int","addr":"@ 0x0f08","kind":"int"}]}],"arrows":[]},
+          {"label":"<code>b = t</code> : dans le cadre, a = 2 et b = 1. L'échange a bien eu lieu… mais seulement ici.","code":"b = t;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_bad","cells":[{"id":"ba","name":"a","value":"2","type":"int","addr":"@ 0x0f00","kind":"int"},{"id":"bb","name":"b","value":"1","type":"int","addr":"@ 0x0f04","kind":"int","state":"changed"},{"id":"bt","name":"t","value":"1","type":"int","addr":"@ 0x0f08","kind":"int"}]}],"arrows":[]},
+          {"label":"<span class='warn'>Retour :</span> les copies a, b et t disparaissent. x et y n'ont jamais été touchés : 1 et 2. Échec classique du passage par valeur.","code":"/* retour de swap_bad */","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]}],"arrows":[]},
+          {"label":"<code>swap_ok(&amp;x, &amp;y)</code> : cette fois les arguments sont les <b>adresses</b>. a contient 0x1000, b contient 0x1004.","code":"swap_ok(&x, &y);","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_ok","cells":[{"id":"oa","name":"a","value":"0x1000","type":"int *","addr":"@ 0x0f00","kind":"ptr","state":"new"},{"id":"ob","name":"b","value":"0x1004","type":"int *","addr":"@ 0x0f08","kind":"ptr","state":"new"}]}],"arrows":[{"from":"oa","to":"mx","label":"0x1000","accent":true},{"from":"ob","to":"my","label":"0x1004","accent":true}]},
+          {"label":"<code>int t = *a;</code> : t reçoit la valeur pointée par a, c'est-à-dire x, donc 1.","code":"int t = *a;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"1","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_ok","cells":[{"id":"oa","name":"a","value":"0x1000","type":"int *","addr":"@ 0x0f00","kind":"ptr"},{"id":"ob","name":"b","value":"0x1004","type":"int *","addr":"@ 0x0f08","kind":"ptr"},{"id":"ot","name":"t","value":"1","type":"int","addr":"@ 0x0f10","kind":"int","state":"new"}]}],"arrows":[{"from":"oa","to":"mx","label":"0x1000","accent":true},{"from":"ob","to":"my","label":"0x1004","accent":true}]},
+          {"label":"<code>*a = *b;</code> écrit 2 à l'adresse 0x1000 : c'est <b>x</b> qui change, dans main.","code":"*a = *b;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"2","type":"int","addr":"@ 0x1000","kind":"int","state":"changed"},{"id":"my","name":"y","value":"2","type":"int","addr":"@ 0x1004","kind":"int"}]},{"title":"swap_ok","cells":[{"id":"oa","name":"a","value":"0x1000","type":"int *","addr":"@ 0x0f00","kind":"ptr"},{"id":"ob","name":"b","value":"0x1004","type":"int *","addr":"@ 0x0f08","kind":"ptr"},{"id":"ot","name":"t","value":"1","type":"int","addr":"@ 0x0f10","kind":"int"}]}],"arrows":[{"from":"oa","to":"mx","label":"0x1000","accent":true},{"from":"ob","to":"my","label":"0x1004","accent":true}]},
+          {"label":"<code>*b = t;</code> écrit 1 à l'adresse 0x1004 : <b>y</b> change à son tour.","code":"*b = t;","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"2","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"my","name":"y","value":"1","type":"int","addr":"@ 0x1004","kind":"int","state":"changed"}]},{"title":"swap_ok","cells":[{"id":"oa","name":"a","value":"0x1000","type":"int *","addr":"@ 0x0f00","kind":"ptr"},{"id":"ob","name":"b","value":"0x1004","type":"int *","addr":"@ 0x0f08","kind":"ptr"},{"id":"ot","name":"t","value":"1","type":"int","addr":"@ 0x0f10","kind":"int"}]}],"arrows":[{"from":"oa","to":"mx","label":"0x1000","accent":true},{"from":"ob","to":"my","label":"0x1004","accent":true}]},
+          {"label":"<b>Retour :</b> x = 2 et y = 1. L'échange est réel, parce qu'on a écrit dans les cases de main à travers leurs adresses.","code":"/* retour de swap_ok */","groups":[{"title":"main","cells":[{"id":"mx","name":"x","value":"2","type":"int","addr":"@ 0x1000","kind":"int","state":"changed"},{"id":"my","name":"y","value":"1","type":"int","addr":"@ 0x1004","kind":"int","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="code"><header><span>swap.c</span><button data-copy>copier</button></header><pre><code data-hl>void swap_bad(int a, int b) { int t = a; a = b; b = t; }        /* copies */
+void swap_ok (int *a, int *b) { int t = *a; *a = *b; *b = t; }  /* adresses */
+
+int main(void) {
+    int x = 1, y = 2;
+    swap_bad(x, y);      /* x = 1, y = 2 : rien ne change */
+    swap_ok(&amp;x, &amp;y);    /* x = 2, y = 1 : ça marche       */
+}</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le C ne connaît que le passage par valeur. « Passage par référence » est une façon de parler : on passe une <b>adresse</b>, donc une valeur de type pointeur, et la fonction utilise <code>*</code> pour atteindre l'original. <code>scanf("%d", &amp;x)</code> fonctionne exactement comme <code>swap_ok</code> : scanf a besoin de l'adresse pour écrire dans x.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le pointeur aussi est copié</div>
+        <p>Dans <code>void f(int *p)</code>, le paramètre <code>p</code> est une copie du pointeur de l'appelant. <code>*p = 3</code> modifie la cible, mais <code>p = NULL</code> ne change que la copie locale. Pour modifier le pointeur de l'appelant, il faut passer son adresse : <code>void f(int **pp)</code>. C'est le sujet de la section suivante.</p>
+      </div>
+
+      <h3>Renvoyer un pointeur : la question de la durée de vie</h3>
+      <p>Une fonction peut renvoyer un pointeur, mais la cible doit vivre plus longtemps que l'appel. Trois cas seulement sont sûrs : un objet <code>static</code> ou global, un bloc alloué par <code>malloc</code>, ou un objet de l'appelant passé en argument. Renvoyer l'adresse d'une variable locale est l'erreur classique : la pile est réutilisée dès le retour.</p>
+
+      <div class="code"><header><span>retour.c</span><button data-copy>copier</button></header><pre><code data-hl>int *bad(void)  { int local = 42; return &amp;local; }     /* suspendu : interdit */
+int *good(void) { static int local = 42; return &amp;local; } /* durée de vie du programme */
+int *heap(void) { return malloc(sizeof(int)); }           /* à free plus tard      */</code></pre></div>
+
+      <div class="box note">
+        <div class="lbl">Tableaux en paramètre</div>
+        <p><code>void f(int a[10])</code> et <code>void f(int *a)</code> déclarent exactement la même chose : un pointeur. La taille <code>10</code> est ignorée. <code>sizeof(a)</code> vaut 8 dans la fonction, et le compilateur ne peut pas détecter un débordement. Passe toujours <code>size_t n</code> avec le tableau.</p>
+      </div>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">pointeur de pointeur</div></div>
+      <h2><code>int **</code> : pour modifier le pointeur de l'appelant</h2>
+      <p class="lead">Un pointeur de pointeur n'est pas un monstre : c'est un pointeur dont la cible est elle-même un pointeur. Il sert dès qu'une fonction doit <b>changer l'adresse contenue dans le pointeur du caller</b> — allocation, insertion en tête de liste, tableau de chaînes.</p>
+
+      <div class="lab" data-lab="pp" data-column>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · deux, puis trois niveaux</div><div class="lab-sub">chaque étoile ajoute un saut</div></div>
+          <span class="lab-tag">6 étapes</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Une variable ordinaire, x = 5, à l'adresse 0x1000.","code":"int x = 5;","groups":[{"cells":[{"id":"x","name":"x","value":"5","type":"int","addr":"@ 0x1000","kind":"int"}]}],"arrows":[]},
+          {"label":"<b>p</b> contient l'adresse de x. Une étoile suffit pour l'atteindre.","code":"int *p = &x;","groups":[{"cells":[{"id":"x","name":"x","value":"5","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true}]},
+          {"label":"<b>pp</b> contient l'adresse de p. Pour atteindre x, il faut deux sauts : <code>**pp</code>.","code":"int **pp = &p;","groups":[{"cells":[{"id":"x","name":"x","value":"5","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"},{"id":"pp","name":"pp","value":"0x2000","type":"int **","addr":"@ 0x2008","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true},{"from":"pp","to":"p","label":"0x2000","accent":true}]},
+          {"label":"<code>**pp = 9</code> : premier saut vers p, deuxième saut vers x, puis écriture. x passe à 9.","code":"**pp = 9;","groups":[{"cells":[{"id":"x","name":"x","value":"9","type":"int","addr":"@ 0x1000","kind":"int","state":"changed"},{"id":"p","name":"p","value":"0x1000","type":"int *","addr":"@ 0x2000","kind":"ptr"},{"id":"pp","name":"pp","value":"0x2000","type":"int **","addr":"@ 0x2008","kind":"ptr"}]}],"arrows":[{"from":"p","to":"x","label":"0x1000","accent":true},{"from":"pp","to":"p","label":"0x2000","accent":true}]},
+          {"label":"<code>*pp = NULL</code> : un seul saut. On change le <b>pointeur p</b>, pas x. x reste à 9.","code":"*pp = NULL;","groups":[{"cells":[{"id":"x","name":"x","value":"9","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"NULL","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"null"},{"id":"pp","name":"pp","value":"0x2000","type":"int **","addr":"@ 0x2008","kind":"ptr"}]}],"arrows":[{"from":"pp","to":"p","label":"0x2000","accent":true}]},
+          {"label":"<code>pp = NULL</code> : on ne touche que pp. p et x sont intacts — il n'y a plus de chemin, mais les cases existent.","code":"pp = NULL;","groups":[{"cells":[{"id":"x","name":"x","value":"9","type":"int","addr":"@ 0x1000","kind":"int"},{"id":"p","name":"p","value":"NULL","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"null"},{"id":"pp","name":"pp","value":"NULL","type":"int **","addr":"@ 0x2008","kind":"ptr","state":"null"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <p>Le cas d'usage du cours est l'allocation dans une fonction. Si la fonction reçoit <code>int *p</code>, elle reçoit une <b>copie</b> du pointeur : <code>p = malloc(...)</code> ne change rien chez l'appelant. Si elle reçoit <code>int **pp</code>, elle reçoit l'adresse du pointeur et peut écrire dedans avec <code>*pp = malloc(...)</code>.</p>
+
+      <div class="code"><header><span>allouer.c</span><button data-copy>copier</button></header><pre><code data-hl>/* reçoit l'adresse du pointeur : peut le modifier */
+void allouer(int **pp, int valeur)
+{
+    *pp = malloc(sizeof **pp);
+    if (*pp != NULL) {
+        **pp = valeur;
+    }
+}
+
+int *p = NULL;
+allouer(&amp;p, 42);       /* *p vaut maintenant 42 */
+
+/* variante qui échoue : p est une copie */
+void allouer_bad(int *p) { p = malloc(sizeof *p); }  /* fuite + p inchangé */</code></pre></div>
+
+      <div class="box trap">
+        <div class="lbl">Ne confonds pas les types</div>
+        <p><code>int **pp</code> n'est pas « un tableau d'int » ni « un int * ». C'est un pointeur vers une case qui contient un <code>int *</code>. Le nombre d'étoiles est le nombre de sauts à faire pour atteindre l'objet final. <code>char **argv</code> s'utilise comme un tableau de pointeurs vers char ; <code>char *argv[]</code> est la même chose dans une liste de paramètres.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Applications</div>
+        <p><b>Listes chaînées</b> : <code>void insert(Node **head, ...)</code> pour modifier la tête. <b>Tableaux de chaînes</b> : <code>char **noms</code>. <b>Matrices dynamiques</b> : <code>int **m</code> avec une allocation par ligne. <b>Structures</b> : <code>struct tm **</code> pour modifier un pointeur de structure. À chaque fois, la question est : « est-ce que je veux changer la cible, ou le pointeur lui-même ? »</p>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">const</div></div>
+      <h2><code>const</code> : trois contrats, pas un seul</h2>
+      <p class="lead"><code>const</code> ne rend rien immuable à l'exécution : c'est une promesse au compilateur. Sa place par rapport à l'étoile décide de <b>ce qui</b> est protégé — la cible, le pointeur, ou les deux. Les trois combinaisons se rencontrent partout dans les en-têtes de fonctions.</p>
+
+      <div class="constgrid">
+        <article class="const-card" data-case="c1">
+          <code>const int *p = &amp;x;</code>
+          <div class="const-viz"><span class="cv-box cv-ptr">p</span><span class="cv-arrow">──▶</span><span class="cv-box">x = 42 <span class="cv-lock">🔒</span></span></div>
+          <div class="const-btns">
+            <button type="button" data-act="val">*p = 5</button>
+            <button type="button" data-act="ptr">p = &amp;y</button>
+          </div>
+          <p class="const-fb" data-fb>teste les deux opérations</p>
+        </article>
+        <article class="const-card" data-case="c2">
+          <code>int *const p = &amp;x;</code>
+          <div class="const-viz"><span class="cv-box cv-ptr">p <span class="cv-lock">🔒</span></span><span class="cv-arrow">──▶</span><span class="cv-box">x = 42</span></div>
+          <div class="const-btns">
+            <button type="button" data-act="val">*p = 5</button>
+            <button type="button" data-act="ptr">p = &amp;y</button>
+          </div>
+          <p class="const-fb" data-fb>teste les deux opérations</p>
+        </article>
+        <article class="const-card" data-case="c3">
+          <code>const int *const p = &amp;x;</code>
+          <div class="const-viz"><span class="cv-box cv-ptr">p <span class="cv-lock">🔒</span></span><span class="cv-arrow">──▶</span><span class="cv-box">x = 42 <span class="cv-lock">🔒</span></span></div>
+          <div class="const-btns">
+            <button type="button" data-act="val">*p = 5</button>
+            <button type="button" data-act="ptr">p = &amp;y</button>
+          </div>
+          <p class="const-fb" data-fb>teste les deux opérations</p>
+        </article>
+      </div>
+
+      <table class="tbl">
+        <caption>Qui est protégé ?</caption>
+        <tr><th>déclaration</th><th><code>*p = 5</code></th><th><code>p = &amp;y</code></th><th>lecture</th></tr>
+        <tr><td><code>const int *p</code></td><td>✗ interdit</td><td>✓ permis</td><td>pointeur vers un int constant</td></tr>
+        <tr><td><code>int *const p</code></td><td>✓ permis</td><td>✗ interdit</td><td>pointeur constant vers un int</td></tr>
+        <tr><td><code>const int *const p</code></td><td>✗ interdit</td><td>✗ interdit</td><td>les deux sont constants</td></tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La lecture qui marche à tous les coups</div>
+        <p>Lis de droite à gauche : <code>const int *p</code> → « p est un pointeur vers un int const ». <code>int *const p</code> → « p est un pointeur const vers un int ». <code>const</code> s'applique à ce qui est <b>juste à sa gauche</b> ; s'il n'y a rien à gauche (ou seulement le type de base), il s'applique à droite. <code>const int *p</code> et <code>int const *p</code> sont identiques.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Où l'utiliser</div>
+        <p>Pour les paramètres que la fonction ne modifie pas : <code>void afficher(const char *s)</code>, <code>void dump(const struct tm *pt)</code>. Pour les pointeurs globaux constants : <code>volatile uint32_t *const pReg</code>. Pour les tableaux de chaînes : <code>const char *const noms[]</code> — un tableau de pointeurs constants vers des chaînes constantes.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège du cast</div>
+        <p><code>const</code> est une protection de compilation, pas un verrou matériel. Si tu retires le <code>const</code> par un cast et que tu écris dans une zone réellement en lecture seule, c'est un comportement indéfini. Et un pointeur <code>const</code> doit être initialisé à la déclaration : on ne peut plus lui donner d'adresse après.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">pile &amp; tas</div></div>
+      <h2><code>malloc</code> rend une adresse, pas une variable</h2>
+      <p class="lead">Les variables locales vivent sur la <b>pile</b> : leur durée de vie est le bloc, et le compilateur gère tout. Les objets de durée de vie inconnue vivent sur le <b>tas</b> : c'est toi qui demandes la place avec <code>malloc</code>, et c'est toi qui la rends avec <code>free</code>. Un pointeur est le seul lien entre les deux mondes.</p>
+
+      <div class="lab codesim" data-lab="heap">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · allouer, utiliser, libérer</div><div class="lab-sub">la pile à gauche, le tas à droite</div></div>
+          <span class="lab-tag">7 étapes</span>
+        </div>
+        <div class="sim">
+          <ol class="sim-code" data-lines></ol>
+          <div class="sim-side">
+            <div class="mem-stage" data-stage>
+              <div class="mem-groups" data-groups></div>
+              <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+            </div>
+          </div>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "lines":[ "int *p;", "p = malloc(sizeof *p);", "if (p == NULL) { return 1; }", "*p = 42;", "free(p);", "p = NULL;" ],
+          "states":[
+            {"label":"Avant tout : la pile et le tas sont vides pour ce programme.","line":-1,"groups":[{"title":"Pile (stack)","cells":[]},{"title":"Tas (heap)","cells":[]}],"arrows":[]},
+            {"label":"La ligne 1 crée <b>p</b> sur la pile, mais ne lui donne aucune adresse. Son contenu est <b>indéterminé</b> : on ne le déréférence pas.","line":0,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"?","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"err"}]},{"title":"Tas (heap)","cells":[]}],"arrows":[]},
+            {"label":"<code>malloc(sizeof *p)</code> demande 4 octets au tas et renvoie leur adresse, 0x3000. p la reçoit : le lien est créé.","line":1,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"0x3000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]},{"title":"Tas (heap)","cells":[{"id":"h","name":"bloc","value":"?","type":"int","addr":"@ 0x3000","kind":"heap","state":"new"}]}],"arrows":[{"from":"p","to":"h","label":"0x3000","accent":true}]},
+            {"label":"L'allocation peut échouer : <code>malloc</code> renvoie alors <code>NULL</code>. On teste <b>toujours</b> avant d'utiliser p.","line":2,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"0x3000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]},{"title":"Tas (heap)","cells":[{"id":"h","name":"bloc","value":"?","type":"int","addr":"@ 0x3000","kind":"heap"}]}],"arrows":[{"from":"p","to":"h","label":"0x3000","accent":true}]},
+            {"label":"<code>*p = 42</code> écrit dans le bloc du tas. La valeur vit tant qu'on ne la libère pas, même si la fonction se termine.","line":3,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"0x3000","type":"int *","addr":"@ 0x2000","kind":"ptr"}]},{"title":"Tas (heap)","cells":[{"id":"h","name":"bloc","value":"42","type":"int","addr":"@ 0x3000","kind":"heap","state":"changed"}]}],"arrows":[{"from":"p","to":"h","label":"0x3000","accent":true}]},
+            {"label":"<code>free(p)</code> rend le bloc au tas. <span class='warn'>p contient toujours 0x3000 : c'est un pointeur suspendu (dangling).</span> Le déréférencer est interdit.","line":4,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"0x3000","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"err"}]},{"title":"Tas (heap)","cells":[{"id":"h","name":"bloc","value":"42","type":"int","addr":"@ 0x3000","kind":"heap","state":"freed"}]}],"arrows":[{"from":"p","to":"h","label":"0x3000","accent":true}]},
+            {"label":"<code>p = NULL</code> : le pointeur ne désigne plus rien. C'est l'état propre. La case du tas, elle, est libérée et pourra être réutilisée.","line":5,"groups":[{"title":"Pile (stack)","cells":[{"id":"p","name":"p","value":"NULL","type":"int *","addr":"@ 0x2000","kind":"ptr","state":"null"}]},{"title":"Tas (heap)","cells":[{"id":"h","name":"bloc","value":"42","type":"int","addr":"@ 0x3000","kind":"heap","state":"freed"}]}],"arrows":[]}
+          ]
+        }
+        </script>
+      </div>
+
+      <figure>
+        <div class="figcard fig-wide">
+          <svg viewBox="0 0 680 185" role="img" aria-label="Fuite mémoire : le pointeur vaut NULL et le bloc alloué n'est plus accessible.">
+            <g class="c-purple"><rect x="40" y="42" width="132" height="58" rx="8"/><text class="th" x="106" y="67" text-anchor="middle">p</text><text class="t" x="106" y="89" text-anchor="middle">NULL</text></g>
+            <text class="tm" x="40" y="120">@ 0x2000 · après p = NULL</text>
+            <g class="c-red" opacity=".7"><rect x="420" y="42" width="150" height="58" rx="8"/><text class="th" x="495" y="67" text-anchor="middle">bloc</text><text class="t" x="495" y="89" text-anchor="middle">42</text></g>
+            <text class="tm" x="420" y="120">@ 0x3000 · toujours alloué</text>
+            <path d="M172 71 C 260 71, 330 71, 414 71" class="arrd" stroke="var(--red)" stroke-dasharray="6 5"/>
+            <line x1="284" y1="62" x2="300" y2="80" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="300" y1="62" x2="284" y2="80" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+            <text class="ts" x="292" y="59" text-anchor="middle" fill="var(--red)">lien perdu</text>
+            <text class="ts" x="40" y="152">Plus personne ne connaît l'adresse : impossible de free. Le bloc reste jusqu'à la fin du processus.</text>
+            <text class="ts" x="40" y="172">C'est une <tspan font-weight="600">fuite mémoire</tspan> (memory leak).</text>
+          </svg>
+        </div>
+        <figcaption>La fuite n'est pas « de la mémoire qui disparaît » : c'est de la mémoire <b>encore allouée</b> dont plus aucun pointeur ne connaît l'adresse. Sur un microcontrôleur qui tourne des semaines, c'est fatal.</figcaption>
+      </figure>
+
+      <div class="code"><header><span>allocation.c</span><button data-copy>copier</button></header><pre><code data-hl>int *p = malloc(sizeof *p);      /* 4 octets, non initialisés       */
+if (p == NULL) { /* plus de mémoire : gérer l'erreur */ }
+
+int *q = calloc(10, sizeof *q);  /* 10 int, initialisés à 0          */
+int *tmp = realloc(p, 2 * sizeof *p);
+if (tmp != NULL) p = tmp;        /* sinon p reste valide             */
+
+free(p);                         /* une seule fois                   */
+p = NULL;                        /* évite le double free             */</code></pre></div>
+
+      <table class="tbl">
+        <caption>La boîte à outils du tas</caption>
+        <tr><th>fonction</th><th>rôle</th><th>piège</th></tr>
+        <tr><td><code>malloc(n)</code></td><td>réserve n octets, contenu indéterminé</td><td>vérifier <code>NULL</code> ; n = <code>sizeof *p * count</code></td></tr>
+        <tr><td><code>calloc(n, size)</code></td><td>réserve et met à zéro</td><td>utile pour les tableaux, pas pour les structs opaques</td></tr>
+        <tr><td><code>realloc(p, n)</code></td><td>change la taille, peut déplacer</td><td>passer par un temporaire ; l'ancien p peut être invalide</td></tr>
+        <tr><td><code>free(p)</code></td><td>rend le bloc au tas</td><td><code>free(NULL)</code> est sans effet ; <code>free</code> ne met pas p à NULL</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Le cast de <code>malloc</code></div>
+        <p>En C, le cast n'est pas nécessaire : <code>void *</code> se convertit implicitement vers tout pointeur d'objet. Le cours écrit parfois <code>(int *)malloc(...)</code> ; les deux compilent, mais le cast est obligatoire en C++ et peut masquer un oubli d'inclusion en C. Préfère <code>int *p = malloc(sizeof *p);</code>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Les quatre fautes qui coûtent le plus</div>
+        <ul>
+          <li><b>Fuite</b> : <code>p = malloc(...); p = NULL;</code> sans <code>free</code> — le bloc est perdu.</li>
+          <li><b>Pointeur suspendu</b> : <code>free(p); *p = 1;</code> — usage après libération, comportement indéfini.</li>
+          <li><b>Double free</b> : <code>free(p); free(p);</code> — le tas est corrompu. Mettre <code>p = NULL</code> après le premier <code>free</code>.</li>
+          <li><b>Libération d'une adresse qui n'est pas du tas</b> : <code>free(&amp;x)</code> ou <code>free(p + 1)</code> — interdit.</li>
+        </ul>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Pile ou tas ?</div>
+        <p><b>Pile</b> : variables locales, paramètres, adresses de retour. Allocation instantanée, libération automatique à la fin du bloc, taille limitée. <b>Tas</b> : <code>malloc</code>/<code>free</code>, durée de vie contrôlée, fragmentation possible, plus lent. Une variable globale ou <code>static</code> vit ni sur l'un ni sur l'autre : elle a une durée de vie égale au programme.</p>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">pointeur de fonction</div></div>
+      <h2>Un pointeur peut viser du code</h2>
+      <p class="lead">Une fonction a une adresse, elle aussi. Un pointeur de fonction stocke cette adresse et permet d'appeler la fonction <b>choisie à l'exécution</b> : table de dispatch, callbacks, comparateurs de <code>qsort</code>. C'est la dernière pièce du chapitre, et elle explique les callbacks du cours d'embarqué.</p>
+
+      <div class="fplab" data-fplab>
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · la même variable, deux fonctions</div><div class="lab-sub">clique sur add ou mul</div></div>
+          <span class="lab-tag">interactif</span>
+        </div>
+        <div class="fp-stage" data-fpstage>
+          <div class="fp-op"><div class="n">op</div><div class="v" data-opval>0x401000</div><div class="ty">int (*)(int, int)</div></div>
+          <div class="fp-fns">
+            <button class="fp-fn on" type="button" data-fn="add"><b>add</b><span>0x401000 · a + b</span></button>
+            <button class="fp-fn" type="button" data-fn="mul"><b>mul</b><span>0x401040 · a × b</span></button>
+          </div>
+          <svg class="arr-svg" data-fpsvg aria-hidden="true"></svg>
+        </div>
+        <div class="fp-out" data-fpout>op(3, 4) = <b>7</b></div>
+        <div class="fp-ctrl">
+          <button class="btn" type="button" data-fn="add">op = add</button>
+          <button class="btn" type="button" data-fn="mul">op = mul</button>
+        </div>
+      </div>
+
+      <div class="code"><header><span>fonction_pointeur.c</span><button data-copy>copier</button></header><pre><code data-hl>int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+/* déclaration : parenthèses obligatoires autour de *op */
+int (*op)(int, int) = add;     /* op contient l'adresse de add */
+
+int r1 = op(3, 4);             /* 7  : appel direct              */
+op = mul;                      /* op contient maintenant mul     */
+int r2 = op(3, 4);             /* 12                             */
+
+/* la version lisible */
+typedef int (*BinOp)(int, int);
+BinOp f = &amp;mul;                 /* &amp; est facultatif             */
+int r3 = (*f)(3, 4);           /* 12 : (*f) est aussi permis      */</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">La syntaxe en une phrase</div>
+        <p><code>int (*op)(int, int)</code> : « op est un pointeur vers une fonction prenant deux int et renvoyant un int ». Sans les parenthèses, <code>int *op(int, int)</code> est une <b>fonction</b> qui renvoie un <code>int *</code>. Les parenthèses changent la nature de la déclaration, pas seulement le style.</p>
+      </div>
+
+      <div class="box plus">
+        <div class="lbl">Table de dispatch</div>
+        <p>Un tableau de pointeurs de fonction remplace une longue chaîne de <code>if</code> :</p>
+        <pre style="margin:8px 0 0;font:12px/1.6 var(--mono);overflow-x:auto"><code data-hl>BinOp ops[] = {add, mul};
+int r = ops[choix](3, 4);   /* choix vaut 0 ou 1 */</code></pre>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Callbacks</div>
+        <p><code>qsort</code> reçoit un comparateur <code>int (*)(const void *, const void *)</code> ; un bouton reçoit un handler ; une machine à états reçoit une table de fonctions. Dans tous les cas, la fonction appelante ne connaît pas le nom de la fonction à exécuter : elle connaît seulement son adresse.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège de la déclaration</div>
+        <p><code>int *f(int)</code> : fonction qui renvoie un pointeur vers int. <code>int (*f)(int)</code> : pointeur vers une fonction qui prend un int. Le cours montre aussi une fonction qui <b>renvoie</b> un pointeur de fonction : <code>Function_t getfct_p(int16_t param);</code> — le <code>typedef</code> rend cette déclaration lisible.</p>
+      </div>
+    </section>
+
+    
+    <section id="s14">
+      <div class="kicker"><div class="badge">14</div><div class="tag">pièges &amp; test</div></div>
+      <h2>Erreurs classiques et comment les repérer</h2>
+      <p class="lead">Un pointeur faux ne se plaint pas à la compilation. Il plante à l'exécution, parfois trois fonctions plus loin, parfois pas du tout. Voici les erreurs les plus fréquentes, les réflexes, puis un QCM.</p>
+
+      <table class="tbl">
+        <caption>Erreurs fréquentes</caption>
+        <tr><th>piège</th><th>ce qui se passe</th><th>le remède</th></tr>
+        <tr><td>pointeur non initialisé</td><td>il contient une adresse quelconque : « wild pointer »</td><td>initialiser à <code>NULL</code> ou à une adresse valide</td></tr>
+        <tr><td>déréférencer <code>NULL</code></td><td>segmentation fault, comportement indéfini</td><td>tester <code>if (p != NULL)</code> avant <code>*p</code></td></tr>
+        <tr><td>pointeur suspendu</td><td>usage après <code>free</code> ou après retour d'une fonction</td><td><code>p = NULL</code> après <code>free</code> ; ne jamais retourner <code>&amp;local</code></td></tr>
+        <tr><td>fuite mémoire</td><td>la mémoire monte, le programme tient puis meurt</td><td>un <code>free</code> pour chaque <code>malloc</code>, sur tous les chemins</td></tr>
+        <tr><td>double free</td><td>le tas est corrompu</td><td>libérer une seule fois, puis <code>p = NULL</code></td></tr>
+        <tr><td>hors du tableau</td><td>écriture dans une case voisine, résultat absurde</td><td>borner <code>i &lt; n</code> ; ne pas déréférencer <code>a + n</code></td></tr>
+        <tr><td><code>sizeof</code> d'un tableau en paramètre</td><td>8 au lieu de 16 : la taille est perdue</td><td>passer <code>n</code> avec le pointeur</td></tr>
+        <tr><td><code>*p++</code> mal lu</td><td>le pointeur avance quand on ne veut pas</td><td>parenthéser : <code>(*p)++</code> ou <code>*(p++)</code></td></tr>
+        <tr><td>modifier un littéral</td><td><code>char *s = "abc"; s[0] = 'A';</code> : UB</td><td><code>char s[] = "abc";</code> ou <code>const char *</code></td></tr>
+        <tr><td>mauvais format</td><td><code>printf("%d", p)</code> ou <code>scanf("%d", x)</code></td><td><code>%p</code> + <code>(void *)</code> ; <code>&amp;x</code></td></tr>
+        <tr><td>cast qui enlève <code>const</code></td><td>écriture dans une zone en lecture seule</td><td>ne pas caster ; corriger le type</td></tr>
+        <tr><td>mélanger pointeurs de tableaux</td><td>comparer ou soustraire deux tableaux différents</td><td>ne comparer que dans le même objet</td></tr>
+      </table>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Les six expressions</h4>
+          <table class="tbl" style="margin:6px 0 0;font-size:12.5px">
+            <tr><th>écriture</th><th>type</th><th>valeur</th></tr>
+            <tr><td><code>x</code></td><td><code>int</code></td><td>42</td></tr>
+            <tr><td><code>&amp;x</code></td><td><code>int *</code></td><td>0x1000</td></tr>
+            <tr><td><code>p</code></td><td><code>int *</code></td><td>0x1000</td></tr>
+            <tr><td><code>*p</code></td><td><code>int</code></td><td>42</td></tr>
+            <tr><td><code>&amp;p</code></td><td><code>int **</code></td><td>0x2000</td></tr>
+            <tr><td><code>**pp</code></td><td><code>int</code></td><td>42</td></tr>
+          </table>
+        </div>
+        <div class="minicard">
+          <h4>Les huit réflexes</h4>
+          <ul>
+            <li>Tout pointeur est initialisé (<code>NULL</code> ou adresse valide).</li>
+            <li>Avant <code>*p</code> : p est-il non nul et vivant ?</li>
+            <li><code>malloc</code> : <code>sizeof *p</code>, test de <code>NULL</code>, un <code>free</code>.</li>
+            <li>Après <code>free</code> : <code>p = NULL</code>.</li>
+            <li>Jamais <code>return &amp;local</code>.</li>
+            <li>Tableau en paramètre : passer <code>n</code> avec.</li>
+            <li><code>const</code> sur tout ce qui est lu seulement.</li>
+            <li>Lire les types de droite à gauche, parenthèses d'abord.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Les outils qui voient les fautes</div>
+        <p><code>gcc -Wall -Wextra -Werror -fsanitize=address,undefined</code> attrape les dépassements, les usages après <code>free</code> et les fuites à l'exécution. <code>valgrind --leak-check=full</code> fait la même chose en plus lent. Un pointeur non initialisé se voit souvent avec <code>-fsanitize=memory</code> (Clang) ou en initialisant tout à <code>NULL</code>.</p>
+      </div>
+
+      <h3>Auto-test : douze questions</h3>
+      <p>Une seule réponse par question. Le retour s'affiche immédiatement, avec le pourquoi.</p>
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+
+      <div class="box idea" style="margin-top:30px">
+        <div class="lbl">À retenir</div>
+        <p>Un pointeur est une <b>adresse typée</b>. Trois questions suffisent pour le lire : <b>où</b> pointe-t-il ? <b>quel type</b> a la cible ? <b>qui</b> est propriétaire de la mémoire ? Répondre aux trois évite les confusions sur <code>&amp;</code>, <code>*</code> et <code>free</code>.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const NS = 'http://www.w3.org/2000/svg';
+  let UID = 0;
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint32_t|int16_t|uint8_t|ptrdiff_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function svgEl(name, attrs){
+    const n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function(k){ n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur mémoire : cases + flèches
+     ============================================================ */
+  function makeMemory(root){
+    const groupsEl = root.querySelector('[data-groups]');
+    const stage = root.querySelector('[data-stage]');
+    const svg = root.querySelector('[data-arrows]');
+    if (!groupsEl || !stage || !svg) return { render: function(){} };
+
+    const mid = 'mm' + (++UID);
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="' + mid + 'i" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+        '<marker id="' + mid + 'a" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>';
+
+    let prevIds = new Set();
+    let lastState = null;
+    let lastAnimate = true;
+
+    function cellHTML(c, isNew){
+      const cls = ['cell'];
+      if (c.kind) cls.push('is-' + c.kind);
+      if (c.state) String(c.state).split(/\s+/).forEach(function(t){ if (t) cls.push('is-' + t); });
+      if (isNew) cls.push('is-new');
+
+      let body = '<div class="cname">' + esc(c.name);
+      if (c.type) body += '<span class="ctype">' + esc(c.type) + '</span>';
+      body += '</div>';
+
+      if (c.fields) {
+        body += '<div class="cfields">' + c.fields.map(function(f){
+          return '<div class="cf"><span>' + esc(f.k) + '</span><b>' + esc(f.v) + '</b></div>';
+        }).join('') + '</div>';
+      } else {
+        body += '<div class="cval">' + (c.value === '' || c.value === null || c.value === undefined ? '&nbsp;' : esc(c.value)) + '</div>';
+      }
+      if (c.addr) body += '<div class="caddr">' + esc(c.addr) + '</div>';
+
+      const style = c.w ? ' style="--cw:' + Number(c.w) + 'px"' : '';
+      return '<div class="' + cls.join(' ') + '" data-id="' + esc(c.id) + '"' + style + '>' + body + '</div>';
+    }
+
+    function drawArrows(state, animate){
+      if (!state) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return;
+      const sr = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.querySelectorAll('.arrow,.alabel').forEach(function(n){ n.remove(); });
+
+      (state.arrows || []).forEach(function(a){
+        const fe = groupsEl.querySelector('[data-id="' + a.from + '"]');
+        const te = groupsEl.querySelector('[data-id="' + a.to + '"]');
+        if (!fe || !te) return;
+
+        const fr = fe.getBoundingClientRect();
+        const tr = te.getBoundingClientRect();
+        const f = {x: fr.left - sr.left, y: fr.top - sr.top, w: fr.width, h: fr.height};
+        const t = {x: tr.left - sr.left, y: tr.top - sr.top, w: tr.width, h: tr.height};
+        const fc = {x: f.x + f.w / 2, y: f.y + f.h / 2};
+        const tc = {x: t.x + t.w / 2, y: t.y + t.h / 2};
+        const dx = tc.x - fc.x;
+        const dy = tc.y - fc.y;
+        const vertical = Math.abs(dy) >= Math.abs(dx) * 0.72;
+        const gap = 4;
+        let p1, p2, c1, c2;
+
+        if (vertical) {
+          const dir = dy >= 0 ? 1 : -1;
+          p1 = {x: fc.x, y: dir > 0 ? f.y + f.h + gap : f.y - gap};
+          p2 = {x: tc.x, y: dir > 0 ? t.y - gap : t.y + t.h + gap};
+          const k = Math.max(26, Math.abs(p2.y - p1.y) * 0.46);
+          c1 = {x: p1.x, y: p1.y + dir * k};
+          c2 = {x: p2.x, y: p2.y - dir * k};
+        } else {
+          const dir = dx >= 0 ? 1 : -1;
+          p1 = {x: dir > 0 ? f.x + f.w + gap : f.x - gap, y: fc.y};
+          p2 = {x: dir > 0 ? t.x - gap : t.x + t.w + gap, y: tc.y};
+          const k = Math.max(26, Math.abs(p2.x - p1.x) * 0.46);
+          c1 = {x: p1.x + dir * k, y: p1.y};
+          c2 = {x: p2.x - dir * k, y: p2.y};
+        }
+
+        const path = svgEl('path', {
+          d: 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y,
+          'class': 'arrow' + (a.accent ? ' is-accent' : ''),
+          'marker-end': 'url(#' + mid + (a.accent ? 'a' : 'i') + ')'
+        });
+        svg.appendChild(path);
+
+        const len = path.getTotalLength();
+        if (animate && !reduceMotion.matches) {
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect();
+          path.style.transition = 'stroke-dashoffset .55s ease';
+          path.style.strokeDashoffset = '0';
+        }
+
+        if (a.label) {
+          const pt = path.getPointAtLength(len * 0.52);
+          const label = svgEl('text', {
+            x: pt.x + (vertical ? 7 : 0),
+            y: pt.y + (vertical ? 3 : -6),
+            'class': 'alabel',
+            'text-anchor': vertical ? 'start' : 'middle'
+          });
+          label.textContent = a.label;
+          svg.appendChild(label);
+        }
+      });
+    }
+
+    function render(state, animate){
+      lastState = state;
+      lastAnimate = animate !== false;
+      const nextIds = new Set();
+
+      groupsEl.classList.toggle('is-stack', (state.groups || []).length > 1);
+      const column = root.hasAttribute('data-column');
+      groupsEl.innerHTML = (state.groups || []).map(function(g){
+        const cells = (g.cells || []).map(function(c){
+          nextIds.add(c.id);
+          return cellHTML(c, !prevIds.has(c.id));
+        }).join('');
+        return '<div class="mem-group">' +
+          (g.title ? '<div class="mem-gtitle">' + esc(g.title) + '</div>' : '') +
+          '<div class="cells' + (column ? ' is-column' : '') + '">' + cells + '</div>' +
+          (g.hint ? '<div class="mem-ghint">' + esc(g.hint) + '</div>' : '') +
+        '</div>';
+      }).join('');
+      prevIds = nextIds;
+      requestAnimationFrame(function(){ drawArrows(lastState, lastAnimate); });
+    }
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){
+        if (!lastState) return;
+        requestAnimationFrame(function(){ drawArrows(lastState, false); });
+      });
+      ro.observe(stage);
+    }
+
+    return { render: render };
+  }
+
+  /* ============================================================
+     contrôleur de laboratoire (étapes, lecture, points)
+     ============================================================ */
+  function mountLab(root, spec){
+    const mem = makeMemory(root);
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const linesEl = root.querySelector('[data-lines]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    if (linesEl && spec.lines) {
+      linesEl.innerHTML = spec.lines.map(function(line, k){
+        return '<li data-line="' + k + '"><span class="ln">' + (k + 1) + '</span><span class="src">' + hl(line) + '</span></li>';
+      }).join('');
+      linesEl.addEventListener('click', function(e){
+        const li = e.target.closest('li[data-line]');
+        if (!li) return;
+        const lineNo = Number(li.getAttribute('data-line'));
+        const idx = states.findIndex(function(s){ return s.line === lineNo; });
+        if (idx >= 0) { stop(); i = idx; paint(); }
+      });
+    }
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(animate){
+      const s = states[i];
+      mem.render(s, animate !== false);
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (linesEl) {
+        Array.prototype.forEach.call(linesEl.children, function(li, k){
+          li.classList.toggle('on', k === s.line);
+        });
+      }
+      setOutput(s.output);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(false); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint(false);
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(false); }
+      }, spec.interval || 2900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(false); });
+
+    paint(false);
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     traducteur de déclarations
+     ============================================================ */
+  const DECLS = [
+    {d: 'int *p', fr: 'p est un <b>pointeur vers un int</b>.', why: 'Une étoile, un saut : <code>*p</code> est un int.'},
+    {d: 'int **pp', fr: 'pp est un <b>pointeur vers un pointeur vers int</b>.', why: 'Deux étoiles, deux sauts : <code>**pp</code> est un int.'},
+    {d: 'int *p[5]', fr: 'p est un <b>tableau de 5 pointeurs vers int</b>.', why: '<code>[]</code> est prioritaire sur <code>*</code> : d’abord un tableau, ensuite des pointeurs.'},
+    {d: 'int (*p)[5]', fr: 'p est un <b>pointeur vers un tableau de 5 int</b>.', why: 'Les parenthèses forcent <code>*</code> d’abord : un seul pointeur, qui avance de 20 octets.'},
+    {d: 'int *f(int)', fr: 'f est une <b>fonction</b> qui renvoie un <b>pointeur vers int</b>.', why: '<code>f</code> est suivi de <code>(int)</code> : c’est une fonction, pas un pointeur.'},
+    {d: 'int (*f)(int, int)', fr: 'f est un <b>pointeur vers une fonction</b> prenant deux int et renvoyant un int.', why: 'Les parenthèses autour de <code>*f</code> font de f un pointeur ; la fonction est la cible.'},
+    {d: 'const int *p', fr: 'p est un pointeur vers un <b>int constant</b>.', why: 'On ne peut pas modifier <code>*p</code>, mais on peut réaffecter <code>p</code>.'},
+    {d: 'int *const p', fr: 'p est un <b>pointeur constant</b> vers un int.', why: 'On peut modifier <code>*p</code>, mais pas réaffecter <code>p</code>.'},
+    {d: 'void *p', fr: 'p est un <b>pointeur générique</b>, sans type de cible.', why: 'On ne peut pas le déréférencer tel quel : il faut le convertir, <code>*(int *)p</code>.'},
+    {d: 'char *argv[]', fr: 'argv est un <b>tableau de pointeurs vers char</b>.', why: 'Dans une liste de paramètres, <code>char *argv[]</code> équivaut à <code>char **argv</code>.'},
+    {d: 'struct Point *p', fr: 'p est un <b>pointeur vers une struct Point</b>.', why: 'On accède aux membres avec <code>p-&gt;x</code> ou <code>(*p).x</code>.'}
+  ];
+
+  (function(){
+    const root = document.querySelector('[data-translator]');
+    if (!root) return;
+    const list = root.querySelector('[data-translist]');
+    const out = root.querySelector('[data-transout]');
+    const buttons = [];
+
+    DECLS.forEach(function(x, k){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<code>' + esc(x.d) + '</code>';
+      b.addEventListener('click', function(){ select(k); });
+      list.appendChild(b);
+      buttons.push(b);
+    });
+
+    function select(k){
+      buttons.forEach(function(b, n){ b.classList.toggle('on', n === k); });
+      const x = DECLS[k];
+      out.innerHTML = '<div class="decl">' + esc(x.d) + '</div>' +
+        '<div class="fr">' + x.fr + '</div>' +
+        '<div class="why">' + x.why + '</div>';
+    }
+
+    select(0);
+  })();
+
+  /* ============================================================
+     explorateur d'octets
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-addrlab]');
+    if (!root) return;
+    const grid = root.querySelector('[data-bytes]');
+    const info = root.querySelector('[data-info]');
+    const buttons = Array.prototype.slice.call(root.querySelectorAll('[data-var]'));
+
+    const BYTES = ['2A','00','00','00','41','··','··','··','00','10','00','00','00','00','00','00'];
+    const OWNER = ['x','x','x','x','c',null,null,null,'p','p','p','p','p','p','p','p'];
+    const META = {
+      x: {name:'x', type:'int', size:4, addr:'0x1000', value:'42 (0x2A)', bytes:'2A 00 00 00', note:'Petit-boutisme : l’octet de poids faible est le premier. 0x0000002A = 42.'},
+      c: {name:'c', type:'char', size:1, addr:'0x1004', value:"'A' (0x41)", bytes:'41', note:'Un seul octet. Les octets 0x1005 à 0x1007 sont du bourrage, pour aligner p.'},
+      p: {name:'p', type:'int *', size:8, addr:'0x1008', value:'0x1000', bytes:'00 10 00 00 00 00 00 00', note:'p contient l’adresse de x : c’est exactement ce qu’on appelle un pointeur.'}
+    };
+    let selected = 'x';
+
+    function paint(sel){
+      selected = sel;
+      grid.innerHTML = BYTES.map(function(b, i){
+        const owner = OWNER[i];
+        const cls = ['byte'];
+        if (owner) cls.push('v-' + owner); else cls.push('pad');
+        if (sel && owner === sel) cls.push('sel');
+        const addr = '0x10' + i.toString(16).toUpperCase().padStart(2, '0');
+        return '<div class="' + cls.join(' ') + '" data-byte="' + i + '">' +
+          '<span class="ba">' + addr + '</span><span class="bv">' + b + '</span></div>';
+      }).join('');
+
+      buttons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-var') === sel); });
+      if (!sel) return;
+      const m = META[sel];
+      info.innerHTML = '<b>' + m.name + '</b> · ' + m.type + ' · ' + m.size + ' ' + (m.size > 1 ? 'octets' : 'octet') + ' · adresse ' +
+        '<span class="mono">' + m.addr + '</span><br>valeur : <span class="mono">' + m.value +
+        '</span> — octets : <span class="mono">' + m.bytes + '</span><br>' + m.note;
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ paint(b.getAttribute('data-var')); });
+    });
+
+    grid.addEventListener('click', function(e){
+      const el = e.target.closest('[data-byte]');
+      if (!el) return;
+      const owner = OWNER[Number(el.getAttribute('data-byte'))];
+      if (owner) paint(owner);
+    });
+
+    paint('x');
+  })();
+
+  /* ============================================================
+     widget tableau : p + i
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-arrlab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-arrstage]');
+    const track = root.querySelector('[data-arrtrack]');
+    const cells = Array.prototype.slice.call(root.querySelectorAll('.arr-cell'));
+    const cur = root.querySelector('[data-cur]');
+    const range = root.querySelector('[data-range]');
+    const iout = root.querySelector('[data-iout]');
+    const formula = root.querySelector('[data-formula]');
+    const svg = root.querySelector('[data-arrsvg]');
+    const pcard = root.querySelector('.arr-p');
+
+    const BASE = 0x1000;
+    const VALUES = [10, 20, 30, 40];
+    let i = 2;
+
+    function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const pr = pcard.getBoundingClientRect();
+      const ar = cells[0].getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      let d;
+      if (window.matchMedia('(max-width: 620px)').matches) {
+        const x1 = pr.left + pr.width / 2 - sr.left;
+        const y1 = pr.bottom - sr.top + 3;
+        const x2 = ar.left + ar.width / 2 - sr.left;
+        const y2 = ar.top - sr.top - 5;
+        const my = (y1 + y2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = pr.right - sr.left + 4;
+        const y1 = pr.top - sr.top + pr.height / 2;
+        const x2 = ar.left - sr.left - 5;
+        const y2 = ar.top - sr.top + ar.height / 2;
+        const mx = (x1 + x2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + mx + ' ' + y1 + ', ' + mx + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      }
+      svg.innerHTML = '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ar-accent)"/>';
+    }
+
+    function layout(){
+      const idx = Math.min(i, 3);
+      const cell = cells[idx];
+      let x;
+      if (i < 4) {
+        x = cell.offsetLeft + cell.offsetWidth / 2;
+      } else {
+        const last = cells[3];
+        x = last.offsetLeft + last.offsetWidth + 13;
+      }
+      cur.style.left = x + 'px';
+      cur.textContent = 'p + ' + i;
+      cells.forEach(function(c, k){ c.classList.toggle('sel', k === i); });
+      range.value = i;
+      iout.textContent = 'i = ' + i;
+
+      if (i < 4) {
+        formula.innerHTML = 'p + ' + i + ' = <b>' + hex(BASE + 4 * i) + '</b> → <b>*(p + ' + i + ')</b> = a[' + i + '] = <b>' + VALUES[i] + '</b> <span class="ok">✓</span>';
+      } else {
+        formula.innerHTML = 'p + 4 = <b>' + hex(BASE + 16) + '</b> : adresse juste après le tableau. <b>Valide</b> pour comparer, <span class="ko">interdit</span> à déréférencer.';
+      }
+      drawArrow();
+    }
+
+    range.addEventListener('input', function(){
+      i = Math.max(0, Math.min(4, parseInt(range.value, 10) || 0));
+      layout();
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(layout); });
+      ro.observe(stage);
+    }
+
+    requestAnimationFrame(layout);
+  })();
+
+  /* ============================================================
+     widget const
+     ============================================================ */
+  (function(){
+    document.querySelectorAll('.const-card').forEach(function(card){
+      const kind = card.getAttribute('data-case');
+      const fb = card.querySelector('[data-fb]');
+      if (!fb) return;
+      card.querySelectorAll('[data-act]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          const act = btn.getAttribute('data-act');
+          let ok = false;
+          let msg = '';
+          if (kind === 'c1') {
+            if (act === 'val') { ok = false; msg = '✗ error: assignment of read-only location ‘*p’ — la cible est const.'; }
+            else { ok = true; msg = '✓ p = &y est permis : le pointeur lui-même n’est pas const.'; }
+          } else if (kind === 'c2') {
+            if (act === 'val') { ok = true; msg = '✓ *p = 5 est permis : la cible n’est pas const.'; }
+            else { ok = false; msg = '✗ error: assignment of read-only variable ‘p’ — le pointeur est const.'; }
+          } else {
+            ok = false;
+            msg = act === 'val'
+              ? '✗ *p est const : la cible est protégée.'
+              : '✗ p est const : le pointeur est protégé.';
+          }
+          fb.textContent = msg;
+          fb.className = 'const-fb ' + (ok ? 'ok' : 'ko');
+        });
+      });
+    });
+  })();
+
+  /* ============================================================
+     widget pointeur de fonction
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-fplab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-fpstage]');
+    const svg = root.querySelector('[data-fpsvg]');
+    const opval = root.querySelector('[data-opval]');
+    const out = root.querySelector('[data-fpout]');
+    const fnButtons = Array.prototype.slice.call(root.querySelectorAll('.fp-fn'));
+
+    const FUNCS = {
+      add: {addr: '0x401000', value: 7},
+      mul: {addr: '0x401040', value: 12}
+    };
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const op = root.querySelector('.fp-op').getBoundingClientRect();
+      const targetEl = root.querySelector('.fp-fn.on');
+      if (!targetEl) return;
+      const target = targetEl.getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      const x1 = op.left + op.width / 2 - sr.left;
+      const y1 = op.bottom - sr.top + 3;
+      const x2 = target.left + target.width / 2 - sr.left;
+      const y2 = target.top - sr.top - 5;
+      const my = (y1 + y2) / 2;
+      svg.innerHTML = '<path d="M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2 +
+        '" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ar-accent)"/>';
+    }
+
+    function pick(k){
+      const f = FUNCS[k];
+      if (!f) return;
+      opval.textContent = f.addr;
+      out.innerHTML = 'op(3, 4) = <b>' + f.value + '</b>';
+      fnButtons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fn') === k); });
+      requestAnimationFrame(drawArrow);
+    }
+
+    root.querySelectorAll('[data-fn]').forEach(function(b){
+      b.addEventListener('click', function(){ pick(b.getAttribute('data-fn')); });
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(drawArrow); });
+      ro.observe(stage);
+    }
+
+    pick('add');
+  })();
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'Après <code>int x = 5; int *p = &amp;x; *p = 8;</code>, que vaut <code>x</code> ?',
+     o: ['5', '8', '0x1000', 'comportement indéfini'], a: 1,
+     fb: '<code>*p</code> est la case de x : écrire 8 dans <code>*p</code>, c’est écrire 8 dans x.'},
+    {q: 'Dans <code>main</code>, avec <code>int a[5];</code>, que vaut <code>sizeof(a) / sizeof(a[0])</code> ?',
+     o: ['5', '4', '8', '2'], a: 0,
+     fb: '20 / 4 = 5. Mais dans une fonction où <code>a</code> est un paramètre, <code>a</code> est un pointeur : le résultat serait 2 sur 64 bits.'},
+    {q: 'Que fait <code>int *p; *p = 3;</code> ?',
+     o: ['p pointe sur 3', 'x vaut 3', 'comportement indéfini : p n’est pas initialisé', 'le compilateur refuse'], a: 2,
+     fb: 'p contient une adresse indéterminée. Le compilateur accepte, l’exécution casse. Initialise toujours p.'},
+    {q: 'Que fait <code>free(p); *p = 1;</code> ?',
+     o: ['libère puis réaffecte', 'comportement indéfini : usage après free', 'met p à NULL', 'double free'], a: 1,
+     fb: 'Après <code>free</code>, p est suspendu (dangling). Il faut <code>p = NULL</code> et ne plus déréférencer.'},
+    {q: 'Avec <code>const int *p = &amp;x;</code>, que peut-on faire ?',
+     o: ['*p = 5 seulement', 'p = &amp;y seulement', 'les deux', 'aucun des deux'], a: 1,
+     fb: 'La cible est const, pas le pointeur : on peut changer p, pas <code>*p</code>.'},
+    {q: 'Avec <code>int a[4]</code> à l’adresse 0x1000 et <code>int *p = a;</code>, que vaut <code>p + 2</code> ?',
+     o: ['0x1002', '0x1004', '0x1008', '0x1010'], a: 2,
+     fb: 'Chaque pas vaut <code>sizeof(int)</code> = 4 octets : 0x1000 + 8 = 0x1008.'},
+    {q: 'À quoi <code>a[2]</code> est-il exactement équivalent ?',
+     o: ['*(a + 2)', '*(a + 2 * sizeof(int))', '&amp;a[2]', 'a + 2'], a: 0,
+     fb: '<code>a[i]</code> est défini comme <code>*(a + i)</code> : le compilateur applique lui-même le facteur sizeof.'},
+    {q: 'Que fait <code>char *s = "abc"; s[0] = \'A\';</code> ?',
+     o: ['s vaut "Abc"', 'comportement indéfini : littéral en lecture seule', 'crée une copie', 'alloue 4 octets'], a: 1,
+     fb: 'Le littéral est souvent en .rodata. Pour modifier, il faut <code>char s[] = "abc";</code>.'},
+    {q: 'Avec <code>int x = 5; int *p = &amp;x; int **pp = &amp;p;</code>, que vaut <code>**pp</code> ?',
+     o: ['5', '0x1000', '0x2000', 'NULL'], a: 0,
+     fb: 'pp → p → x : deux déréférencements pour atteindre l’int.'},
+    {q: 'Après <code>p = malloc(sizeof *p);</code>, que faut-il vérifier avant <code>*p</code> ?',
+     o: ['p != NULL', 'p == NULL', 'sizeof(p)', '*p == 0'], a: 0,
+     fb: 'malloc renvoie NULL si l’allocation échoue. On teste toujours avant d’utiliser.'},
+    {q: 'Après <code>free(p);</code>, que vaut <code>p</code> ?',
+     o: ['NULL', 'l’adresse du bloc, devenue invalide', '0', 'indéfini mais utilisable'], a: 1,
+     fb: 'free ne modifie pas p. Il contient encore l’adresse, mais le bloc n’existe plus : c’est un pointeur suspendu.'},
+    {q: 'Que déclare <code>int (*f)(int);</code> ?',
+     o: ['une fonction qui renvoie int *', 'un pointeur vers une fonction prenant un int', 'un tableau de fonctions', 'un pointeur vers int'], a: 1,
+     fb: 'Les parenthèses autour de <code>*f</code> font de f un pointeur ; la cible est une fonction. <code>int *f(int)</code> serait une fonction renvoyant un pointeur.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E2-EMB1 — comprendre les systèmes embarqués</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#ffffff; --card2:#faf9f5;
+    --ink:#1a1a18; --muted:#5f5e5a; --faint:#88877f; --line:rgba(0,0,0,.12); --line2:rgba(0,0,0,.06);
+    --purple:#534ab7; --purple-s:#eeedfe; --teal:#0f6e56; --teal-s:#e1f5ee;
+    --coral:#993c1d; --coral-s:#faece7; --blue:#185fa5; --blue-s:#e6f1fb;
+    --green:#3b6d11; --green-s:#eaf3de; --amber:#854f0b; --amber-s:#faeeda;
+    --red:#a32d2d; --red-s:#fcebeb; --gray:#5f5e5a; --gray-s:#f1efe8;
+    --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.04);
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#141413; --card:#1f1f1d; --card2:#262624;
+      --ink:#e8e6de; --muted:#b4b2a9; --faint:#888780; --line:rgba(255,255,255,.16); --line2:rgba(255,255,255,.07);
+      --purple:#afaaec; --purple-s:#26215c; --teal:#5dcaa5; --teal-s:#04342c;
+      --coral:#f0997b; --coral-s:#4a1b0c; --blue:#85b7eb; --blue-s:#042c53;
+      --green:#97c459; --green-s:#173404; --amber:#ef9f27; --amber-s:#412402;
+      --red:#f09595; --red-s:#501313; --gray:#b4b2a9; --gray-s:#2c2c2a;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--purple);z-index:50;transition:width .1s linear}
+
+  /* ---------- gabarit ---------- */
+  .wrap{max-width:920px;margin:0 auto;padding:56px 28px 120px}
+
+  /* ---------- sommaire ---------- */
+  nav{position:sticky;top:32px;align-self:start;font-size:14px}
+  nav .navtitle{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+  nav ol{list-style:none;counter-reset:c}
+  nav li{counter-increment:c;margin:2px 0}
+  nav a{display:flex;gap:10px;padding:6px 10px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a::before{content:counter(c);font-variant-numeric:tabular-nums;color:var(--faint);font-size:12px;min-width:14px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow);font-weight:500}
+  nav a.on::before{color:var(--purple)}
+  .navfoot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line2);color:var(--faint);font-size:12px;line-height:1.5}
+  @media (max-width:960px){
+    .wrap{padding:32px 18px 80px}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{margin-bottom:72px}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:18px}
+  h1{font-size:clamp(30px,4.4vw,46px);line-height:1.1;letter-spacing:-.02em;font-weight:600;max-width:24ch}
+  .hero .sub{margin-top:20px;font-size:18px;color:var(--muted);max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 13px;font-size:13px;color:var(--muted)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  /* ---------- carte du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:36px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:16px 16px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 12px/1 var(--mono);color:var(--purple)}
+  .step h3{font-size:15px;font-weight:600;margin:8px 0 4px}
+  .step p{font-size:13px;color:var(--muted);line-height:1.45}
+
+  /* ---------- chapitres ---------- */
+  section{scroll-margin-top:24px;margin-bottom:88px}
+  .kicker{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .kicker .badge{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;font:600 15px/1 var(--mono);background:var(--purple-s);color:var(--purple)}
+  .kicker .tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(23px,2.7vw,30px);line-height:1.2;letter-spacing:-.01em;font-weight:600;margin-bottom:14px;max-width:30ch}
+  .lead{font-size:17px;color:var(--muted);max-width:66ch;margin-bottom:26px}
+  h3{font-size:17px;font-weight:600;margin:34px 0 10px}
+  h4{font-size:14px;font-weight:600;margin:22px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  p{max-width:68ch}
+  p+p{margin-top:12px}
+  ul,ol{max-width:68ch;padding-left:20px}
+  li{margin:7px 0}
+  li::marker{color:var(--faint)}
+  b,strong{font-weight:600}
+  code{font:13.5px/1.4 var(--mono);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  .ok{color:var(--green)} .ko{color:var(--red)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:14px;padding:18px 20px;margin:20px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .box p,.box ul{max-width:64ch}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+
+  /* ---------- figures ---------- */
+  figure{margin:26px 0 30px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:22px 22px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:13px;color:var(--faint);margin-top:10px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:system-ui,-apple-system,sans-serif;font-size:14px;fill:var(--ink)}
+  .ts{font-family:system-ui,-apple-system,sans-serif;font-size:12px;fill:var(--muted)}
+  .th{font-family:system-ui,-apple-system,sans-serif;font-size:14px;fill:var(--ink);font-weight:500}
+  .tm{font-family:var(--mono);font-size:11.5px;fill:var(--muted)}
+  .arr{stroke:var(--muted);stroke-width:1.5px;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2px;fill:none;stroke-dasharray:4 3}
+  .leader{stroke:var(--faint);stroke-width:.5px;stroke-dasharray:4 3;fill:none}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.6}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.6}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.6}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.6}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.6}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-amber>rect,.c-amber>circle{fill:var(--amber-s);stroke:var(--amber);stroke-width:.6}
+  .c-amber>.th,.c-amber>.t{fill:var(--amber)} .c-amber>.ts{fill:var(--amber)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.6}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.6}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+
+  /* ---------- code ---------- */
+  .code{background:#1d1d1b;border-radius:14px;margin:22px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:12px/1 var(--mono);color:#a9a7a0;letter-spacing:.02em}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:7px;padding:5px 10px;font:11px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:14px 16px 16px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e6e4dd;font:12.5px/1.62 var(--mono);white-space:pre}
+  .code .c{color:#8a8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a5d6a7} .code .f{color:#c4a7f7}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12.5px;color:var(--faint);padding-bottom:8px}
+  .tbl th,.tbl td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12.5px}
+
+  /* ---------- « à toi » ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--purple);border-radius:12px;padding:14px 18px;margin:22px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:500;list-style:none;display:flex;gap:10px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:600 10.5px/1 var(--mono);letter-spacing:.1em;color:var(--purple);background:var(--purple-s);padding:4px 7px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:10px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;margin-top:4px}
+
+  /* ---------- widgets ---------- */
+  .widget{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:20px;margin:24px 0;box-shadow:var(--shadow)}
+  .widget h4{margin:0 0 12px;font-size:12px;letter-spacing:.1em}
+  .wgrid{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+  .ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctrl input[type=number]{width:96px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:14px var(--mono)}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:9px;padding:8px 13px;font:500 13.5px system-ui;cursor:pointer;transition:background .15s,transform .1s}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.p{background:var(--purple);border-color:var(--purple);color:#fff}
+  @media (prefers-color-scheme:dark){.btn.p{color:#141413}}
+  .out{font:14px/1.7 var(--mono);color:var(--muted)}
+  .out b{color:var(--ink)}
+  .warn{color:var(--red)}
+
+  /* FIFO */
+  .cells{display:flex;gap:0;margin:14px 0 10px}
+  .cell{width:46px;height:46px;border:1px solid var(--line);display:grid;place-content:center;font:600 15px/1 var(--mono);background:var(--card2);color:var(--faint);position:relative;transition:background .2s,color .2s}
+  .cell:first-child{border-radius:9px 0 0 9px}
+  .cell:last-child{border-radius:0 9px 9px 0}
+  .cell.full{background:var(--teal-s);color:var(--teal);border-color:var(--teal)}
+  .cell .ix{position:absolute;top:2px;left:4px;font:9px/1 var(--mono);color:var(--faint)}
+  .cell.rd{border-top:3px solid var(--red)}
+  .cell.wr{border-bottom:3px solid var(--blue)}
+  .legend{display:flex;gap:16px;font-size:12.5px;color:var(--faint);flex-wrap:wrap}
+  .legend span::before{content:"—";margin-right:5px}
+  .legend .rd::before{color:var(--red)} .legend .wr::before{color:var(--blue)}
+
+  /* quiz */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin:26px 0}
+  .q{padding:14px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:500;margin-bottom:10px;max-width:64ch}
+  .opts{display:grid;gap:6px;max-width:64ch}
+  .opt{display:flex;gap:10px;align-items:baseline;border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:14.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--purple)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:13.5px;color:var(--muted);margin-top:8px;display:none}
+  .fb.show{display:block}
+  .score{font:600 14px var(--mono);color:var(--purple);margin-top:16px}
+
+  /* divers */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  .mini{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+  .mini h4{margin:0 0 6px}
+  .mini p{font-size:14px;color:var(--muted)}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding-top:22px;font-size:13px;color:var(--faint)}
+  @media print{
+    nav,#progress,.code button{display:none}
+    body{background:#fff}
+    .wrap{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f7f7f5}.code code{color:#111}
+    .code .c{color:#6b6b66}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+  }
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/>
+  </marker></defs></svg>
+
+<div class="wrap">
+
+
+<main>
+<header class="hero">
+  <div class="eyebrow">E2-EMB1 · comprendre, pas réciter</div>
+  <h1>Du bouton à la LED : comment un microcontrôleur entend le monde</h1>
+  <p class="sub">Huit étapes, dans l'ordre où les questions se posent : la carte, la broche, l'interruption, le tampon, le temps, puis le code propre. Chaque étape part d'un problème concret, montre le mécanisme, puis le piège qui coûte le point.</p>
+  <div class="meta">
+    <span class="chip"><b>120 MHz</b> · PLL 480 → 120</span>
+    <span class="chip">SysTick <b>12 000 000</b> cycles pour 100 ms</span>
+    <span class="chip">FIFO <b>N−1</b> éléments</span>
+    <span class="chip">charge <b>Σ f·d</b></span>
+  </div>
+
+  <div class="path">
+    <a class="step" href="#c1"><div class="n">01</div><h3>La carte</h3><p>Cortex-M4, carte mémoire, broches, horloge : où est quoi.</p></a>
+    <a class="step" href="#c2"><div class="n">02</div><h3>Parler au matériel</h3><p>DriverLib, GPIO, masques : allumer une LED, exercice 1.1.</p></a>
+    <a class="step" href="#c3"><div class="n">03</div><h3>Être prévenu</h3><p>Interruption, NVIC, priorité, ISR propre : exercice 1.2.</p></a>
+    <a class="step" href="#c4"><div class="n">04</div><h3>Ne rien perdre</h3><p>FIFO, pile, dimensionnement : exercices 1.3 et 2.1.</p></a>
+    <a class="step" href="#c5"><div class="n">05</div><h3>Faire plusieurs choses</h3><p>SysTick, événements, charge du processeur, veille.</p></a>
+    <a class="step" href="#c6"><div class="n">06</div><h3>Structurer</h3><p>Pointeurs de fonction, callbacks, boutons : 1.4 et 2.13.</p></a>
+    <a class="step" href="#c7"><div class="n">07</div><h3>Outils</h3><p>Compilation, édition de liens, <code>static</code>, git.</p></a>
+    <a class="step" href="#c8"><div class="n">08</div><h3>Réviser</h3><p>Pièges, méthode du jour J, auto-test corrigé.</p></a>
+  </div>
+</header>
+
+
+<section id="c1">
+  <div class="kicker"><div class="badge">01</div><div class="tag">le matériel</div></div>
+  <h2>La carte : tout a une adresse, rien n'est magique</h2>
+  <p class="lead">Avant d'écrire une ligne de code, il faut savoir ce qu'on pilote : un processeur 32 bits, de la mémoire, et des périphériques qui répondent à des adresses.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>Un microcontrôleur n'est pas « un petit ordinateur ». C'est une puce unique où le processeur, la mémoire et les périphériques (ports, timers, UART…) partagent le même espace d'adressage. Écrire à l'adresse d'un périphérique, c'est déjà le piloter : il n'y a pas d'appel système entre toi et le matériel.</p>
+  </div>
+
+  <p>Le cœur est un <b>Cortex-M4F</b> : 32 bits, architecture <b>Harvard</b> (bus d'instructions et de données séparés), jeu <b>RISC</b>, jusqu'à 120 MHz. Attention au QCM : « RISC » décrit le jeu d'instructions ; la case attendue pour l'organisation mémoire est <b>Harvard</b>.</p>
+
+  <table class="tbl">
+    <caption>Ce que contient la puce TM4C1294NCPDT</caption>
+    <tr><th>bloc</th><th>valeur</th></tr>
+    <tr><td>Mémoire</td><td>1024 ko de flash · 256 ko de SRAM · 6 ko d'EEPROM</td></tr>
+    <tr><td>Périphériques</td><td>8 UART · 10 I2C · 2 CAN · USB · Ethernet · 2 ADC 12 bits · 90 broches GPIO</td></tr>
+    <tr><td>Dans le cœur</td><td>SysTick 24 bits · NVIC 8 niveaux de priorité · FPU simple précision · MPU</td></tr>
+  </table>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 250" role="img" aria-label="Carte mémoire du TM4C1294">
+        <g class="c-blue"><rect x="40" y="40" width="230" height="30" rx="6"/><text class="th" x="54" y="59">Flash interne (.text, const)</text></g>
+        <text class="tm" x="284" y="59">0x0000.0000 – 0x000F.FFFF</text>
+        <g class="c-gray"><rect x="40" y="78" width="230" height="30" rx="6"/><text class="th" x="54" y="97">ROM interne</text></g>
+        <text class="tm" x="284" y="97">0x0200.0000 – 0x02FF.FFFF</text>
+        <g class="c-teal"><rect x="40" y="116" width="230" height="30" rx="6"/><text class="th" x="54" y="135">SRAM (données, pile, tas)</text></g>
+        <text class="tm" x="284" y="135">0x2000.0000 – 0x2006.FFFF</text>
+        <g class="c-amber"><rect x="40" y="154" width="230" height="30" rx="6"/><text class="th" x="54" y="173">Périphériques</text></g>
+        <text class="tm" x="284" y="173">0x4000.0000 – 0x4405.4FFF</text>
+        <g class="c-purple"><rect x="40" y="192" width="230" height="30" rx="6"/><text class="th" x="54" y="211">SysTick, NVIC, MPU, FPU</text></g>
+        <text class="tm" x="284" y="211">0xE000.E000 – 0xE000.EFFF</text>
+        <text class="ts" x="40" y="243">Bus d'adresses 32 bits : 4 Gio adressables</text>
+      </svg>
+    </div>
+    <figcaption>Les cinq zones utiles à connaître. Le code vit en flash ; les variables, la pile et le tas en SRAM ; les registres des périphériques sont à 0x4000.0000 et ceux du cœur à 0xE000.E000. La <b>table des vecteurs</b> occupe le début de la flash (0x0000.0000) : mot 0 = SP initial, mot k = adresse du handler de l’exception k — SysTick est l’exception 15, donc à l’offset 15 × 4 = 0x3C.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 300" role="img" aria-label="Placement des sections en flash et en SRAM">
+        <text class="th" x="40" y="26">FLASH — 1 Mo</text>
+        <g class="c-gray"><rect x="40" y="36" width="260" height="118" rx="10"/></g>
+        <g class="c-blue"><rect x="52" y="50" width="236" height="42" rx="6"/><text class="th" x="66" y="68">.text — le code</text><text class="ts" x="66" y="84">main(), HAL, DriverLib</text></g>
+        <g class="c-purple"><rect x="52" y="100" width="236" height="42" rx="6"/><text class="th" x="66" y="118">.rodata — constantes</text><text class="ts" x="66" y="134">const, chaînes littérales</text></g>
+        <text class="th" x="380" y="26">SRAM — 256 ko</text>
+        <g class="c-gray"><rect x="380" y="36" width="260" height="196" rx="10"/></g>
+        <g class="c-teal"><rect x="392" y="50" width="236" height="38" rx="6"/><text class="th" x="406" y="66">.data — initialisées</text><text class="ts" x="406" y="81">copiées de la flash au reset</text></g>
+        <g class="c-teal"><rect x="392" y="96" width="236" height="38" rx="6"/><text class="th" x="406" y="112">.bss — mises à zéro</text><text class="ts" x="406" y="127">globales non initialisées</text></g>
+        <g class="c-amber"><rect x="392" y="142" width="236" height="38" rx="6"/><text class="th" x="406" y="158">pile — SP descend</text><text class="ts" x="406" y="173">variables locales, retours</text></g>
+        <g class="c-coral"><rect x="392" y="188" width="236" height="38" rx="6"/><text class="th" x="406" y="204">tas — malloc monte</text><text class="ts" x="406" y="219">allocation dynamique</text></g>
+        <text class="ts" x="40" y="256">Au démarrage, le code de startup copie .data de la flash vers la RAM, puis met .bss à zéro.</text>
+        <text class="ts" x="40" y="276">Pile et tas grandissent l'un vers l'autre : leur rencontre est un débordement.</text>
+      </svg>
+    </div>
+    <figcaption>Ce que le <code>.map</code> te montre : le code et les constantes restent en flash, seules les variables occupent la SRAM. Une globale non initialisée ne prend pas de place en flash.</figcaption>
+  </figure>
+
+  <h3>Les registres qui expliquent les appels de fonction</h3>
+  <p>Un appel de fonction n'est pas une abstraction : c'est un saut avec une adresse de retour. <code>R13 = SP</code> pointe la pile, <code>R14 = LR</code> garde l'adresse de retour, <code>R15 = PC</code> désigne la prochaine instruction. <code>PRIMASK</code> et <code>BASEPRI</code> masquent les interruptions.</p>
+  <ol>
+    <li>L'instruction d'appel range l'adresse de retour dans <b>LR</b>.</li>
+    <li><b>PC</b> prend l'adresse de la fonction appelée.</li>
+    <li>La fonction empile ce qu'elle doit préserver, en descendant <b>SP</b>.</li>
+    <li>Au retour, <b>PC</b> reprend la valeur de LR — une ISR revient exactement de la même façon.</li>
+  </ol>
+
+  <h3>La carte physique : les broches à ne pas confondre</h3>
+  <table class="tbl">
+    <tr><th>signal</th><th>broche</th><th>à retenir</th></tr>
+    <tr><td>D1 / D2</td><td>PN1 / PN0</td><td><b>l'ordre est inversé</b> : D1 n'est pas PN0</td></tr>
+    <tr><td>D3 / D4</td><td>PF4 / PF0</td><td>D4 partage la broche avec le signal SWD_TDI</td></tr>
+    <tr><td>USR_SW1 / USR_SW2</td><td>PJ0 / PJ1</td><td>appui ⇒ lecture 0 : boutons <b>actifs bas</b>, d'où le pull-up</td></tr>
+  </table>
+
+  <h3>D'où viennent les 120 MHz</h3>
+  <p>L'oscillateur interne bat à 16 MHz. La PLL multiplie jusqu'à 480 MHz (le VCO), puis un diviseur ramène l'horloge système à 120 MHz. Un seul appel règle tout et <b>renvoie la fréquence réellement obtenue</b> : c'est cette valeur qu'on garde, jamais une constante recopiée à la main.</p>
+  <div class="code"><header><span>HAL_TM4C1294.c</span><button data-copy>copier</button></header><pre><code>uint32_t g_sysClockHz;                        <span class="c">/* fréquence réellement obtenue */</span>
+
+<span class="k">void</span> <span class="f">clockInit</span>(<span class="k">void</span>)
+{
+    g_sysClockHz = <span class="f">SysCtlClockFreqSet</span>(SYSCTL_OSC_INT | SYSCTL_USE_PLL
+                                   | SYSCTL_CFG_VCO_480, <span class="n">120000000</span>);
+}</code></pre></div>
+
+  <div class="box note">
+    <div class="lbl">Pourquoi ce détour</div>
+    <p>Parce que tout le reste en dépend : le SysTick compte des cycles de cette horloge, les délais se calculent avec elle, et la charge du processeur se mesure en temps réel. Une horloge fausse rend faux tous les calculs de la page 5.</p>
+  </div>
+
+  <details class="try"><summary>Quelle broche allume D1 ? Et quel niveau lit-on sur PJ0 quand USR_SW1 est appuyé ?</summary>
+    <div class="ans"><b>D1 = PN1</b> (D2 = PN0 : l'ordre est inversé). Les boutons sont actifs bas : appuyé ⇒ niveau logique <b>0</b>, ce qui explique le pull-up interne.</div>
+  </details>
+</section>
+
+
+<section id="c2">
+  <div class="kicker"><div class="badge">02</div><div class="tag">gpio · exercice 1.1</div></div>
+  <h2>Parler au matériel : trois étapes, puis des masques</h2>
+  <p class="lead">Allumer une LED suppose de réveiller le port, de choisir le sens de la broche, puis de régler son étage électrique. DriverLib fait chaque étape en un appel — encore faut-il les appeler dans l'ordre.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>Une broche GPIO est un interrupteur que le logiciel lit ou commande. Mais une broche appartient à un <b>port</b>, et un port ne répond pas tant que son horloge n'est pas allumée. C'est la première cause de « ça ne fait rien » chez un débutant.</p>
+  </div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 230" role="img" aria-label="Architecture logicielle en couches">
+        <g class="c-blue"><rect x="40" y="30" width="300" height="34" rx="8"/><text class="th" x="190" y="52" text-anchor="middle">Application — main.c</text></g>
+        <g class="c-teal"><rect x="40" y="76" width="300" height="34" rx="8"/><text class="th" x="190" y="98" text-anchor="middle">HAL — HAL_Leds.c, HAL_Buttons.c…</text></g>
+        <g class="c-purple"><rect x="40" y="122" width="300" height="34" rx="8"/><text class="th" x="190" y="144" text-anchor="middle">DriverLib — TivaWare</text></g>
+        <g class="c-gray"><rect x="40" y="168" width="300" height="34" rx="8"/><text class="th" x="190" y="190" text-anchor="middle">Matériel — TM4C1294</text></g>
+        <line class="arr" x1="190" y1="64" x2="190" y2="74" marker-end="url(#ar)"/>
+        <line class="arr" x1="190" y1="110" x2="190" y2="120" marker-end="url(#ar)"/>
+        <line class="arr" x1="190" y1="156" x2="190" y2="166" marker-end="url(#ar)"/>
+        <path d="M360 93 L360 40" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+        <text class="ts" x="372" y="70" fill="var(--red)">appel interdit</text>
+        <text class="ts" x="372" y="88" fill="var(--red)">(HAL → application)</text>
+        <text class="ts" x="40" y="222">HAL = Hardware Abstraction Layer. CMSIS est celle d'ARM pour les Cortex-M.</text>
+      </svg>
+    </div>
+    <figcaption>Une couche n'appelle que celle du dessous. Si la carte change, seule la HAL change — c'est tout l'intérêt de la séparation.</figcaption>
+  </figure>
+
+  <h3>Les trois étapes</h3>
+  <ol>
+    <li><b>Horloge du port</b> : <code>SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOx)</code>, puis attendre <code>SysCtlPeripheralReady</code>. Sans horloge, l'accès au port provoque une faute.</li>
+    <li><b>Direction</b> : <code>GPIOPinTypeGPIOInput(port, broches)</code> ou <code>GPIOPinTypeGPIOOutput</code>.</li>
+    <li><b>Étage électrique</b> : <code>GPIOPadConfigSet(port, broches, courant, type)</code>. Pour un bouton, <code>GPIO_PIN_TYPE_STD_WPU</code> (pull-up) ; pour une LED, <code>GPIO_STRENGTH_6MA</code>. Sur une entrée, seul le type compte.</li>
+  </ol>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 260" role="img" aria-label="Schéma d'entrée avec pull-up et de sortie avec LED">
+        <text class="th" x="40" y="28">(a) entrée : bouton et pull-up</text>
+
+        <g class="c-blue"><rect x="40" y="120" width="86" height="40" rx="8"/><text class="th" x="83" y="145" text-anchor="middle">PJ0</text></g>
+        <line class="arr" x1="126" y1="140" x2="196" y2="140"/>
+        <circle cx="200" cy="140" r="3" fill="var(--muted)"/>
+
+        <line class="arr" x1="200" y1="140" x2="200" y2="110"/>
+        <g class="c-green"><rect x="190" y="94" width="20" height="16" rx="3"/></g>
+        <line class="arr" x1="200" y1="94" x2="200" y2="76"/>
+        <text class="ts" x="210" y="78">3V3</text>
+        <text class="ts" x="126" y="104">pull-up</text>
+
+        <line class="arr" x1="200" y1="140" x2="200" y2="170"/>
+        <g class="c-gray"><rect x="158" y="170" width="84" height="30" rx="6"/><text class="th" x="200" y="190" text-anchor="middle">SW1</text></g>
+        <line class="arr" x1="200" y1="200" x2="200" y2="222"/>
+        <line class="arr" x1="184" y1="222" x2="216" y2="222"/>
+        <line class="arr" x1="190" y1="229" x2="210" y2="229"/>
+        <line class="arr" x1="195" y1="236" x2="205" y2="236"/>
+        <text class="ts" x="226" y="232">GND</text>
+        <text class="ts" x="40" y="254">relâché : 1 (pull-up) · appuyé : 0 — logique inversée</text>
+
+        <text class="th" x="352" y="28">(b) sortie : la broche pousse le courant</text>
+
+        <g class="c-blue"><rect x="380" y="120" width="86" height="40" rx="8"/><text class="th" x="423" y="145" text-anchor="middle">PN1</text></g>
+        <line class="arr" x1="466" y1="140" x2="494" y2="140"/>
+        <g class="c-amber"><rect x="494" y="132" width="30" height="16" rx="3"/></g>
+        <text class="ts" x="500" y="124">R</text>
+        <line class="arr" x1="524" y1="140" x2="552" y2="140"/>
+
+        <path d="M552 124 L552 156 L580 140 Z" fill="none" stroke="var(--muted)" stroke-width="1.5"/>
+        <line class="arr" x1="580" y1="124" x2="580" y2="156"/>
+        <text class="ts" x="556" y="116">LED</text>
+        <line class="arr" x1="580" y1="140" x2="608" y2="140"/>
+        <line class="arr" x1="608" y1="126" x2="608" y2="154"/>
+        <line class="arr" x1="614" y1="131" x2="614" y2="149"/>
+        <line class="arr" x1="620" y1="136" x2="620" y2="144"/>
+        <text class="ts" x="600" y="176">GND</text>
+        <text class="ts" x="380" y="254">1 = allumée · 0 = éteinte (6 mA)</text>
+        <text class="ts" x="380" y="200">PN1 pousse le courant : la LED</text>
+        <text class="ts" x="380" y="218">s'allume quand la broche vaut 1.</text>
+      </svg>
+    </div>
+    <figcaption>À gauche, l'entrée : le pull-up interne maintient la broche à 1, le bouton la tire à 0. À droite, la sortie : la broche pousse le courant à travers une résistance de limitation.</figcaption>
+  </figure>
+
+  <div class="box rule">
+    <div class="lbl">La règle</div>
+    <p><b>Un masque, pas un numéro.</b> <code>GPIO_PIN_0</code> vaut 0x01, <code>GPIO_PIN_1</code> vaut 0x02, et on combine par <code>|</code>. <code>GPIOPinWrite(port, broches, valeur)</code> n'écrit que les bits du masque ; <code>GPIOPinRead</code> rend un masque (0x02), pas 1.</p>
+  </div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 250" role="img" aria-label="Un port de huit bits et les masques GPIO_PIN">
+        <text class="ts" x="40" y="24">bit 7</text><text class="ts" x="378" y="24">bit 0</text>
+        <text class="th" x="40" y="52">GPIO_PIN_0 = 0x01</text>
+        <g class="c-gray"><rect x="200" y="34" width="46" height="34"/><rect x="246" y="34" width="46" height="34"/><rect x="292" y="34" width="46" height="34"/><rect x="338" y="34" width="46" height="34"/><rect x="384" y="34" width="46" height="34"/><rect x="430" y="34" width="46" height="34"/><rect x="476" y="34" width="46" height="34"/></g>
+        <g class="c-blue"><rect x="522" y="34" width="46" height="34"/></g>
+        <text class="tm" x="200" y="84">0</text><text class="tm" x="246" y="84">0</text><text class="tm" x="292" y="84">0</text><text class="tm" x="338" y="84">0</text><text class="tm" x="384" y="84">0</text><text class="tm" x="430" y="84">0</text><text class="tm" x="476" y="84">0</text><text class="tm" x="534" y="84">1</text>
+
+        <text class="th" x="40" y="126">GPIO_PIN_1 = 0x02</text>
+        <g class="c-gray"><rect x="200" y="108" width="46" height="34"/><rect x="246" y="108" width="46" height="34"/><rect x="292" y="108" width="46" height="34"/><rect x="338" y="108" width="46" height="34"/><rect x="384" y="108" width="46" height="34"/><rect x="430" y="108" width="46" height="34"/><rect x="522" y="108" width="46" height="34"/></g>
+        <g class="c-teal"><rect x="476" y="108" width="46" height="34"/></g>
+        <text class="tm" x="200" y="158">0</text><text class="tm" x="246" y="158">0</text><text class="tm" x="292" y="158">0</text><text class="tm" x="338" y="158">0</text><text class="tm" x="384" y="158">0</text><text class="tm" x="430" y="158">0</text><text class="tm" x="488" y="158">1</text><text class="tm" x="534" y="158">0</text>
+
+        <text class="th" x="40" y="200">PIN_0 | PIN_1 = 0x03</text>
+        <g class="c-gray"><rect x="200" y="182" width="46" height="34"/><rect x="246" y="182" width="46" height="34"/><rect x="292" y="182" width="46" height="34"/><rect x="338" y="182" width="46" height="34"/><rect x="384" y="182" width="46" height="34"/><rect x="430" y="182" width="46" height="34"/></g>
+        <g class="c-teal"><rect x="476" y="182" width="46" height="34"/></g>
+        <g class="c-blue"><rect x="522" y="182" width="46" height="34"/></g>
+        <text class="tm" x="200" y="232">0</text><text class="tm" x="246" y="232">0</text><text class="tm" x="292" y="232">0</text><text class="tm" x="338" y="232">0</text><text class="tm" x="384" y="232">0</text><text class="tm" x="430" y="232">0</text><text class="tm" x="488" y="232">1</text><text class="tm" x="534" y="232">1</text>
+      </svg>
+    </div>
+    <figcaption>Un port est un octet, une broche est un bit. Le masque se fabrique avec <code>|</code> ; <code>GPIOPinWrite(port, 0x03, 0x02)</code> écrit les deux bits du masque mais n’en met qu’un à 1 — l’autre est remis à 0 sans être « touché » ailleurs.</figcaption>
+  </figure>
+
+  <h3>Le code complet de l'exercice 1.1</h3>
+  <p>Objectif : D1 suit SW1, D2 suit SW2, sans aucune interruption — du polling pur, pour apprendre le matériel avant d'apprendre les interruptions.</p>
+  <div class="code"><header><span>SYE1-Ex_1_1-Basic · main.c + HAL</span><button data-copy>copier</button></header><pre><code><span class="k">typedef enum</span> { eLED1 = GPIO_PIN_1, eLED2 = GPIO_PIN_0 } ledType_t;   <span class="c">/* D1 = PN1 ! */</span>
+<span class="k">typedef enum</span> { eBUTTON_USR_SW1 = GPIO_PIN_0, eBUTTON_USR_SW2 = GPIO_PIN_1 } Button_t;
+
+<span class="k">void</span> <span class="f">clockInit</span>(<span class="k">void</span>)
+{   <span class="c">/* PLL 480 MHz sur l'oscillateur interne, puis division → 120 MHz */</span>
+    systemClock = <span class="f">SysCtlClockFreqSet</span>(SYSCTL_OSC_INT | SYSCTL_USE_PLL
+                                     | SYSCTL_CFG_VCO_480, MAIN_CLOCK_FREQUENCY);
+}
+
+<span class="k">void</span> <span class="f">HAL_Button_Init</span>(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1 | eBUTTON_USR_SW2);
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1 | eBUTTON_USR_SW2,
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);       <span class="c">/* pull-up */</span>
+}
+
+<span class="k">void</span> <span class="f">HAL_Led_Init</span>(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPION);
+    <span class="f">GPIOPinTypeGPIOOutput</span>(GPIO_PORTN_BASE, eLED1 | eLED2);
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTN_BASE, eLED1 | eLED2,
+                     GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD);           <span class="c">/* 6 mA */</span>
+}
+
+<span class="k">bool</span> <span class="f">buttonState</span>(Button_t b) { <span class="k">return</span> <span class="f">GPIOPinRead</span>(GPIO_PORTJ_BASE, b) == <span class="n">0</span>; }  <span class="c">/* actif bas */</span>
+<span class="k">void</span> <span class="f">HAL_Led_Write</span>(ledType_t led, <span class="k">bool</span> on)
+{   <span class="f">GPIOPinWrite</span>(GPIO_PORTN_BASE, led, on ? led : <span class="n">0</span>); }             <span class="c">/* masque, pas 1 */</span>
+
+<span class="k">int</span> <span class="f">main</span>(<span class="k">void</span>)
+{
+    <span class="f">clockInit</span>(); <span class="f">HAL_Button_Init</span>(); <span class="f">HAL_Led_Init</span>();
+    <span class="k">while</span> (<span class="n">1</span>) {
+        <span class="f">HAL_Led_Write</span>(eLED1, <span class="f">buttonState</span>(eBUTTON_USR_SW1));
+        <span class="f">HAL_Led_Write</span>(eLED2, <span class="f">buttonState</span>(eBUTTON_USR_SW2));
+    }
+}</code></pre></div>
+
+  <div class="box trap">
+    <div class="lbl">Le piège</div>
+    <p>Le corrigé officiel écrit <code>buttonState()</code> sous la forme <code>!(button == GPIOPinRead(...))</code> : le résultat est le même pour une broche par bouton, mais on compare un <code>enum</code> à un masque. La forme ci-dessus est équivalente et se lit sans effort. Le vrai piège de l'exercice reste <b>D1 = PN1</b> et non PN0.</p>
+  </div>
+
+  <h3>Ce que le polling coûte</h3>
+  <p>La boucle relit les deux broches en permanence, même quand personne ne touche la carte : l'énergie part à ne rien faire, et un appui très court peut tomber entre deux lectures. C'est précisément le problème que l'étape suivante résout.</p>
+
+  <details class="try"><summary>Écris les quatre appels qui allument D2 et rien d'autre.</summary>
+    <div class="ans"><code>SysCtlPeripheralEnable(SYSCTL_PERIPH_GPION)</code> (puis <code>SysCtlPeripheralReady</code>), <code>GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_0)</code>, <code>GPIOPadConfigSet(…, GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD)</code>, <code>GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, GPIO_PIN_0)</code>.</div>
+  </details>
+</section>
+
+
+<section id="c3">
+  <div class="kicker"><div class="badge">03</div><div class="tag">interruptions · exercice 1.2</div></div>
+  <h2>Être prévenu : l'ISR note, <code>main</code> traite</h2>
+  <p class="lead">Une interruption renverse le rapport au temps : ce n'est plus le programme qui surveille, c'est le matériel qui appelle. Encore faut-il que la fonction appelée soit courte et qu'elle acquitte sa cause.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>En polling, tu vas sans cesse voir si le facteur est passé. Avec une interruption, il sonne : tu poses ce que tu fais, tu ouvres, puis tu reprends exactement là où tu t'étais arrêté. L'ISR (<i>Interrupt Service Routine</i>) est la fonction qui « ouvre la porte » — elle note l'événement, <code>main()</code> fait le travail.</p>
+  </div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 200" role="img" aria-label="Polling et interruption, deux chronogrammes">
+        <text class="th" x="30" y="46">Polling</text>
+        <g class="c-blue"><rect x="150" y="30" width="470" height="26" rx="5"/><text class="ts" x="164" y="47">main : lit les broches en boucle</text></g>
+        <g class="c-gray">
+          <line class="leader" x1="200" y1="56" x2="200" y2="66"/><line class="leader" x1="250" y1="56" x2="250" y2="66"/>
+          <line class="leader" x1="300" y1="56" x2="300" y2="66"/><line class="leader" x1="350" y1="56" x2="350" y2="66"/>
+          <line class="leader" x1="400" y1="56" x2="400" y2="66"/><line class="leader" x1="450" y1="56" x2="450" y2="66"/>
+          <line class="leader" x1="500" y1="56" x2="500" y2="66"/><line class="leader" x1="550" y1="56" x2="550" y2="66"/>
+          <line class="leader" x1="600" y1="56" x2="600" y2="66"/>
+        </g>
+        <text class="ts" x="150" y="80">lectures régulières</text>
+        <line x1="376" y1="10" x2="376" y2="30" stroke="var(--red)" stroke-width="1.8"/>
+        <text class="ts" x="382" y="18" fill="var(--red)">appui manqué</text>
+
+        <text class="th" x="30" y="146">Interruption</text>
+        <g class="c-blue"><rect x="150" y="132" width="140" height="26" rx="5"/><text class="ts" x="164" y="149">main</text></g>
+        <g class="c-blue"><rect x="400" y="132" width="220" height="26" rx="5"/><text class="ts" x="414" y="149">main reprend</text></g>
+        <g class="c-teal"><rect x="308" y="96" width="86" height="26" rx="5"/><text class="th" x="322" y="114">ISR</text></g>
+        <path class="arr" d="M290 132 L290 110 L306 110" fill="none" marker-end="url(#ar)"/>
+        <path class="arr" d="M394 110 L400 110 L400 130" fill="none" marker-end="url(#ar)"/>
+        <text class="ts" x="308" y="88">le matériel appelle</text>
+        <text class="ts" x="30" y="182">Le polling échantillonne ; l’interruption est prévenue : un appui court peut être manqué.</text>
+      </svg>
+    </div>
+    <figcaption>Deux façons d’attendre un événement. En haut, la boucle décide quand regarder ; en bas, c’est le matériel qui décide quand appeler.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 300" role="img" aria-label="Les six phases d'une interruption">
+        <line class="arr" x1="96" y1="30" x2="96" y2="286" marker-end="url(#ar)"/>
+        <g class="c-purple"><rect x="120" y="24" width="470" height="34" rx="8"/><text class="th" x="136" y="46">1 · stacking : R0–R3, R12, LR, PC, xPSR empilés</text><text class="ts" x="580" y="46" text-anchor="end">32 octets</text></g>
+        <g class="c-purple"><rect x="120" y="66" width="470" height="34" rx="8"/><text class="th" x="136" y="88">2 · lecture du vecteur, entrée dans l'ISR, LR ← EXC_RETURN</text></g>
+        <g class="c-teal"><rect x="120" y="108" width="470" height="34" rx="8"/><text class="th" x="136" y="130">3 · le drapeau pending est effacé, l'IRQ devient active</text></g>
+        <g class="c-teal"><rect x="120" y="150" width="470" height="34" rx="8"/><text class="th" x="136" y="172">4 · l'ISR efface la requête à la source (GPIOIntClear)</text></g>
+        <g class="c-amber"><rect x="120" y="192" width="470" height="34" rx="8"/><text class="th" x="136" y="214">5 · l'ISR se termine par un retour ordinaire</text></g>
+        <g class="c-amber"><rect x="120" y="234" width="470" height="34" rx="8"/><text class="th" x="136" y="256">6 · unstacking : EXC_RETURN dans PC, contexte restauré</text></g>
+        <text class="ts" x="120" y="16">le temps descend</text>
+      </svg>
+    </div>
+    <figcaption>Les six phases attendues quand on demande « décrire une interruption ». Retiens surtout la quatrième : sans acquittement à la source, le périphérique redemande l'interruption dès la sortie.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 320" role="img" aria-label="Table des vecteurs et offsets">
+        <text class="ts" x="40" y="30">une entrée = 4 octets : offset = numéro d'exception × 4</text>
+<text class="tm" x="40" y="75">0x00</text>
+        <g class="c-gray"><rect x="150" y="56" width="380" height="26" rx="5"/><text class="th" x="164" y="73">SP initial (pile)</text></g>
+<text class="tm" x="40" y="107">0x04</text>
+        <g class="c-gray"><rect x="150" y="88" width="380" height="26" rx="5"/><text class="th" x="164" y="105">Reset</text></g>
+<text class="tm" x="40" y="139">0x08</text>
+        <g class="c-gray"><rect x="150" y="120" width="380" height="26" rx="5"/><text class="th" x="164" y="137">NMI</text></g>
+<text class="tm" x="40" y="171">0x0C</text>
+        <g class="c-gray"><rect x="150" y="152" width="380" height="26" rx="5"/><text class="th" x="164" y="169">HardFault</text></g>
+<text class="tm" x="40" y="203">0x10</text>
+        <g class="c-gray"><rect x="150" y="184" width="380" height="26" rx="5"/><text class="th" x="164" y="201">… exceptions système …</text></g>
+<text class="tm" x="40" y="235">0x3C</text>
+        <g class="c-amber"><rect x="150" y="216" width="380" height="26" rx="5"/><text class="th" x="164" y="233">SysTick — exception 15</text></g>
+<text class="tm" x="40" y="267">0x40</text>
+        <g class="c-blue"><rect x="150" y="248" width="380" height="26" rx="5"/><text class="th" x="164" y="265">IRQ0 — premier périphérique</text></g>
+        <text class="ts" x="40" y="304">Le cœur lit l'entrée k pour trouver l'adresse du handler de l'exception k.</text>
+      </svg>
+    </div>
+    <figcaption>La table commence à 0x0000.0000. SysTick est l’exception 15, donc son vecteur est à 15 × 4 = <b>0x3C</b> ; la première IRQ de périphérique suit à 0x40.</figcaption>
+  </figure>
+
+  <h3>Le NVIC décide, et « plus petit » veut dire « plus urgent »</h3>
+  <p>Le TM4C a <b>3 bits</b> de priorité, soit 8 niveaux (0 à 7). Ces bits occupent le poids fort de l'octet : le niveau <i>n</i> s'écrit <code>n &lt;&lt; 5</code>. Une interruption plus prioritaire qu'une ISR en cours la coupe ; de priorité égale ou plus basse, elle reste <i>pending</i>.</p>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 200" role="img" aria-label="Chronogramme de préemption">
+        <text class="ts" x="40" y="42">main</text>
+        <text class="ts" x="40" y="86">ISR niveau 3</text>
+        <text class="ts" x="40" y="130">ISR niveau 1</text>
+        <g class="c-blue"><rect x="150" y="24" width="88" height="22" rx="4"/></g>
+        <g class="c-blue"><rect x="390" y="24" width="136" height="22" rx="4"/></g>
+        <g class="c-teal"><rect x="238" y="68" width="32" height="22" rx="4"/></g>
+        <g class="c-teal"><rect x="302" y="68" width="88" height="22" rx="4"/></g>
+        <g class="c-coral"><rect x="270" y="112" width="32" height="22" rx="4"/></g>
+        <text class="ts" x="238" y="18">IRQ 3 arrive</text>
+        <text class="ts" x="286" y="150">elle est suspendue ici</text>
+        <text class="ts" x="196" y="104">IRQ 1 : préempte</text>
+        <line class="arr" x1="150" y1="166" x2="560" y2="166" marker-end="url(#ar)"/>
+        <text class="ts" x="146" y="184">0</text><text class="ts" x="226" y="184">10</text>
+        <text class="ts" x="306" y="184">20</text><text class="ts" x="386" y="184">30</text>
+        <text class="ts" x="466" y="184">40</text><text class="ts" x="566" y="184">t (ms)</text>
+      </svg>
+    </div>
+    <figcaption>Une IRQ de niveau 3 est servie ; une IRQ de niveau 1 arrive et la coupe ; à sa fin, l'ISR de niveau 3 reprend là où elle s'était arrêtée. Une IRQ de priorité égale n'aurait fait qu'attendre.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 230" role="img" aria-label="Codage de la priorité sur trois bits">
+        <text class="ts" x="40" y="30">l'octet de priorité, vu du bit 7 au bit 0</text>
+<g class="c-amber"><rect x="40" y="44" width="46" height="36"/></g><g class="c-amber"><rect x="86" y="44" width="46" height="36"/></g><g class="c-amber"><rect x="132" y="44" width="46" height="36"/></g><g class="c-gray"><rect x="178" y="44" width="46" height="36"/></g><g class="c-gray"><rect x="224" y="44" width="46" height="36"/></g><g class="c-gray"><rect x="270" y="44" width="46" height="36"/></g><g class="c-gray"><rect x="316" y="44" width="46" height="36"/></g><g class="c-gray"><rect x="362" y="44" width="46" height="36"/></g>
+<text class="tm" x="58" y="67">7</text><text class="tm" x="104" y="67">6</text><text class="tm" x="150" y="67">5</text><text class="tm" x="196" y="67">4</text><text class="tm" x="242" y="67">3</text><text class="tm" x="288" y="67">2</text><text class="tm" x="334" y="67">1</text><text class="tm" x="380" y="67">0</text>
+        <text class="ts" x="40" y="104">3 bits utiles → 8 niveaux (0 = le plus urgent) ; les 5 bits bas sont ignorés</text>
+        <text class="tm" x="40" y="140">niveau 2  →  2 &lt;&lt; 5  =  0x40  =  0100 0000</text>
+        <text class="tm" x="40" y="162">niveau 5  →  5 &lt;&lt; 5  =  0xA0  =  1010 0000</text>
+        <text class="tm" x="40" y="184">IntPrioritySet(INT_GPIOJ, 2)  →  0x02 = 0000 0010  →  niveau 0</text>
+        <text class="ts" x="40" y="212">D'où le piège : écrire 2 ne donne pas le niveau 2, mais le niveau 0.</text>
+      </svg>
+    </div>
+    <figcaption>La priorité s’écrit dans les trois bits de poids fort. Décaler de 5 bits est donc obligatoire — et c’est ce qui rend le piège « 2 donne le niveau 0 » vérifiable.</figcaption>
+  </figure>
+
+  <div class="box trap">
+    <div class="lbl">Le piège de QCM</div>
+    <p>La priorité <b>0 est la plus haute</b> — « plus faible = moins important » est faux. Et <code>IntPrioritySet(INT_GPIOJ, 2)</code> ne donne pas le niveau 2 : les bits bas sont ignorés, il reste le niveau 0. Il faut écrire <code>2 &lt;&lt; 5</code> (0x40) ; le niveau 5 s'écrit 0xA0.</p>
+  </div>
+
+  <h3>Une ISR propre, et le code de l'exercice 1.2</h3>
+  <ul>
+    <li>Signature imposée : <code>void f(void)</code>. Ni attente active, ni <code>printf</code> dans l'ISR.</li>
+    <li>Lire la cause, <b>acquitter tôt</b>, publier l'événement, sortir.</li>
+    <li>Toute variable partagée avec <code>main</code> est <code>volatile</code> ; « lire puis effacer » se fait en section critique (<code>IntMasterDisable</code> / <code>IntMasterEnable</code>).</li>
+  </ul>
+
+  <div class="code"><header><span>SYE1-Ex_1_2-Interrupt · HAL_Buttons.c</span><button data-copy>copier</button></header><pre><code><span class="k">void</span> <span class="f">HAL_Button_Init</span>(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, SW1 | SW2);              <span class="c">/* cf. exercice 1.1 */</span>
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, SW1 | SW2, GPIO_STRENGTH_2MA,
+                     GPIO_PIN_TYPE_STD_WPU);
+    <span class="f">GPIOIntRegister</span>(GPIO_PORTJ_BASE, button_ISR);   <span class="c">/* l'ISR entre dans la table */</span>
+    <span class="f">GPIOIntTypeSet</span>(GPIO_PORTJ_BASE, SW1 | SW2, GPIO_BOTH_EDGES);   <span class="c">/* deux flancs */</span>
+    <span class="f">GPIOIntEnable</span>(GPIO_PORTJ_BASE, GPIO_INT_PIN_0 | GPIO_INT_PIN_1);
+    <span class="f">IntMasterEnable</span>();                                <span class="c">/* 3e verrou : masque global */</span>
+}
+
+<span class="k">static volatile</span> ButtonEvent_t usrSw1Event = eBUTTON_NO_EVENT;   <span class="c">/* main lit, ISR écrit */</span>
+
+<span class="k">static void</span> <span class="f">button_ISR</span>(<span class="k">void</span>)
+{
+    uint32_t <span class="k">const</span> st = <span class="f">GPIOIntStatus</span>(GPIO_PORTJ_BASE, <span class="k">true</span>);
+    <span class="k">if</span> (st &amp; eBUTTON_USR_SW1) {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1);           <span class="c">/* acquitter TÔT */</span>
+        usrSw1Event = <span class="f">buttonState</span>(eBUTTON_USR_SW1) ? eBUTTON_EVENT_PRESSED
+                                                   : eBUTTON_EVENT_RELEASED;
+    }
+    <span class="c">/* idem SW2 */</span>
+}
+
+ButtonEvent_t <span class="f">HAL_Button_Event</span>(Button_t b)      <span class="c">/* lit ET efface, en section critique */</span>
+{
+    ButtonEvent_t ev;
+    <span class="f">IntMasterDisable</span>();
+    ev = (b == eBUTTON_USR_SW1) ? usrSw1Event : usrSw2Event;
+    <span class="k">if</span> (b == eBUTTON_USR_SW1) usrSw1Event = eBUTTON_NO_EVENT;
+    <span class="k">else</span>                      usrSw2Event = eBUTTON_NO_EVENT;
+    <span class="f">IntMasterEnable</span>();
+    <span class="k">return</span> ev;
+}</code></pre></div>
+
+  <h3>Deux façons d'installer l'ISR</h3>
+  <table class="tbl">
+    <tr><th>méthode</th><th>ce qui se passe</th></tr>
+    <tr><td><code>GPIOIntRegister</code></td><td>copie la table <code>g_pfnVectors</code> de la flash vers <code>g_pfnRAMVectors</code> en RAM, puis y écrit l'adresse de l'ISR</td></tr>
+    <tr><td>entrée dans <code>g_pfnVectors</code></td><td>on écrit l'ISR dans la table en flash (section <code>.intvecs</code>), puis <code>IntEnable(INT_GPIOJ_TM4C129)</code></td></tr>
+  </table>
+  <p>Les trois verrous à ouvrir, dans l'ordre : la source dans le périphérique (<code>GPIOIntEnable</code>), l'IRQ dans le NVIC (<code>IntEnable</code>, fait par <code>GPIOIntRegister</code>), puis le masque global (<code>IntMasterEnable</code>). Après un reset, les interruptions sont désactivées.</p>
+
+  <details class="try"><summary>Deux IRQ sont en attente, niveaux 1 et 3. Laquelle passe ? Et si la 3 arrive pendant l'ISR de la 1 ?</summary>
+    <div class="ans">La <b>1</b> (plus petit = plus prioritaire). La 3 reste <i>pending</i> et ne passe qu'à la fin de l'ISR de la 1 : seule une priorité <b>strictement</b> plus haute préempte.</div>
+  </details>
+</section>
+
+
+<section id="c4">
+  <div class="kicker"><div class="badge">04</div><div class="tag">fifo · exercices 1.3 et 2.1</div></div>
+  <h2>Ne rien perdre : le tampon entre l'ISR et <code>main</code></h2>
+  <p class="lead">Un Event-Flag ne retient qu'un événement. Dès que deux appuis se suivent, le second écrase le premier. La FIFO est la réponse : une file où l'ISR dépose et où <code>main</code> retire, chacun à son rythme.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>Une FIFO (<i>First In, First Out</i>) est une file d'attente : premier arrivé, premier servi. Le tableau ne bouge jamais : seuls deux index avancent en tournant. L'ISR produit, <code>main</code> consomme — et l'ordre des événements est conservé.</p>
+  </div>
+
+  <div class="widget" id="fifoWidget">
+    <h4>Simulateur — ajoute et retire des événements</h4>
+    <div class="ctrl" style="margin-bottom:10px">
+      <button class="btn p" data-fifo="add">ajouter un événement</button>
+      <button class="btn" data-fifo="get">lire (get)</button>
+      <button class="btn" data-fifo="reset">réinitialiser</button>
+    </div>
+    <div class="cells" id="fifoCells"></div>
+    <div class="legend"><span class="rd">readIndex</span><span class="wr">writeIndex</span></div>
+    <div class="out" id="fifoOut" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Les deux conditions à écrire sans hésiter</h3>
+  <div class="code"><header><span>SerialBuffer.c</span><button data-copy>copier</button></header><pre><code><span class="k">bool</span> <span class="f">SerialBuffer_isEmpty</span>(SerialBuffer_t *b) { <span class="k">return</span> b-&gt;rd == b-&gt;wr; }
+<span class="k">bool</span> <span class="f">SerialBuffer_isFull</span>(SerialBuffer_t *b)  { <span class="k">return</span> (b-&gt;wr + <span class="n">1</span>) % N == b-&gt;rd; }
+
+<span class="k">bool</span> <span class="f">SerialBuffer_addData</span>(SerialBuffer_t *b, <span class="k">char</span> c)          <span class="c">/* producteur : l'ISR */</span>
+{   <span class="k">if</span> (<span class="f">SerialBuffer_isFull</span>(b)) { b-&gt;lost++; <span class="k">return false</span>; }
+    b-&gt;data[b-&gt;wr] = c;                   <span class="c">/* ÉCRIRE d'abord…            */</span>
+    b-&gt;wr = (b-&gt;wr + <span class="n">1</span>) % N;              <span class="c">/* …puis avancer l'index      */</span>
+    <span class="k">return true</span>; }
+
+<span class="k">bool</span> <span class="f">SerialBuffer_getData</span>(SerialBuffer_t *b, <span class="k">char</span> *c)         <span class="c">/* consommateur : main */</span>
+{   <span class="k">if</span> (<span class="f">SerialBuffer_isEmpty</span>(b)) <span class="k">return false</span>;
+    *c = b-&gt;data[b-&gt;rd];                  <span class="c">/* LIRE d'abord…               */</span>
+    b-&gt;rd = (b-&gt;rd + <span class="n">1</span>) % N;              <span class="c">/* …puis avancer l'index       */</span>
+    <span class="k">return true</span>; }</code></pre></div>
+
+  <div class="box rule">
+    <div class="lbl">La règle</div>
+    <p><b>Écrire la donnée avant d'avancer l'index</b> : sinon <code>main</code> peut voir l'index à jour et lire une case pas encore écrite. Un seul producteur et un seul consommateur : inutile de bloquer les interruptions.</p>
+  </div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 240" role="img" aria-label="Tampon circulaire : retour au début par le modulo">
+        <g class="c-gray"><rect x="40" y="50" width="46" height="44"/><rect x="86" y="50" width="46" height="44"/><rect x="132" y="50" width="46" height="44"/><rect x="178" y="50" width="46" height="44"/><rect x="224" y="50" width="46" height="44"/><rect x="270" y="50" width="46" height="44"/><rect x="316" y="50" width="46" height="44"/><rect x="362" y="50" width="46" height="44"/></g>
+        <text class="tm" x="52" y="42">0</text><text class="tm" x="98" y="42">1</text><text class="tm" x="144" y="42">2</text><text class="tm" x="190" y="42">3</text>
+        <text class="tm" x="236" y="42">4</text><text class="tm" x="282" y="42">5</text><text class="tm" x="328" y="42">6</text><text class="tm" x="374" y="42">7</text>
+        <text class="th" x="100" y="78" text-anchor="middle">A</text><text class="th" x="146" y="78" text-anchor="middle">B</text>
+        <text class="th" x="192" y="78" text-anchor="middle">D</text><text class="th" x="238" y="78" text-anchor="middle">E</text>
+        <text class="th" x="284" y="78" text-anchor="middle">F</text>
+        <path d="M385 96 C385 142, 63 142, 63 96" fill="none" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <text class="ts" x="224" y="166" text-anchor="middle">wr + 1 atteint N → retour à 0 : (wr + 1) % N</text>
+        <text class="ts" x="40" y="196">Le tableau ne se déplace jamais : ce sont les index qui tournent. D'où le nom « tampon circulaire ».</text>
+        <text class="ts" x="40" y="216">Quand N est une puissance de 2, (wr + 1) &amp; (N − 1) remplace le modulo.</text>
+      </svg>
+    </div>
+    <figcaption>La circularité vue de dessus : après la dernière case on revient à la première. Les données restent en place, seuls les deux index avancent.</figcaption>
+  </figure>
+
+  <h3>La trace des index, à savoir refaire</h3>
+  <table class="tbl">
+    <caption>FIFO de 8 cases : l'exercice de la diapositive 17</caption>
+    <tr><th>opération</th><th>readIndex</th><th>writeIndex</th><th>contenu</th></tr>
+    <tr><td>init</td><td>0</td><td>0</td><td>vide</td></tr>
+    <tr><td>ajouter A</td><td>0</td><td>1</td><td>A</td></tr>
+    <tr><td>ajouter B</td><td>0</td><td>2</td><td>A, B</td></tr>
+    <tr><td>get → A</td><td>1</td><td>2</td><td>B</td></tr>
+    <tr><td>ajouter C</td><td>1</td><td>3</td><td>B, C</td></tr>
+    <tr><td>ajouter D</td><td>1</td><td>4</td><td>B, C, D</td></tr>
+    <tr><td>get → B</td><td>2</td><td>4</td><td>C, D</td></tr>
+    <tr><td>ajouter E</td><td>2</td><td>5</td><td>C, D, E</td></tr>
+  </table>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 240" role="img" aria-label="Event-Flag contre FIFO">
+        <text class="th" x="40" y="30">Event-Flag — un seul emplacement</text>
+        <line class="arr" x1="40" y1="86" x2="300" y2="86"/>
+        <line x1="100" y1="70" x2="100" y2="86" stroke="var(--muted)" stroke-width="1.6"/>
+        <line x1="180" y1="70" x2="180" y2="86" stroke="var(--muted)" stroke-width="1.6"/>
+        <text class="ts" x="88" y="64">E1</text><text class="ts" x="168" y="64">E2</text>
+        <g class="c-red"><rect x="330" y="60" width="120" height="42" rx="8"/><text class="th" x="344" y="86">flag = E2</text></g>
+        <text class="ts" x="330" y="122" fill="var(--red)">E1 a été écrasé par E2</text>
+        <text class="ts" x="330" y="140">deux appuis rapprochés → un seul événement vu</text>
+
+        <text class="th" x="40" y="170">FIFO — file d'attente</text>
+        <line class="arr" x1="40" y1="216" x2="300" y2="216"/>
+        <line x1="100" y1="200" x2="100" y2="216" stroke="var(--muted)" stroke-width="1.6"/>
+        <line x1="180" y1="200" x2="180" y2="216" stroke="var(--muted)" stroke-width="1.6"/>
+        <text class="ts" x="88" y="194">E1</text><text class="ts" x="168" y="194">E2</text>
+        <g class="c-teal"><rect x="330" y="192" width="52" height="36" rx="6"/><text class="th" x="348" y="215">E1</text></g>
+        <g class="c-teal"><rect x="386" y="192" width="52" height="36" rx="6"/><text class="th" x="404" y="215">E2</text></g>
+        <line class="arr" x1="444" y1="210" x2="478" y2="210" marker-end="url(#ar)"/>
+        <text class="ts" x="484" y="215">main lit E1 puis E2</text>
+      </svg>
+    </div>
+    <figcaption>Même suite d’événements, deux mémoires. En haut, le second efface le premier ; en bas, les deux attendent leur tour. C’est tout le passage de l’exercice 1.2 à l’exercice 1.3.</figcaption>
+  </figure>
+
+  <h3>Dimensionner : le seul calcul qui tombe à tous les coups</h3>
+  <p>La FIFO doit absorber tout ce qui arrive entre deux passages de <code>main</code>. On calcule le débit en octets par seconde, puis le volume pendant l'attente, puis la taille en puissance de 2.</p>
+  <div class="box rule">
+    <div class="lbl">La formule</div>
+    <p><b>Q = (bauds / 10) × T</b>, puis <b>N − 1 ≥ ⌈Q⌉</b> et <b>N = 2ᵏ</b>. Le 10 vient de la trame 8N1 : 1 start + 8 données + 1 stop. T est l'intervalle entre deux lectures.</p>
+  </div>
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 190" role="img" aria-label="Les quatre étapes du dimensionnement d'une FIFO">
+        <g class="c-blue"><rect x="30" y="46" width="130" height="52" rx="8"/><text class="th" x="95" y="68" text-anchor="middle">bauds / 10</text><text class="ts" x="95" y="86" text-anchor="middle">octets par seconde</text></g>
+        <g class="c-blue"><rect x="190" y="46" width="130" height="52" rx="8"/><text class="th" x="255" y="68" text-anchor="middle">× T</text><text class="ts" x="255" y="86" text-anchor="middle">pendant l'attente</text></g>
+        <g class="c-amber"><rect x="350" y="46" width="130" height="52" rx="8"/><text class="th" x="415" y="68" text-anchor="middle">⌈Q⌉ + 1</text><text class="ts" x="415" y="86" text-anchor="middle">cases utiles</text></g>
+        <g class="c-teal"><rect x="510" y="46" width="140" height="52" rx="8"/><text class="th" x="580" y="68" text-anchor="middle">N = 2ᵏ ≥ Q + 1</text><text class="ts" x="580" y="86" text-anchor="middle">taille réelle</text></g>
+        <line class="arr" x1="160" y1="72" x2="188" y2="72" marker-end="url(#ar)"/>
+        <line class="arr" x1="320" y1="72" x2="348" y2="72" marker-end="url(#ar)"/>
+        <line class="arr" x1="480" y1="72" x2="508" y2="72" marker-end="url(#ar)"/>
+        <text class="tm" x="30" y="126">115 200</text><text class="tm" x="190" y="126">11 520 o/s</text><text class="tm" x="350" y="126">115,2 → 116</text><text class="tm" x="510" y="126">N ≥ 117 → 128</text>
+        <text class="ts" x="30" y="162">Exemple du cours : 115 200 bds, 8N1, une lecture toutes les 10 ms.</text>
+      </svg>
+    </div>
+    <figcaption>Le calcul en quatre temps, avec l’exemple du cours en dessous. Écrire ces quatre valeurs sur la copie suffit à montrer le raisonnement.</figcaption>
+  </figure>
+
+  <table class="tbl">
+    <tr><th>cas</th><th>Q</th><th>taille</th></tr>
+    <tr><td>115 200 bds / 10 ms</td><td>115,2 → 116</td><td>N ≥ 117 → <b>128</b></td></tr>
+    <tr><td>9 600 bds / 10 ms</td><td>9,6 → 10</td><td>N ≥ 11 → <b>16</b> (pas 10 !)</td></tr>
+    <tr><td>38 400 bds / 5 ms</td><td>19,2 → 20</td><td>N ≥ 21 → <b>32</b></td></tr>
+    <tr><td>9 600 bds / 25 ms (40 Hz)</td><td>24</td><td>N ≥ 25 → <b>32</b></td></tr>
+  </table>
+  <div class="box note">
+    <div class="lbl">Pourquoi 16 et pas 10</div>
+    <p>« Minimum » ne veut pas dire « juste au-dessus du volume » : il faut 10 cases <b>utiles</b>, donc N ≥ 11, et une taille en puissance de 2 donne 16. Écris les trois lignes du calcul — ce sont elles qui rapportent les points.</p>
+  </div>
+
+  <h3>La pile, et le tampon qui change de mode</h3>
+  <p>Une pile (LIFO) n'a qu'un index, <code>top</code> : −1 pour vide, N−1 pour plein. Empiler avance <b>puis</b> écrit (<code>data[++top] = c</code>), dépiler lit <b>puis</b> recule (<code>c = data[top--]</code>). Et surtout : <b>N cases contiennent N éléments</b> — pas de case perdue.</p>
+  <p>Exemple d'école : empiler « desserts » puis tout dépiler donne « stressed ». Même boucle, deux lectures différentes selon le mode : c'est tout l'intérêt du <b>buffer configurable</b>.</p>
+  <div class="code"><header><span>SerialBuffer.h · variante générique (ex. 2.1 partie 2)</span><button data-copy>copier</button></header><pre><code><span class="k">typedef struct</span> SerialBuffer {
+    <span class="k">char</span> data[N]; uint16_t rd, wr;
+    <span class="k">bool</span> (*addData)(<span class="k">struct</span> SerialBuffer *, <span class="k">char</span>);
+    <span class="k">bool</span> (*getData)(<span class="k">struct</span> SerialBuffer *, <span class="k">char</span> *);
+    <span class="k">bool</span> (*isEmpty)(<span class="k">struct</span> SerialBuffer *);
+    <span class="k">bool</span> (*isFull)(<span class="k">struct</span> SerialBuffer *);
+} SerialBuffer_t;
+
+<span class="k">void</span> <span class="f">SerialBuffer_init</span>(SerialBuffer_t *b, BufferMode_t m)
+{   b-&gt;rd = b-&gt;wr = <span class="n">0</span>;
+    b-&gt;addData = addDataShared;                    <span class="c">/* seuls getData et isFull changent */</span>
+    b-&gt;getData = (m == eModeFIFO) ? getDataFIFO : getDataLIFO;
+    b-&gt;isEmpty = …; b-&gt;isFull = …; }
+
+<span class="c">/* appel : le C n'a pas de this, le buffer se passe lui-même */</span>
+c = buf.<span class="f">getData</span>(&amp;buf, &amp;ch);</code></pre></div>
+
+  <table class="tbl">
+    <tr><th>tampon</th><th>index</th><th>plein</th><th>capacité</th></tr>
+    <tr><td>FIFO (file)</td><td>rd et wr</td><td>(wr + 1) % N == rd</td><td><b>N − 1</b></td></tr>
+    <tr><td>LIFO (pile)</td><td>top seul</td><td>top == N − 1</td><td><b>N</b></td></tr>
+    <tr><td>buffer configurable</td><td>rd et wr + 4 pointeurs</td><td>isFull() du mode choisi</td><td>N − 1 ou N</td></tr>
+  </table>
+
+  <div class="box trap">
+    <div class="lbl">Le piège</div>
+    <p>Le corrigé 2025 écrit <code>(myWrIndex − 1) % eMAX_BUFFER_SIZE</code>. En C, <code>myWrIndex</code> est d'abord promu en <code>int</code> : pour 0 on obtient −1, puis 65535 une fois rangé dans un <code>uint16_t</code> — hors du tableau. Écris <code>(i + N − 1) % N</code>.</p>
+  </div>
+
+  <details class="try"><summary>Une FIFO de 16 cases reçoit « Was it a car or a cat you saw? ». Que relit-on ?</summary>
+    <div class="ans">Les <b>15</b> premiers caractères : « Was it a car or ». La seizième case reste libre, c'est elle qui distingue plein et vide.</div>
+  </details>
+</section>
+
+
+<section id="c5">
+  <div class="kicker"><div class="badge">05</div><div class="tag">systick · tp2</div></div>
+  <h2>Faire plusieurs choses : un métronome dans le cœur</h2>
+  <p class="lead">Une seule interruption périodique suffit à donner une notion de temps à l'application. Le SysTick ne fait rien lui-même : il dépose un événement, et la boucle principale décide.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>Le SysTick est un compteur 24 bits décroissant, intégré au cœur, exception n° 15. Il décompte de N−1 à 0, lève l'interruption, puis recommence. Tu règles le tempo avec N — et N se calcule, il ne s'invente pas.</p>
+  </div>
+
+  <div class="box rule">
+    <div class="lbl">La formule</div>
+    <p><b>N = f<sub>clk</sub> × T</b>, avec <b>1 ≤ N ≤ 2²⁴ = 16 777 216</b>. À 120 MHz : 100 ms donnent 12 000 000 cycles, soit un RELOAD de 11 999 999. Au-delà de 2²⁴ cycles — <b>139,81 ms</b> à 120 MHz — une seule période est impossible.</p>
+  </div>
+
+  <div class="widget">
+    <h4>Calculateur — période visée à 120 MHz</h4>
+    <div class="wgrid">
+      <div>
+        <div class="ctrl"><input id="ms" type="number" value="100" min="0.001" step="1" max="1000"><span class="out">ms</span></div>
+        <div class="ctrl" style="margin-top:8px">
+          <button class="btn" data-ms="5">5 ms</button><button class="btn" data-ms="10">10 ms</button>
+          <button class="btn" data-ms="100">100 ms</button><button class="btn" data-ms="200">200 ms</button>
+        </div>
+      </div>
+      <div class="out" id="msOut"></div>
+    </div>
+  </div>
+
+  <table class="tbl">
+    <tr><th>période</th><th>N = f × T</th><th>réglage</th></tr>
+    <tr><td>5 ms</td><td>600 000</td><td><code>SysTickPeriodSet(600000)</code></td></tr>
+    <tr><td>10 ms</td><td>1 200 000</td><td>une période suffit</td></tr>
+    <tr><td>100 ms</td><td>12 000 000</td><td>RELOAD = 11 999 999 (N−1)</td></tr>
+    <tr><td>200 ms</td><td>24 000 000</td><td><b>impossible</b> : base 50 ms × 4 ticks</td></tr>
+    <tr><td>maximum</td><td>16 777 216</td><td>139,81 ms à 120 MHz</td></tr>
+  </table>
+
+  <div class="code"><header><span>HAL_TM4C1294.c · TP2</span><button data-copy>copier</button></header><pre><code><span class="k">void</span> <span class="f">HAL_TM4C1294_SystickInit</span>(<span class="k">void</span>)
+{
+    <span class="f">SysTickPeriodSet</span>(<span class="n">12000000</span>);                  <span class="c">/* 100 ms à 120 MHz */</span>
+    <span class="f">SysTickIntRegister</span>(&amp;sysTickIntHandler);      <span class="c">/* le vecteur          */</span>
+    <span class="f">SysTickIntEnable</span>();                          <span class="c">/* autorise l'IRQ      */</span>
+    <span class="f">SysTickEnable</span>();                             <span class="c">/* lance le compteur   */</span>
+}</code></pre></div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 262" role="img" aria-label="Compteur SysTick décroissant et interruptions">
+        <line class="arr" x1="150" y1="40" x2="150" y2="190"/>
+        <line class="arr" x1="140" y1="190" x2="620" y2="190" marker-end="url(#ar)"/>
+        <text class="ts" x="120" y="48" text-anchor="end">N</text>
+        <text class="ts" x="120" y="194" text-anchor="end">0</text>
+        <text class="ts" x="628" y="194">t</text>
+        <text class="ts" x="40" y="120" transform="rotate(-90 40 120)" text-anchor="middle">compteur</text>
+
+        <path d="M150 48 L330 186" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <path d="M330 48 L510 186" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <path d="M330 186 L330 48" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <path d="M510 186 L510 48" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+        <g class="c-amber"><rect x="300" y="20" width="120" height="22" rx="5"/><text class="ts" x="310" y="36">IRQ SysTick</text></g>
+        <g class="c-amber"><rect x="480" y="20" width="120" height="22" rx="5"/><text class="ts" x="490" y="36">IRQ SysTick</text></g>
+        <text class="ts" x="40" y="228">Le compteur descend en N cycles (N = f × T = 12 000 000 à 100 ms), lève l'interruption à 0,</text>
+        <text class="ts" x="40" y="246">puis repart : la période ne dépend que de N.</text>
+      </svg>
+    </div>
+    <figcaption>Le temps vu par le SysTick : une dent de scie de N cycles. À 120 MHz, N = 12 000 000 pour 100 ms — et RELOAD vaut N − 1.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 210" role="img" aria-label="Chaîne du TP2, de l'interruption à la veille">
+        <g class="c-blue"><rect x="40" y="30" width="130" height="52" rx="8"/><text class="th" x="105" y="52" text-anchor="middle">SysTick</text><text class="ts" x="105" y="70" text-anchor="middle">100 ms</text></g>
+        <g class="c-teal"><rect x="200" y="30" width="120" height="52" rx="8"/><text class="th" x="260" y="52" text-anchor="middle">ISR courte</text><text class="ts" x="260" y="70" text-anchor="middle">callback</text></g>
+        <g class="c-purple"><rect x="350" y="30" width="130" height="52" rx="8"/><text class="th" x="415" y="52" text-anchor="middle">EventsBuffer</text><text class="ts" x="415" y="70" text-anchor="middle">FIFO</text></g>
+        <g class="c-amber"><rect x="510" y="30" width="130" height="52" rx="8"/><text class="th" x="575" y="52" text-anchor="middle">main()</text><text class="ts" x="575" y="70" text-anchor="middle">traite</text></g>
+        <line class="arr" x1="170" y1="56" x2="198" y2="56" marker-end="url(#ar)"/>
+        <line class="arr" x1="320" y1="56" x2="348" y2="56" marker-end="url(#ar)"/>
+        <line class="arr" x1="480" y1="56" x2="508" y2="56" marker-end="url(#ar)"/>
+        <g class="c-gray"><rect x="510" y="120" width="130" height="52" rx="8"/><text class="th" x="575" y="142" text-anchor="middle">MAP_SysCtlSleep</text><text class="ts" x="575" y="160" text-anchor="middle">si la FIFO est vide</text></g>
+        <line class="arr" x1="575" y1="82" x2="575" y2="118" marker-end="url(#ar)"/>
+        <path class="arrd" d="M510 146 L180 146 L180 88" marker-end="url(#ar)"/>
+        <text class="ts" x="196" y="138">le réveil lève une nouvelle interruption</text>
+        <text class="ts" x="40" y="196">Deux règles : l'ISR dépose un octet et sort ; le travail lourd est dans main().</text>
+      </svg>
+    </div>
+    <figcaption>La chaîne du TP2 : période → ISR → callback → FIFO d'événements → boucle principale → veille. Une seule flèche manque dans cette figure : la veille est un état d'attente, pas une horloge de plus.</figcaption>
+  </figure>
+
+  <h3>La charge du processeur : ce que chaque source emprunte</h3>
+  <p>Chaque interruption prend un peu de temps au processeur. Additionne ce que toutes prennent en une seconde : tu obtiens la part du temps occupé. Il faut U &lt; 1, sinon des interruptions se perdent.</p>
+  <div class="box rule">
+    <div class="lbl">La formule</div>
+    <p><b>U = Σ f<sub>i</sub> · d<sub>i</sub></b> : chaque source i réveille f<sub>i</sub> fois par seconde une ISR de durée d<sub>i</sub>. Les occupations s'additionnent, quel que soit l'ordre de service.</p>
+  </div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 170" role="img" aria-label="Occurrences des quatre sources sur 60 ms">
+        <g class="c-blue"><rect x="40" y="26" width="10" height="10" rx="2"/></g><text class="ts" x="56" y="35">SysTick : 10 ms, ISR 2 ms</text><text class="ts" x="290" y="35">20 %</text>
+        <g class="c-green"><rect x="40" y="54" width="10" height="10" rx="2"/></g><text class="ts" x="56" y="63">ADC : 5 ms, ISR 1 ms</text><text class="ts" x="290" y="63">20 %</text>
+        <g class="c-purple"><rect x="40" y="82" width="10" height="10" rx="2"/></g><text class="ts" x="56" y="91">CAN : 20 ms, ISR 1 ms</text><text class="ts" x="290" y="91">5 %</text>
+        <g class="c-amber"><rect x="40" y="110" width="10" height="10" rx="2"/></g><text class="ts" x="56" y="119">UART : 50 ms, ISR 1 ms</text><text class="ts" x="290" y="119">2 %</text>
+        <g id="marks"></g>
+        <line class="arr" x1="340" y1="140" x2="640" y2="140" marker-end="url(#ar)"/>
+        <text class="ts" x="340" y="156">0</text><text class="ts" x="390" y="156">10</text><text class="ts" x="440" y="156">20</text>
+        <text class="ts" x="490" y="156">30</text><text class="ts" x="540" y="156">40</text><text class="ts" x="590" y="156">50</text>
+        <text class="ts" x="636" y="156">ms</text>
+      </svg>
+    </div>
+    <figcaption>Sur 60 ms : 12 + 12 + 3 + 1 = 28 ms occupées, soit 46,7 % — la même valeur que par la formule (47 %, aux arrondis près).</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 170" role="img" aria-label="Répartition de la charge du processeur sur 60 ms">
+        <g class="c-blue"><rect x="40" y="40" width="120" height="40"/></g><text class="th" x="60" y="65" fill="var(--blue)">SysTick 20 %</text>
+        <g class="c-teal"><rect x="160" y="40" width="120" height="40"/></g><text class="th" x="184" y="65" fill="var(--teal)">ADC 20 %</text>
+        <g class="c-purple"><rect x="280" y="40" width="60" height="40"/></g><text class="ts" x="310" y="65" text-anchor="middle" fill="var(--purple)">CAN 5 %</text>
+        <g class="c-amber"><rect x="340" y="40" width="60" height="40"/></g><text class="ts" x="370" y="65" text-anchor="middle" fill="var(--amber)">UART 2 %</text>
+        <g class="c-gray"><rect x="400" y="40" width="240" height="40"/></g><text class="ts" x="470" y="65">libre</text>
+        <line class="arr" x1="40" y1="96" x2="640" y2="96" marker-end="url(#ar)"/>
+        <text class="ts" x="40" y="114">0</text><text class="ts" x="336" y="114">47 %</text><text class="ts" x="640" y="114" text-anchor="end">100 %</text>
+        <text class="ts" x="40" y="144">47 % occupé : la marge restante (53 %) absorbe les ISR exceptionnelles sans perdre d'événement.</text>
+      </svg>
+    </div>
+    <figcaption>La somme des occupations, dessinée. Chaque source est une bande ; leur total ne doit jamais atteindre la barre entière.</figcaption>
+  </figure>
+
+  <div class="box trap">
+    <div class="lbl">Le piège</div>
+    <p>Le corrigé 2025 annonce 24 ms sur 60 ms (40 %) : il oublie <b>CAN et UART</b>. À une question ouverte, écris la somme des quatre sources (47 %) et signale l'écart. Autre piège : <code>SysTickEnable()</code> lance le compteur, c'est <code>SysTickIntEnable()</code> qui autorise l'interruption.</p>
+  </div>
+
+  <h3>Mesurer, pas supposer</h3>
+  <p>Une durée se mesure avec le compteur lui-même : <code>SysTickValueGet()</code> avant et après, puis <code>écoulé = début − fin</code> (modulo N), parce que le compteur <b>décroît</b>. À 120 MHz, 3 000 ticks valent 25 µs.</p>
+  <p>Pour le temps de traitement d'une boucle, on lève une broche GPIO au début de <code>main</code> et on la baisse à la fin, puis on lit l'analyseur logique. Attention : le temps écoulé n'est pas le temps CPU propre — une interruption peut s'insérer entre les deux.</p>
+
+  <h3>Veille</h3>
+  <p>Sans veille, la boucle tourne à 100 % en testant la FIFO — et une LED qui clignote ne prouve pas le contraire. Quand la FIFO est vide, <code>MAP_SysCtlSleep()</code> endort le cœur jusqu'à la prochaine interruption autorisée. Le préfixe <code>MAP_</code> est obligatoire sur ce microcontrôleur.</p>
+  <p>Attention à l'ordre : « vérifier puis dormir » n'est pas atomique. Un événement arrivé entre le test et l'endormissement est traité au tick suivant — un retard, pas une perte.</p>
+
+  <details class="try"><summary>Peut-on obtenir 250 ms en une seule période à 120 MHz ?</summary>
+    <div class="ans">Non : 250 ms demandent 30 000 000 cycles, au-delà de 2²⁴ (139,81 ms). Prends une base de 50 ms (N = 6 000 000) et compte 5 ticks dans l'ISR.</div>
+  </details>
+</section>
+
+
+<section id="c6">
+  <div class="kicker"><div class="badge">06</div><div class="tag">callbacks · exercices 1.4 et 2.13</div></div>
+  <h2>Structurer : une couche ne parle qu'à celle du dessous</h2>
+  <p class="lead">L'ISR du bouton doit prévenir l'application. Si elle l'appelle directement, la HAL dépend de <code>main.c</code> : plus de portabilité, ni pour l'une ni pour l'autre. La solution tient en un pointeur.</p>
+
+  <div class="box idea">
+    <div class="lbl">L'idée</div>
+    <p>Une fonction a une adresse, exactement comme une variable. Un <b>pointeur de fonction</b> garde cette adresse : on peut la changer pendant l'exécution, la ranger dans un tableau, puis appeler « la fonction qui est là ». L'application confie l'adresse d'une de ses fonctions à la HAL, qui l'appellera le moment venu : c'est un <b>callback</b>.</p>
+  </div>
+
+  <div class="code"><header><span>pointeur de fonction — le type décrit la signature</span><button data-copy>copier</button></header><pre><code><span class="k">typedef void</span> (*Function_t)(<span class="k">void</span>);      <span class="c">/* pointeur vers void f(void)          */</span>
+Function_t p = f1;      <span class="c">/* == &amp;f1 : le nom se convertit en adresse            */</span>
+p();                    <span class="c">/* == (*p)() : les deux écritures sont équivalentes   */</span>
+<span class="k">static const</span> Function_t ops[] = { f1, f2 };   ops[<span class="n">0</span>]();</code></pre></div>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 230" role="img" aria-label="Un pointeur de fonction garde une adresse">
+        <text class="th" x="40" y="30">FLASH</text>
+        <g class="c-gray"><rect x="40" y="40" width="230" height="110" rx="10"/></g>
+        <g class="c-blue"><rect x="54" y="56" width="202" height="34" rx="6"/><text class="th" x="68" y="78">onButton()</text></g>
+        <text class="tm" x="54" y="108">0x0000.1A2C</text>
+        <text class="ts" x="54" y="130">le code ne bouge pas</text>
+
+        <text class="th" x="400" y="30">RAM</text>
+        <g class="c-gray"><rect x="400" y="40" width="240" height="110" rx="10"/></g>
+        <g class="c-purple"><rect x="414" y="56" width="212" height="34" rx="6"/><text class="th" x="428" y="78">s_cb</text></g>
+        <text class="tm" x="414" y="108">0x0000.1A2C</text>
+        <text class="ts" x="414" y="130">une variable de 4 octets</text>
+
+        <line class="arr" x1="414" y1="112" x2="256" y2="112" marker-end="url(#ar)"/>
+        <text class="ts" x="40" y="176">Appeler s_cb() fait sauter le processeur à l'adresse contenue dans la variable : c'est un appel indirect.</text>
+        <text class="ts" x="40" y="198">Le type de s_cb fixe la signature attendue — d'où le refus d'une fonction qui prend un bool.</text>
+      </svg>
+    </div>
+    <figcaption>Un pointeur de fonction n’est qu’une variable qui contient une adresse de code. L’appel passe par cette adresse : la HAL n’a pas besoin de connaître le nom.</figcaption>
+  </figure>
+
+  <table class="tbl">
+    <caption>Le QCM des trois sessions : quelles affectations compilent ?</caption>
+    <tr><th>affectation</th><th>compilateur</th><th>pourquoi</th></tr>
+    <tr><td><code>fct_p[1] = f1;</code></td><td class="ok">oui</td><td>même signature, le nom devient une adresse</td></tr>
+    <tr><td><code>fct_p[2] = &amp;f1;</code></td><td class="ok">oui</td><td>forme explicite, identique</td></tr>
+    <tr><td><code>fct_p[3] = f2;</code> <span class="ts">(f2 prend un <code>bool</code>)</span></td><td class="ko">non</td><td>types incompatibles</td></tr>
+    <tr><td><code>fct_p[5] = &amp;f2(true);</code></td><td class="ko">non</td><td><code>f2(true)</code> est un <b>appel</b>, il n'a pas d'adresse</td></tr>
+    <tr><td><code>fct_p[0] = *f1;</code></td><td class="ok">oui</td><td>le corrigé le refuse, mais la norme l'accepte</td></tr>
+  </table>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 210" role="img" aria-label="Sens des appels entre application et HAL">
+        <g class="c-blue"><rect x="60" y="60" width="200" height="60" rx="10"/><text class="th" x="160" y="86" text-anchor="middle">Application (main.c)</text><text class="ts" x="160" y="106" text-anchor="middle">onButton() — static</text></g>
+        <g class="c-teal"><rect x="420" y="60" width="200" height="60" rx="10"/><text class="th" x="520" y="86" text-anchor="middle">HAL_Buttons.c</text><text class="ts" x="520" y="106" text-anchor="middle">button_ISR()</text></g>
+        <path class="arr" d="M160 60 L160 30 L520 30 L520 58" marker-end="url(#ar)"/>
+        <text class="ts" x="340" y="22" text-anchor="middle">HAL_Button_RegisterCallback(&amp;onButton) — vers le bas</text>
+        <path d="M520 120 L520 160 L160 160 L160 122" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+        <text class="ts" x="340" y="180" text-anchor="middle" fill="var(--teal)">s_cb(ev) — l'information remonte par le pointeur</text>
+        <text class="ts" x="60" y="200">La HAL ne connaît que l'adresse de la fonction, jamais son nom.</text>
+      </svg>
+    </div>
+    <figcaption>Deux flèches, deux sens. Le bas (enregistrement) est autorisé parce que l'application connaît la HAL ; le haut (rappel) passe par un pointeur, donc la HAL n'a rien à savoir du code qui l'utilise.</figcaption>
+  </figure>
+
+  <div class="code"><header><span>HAL_Buttons.c · exercice 1.4</span><button data-copy>copier</button></header><pre><code><span class="k">typedef void</span> (*ButtonCallback_t)(Button_t, ButtonEvent_t);
+<span class="k">static</span> ButtonCallback_t s_cb = NULL;              <span class="c">/* static du MODULE : survit */</span>
+
+<span class="k">void</span> <span class="f">HAL_Button_RegisterCallback</span>(ButtonCallback_t cb) { s_cb = cb; }
+
+<span class="k">static void</span> <span class="f">button_ISR</span>(<span class="k">void</span>)
+{   uint32_t st = <span class="f">GPIOIntStatus</span>(GPIO_PORTJ_BASE, <span class="k">true</span>);
+    <span class="k">if</span> (st &amp; eBUTTON_USR_SW1) { <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1);
+        <span class="k">if</span> (s_cb != NULL) <span class="f">s_cb</span>(eBUTTON_USR_SW1, <span class="f">buttonState</span>(eBUTTON_USR_SW1)
+                                         ? eBUTTON_EVENT_PRESSED : eBUTTON_EVENT_RELEASED); } }
+
+<span class="c">/* dans main.c : l'application choisit, la HAL appelle */</span>
+<span class="f">HAL_Button_RegisterCallback</span>(&amp;onButton);</code></pre></div>
+
+  <div class="box rule">
+    <div class="lbl">La règle</div>
+    <p>Le pointeur est une variable <code>static</code> du <b>module</b> : une locale disparaîtrait à la sortie de la fonction d'enregistrement. Et il se teste contre <code>NULL</code> avant chaque appel — sinon on saute à l'adresse 0.</p>
+  </div>
+
+  <h3>L'exercice 2.13 : le diagnostic avant la correction</h3>
+  <p>On te donne une ISR qui appelle <code>handleLED1()</code>, définie dans <code>main.c</code>. Le défaut n'est pas une faute de syntaxe : c'est un <b>appel vers le haut</b>. La HAL dépend alors de ce <code>main.c</code> précis, et les deux couches perdent leur portabilité. Le remède est le callback ci-dessus.</p>
+  <p>Astuce d'examen : déclarer <code>handleLED1()</code> <code>static</code> dans <code>main.c</code> fait échouer <b>l'édition de liens</b>. Ce n'est pas une erreur d'outil, c'est le compilateur qui révèle chaque appel interdit.</p>
+
+  <table class="tbl">
+    <tr><th>symptôme</th><th>cause</th><th>correction</th></tr>
+    <tr><td>liaison : <i>undefined reference</i></td><td>fonction <code>static</code> appelée depuis un autre module</td><td>faire remonter l'information par un pointeur</td></tr>
+    <tr><td>l'ISR appelle une fonction d'application</td><td>appel vers le haut</td><td>type + <code>RegisterCallback</code> dans la HAL</td></tr>
+    <tr><td>le callback n'est jamais appelé</td><td>pointeur resté <code>NULL</code></td><td>enregistrer dans <code>main</code>, tester avant l'appel</td></tr>
+  </table>
+
+  <h3>Boutons : les rebonds, et pourquoi on ne branche pas tout sur l'interruption</h3>
+  <p>Un bouton mécanique rebondit : un seul appui produit une rafale de fronts en quelques millisecondes, et chaque front peut déclencher une interruption. Deux stratégies tiennent la route :</p>
+  <ul>
+    <li><b>ISR minuscule + FIFO</b> : l'ISR dépose un événement, <code>main</code> filtre et agit.</li>
+    <li><b>Polling filtré</b> : échantillonner à intervalle fixe et valider après n lectures identiques — charge bornée, recommandé par le corrigé.</li>
+  </ul>
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 200" role="img" aria-label="Rebonds d'un bouton et validation par échantillonnage">
+        <line class="arr" x1="40" y1="140" x2="640" y2="140"/>
+        <line class="arr" x1="40" y1="140" x2="40" y2="40"/>
+        <text class="ts" x="16" y="46">1</text><text class="ts" x="16" y="144">0</text>
+        <text class="ts" x="646" y="144">t</text>
+
+        <path d="M40 60 L180 60" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <path d="M180 60 L188 136 L196 60 L204 130 L212 60 L220 126 L228 60 L236 120 L244 60 L252 132 L260 60 L268 136"
+              fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <path d="M268 136 L640 136" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <text class="ts" x="180" y="40">rebonds (quelques ms)</text>
+
+        <line class="leader" x1="330" y1="60" x2="330" y2="150"/>
+        <line class="leader" x1="390" y1="60" x2="390" y2="150"/>
+        <line class="leader" x1="450" y1="60" x2="450" y2="150"/>
+        <text class="ts" x="322" y="166">1</text><text class="ts" x="382" y="166">2</text><text class="ts" x="442" y="166">3</text>
+        <text class="ts" x="330" y="184">trois lectures identiques (0) → appui validé</text>
+      </svg>
+    </div>
+    <figcaption>Le signal réel d’un bouton : une rafale de fronts. Les trois traits verticaux sont les lectures du filtre — c’est la méthode dite du polling filtré.</figcaption>
+  </figure>
+
+  <div class="code"><header><span>anti-rebond par polling (principe du cours)</span><button data-copy>copier</button></header><pre><code><span class="k">bool</span> <span class="f">lireBoutonFiltre</span>(Button_t b)
+{
+    <span class="k">bool</span> etat = <span class="f">buttonState</span>(b);                  <span class="c">/* première lecture        */</span>
+    <span class="k">for</span> (uint8_t i = <span class="n">0</span>; i &lt; <span class="n">3</span>; i++) {              <span class="c">/* 3 confirmations         */</span>
+        <span class="f">MAP_SysCtlDelay</span>(g_sysClockHz / <span class="n">3000</span>);     <span class="c">/* ≈ 1 ms                  */</span>
+        <span class="k">if</span> (<span class="f">buttonState</span>(b) != etat) { etat = !etat; i = <span class="n">0</span>; }   <span class="c">/* rebond : on repart */</span>
+    }
+    <span class="k">return</span> etat;                                 <span class="c">/* stable depuis 3 ms      */</span>
+}</code></pre></div>
+  <div class="box trap">
+    <div class="lbl">Le piège</div>
+    <p>Alterner une LED s'écrit <code>count = (count + 1) % 2</code>. Le corrigé 2024 écrit <code>++count % 2</code> : la variable est modifiée deux fois dans la même expression, c'est un <b>comportement indéfini</b> que <code>gcc -Wall</code> signale. Et l'en-tête fourni fait foi : <code>ledWrite</code>, pas <code>HAL_Led_Write</code>.</p>
+  </div>
+
+  <details class="try"><summary>Pourquoi le pointeur du callback doit-il être <code>static</code> dans le module HAL ?</summary>
+    <div class="ans">Une variable locale disparaît à la sortie de la fonction d'enregistrement : l'ISR ne retrouverait plus l'adresse. La <code>static</code> du module vit pendant tout le programme et reste privée au module.</div>
+  </details>
+</section>
+
+
+<section id="c7">
+  <div class="kicker"><div class="badge">07</div><div class="tag">compilation · nombres · git</div></div>
+  <h2>Du fichier source à la carte : chaîne, mémoire, types</h2>
+  <p class="lead">Ton <code>.c</code> passe sur une chaîne de montage. Savoir à quelle étape une erreur apparaît — et comment un octet devient un nombre — évite la moitié des questions pièges.</p>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 170" role="img" aria-label="Chaîne de compilation">
+        <g class="c-gray"><rect x="30" y="46" width="92" height="46" rx="8"/><text class="th" x="76" y="66" text-anchor="middle">main.c</text><text class="ts" x="76" y="82" text-anchor="middle">HAL_*.c .h</text></g>
+        <g class="c-blue"><rect x="142" y="46" width="92" height="46" rx="8"/><text class="th" x="188" y="66" text-anchor="middle" style="font-size:12.5px">préprocesseur</text><text class="ts" x="188" y="82" text-anchor="middle">→ .i</text></g>
+        <g class="c-blue"><rect x="254" y="46" width="92" height="46" rx="8"/><text class="th" x="300" y="66" text-anchor="middle">compilateur</text><text class="ts" x="300" y="82" text-anchor="middle">→ .s</text></g>
+        <g class="c-purple"><rect x="366" y="46" width="92" height="46" rx="8"/><text class="th" x="412" y="66" text-anchor="middle">assembleur</text><text class="ts" x="412" y="82" text-anchor="middle">→ .o</text></g>
+        <g class="c-amber"><rect x="478" y="46" width="98" height="46" rx="8"/><text class="th" x="527" y="66" text-anchor="middle" style="font-size:12.5px">éditeur de liens</text><text class="ts" x="527" y="82" text-anchor="middle">+ driverlib.lib</text></g>
+        <g class="c-green"><rect x="596" y="46" width="54" height="46" rx="8"/><text class="th" x="623" y="66" text-anchor="middle">.out</text><text class="ts" x="623" y="82" text-anchor="middle">.map</text></g>
+        <line class="arr" x1="122" y1="69" x2="140" y2="69" marker-end="url(#ar)"/>
+        <line class="arr" x1="234" y1="69" x2="252" y2="69" marker-end="url(#ar)"/>
+        <line class="arr" x1="346" y1="69" x2="364" y2="69" marker-end="url(#ar)"/>
+        <line class="arr" x1="458" y1="69" x2="476" y2="69" marker-end="url(#ar)"/>
+        <line class="arr" x1="576" y1="69" x2="594" y2="69" marker-end="url(#ar)"/>
+        <text class="ts" x="30" y="30">un .c à la fois</text>
+        <text class="ts" x="30" y="128">Le compilateur ne voit qu'un fichier : c'est le lieur qui assemble les .o et les bibliothèques.</text>
+        <text class="ts" x="30" y="148">Sections : .text et const en flash · .data copiée en RAM · .bss mise à zéro · pile et tas en RAM.</text>
+      </svg>
+    </div>
+    <figcaption>Préprocesseur → compilateur → assembleur → éditeur de liens. Retiens les extensions : <code>.i</code>, <code>.s</code>, <code>.o</code>, puis l'exécutable et sa carte <code>.map</code>.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 240" role="img" aria-label="Distinguer une erreur de compilation d'une erreur de lien">
+        <g class="c-blue"><rect x="30" y="30" width="190" height="46" rx="8"/><text class="th" x="125" y="52" text-anchor="middle">le compilateur</text><text class="ts" x="125" y="68" text-anchor="middle">accepte ce fichier ?</text></g>
+        <line class="arr" x1="220" y1="53" x2="248" y2="53" marker-end="url(#ar)"/>
+        <text class="ts" x="226" y="46">oui</text>
+        <g class="c-teal"><rect x="250" y="30" width="230" height="46" rx="8"/><text class="th" x="365" y="52" text-anchor="middle">tous les symboles</text><text class="ts" x="365" y="68" text-anchor="middle">sont-ils définis ?</text></g>
+        <line class="arr" x1="480" y1="53" x2="508" y2="53" marker-end="url(#ar)"/>
+        <text class="ts" x="486" y="46">oui</text>
+        <g class="c-green"><rect x="510" y="30" width="140" height="46" rx="8"/><text class="th" x="580" y="52" text-anchor="middle">.out (ELF)</text><text class="ts" x="580" y="68" text-anchor="middle">+ .map</text></g>
+
+        <line class="arr" x1="125" y1="76" x2="125" y2="118" marker-end="url(#ar)"/>
+        <text class="ts" x="133" y="100">non</text>
+        <g class="c-red"><rect x="30" y="120" width="230" height="46" rx="8"/><text class="th" x="145" y="142" text-anchor="middle">erreur de compilation</text><text class="ts" x="145" y="158" text-anchor="middle">syntaxe, type, point-virgule…</text></g>
+
+        <line class="arr" x1="365" y1="76" x2="365" y2="118" marker-end="url(#ar)"/>
+        <text class="ts" x="373" y="100">non</text>
+        <g class="c-amber"><rect x="250" y="120" width="270" height="46" rx="8"/><text class="th" x="385" y="142" text-anchor="middle">édition de liens</text><text class="ts" x="385" y="158" text-anchor="middle">undefined reference, définition multiple</text></g>
+        <text class="ts" x="30" y="214">Le compilateur ne voit qu'un .c à la fois : tout ce qui manque « ailleurs » ne se voit qu'au lien.</text>
+      </svg>
+    </div>
+    <figcaption>Deux étages, deux familles d’erreurs. Un point-virgule manquant s’arrête en haut ; un symbole absent ne se voit qu’en bas.</figcaption>
+  </figure>
+
+  <h3>Compiler ou éditer les liens ?</h3>
+  <table class="tbl">
+    <tr><th>erreur</th><th>étape</th><th>pourquoi</th></tr>
+    <tr><td>point-virgule manquant dans <code>main.c</code></td><td>compilation</td><td>syntaxe d'un seul fichier</td></tr>
+    <tr><td><code>absente()</code> déclarée dans un <code>.h</code>, définie nulle part</td><td>édition de liens</td><td>le prototype suffit au compilateur ; le lieur ne trouve pas le code</td></tr>
+    <tr><td><code>int compteur = 0;</code> dans un <code>.h</code> inclus deux fois</td><td>édition de liens</td><td>chaque <code>.o</code> a sa propre variable : définition multiple</td></tr>
+  </table>
+  <p><code>undefined reference to foo</code> est donc une erreur de <b>lien</b>, jamais de compilation. Et <code>static</code> sur une fonction ou une globale lui donne une <b>liaison interne</b> : visible dans ce fichier seulement.</p>
+
+  <h3>Quatre mots-clés à ne pas confondre</h3>
+  <table class="tbl">
+    <tr><th>mot-clé</th><th>effet exact</th></tr>
+    <tr><td><code>static</code></td><td>fonction ou globale : portée limitée au fichier (liaison interne) ; sur une locale : garde sa valeur d'un appel à l'autre</td></tr>
+    <tr><td><code>extern</code></td><td>le nom est défini ailleurs — une annonce, qui ne réserve rien</td></tr>
+    <tr><td><code>volatile</code></td><td>relue en mémoire à chaque accès : indispensable entre une ISR et <code>main</code></td></tr>
+    <tr><td><code>const</code></td><td>placée en flash ; attention, <code>const</code> ne veut pas dire <code>volatile</code></td></tr>
+  </table>
+
+  <h3>Comment un octet devient un nombre</h3>
+  <p>Un octet n'est qu'une suite de 8 bits : c'est le <b>type</b> qui dit comment la lire. Le même <code>0xF6</code> vaut 246 en non signé et −10 en signé. En complément à deux, l'opposé s'obtient en inversant les bits puis en ajoutant 1.</p>
+  <table class="tbl">
+    <tr><th>exemple</th><th>calcul</th><th>résultat</th></tr>
+    <tr><td>−10 sur 8 bits</td><td>+10 = 0x0A → 1111 0101 → +1 = 1111 0110</td><td><code>0xF6</code></td></tr>
+    <tr><td>−5 sur 8 bits</td><td>+5 = 0x05 → 1111 1010 → +1 = 1111 1011</td><td><code>0xFB</code></td></tr>
+    <tr><td>0xF6 relu</td><td>246 en <code>uint8_t</code></td><td>−10 en <code>int8_t</code></td></tr>
+    <tr><td>200 + 100 en <code>uint8_t</code></td><td>300 modulo 256</td><td>44</td></tr>
+    <tr><td>100 + 100 en <code>int8_t</code></td><td>débordement signé</td><td>−56</td></tr>
+  </table>
+
+  <figure>
+    <div class="figcard">
+      <svg viewBox="0 0 680 170" role="img" aria-label="Champs du format IEEE 754 simple précision">
+        <g class="c-red"><rect x="50" y="34" width="18" height="34" rx="4"/></g>
+        <text class="th" x="59" y="56" text-anchor="middle">S</text>
+        <g class="c-green"><rect x="68" y="34" width="144" height="34" rx="4"/></g>
+        <text class="th" x="140" y="56" text-anchor="middle">exposant</text>
+        <g class="c-blue"><rect x="212" y="34" width="414" height="34" rx="4"/></g>
+        <text class="th" x="419" y="56" text-anchor="middle">mantisse (23 bits)</text>
+        <text class="tm" x="50" y="84">31</text><text class="tm" x="204" y="84">23</text><text class="tm" x="612" y="84">0</text>
+        <text class="ts" x="50" y="112">1 bit de signe · 8 bits d'exposant (biais 127) · 23 bits de mantisse</text>
+        <text class="ts" x="50" y="132">1,0 → 0x3F800000 · −2,5 → 0xC0200000</text>
+        <text class="ts" x="50" y="152">Q1.15 (virgule fixe) : valeur = entier / 2¹⁵ — 0,5 → 0x4000 · −0,25 → 0xE000</text>
+      </svg>
+    </div>
+    <figcaption>Les largeurs sont à l'échelle des 32 bits : 1 bit de signe, 8 d'exposant, 23 de mantisse. La FPU du Cortex-M4F ne traite que la simple précision : écris <code>float</code> et <code>2.5f</code>, un <code>double</code> est calculé en logiciel.</figcaption>
+  </figure>
+
+  <h3>git : trois zones, deux dépôts</h3>
+  <p>Tu choisis ce qui entre dans la photo (<code>add</code>), tu prends la photo (<code>commit</code>), tu l'envoies sur la forge (<code>push</code>). Tant que tu n'as pas poussé, le travail n'existe que sur ta machine. Ton dépôt est <code>origin</code>, celui du prof <code>upstream</code> : fork, clone, <code>git remote add upstream</code>, puis <code>git pull upstream main</code> (= <code>fetch</code> + <code>merge</code>). Un tag marque une version stable (RC1.0).</p>
+
+  <details class="try"><summary>Le prof ajoute l'exercice 1.3 au template. Quelles commandes le font arriver chez toi ?</summary>
+    <div class="ans"><code>git fetch upstream</code> puis <code>git merge upstream/main</code> — ou en une commande <code>git pull upstream main</code>.</div>
+  </details>
+</section>
+
+
+<section id="c8">
+  <div class="kicker"><div class="badge">08</div><div class="tag">réviser</div></div>
+  <h2>Réviser : les pièges, la méthode, l'auto-test</h2>
+  <p class="lead">Tout ce qui précède se résume en dix-huit réflexes et une méthode de lecture. Commence par le QCM et le dimensionnement : ce sont les points les plus rapides.</p>
+
+  <h3>Les dix-huit pièges</h3>
+  <div class="grid2">
+    <div class="mini">
+      <ol style="font-size:14.5px;padding-left:18px">
+        <li><code>SysCtlPeripheralEnable</code> avant tout accès au port</li>
+        <li>D1 = PN1, D2 = PN0 — l'ordre est inversé</li>
+        <li>Boutons actifs bas, pull-up interne</li>
+        <li><code>GPIOPinWrite</code> : un masque, pas 1</li>
+        <li><code>volatile</code> + section critique</li>
+        <li>Acquitter au début de l'ISR</li>
+        <li>Priorité 0 = la plus haute</li>
+        <li>SysTick : 24 bits, 139,81 ms au plus</li>
+        <li><code>SysTickIntEnable</code> ≠ <code>SysTickEnable</code></li>
+      </ol>
+    </div>
+    <div class="mini">
+      <ol start="10" style="font-size:14.5px;padding-left:18px">
+        <li><i>undefined reference</i> = édition de liens</li>
+        <li>Guillemets pour un en-tête du projet, chevrons pour le système</li>
+        <li>FIFO : N−1 éléments · pile : N</li>
+        <li>9,6 octets donnent 16 cases, pas 10</li>
+        <li>Callback <code>static</code>, testé contre <code>NULL</code></li>
+        <li><code>(i + N − 1) % N</code>, jamais <code>(i − 1) % N</code></li>
+        <li><code>commit</code> est local, <code>push</code> publie</li>
+        <li><code>double</code> = logiciel sur M4F</li>
+        <li>Une ISR : <code>void f(void)</code>, rien en paramètre</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>La méthode du jour J</h3>
+  <table class="tbl">
+    <tr><th>si on demande…</th><th>réflexe</th></tr>
+    <tr><td>taille d'une FIFO</td><td>Q = bauds/10 × T, N−1 ≥ ⌈Q⌉, puissance de 2 : écrire les trois lignes</td></tr>
+    <tr><td>charge processeur</td><td>Σ fᵢ·dᵢ sur <b>toutes</b> les sources, puis contrôle sur la fenêtre</td></tr>
+    <tr><td>pourquoi pas d'appel vers le haut</td><td>dépendance remontante, perte de portabilité, remède : callback</td></tr>
+    <tr><td>si une affectation compile</td><td>même signature ; <code>f1</code> et <code>&amp;f1</code> ; un appel n'a pas d'adresse</td></tr>
+    <tr><td>ordre de la chaîne</td><td>préprocesseur <code>.i</code>, compilateur <code>.s</code>, assembleur <code>.o</code>, lieur</td></tr>
+    <tr><td>régler le SysTick</td><td>N = f·T ≤ 2²⁴ puis Period, IntRegister, IntEnable, Enable</td></tr>
+    <tr><td>une priorité</td><td>plus petit = plus prioritaire ; niveau n → <code>n &lt;&lt; 5</code></td></tr>
+    <tr><td>écrire une ISR</td><td>lire, acquitter, publier, sortir ; partage en <code>volatile</code></td></tr>
+  </table>
+  <p>Le temps : environ une minute par point. Commence par le QCM et le dimensionnement FIFO (5 points en cinq minutes), puis le code. Et sur une question ouverte, réponds ce que le cours valide, mais signale l'écart quand tu le vois.</p>
+
+  <div class="box note">
+    <div class="lbl">Écarts des corrigés officiels</div>
+    <p>Ordre assembleur/compilateur inversé (2023, 2024) · charge 40 % au lieu de 47 % (CAN et UART oubliés) · « <code>SysTickEnable</code> active l'interruption » alors que c'est <code>SysTickIntEnable</code> · <code>*f1</code> refusé alors que le C l'accepte · spécification FIFO 2025 contradictoire (40 Hz et 10 ms).</p>
+  </div>
+
+  <h3>Auto-test — dix questions</h3>
+  <div class="quiz" id="quiz"></div>
+  <p class="score" id="score">0 / 10</p>
+
+  <details class="try"><summary>Trois sources : 100 Hz pendant 2 ms, 200 Hz pendant 1 ms, 50 Hz pendant 1 ms. Quelle charge ?</summary>
+    <div class="ans">20 % + 20 % + 5 % = <b>45 %</b>. Même méthode que la page 5, avec une source de moins.</div>
+  </details>
+</section>
+
+<script>
+/* ---------- quiz ---------- */
+const QUIZ = [
+  {q:"Quelle broche allume la LED D1 ?", o:["PN0","PN1","PF4","PJ0"], a:1,
+   fb:"D1 = PN1 et D2 = PN0 : l'ordre est inversé, c'est le piège numéro 2."},
+  {q:"Quelle valeur écrire pour un SysTick de 100 ms à 120 MHz ?", o:["12 000 000","11 999 999","1 200 000","120 000"], a:0,
+   fb:"N = f × T = 12 000 000 ; c'est SysTickPeriodSet qui écrit RELOAD = N−1."},
+  {q:"Combien d'éléments tiennent dans une FIFO de 16 cases à deux index ?", o:["16","15","17","8"], a:1,
+   fb:"N−1 : une case reste libre pour distinguer « plein » de « vide »."},
+  {q:"IntPrioritySet(INT_GPIOJ, 3) donne quel niveau de priorité ?", o:["3","0","7","5"], a:1,
+   fb:"Seuls les 3 bits de poids fort comptent : il faut écrire 3 << 5 (0x60)."},
+  {q:"À quel offset se trouve le vecteur du SysTick ?", o:["0x00","0x3C","0x40","0xE000"], a:1,
+   fb:"Exception 15 → 15 × 4 = 0x3C. IRQ0 commence à 0x40."},
+  {q:"« undefined reference to foo » est une erreur de…", o:["compilation","édition de liens","exécution","préprocesseur"], a:1,
+   fb:"Le prototype suffit au compilateur ; c'est le lieur qui ne trouve pas le code."},
+  {q:"Que vaut 0xF6 relu en int8_t ?", o:["246","−10","−6","250"], a:1,
+   fb:"0xF6 = 246 en non signé = −10 en complément à deux."},
+  {q:"Qui lit la FIFO d'événements ?", o:["l'ISR","main()","le NVIC","le DMA"], a:1,
+   fb:"L'ISR dépose et sort ; c'est main() qui traite — sinon l'interruption est trop longue."},
+  {q:"SysTickEnable()…", o:["autorise l'interruption","lance le compteur","règle la période","efface le drapeau"], a:1,
+   fb:"SysTickIntEnable() autorise l'IRQ ; SysTickEnable() démarre le décompte."},
+  {q:"Charge de 100 Hz/2 ms + 200 Hz/1 ms + 50 Hz/1 ms ?", o:["20 %","35 %","45 %","47 %"], a:2,
+   fb:"20 + 20 + 5 = 45 %. Les occupations s'additionnent."}
+];
+(function(){
+  const box = document.getElementById('quiz'), sc = document.getElementById('score');
+  let done = new Array(QUIZ.length).fill(false);
+  QUIZ.forEach((item, qi)=>{
+    const d = document.createElement('div');
+    d.className = 'q';
+    d.innerHTML = `<div class="qt">${qi+1}. ${item.q}</div>`;
+    const opts = document.createElement('div'); opts.className = 'opts';
+    item.o.forEach((txt, oi)=>{
+      const lab = document.createElement('label');
+      lab.className = 'opt';
+      lab.innerHTML = `<input type="radio" name="q${qi}" value="${oi}"><span>${txt}</span>`;
+      lab.querySelector('input').addEventListener('change', ()=>{
+        const good = oi === item.a;
+        [...opts.children].forEach((l,i)=>{
+          l.classList.remove('right','wrong');
+          if(i === item.a) l.classList.add('right');
+          if(i === oi && !good) l.classList.add('wrong');
+        });
+        d.querySelector('.fb').classList.add('show');
+        done[qi] = good;
+        sc.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+      });
+      opts.appendChild(lab);
+    });
+    d.appendChild(opts);
+    const fb = document.createElement('div'); fb.className = 'fb'; fb.innerHTML = item.fb;
+    d.appendChild(fb);
+    box.appendChild(d);
+  });
+})();
+</script>
+
+</main>
+
+</div>
+
+<script>
+/* ---------- barre de progression + sommaire actif ---------- */
+const bar = document.getElementById('progress');
+function onScroll(){
+  const h = document.documentElement;
+  const p = h.scrollTop / (h.scrollHeight - h.clientHeight || 1);
+  bar.style.width = (p*100).toFixed(2) + '%';
+}
+document.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ---------- copie du code ---------- */
+document.querySelectorAll('[data-copy]').forEach(b=>{
+  b.addEventListener('click', async ()=>{
+    const code = b.closest('.code').querySelector('code').innerText;
+    try{ await navigator.clipboard.writeText(code); b.textContent='copié ✓'; }
+    catch(e){ b.textContent='Ctrl+C'; }
+    setTimeout(()=>b.textContent='copier', 1400);
+  });
+});
+
+/* ---------- figure : marques des quatre sources ---------- */
+(function(){
+  const g = document.getElementById('marks');
+  if(!g) return;
+  const x0 = 340, ech = 5;                 // 60 ms sur 300 px
+  const rows = [['--blue',26,10],['--green',54,5],['--purple',82,20],['--amber',110,50]];
+  let svg = '';
+  rows.forEach(([col, y, per])=>{
+    for(let t = per; t <= 60; t += per){
+      svg += `<rect x="${x0 + t*ech - 1.5}" y="${y}" width="3" height="10" rx="1" fill="var(${col})"/>`;
+    }
+  });
+  g.innerHTML = svg;
+})();
+
+/* ---------- simulateur FIFO ---------- */
+(function(){
+  const N = 8, cells = document.getElementById('fifoCells'), out = document.getElementById('fifoOut');
+  const svg = document.getElementById('fifoSvg');
+  let buf = new Array(N).fill(null), rd = 0, wr = 0, lost = 0, n = 0;
+  const paint = ()=>{
+    cells.innerHTML = '';
+    for(let i=0;i<N;i++){
+      const d = document.createElement('div');
+      d.className = 'cell' + (buf[i]?' full':'') + (i===rd&&rd!==wr?' rd':'') + (i===wr?' wr':'');
+      d.innerHTML = `<span class="ix">${i}</span>${buf[i]||''}`;
+      cells.appendChild(d);
+    }
+    const used = (wr - rd + N) % N;
+    let s = `readIndex = <b>${rd}</b> · writeIndex = <b>${wr}</b> · ${used} élément(s) — capacité utile <b>${N-1}</b>`;
+    if(lost) s += ` · <span class="warn">${lost} perdu(s) : FIFO pleine</span>`;
+    if(!used) s += ' — vide (rd == wr)';
+    out.innerHTML = s;
+    if(svg){
+      let x = '';
+      for(let i=0;i<N;i++){
+        const fill = buf[i] ? 'var(--teal-s)' : 'var(--card2)';
+        const stroke = buf[i] ? 'var(--teal)' : 'var(--line)';
+        x += `<rect x="${40 + i*72}" y="46" width="72" height="46" fill="${fill}" stroke="${stroke}" stroke-width=".8" rx="${i===0?8:0}"/>`;
+        x += `<text class="ts" x="${52 + i*72}" y="62">${i}</text>`;
+        if(buf[i]) x += `<text class="th" x="${76 + i*72}" y="82" text-anchor="middle">${buf[i]}</text>`;
+      }
+      x += `<text class="ts" x="${40 + rd*72 + 24}" y="32" text-anchor="middle" fill="var(--red)">readIndex</text>`;
+      x += `<line x1="${76 + rd*72}" y1="36" x2="${76 + rd*72}" y2="44" stroke="var(--red)" stroke-width="1.5"/>`;
+      x += `<text class="ts" x="${40 + wr*72 + 26}" y="122" text-anchor="middle" fill="var(--blue)">writeIndex</text>`;
+      x += `<line x1="${76 + wr*72}" y1="94" x2="${76 + wr*72}" y2="102" stroke="var(--blue)" stroke-width="1.5"/>`;
+      x += `<text class="ts" x="40" y="150">N cases → N−1 éléments : la case précédant readIndex reste libre.</text>`;
+      svg.innerHTML = x;
+    }
+  };
+  document.querySelectorAll('[data-fifo]').forEach(b=>b.addEventListener('click', ()=>{
+    const a = b.dataset.fifo;
+    if(a==='add'){
+      if((wr+1)%N === rd){ lost++; }
+      else { buf[wr] = String.fromCharCode(65 + (n++ % 26)); wr = (wr+1)%N; }
+    } else if(a==='get'){
+      if(rd === wr){} else { buf[rd] = null; rd = (rd+1)%N; }
+    } else { buf = new Array(N).fill(null); rd = wr = lost = 0; n = 0; }
+    paint();
+  }));
+  paint();
+})();
+
+/* ---------- calculateur SysTick ---------- */
+(function(){
+  const inp = document.getElementById('ms'), out = document.getElementById('msOut');
+  const F = 120e6, MAX = Math.pow(2,24);
+  const upd = ()=>{
+    const ms = parseFloat(inp.value);
+    if(!isFinite(ms) || ms <= 0){ out.innerHTML = '—'; return; }
+    const N = F * ms / 1000;
+    const hz = 1000/ms;
+    let html = `N = <b>${Math.round(N).toLocaleString('fr-CH')}</b> cycles`;
+    if(N > MAX){
+      html += `<br><span class="warn">impossible : ${Math.round(N).toLocaleString('fr-CH')} > 2²⁴ (16 777 216)</span>`;
+      html += `<br>période maximale : <b>139,81 ms</b> — prends une base plus courte et compte les ticks`;
+    } else {
+      html += `<br>RELOAD = <b>${(Math.round(N)-1).toLocaleString('fr-CH')}</b> (N−1 écrit par SysTickPeriodSet)`;
+      html += `<br>fréquence : <b>${hz.toLocaleString('fr-CH',{maximumFractionDigits:2})} Hz</b>`;
+      if(hz < 10) html += `<br><span class="ts">${Math.round(1000/ms*1000)} ms : pense à un Timer plutôt qu'à un tick très lent</span>`;
+    }
+    out.innerHTML = html;
+  };
+  inp.addEventListener('input', upd);
+  document.querySelectorAll('[data-ms]').forEach(b=>b.addEventListener('click', ()=>{ inp.value = b.dataset.ms; upd(); }));
+  upd();
+})();
+</script>
+<a class="site-retour" href="../index.html#E2-EMB1">← E2-EMB1</a>
+</body>
+</html>

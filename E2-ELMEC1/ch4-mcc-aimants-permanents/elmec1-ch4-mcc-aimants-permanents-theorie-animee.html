@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>MCC à aimants permanents — E2-ELMEC1</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  h1 em{font-style:normal;color:var(--accent);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--accent-2);text-decoration-thickness:.055em;text-underline-offset:.13em}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;border:1px solid transparent}
+  .sw-int{background:var(--blue-s);border-color:var(--blue)}
+  .sw-char{background:var(--green-s);border-color:var(--green)}
+  .sw-ptr{background:var(--accent-s);border-color:var(--accent)}
+  .sw-heap{background:var(--coral-s);border-color:var(--coral)}
+  .sw-free{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:28ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+  h1 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent)}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 12px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+  .th{font-family:var(--sans);font-size:14px;fill:var(--ink);font-weight:600}
+  .tm{font-family:var(--mono);font-size:10.5px;fill:var(--faint)}
+  .arr{stroke:var(--ink);stroke-width:1.5;fill:none}
+  .arrd{stroke:var(--faint);stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+  .c-blue>rect,.c-blue>circle{fill:var(--blue-s);stroke:var(--blue);stroke-width:.7}
+  .c-blue>.th,.c-blue>.t{fill:var(--blue)} .c-blue>.ts{fill:var(--blue)}
+  .c-teal>rect,.c-teal>circle{fill:var(--teal-s);stroke:var(--teal);stroke-width:.7}
+  .c-teal>.th,.c-teal>.t{fill:var(--teal)} .c-teal>.ts{fill:var(--teal)}
+  .c-coral>rect,.c-coral>circle{fill:var(--coral-s);stroke:var(--coral);stroke-width:.7}
+  .c-coral>.th,.c-coral>.t{fill:var(--coral)} .c-coral>.ts{fill:var(--coral)}
+  .c-purple>rect,.c-purple>circle{fill:var(--purple-s);stroke:var(--purple);stroke-width:.7}
+  .c-purple>.th,.c-purple>.t{fill:var(--purple)} .c-purple>.ts{fill:var(--purple)}
+  .c-green>rect,.c-green>circle{fill:var(--green-s);stroke:var(--green);stroke-width:.7}
+  .c-green>.th,.c-green>.t{fill:var(--green)} .c-green>.ts{fill:var(--green)}
+  .c-gray>rect,.c-gray>circle{fill:var(--gray-s);stroke:var(--gray);stroke-width:.7}
+  .c-gray>.th,.c-gray>.t{fill:var(--ink)} .c-gray>.ts{fill:var(--muted)}
+  .c-red>rect,.c-red>circle{fill:var(--red-s);stroke:var(--red);stroke-width:.7}
+  .c-red>.th,.c-red>.t{fill:var(--red)} .c-red>.ts{fill:var(--red)}
+
+  /* ---------- traducteur de déclarations ---------- */
+  .translator{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px;background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:16px;margin:22px 0;box-shadow:var(--shadow);align-items:start}
+  .trans-list{display:grid;gap:4px;align-content:start}
+  .trans-list button{text-align:left;border:1px solid transparent;background:var(--card2);border-radius:7px;padding:5px 8px;font:11.5px/1.5 var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s,color .15s;overflow-wrap:anywhere}
+  .trans-list button:hover{color:var(--ink);background:var(--card)}
+  .trans-list button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .trans-list button code{background:none;border:0;padding:0;font-size:12px;color:inherit}
+  .trans-out{background:var(--card2);border-radius:10px;padding:12px 14px;min-height:150px}
+  .trans-out .decl{font:12px var(--mono);color:var(--accent);margin-bottom:6px;overflow-wrap:anywhere}
+  .trans-out .fr{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:550;max-width:40ch}
+  .trans-out .why{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;max-width:46ch}
+  @media (max-width:760px){
+    .translator{grid-template-columns:1fr;padding:13px}
+    .trans-list{grid-template-columns:1fr 1fr}
+    .trans-out{min-height:120px}
+  }
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .mem-stage{position:relative;padding:12px 4px 4px;margin-top:2px}
+  .mem-groups{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;justify-content:center}
+  .mem-groups.is-stack{flex-direction:column;align-items:center;gap:24px}
+  .mem-groups.is-stack .mem-group{width:100%;position:relative;padding-top:16px}
+  .mem-groups.is-stack .mem-gtitle{position:absolute;left:0;top:0;text-align:left}
+  .mem-group{display:grid;justify-items:center;gap:6px;min-width:0}
+  .mem-gtitle{font:650 9.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .mem-ghint{font-size:11px;color:var(--faint);line-height:1.35;text-align:center;max-width:230px}
+  .cells{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:flex-start}
+  .cells.is-column{flex-direction:column;gap:44px;align-items:center}
+  .cell{--cw:108px;width:var(--cw);max-width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:7px 8px 6px;text-align:center;position:relative;transition:border-color .22s,background .22s,box-shadow .22s,opacity .22s}
+  .cell.is-ptr{border-color:var(--accent);background:linear-gradient(var(--accent-s),var(--card) 72%)}
+  .cell.is-char{border-color:var(--green);background:linear-gradient(var(--green-s),var(--card) 78%)}
+  .cell.is-heap{border-color:var(--coral);background:linear-gradient(var(--coral-s),var(--card) 78%)}
+  .cell.is-active{box-shadow:0 0 0 3px var(--accent-s);border-color:var(--accent)}
+  .cell.is-changed{animation:flash .9s ease}
+  .cell.is-new{animation:pop .34s ease}
+  .cell.is-freed{opacity:.62;border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 5px,var(--line2) 5px 6px)}
+  .cell.is-freed .cval{text-decoration:line-through}
+  .cell.is-err{border-color:var(--red);background:var(--red-s)}
+  .cell.is-null .cval{color:var(--faint)}
+  .cname{display:flex;align-items:center;justify-content:center;gap:4px;font:650 11.5px/1.2 var(--mono);color:var(--ink);min-height:16px}
+  .ctype{font:8.5px/1 var(--mono);text-transform:none;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:2px 3px;font-weight:400}
+  .cval{font:700 18px/1.18 var(--mono);margin:4px 0 1px;min-height:21px;overflow-wrap:anywhere}
+  .is-ptr .cval{font-size:13.5px;font-weight:650;color:var(--accent);letter-spacing:-.02em}
+  .caddr{font:9.5px/1.15 var(--mono);color:var(--faint);letter-spacing:.01em}
+  .cfields{display:grid;gap:1px;margin:4px 0 2px}
+  .cf{display:flex;justify-content:space-between;gap:8px;font:11px/1.5 var(--mono);border-bottom:1px dotted var(--line2);padding:1px 2px}
+  .cf:last-child{border-bottom:0}
+  .cf span{color:var(--faint)}
+  .cf b{font-weight:650}
+  .cell.w-node{--cw:158px}
+  .cell.w-wide{--cw:150px}
+
+  .arrow-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .arrow{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .arrow.is-accent{stroke:var(--accent);stroke-width:2}
+  .alabel{font:10px/1 var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- simulateur de code ---------- */
+  .codesim .sim{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+  .sim-code{list-style:none;margin:0;padding:8px 0;background:#1c1c1a;border-radius:11px;font:12px/1.72 var(--mono);overflow:auto;min-height:150px}
+  .sim-code li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:1px 11px 1px 6px;border-left:3px solid transparent;color:#cfccc4;white-space:pre;cursor:pointer}
+  .sim-code li:hover{background:rgba(255,255,255,.045)}
+  .sim-code li .ln{color:#67655f;text-align:right;user-select:none}
+  .sim-code li.on{background:rgba(255,255,255,.09);border-left-color:var(--accent-2);color:#fff}
+  .sim-code li.on .ln{color:#b9b6ad}
+  .sim-code .k{color:#9ec7f3} .sim-code .n{color:#e7b06a} .sim-code .s{color:#a7d8a9} .sim-code .c{color:#8b8880} .sim-code .f{color:#c6a9f8}
+  .sim-side{min-width:0}
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:9px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+  @media (max-width:880px){
+    .codesim .sim{grid-template-columns:1fr}
+    .codesim .sim-code{min-height:0}
+  }
+
+  /* ---------- explorateur d'adresses ---------- */
+  .addrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .addr-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0 13px}
+  .byte{border:1px solid var(--line2);border-radius:7px;background:var(--card2);padding:4px 3px 3px;text-align:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+  .byte:hover{transform:translateY(-1px);border-color:var(--line)}
+  .byte .ba{display:block;font:8.5px/1.2 var(--mono);color:var(--faint)}
+  .byte .bv{display:block;font:650 12px/1.3 var(--mono);color:var(--ink)}
+  .byte.v-x{background:var(--blue-s);border-color:var(--blue)}
+  .byte.v-c{background:var(--green-s);border-color:var(--green)}
+  .byte.v-p{background:var(--accent-s);border-color:var(--accent)}
+  .byte.pad{opacity:.5;background:transparent;border-style:dashed;cursor:default}
+  .byte.pad:hover{transform:none;border-color:var(--line2)}
+  .byte.sel{outline:2px solid var(--ink);outline-offset:1px}
+  .addr-vars{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+  .addr-vars button{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:6px 9px;font:12px var(--mono);color:var(--muted);cursor:pointer;transition:background .15s,border-color .15s}
+  .addr-vars button:hover{background:var(--card)}
+  .addr-vars button.on{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .addr-info{font-size:13px;line-height:1.55;color:var(--muted);background:var(--card2);border-radius:9px;padding:9px 11px;min-height:3.1em}
+  .addr-info b{color:var(--ink)}
+  .addr-info .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- widget tableau ---------- */
+  .arrlab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .arr-stage{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;align-items:center;padding:34px 0 6px;min-height:120px}
+  .arr-p{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:6px 8px;text-align:center}
+  .arr-p .n{font:650 11px/1.2 var(--mono);color:var(--ink)}
+  .arr-p .v{font:650 13px/1.2 var(--mono);color:var(--accent);margin:2px 0}
+  .arr-p .ty{font:9px/1 var(--mono);color:var(--faint)}
+  .arr-track{position:relative;display:flex;gap:0;min-width:0}
+  .arr-cell{flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--card);padding:7px 3px 6px;text-align:center;position:relative;transition:background .2s,border-color .2s,transform .2s}
+  .arr-cell:first-child{border-radius:9px 0 0 9px}
+  .arr-cell:last-child{border-radius:0 9px 9px 0}
+  .arr-cell .av{font:700 17px/1.2 var(--mono);color:var(--ink)}
+  .arr-cell .ai{font:9px/1.2 var(--mono);color:var(--faint);margin-top:2px}
+  .arr-cell.sel{background:var(--teal-s);border-color:var(--teal);transform:translateY(-2px)}
+  .arr-cell.sel .av{color:var(--teal)}
+  .arr-cur{position:absolute;top:-31px;transform:translateX(-50%);text-align:center;font:650 10.5px/1 var(--mono);color:var(--teal);transition:left .28s ease;white-space:nowrap}
+  .arr-cur::after{content:"";display:block;width:1.5px;height:16px;background:var(--teal);margin:4px auto 0}
+  .arr-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .arr-formula{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px;margin-top:8px}
+  .arr-formula b{color:var(--ink)}
+  .arr-formula .ok{color:var(--teal)} .arr-formula .ko{color:var(--red)}
+  .arr-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .arr-ctrl input[type=range]{flex:1 1 160px;accent-color:var(--teal);min-width:120px}
+  .arr-ctrl output{font:12px var(--mono);color:var(--faint);min-width:58px;text-align:right}
+
+  /* ---------- const ---------- */
+  .constgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:20px 0}
+  @media (max-width:800px){.constgrid{grid-template-columns:1fr}}
+  .const-card{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .const-card code{display:block;font-size:12px;background:var(--card2);white-space:nowrap;overflow-x:auto}
+  .const-viz{display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);color:var(--muted);flex-wrap:wrap;min-height:38px}
+  .cv-box{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:4px 6px}
+  .cv-ptr{border-color:var(--accent);background:var(--accent-s);color:var(--accent)}
+  .cv-lock{color:var(--red);font-size:12px}
+  .cv-arrow{color:var(--faint)}
+  .const-btns{display:flex;flex-wrap:wrap;gap:5px}
+  .const-btns button{border:1px solid var(--line);background:var(--card2);border-radius:6px;padding:5px 8px;font:10.5px var(--mono);color:var(--muted);cursor:pointer}
+  .const-btns button:hover{background:var(--card);color:var(--ink)}
+  .const-fb{font-size:11.5px;line-height:1.4;min-height:2.6em;color:var(--faint)}
+  .const-fb.ok{color:var(--teal)} .const-fb.ko{color:var(--red)}
+
+  /* ---------- pointeur de fonction ---------- */
+  .fplab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px;margin:22px 0;box-shadow:var(--shadow)}
+  .fp-stage{display:flex;flex-direction:column;align-items:center;gap:26px;padding:10px 0;position:relative}
+  .fp-op{background:linear-gradient(var(--accent-s),var(--card) 75%);border:1.5px solid var(--accent);border-radius:10px;padding:8px 11px;text-align:center;min-width:110px}
+  .fp-op .n{font:650 11px/1.2 var(--mono)}
+  .fp-op .v{font:650 12.5px/1.3 var(--mono);color:var(--accent);margin-top:2px}
+  .fp-fns{display:flex;gap:8px;flex-wrap:wrap}
+  .fp-fn{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:8px 10px;font:11.5px/1.4 var(--mono);color:var(--muted);cursor:pointer;text-align:left;transition:border-color .18s,background .18s}
+  .fp-fn b{display:block;color:var(--ink);font-size:12.5px}
+  .fp-fn span{color:var(--faint);font-size:10px}
+  .fp-fn.on{border-color:var(--teal);background:var(--teal-s);color:var(--teal)}
+  .fp-fn.on b{color:var(--teal)}
+  .fp-out{font:12.5px/1.7 var(--mono);color:var(--muted);background:var(--card2);border-radius:9px;padding:8px 11px}
+  .fp-out b{color:var(--ink)}
+  .fp-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:flex;gap:9px;align-items:baseline}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .mem-groups{gap:20px}
+    .cell{--cw:98px}
+    .addr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:560px}
+    .arr-stage{grid-template-columns:1fr;gap:0;padding:8px 0 6px}
+    .arr-p{justify-self:start;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start;padding:5px 8px;margin-bottom:54px;width:auto}
+    .arr-p .v{margin:0}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.addrlab,.arrlab,.fplab,.quiz,.box{box-shadow:none}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+
+  /* ---------- formules (fiches ELMEC1) ---------- */
+  .math{font:16.5px/1.9 "Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:11px 15px;margin:14px 0;overflow-x:auto;white-space:pre-wrap;color:var(--ink);max-width:100%}
+  .math .ml{display:block;font:650 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+  .math i,.fx i{font-style:italic}
+  .math sub,.math sup,.fx sub,.fx sup{font-size:.72em;line-height:0}
+  .fx{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",Georgia,serif;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:0 5px;white-space:nowrap}
+  .mono{font-family:var(--mono);font-size:12.5px}
+
+  /* ---------- schemas electromagnetiques ---------- */
+  .core{fill:var(--card2);stroke:var(--muted);stroke-width:2;stroke-linejoin:round}
+  .core-hot{fill:var(--amber-s);stroke:var(--amber)}
+  .wire{fill:none;stroke:var(--ink);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .wire-d{fill:none;stroke:var(--faint);stroke-width:1.4;stroke-dasharray:5 4;stroke-linecap:round}
+  .flux{fill:none;stroke:var(--accent);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .flux2{fill:none;stroke:var(--teal);stroke-width:1.9;stroke-dasharray:7 4;stroke-linecap:round}
+  .coil{fill:none;stroke:var(--coral);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  .ax{stroke:var(--faint);stroke-width:1;stroke-dasharray:3 3}
+  .lgd{font:10px var(--mono);fill:var(--faint)}
+  .figgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+  @media (max-width:720px){.figgrid{grid-template-columns:1fr}}
+  .figgrid figure{margin:0}
+  .sw-core{background:var(--card2);border-color:var(--muted)}
+  .sw-flux{background:var(--accent-s);border-color:var(--accent)}
+  .sw-coil{background:var(--coral-s);border-color:var(--coral)}
+  .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
+  .legend .sw-t{font-size:12px;color:var(--faint)}
+  .tbl.wide{max-width:none}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-accent" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ELMEC1</div>
+        <div class="brandsub">MCC à aimants permanents<br>Fiche de révision · TE2</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>La machine</a>
+      <a href="#s2"><i>02</i>Laplace et collecteur</a>
+      <a href="#s3"><i>03</i>Couple électromagnétique</a>
+      <a href="#s4"><i>04</i>Tension induite</a>
+      <a href="#s5"><i>05</i>Équation électrique</a>
+      <a href="#s6"><i>06</i>Équation mécanique</a>
+      <a href="#s7"><i>07</i>Modèle dynamique</a>
+      <a href="#s8"><i>08</i>Régime permanent</a>
+      <a href="#s9"><i>09</i>Démarrage</a>
+      <a href="#s10"><i>10</i>Constantes de temps</a>
+      <a href="#s11"><i>11</i>Puissances et rendement</a>
+      <a href="#s12"><i>12</i>Réglage de la vitesse</a>
+      <a href="#s13"><i>13</i>Erreurs, QCM et mémo</a>
+    </nav>
+    <div class="sidefoot"><b>TE2</b> · chapitres 3–4<br><span>13 sections</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ELMEC1 · chapitre 4 · machine à courant continu</div>
+      <h1>MCC à aimants permanents</h1>
+      <p class="sub">Force de Laplace, tension induite, équations électrique et mécanique, modèle dynamique, régime permanent, démarrage, rendement et défluxage, à partir des mesures du TP2.</p>
+      <div class="meta">
+        <span class="chip"><b>13</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires</span>
+        <span class="chip">formulaire A4 autorisé</span>
+        <span class="chip">TE2 · ch. 3–4</span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>La machine</h3><p>Stator, induit, collecteur et balais.</p></a>
+        <a class="step" href="#s2"><div class="n">02</div><h3>Laplace et couple</h3><p>Force sur un conducteur, rôle du collecteur.</p></a>
+        <a class="step" href="#s4"><div class="n">04</div><h3>Tension induite</h3><p>u<sub>i</sub> = kΦ Ω et mesure du banc.</p></a>
+        <a class="step" href="#s8"><div class="n">08</div><h3>Régime permanent</h3><p>Point de fonctionnement et caractéristique.</p></a>
+        <a class="step" href="#s9"><div class="n">09</div><h3>Démarrage</h3><p>Courant d'appel et limitation.</p></a>
+        <a class="step" href="#s13"><div class="n">13</div><h3>Révision</h3><p>Erreurs fréquentes, QCM, mémo.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-core"></i>matériau doux</span>
+        <span><i class="sw sw-flux"></i>flux</span>
+        <span><i class="sw sw-coil"></i>bobinage / induit</span>
+        <span><i class="sw sw-air"></i>entrefer</span>
+        <span class="sw-t">flèche = sens du flux</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b> ; le sommaire s'ouvre avec <b>Sommaire</b>, en haut à gauche. Les valeurs viennent des mesures du TP2 recalculées (<span class="fx">R<sub>a</sub></span>, <span class="fx">R<sub>f</sub></span>, <span class="fx">U<sub>i</sub>/n</span>) ou d'un calcul explicite à partir d'elles ; en moteur la convention est celle du récepteur (<span class="fx">u = R i + u<sub>i</sub></span>), en génératrice <span class="fx">U<sub>a</sub> = U<sub>i</sub> − R<sub>a</sub> I<sub>a</sub></span>.</p>
+    </div>
+
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1</span>
+      <span class="doc-ref" title="Document du cours non publié">2</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">constitution</div></div>
+      <h2>La MCC à aimants permanents : un induit tournant dans un champ fixe</h2>
+      <p class="lead">Le stator crée un champ magnétique constant, le rotor porte l'induit et tourne, le collecteur et les balais relient les conducteurs tournants au circuit extérieur. Le chapitre modélise cette machine ; le banc du TP est une variante à excitation bobinée séparée.</p>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Coupe schématique de la machine : stator à aimants permanents, induit au rotor, arbre">
+            <circle cx="170" cy="152" r="116" class="core"/>
+            <circle cx="170" cy="152" r="88" fill="var(--card)" stroke="var(--muted)" stroke-width="1.2"/>
+            <circle cx="170" cy="152" r="73" class="ax" fill="none"/>
+            <g class="c-blue"><rect x="54" y="118" width="20" height="68" rx="3"/></g>
+            <g class="c-coral"><rect x="266" y="118" width="20" height="68" rx="3"/></g>
+            <text class="ts" x="64" y="156" text-anchor="middle">N</text>
+            <text class="ts" x="276" y="156" text-anchor="middle">S</text>
+            <circle cx="170" cy="152" r="58" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
+            <g fill="var(--coral)">
+              <circle cx="214" cy="152" r="5.5"/><circle cx="201.1" cy="183.1" r="5.5"/>
+              <circle cx="170" cy="196" r="5.5"/><circle cx="138.9" cy="183.1" r="5.5"/>
+              <circle cx="126" cy="152" r="5.5"/><circle cx="138.9" cy="120.9" r="5.5"/>
+              <circle cx="170" cy="108" r="5.5"/><circle cx="201.1" cy="120.9" r="5.5"/>
+            </g>
+            <circle cx="170" cy="152" r="11" fill="var(--card)" stroke="var(--ink)" stroke-width="1.2"/>
+            <path d="M78 130 H 262" class="flux" marker-end="url(#ar-accent)"/>
+            <path d="M78 174 H 262" class="flux" marker-end="url(#ar-accent)"/>
+            <path d="M210 95 A 70 70 0 0 1 236 176" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="252" y="133">Ω</text>
+            <line x1="286" y1="100" x2="330" y2="72" class="wire-d"/>
+            <text class="ts" x="334" y="68">stator : aimants permanents</text>
+            <line x1="224" y1="150" x2="330" y2="150" class="wire-d"/>
+            <text class="ts" x="334" y="146">induit : conducteurs</text>
+            <line x1="222" y1="204" x2="330" y2="232" class="wire-d"/>
+            <text class="ts" x="334" y="230">entrefer</text>
+            <text class="ts" x="170" y="292" text-anchor="middle">arbre</text>
+          </svg>
+        </div>
+        <figcaption>Coupe schématique : les aimants du stator imposent le flux (flèches pointillées, d'un pôle N vers un pôle S) ; l'induit tourne dans cet entrefer et le collecteur, solidaire de l'arbre, réalise la commutation. Le détail du collecteur est traité au laboratoire de la section 2.</figcaption>
+      </figure>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Les aimants permanents remplacent l'enroulement d'excitation : le flux est fixé une fois pour toutes, donc <span class="fx">kΦ</span> est constant. Sur le banc du TP, l'excitation est <b>bobinée séparée</b> : <span class="fx">I<sub>f</sub></span> est réglable, <span class="fx">R<sub>f</sub> = 64 Ω</span> mesurée à l'ohmmètre, et le flux peut varier (défluxage, section 12).</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Deux réalisations, deux comportements</caption>
+        <thead><tr><th>Point</th><th>MCC à aimants permanents</th><th>MCC à excitation bobinée séparée (banc)</th></tr></thead>
+        <tbody>
+          <tr><td>Source du flux</td><td>aimants au stator</td><td>enroulement d'excitation alimenté par <span class="fx">U<sub>f</sub></span>, <span class="fx">R<sub>f</sub> = 64 Ω</span></td></tr>
+          <tr><td><span class="fx">kΦ</span></td><td>constant, fixé par les aimants</td><td>dépend de <span class="fx">I<sub>f</sub></span> : réglable, saturable</td></tr>
+          <tr><td>Réglage de la vitesse</td><td>par la tension d'induit seulement</td><td>par la tension d'induit et par <span class="fx">I<sub>f</sub></span> (défluxage)</td></tr>
+          <tr><td>Couple à courant donné</td><td><span class="fx">M<sub>em</sub> = kΦ i</span>, proportionnel à <span class="fx">i</span></td><td>proportionnel à <span class="fx">i</span> et à <span class="fx">I<sub>f</sub></span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Le cours de référence est intitulé « MCC à aimants permanents ». Les énoncés de laboratoire déposés décrivent en revanche une MCC à excitation bobinée séparée : c'est l'énoncé qui fait foi pour le banc, le vocabulaire du cours (Laplace, tension induite, <span class="fx">M<sub>em</sub></span>, <span class="fx">τ<sub>e</sub></span>, <span class="fx">τ<sub>m</sub></span>) reste la base d'analyse. La différence se voit au défluxage (section 12).</p>
+      </div>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">laboratoire</div></div>
+      <h2>La force de Laplace et le collecteur produisent un couple</h2>
+      <p class="lead">Un conducteur parcouru par un courant <span class="fx">i</span> et plongé dans un champ <span class="fx">B</span> subit la force <span class="fx">F = i l × B</span>. Sur le rotor, cette force crée un couple ; le collecteur inverse le courant au passage du pôle pour garder le couple dans le même sens.</p>
+
+      <div class="math"><span class="ml">Force de Laplace</span>
+<i>F</i> = <i>i</i> · <i>l</i> × <i>B</i>        |<i>F</i>| = <i>i</i> · <i>l</i> · <i>B</i>  si  <i>i</i> ⊥ <i>B</i>
+
+Couple d'un conducteur à la distance <i>r</i> de l'axe :   <i>M</i> = <i>F</i> · <i>r</i>
+      </div>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 260" role="img" aria-label="Force de Laplace sur un conducteur puis couple sur une spire">
+            <g transform="translate(30,22)">
+              <text class="th" x="0" y="0">Conducteur</text>
+              <path d="M20 120 H 220" class="arr" marker-end="url(#ar)"/>
+              <path d="M20 70 H 220" class="arr" marker-end="url(#ar)"/>
+              <path d="M20 170 H 220" class="arr" marker-end="url(#ar)"/>
+              <text class="t" x="230" y="124">B</text>
+              <circle cx="120" cy="120" r="28" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.8"/>
+              <circle cx="120" cy="120" r="5" fill="var(--ink)"/>
+              <path d="M120 88 V 22" class="arr" marker-end="url(#ar)"/>
+              <text class="t" x="132" y="46">F</text>
+              <text class="ts" x="0" y="215">• : courant <tspan class="tm">i</tspan> sortant</text>
+            </g>
+            <g transform="translate(370,22)">
+              <text class="th" x="0" y="0">Spire</text>
+              <path d="M0 60 H 190" class="arr" marker-end="url(#ar)"/>
+              <path d="M0 150 H 190" class="arr" marker-end="url(#ar)"/>
+              <rect x="45" y="45" width="110" height="120" fill="none" stroke="var(--coral)" stroke-width="2.1" rx="3"/>
+              <circle cx="45" cy="105" r="13" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
+              <circle cx="45" cy="105" r="4.5" fill="var(--ink)"/>
+              <circle cx="155" cy="105" r="13" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
+              <path d="M149 99 L161 111 M161 99 L149 111" class="wire"/>
+              <path d="M45 90 V 38" class="arr" marker-end="url(#ar)"/>
+              <text class="t" x="56" y="56">F</text>
+              <path d="M155 120 V 196" class="arr" marker-end="url(#ar)"/>
+              <text class="t" x="166" y="184">F</text>
+              <path d="M25 35 C 60 2, 140 2, 175 35" class="arr" marker-end="url(#ar)"/>
+              <text class="ts" x="96" y="24">M<tspan class="tm">em</tspan></text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>À gauche : un conducteur vu de dessus, courant sortant (•), champ <span class="fx">B</span> vers la droite, force <span class="fx">F</span> vers le haut. À droite : les deux conducteurs d'une spire portent des courants opposés ; les forces opposées forment un couple. Le collecteur inverse le courant à chaque demi-tour pour conserver le sens du couple.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Sens par la règle des trois doigts de la main gauche : <b>index</b> = champ <span class="fx">B</span>, <b>majeur</b> = courant <span class="fx">i</span>, <b>pouce</b> = force <span class="fx">F</span>. Le couple est maximal quand <span class="fx">B</span> et le courant sont perpendiculaires, nul quand ils sont parallèles.</p>
+      </div>
+
+      <div class="lab" data-lab="laplace">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · force et commutation</div><div class="lab-sub">six états — exemple de calcul : B = 0,8 T, l = 0,2 m, r = 0,075 m</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Sans courant, aucune force : le conducteur immobile dans le champ ne produit rien.","code":"i = 0  →  F = 0","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"0 A","type":"courant","kind":"int"},
+            {"id":"f","name":"F","value":"0 N","type":"force","kind":"ptr"},
+            {"id":"m","name":"M","value":"0 N·m","type":"couple","kind":"char"}]}],"arrows":[]},
+          {"label":"On établit <b>i = 10 A</b> : la force vaut <b>F = i l B = 10 × 0,2 × 0,8 = 1,6 N</b>.","code":"F = i · l · B","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"10 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"new"},
+            {"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"new"}]}],"arrows":[]},
+          {"label":"On inverse le courant (<b>i = −10 A</b>) : la force et le couple changent de sens. Un moteur freinerait.","code":"i < 0 → F < 0","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"−10 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"f","name":"F","value":"−1,6 N","type":"force","kind":"ptr","state":"changed"},
+            {"id":"m","name":"M","value":"−0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"Le collecteur inverse le courant quand le conducteur passe sous l'autre pôle : le couple reste <b>positif</b>.","code":"commutation → i change de signe","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"+10 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"changed"},
+            {"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"Avec <b>i = 20 A</b>, la spire (deux conducteurs) produit <b>0,48 N·m</b> : le couple double avec le courant.","code":"M = 2 · F · r","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"20 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr","state":"changed"},
+            {"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"Résultat : un couple toujours dans le même sens et proportionnel au courant. C'est exactement <b>M<sub>em</sub> = kΦ i</b>, avec kΦ qui regroupe la géométrie et le champ.","code":"M_em = kΦ · i","groups":[{"title":"Grandeurs","cells":[
+            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
+            {"id":"i","name":"i","value":"20 A","type":"courant","kind":"int"},
+            {"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr"},
+            {"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Le collecteur ne crée pas le couple : il inverse le courant pour que le couple garde le même signe. Sans lui, le couple s'inverserait à chaque demi-tour et la machine ne tournerait pas de façon continue. Les valeurs de ce laboratoire sont un exemple de calcul, pas des mesures du banc.</p>
+      </div>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">couple</div></div>
+      <h2>Le couple électromagnétique est proportionnel au courant d'induit</h2>
+      <p class="lead">En sommant la force de Laplace sur tous les conducteurs de l'induit, le couple s'écrit <span class="fx">M<sub>em</sub> = kΦ i</span>. Pour une MCC à aimants permanents, <span class="fx">kΦ</span> ne dépend que de la géométrie et du flux des aimants : il est constant.</p>
+
+      <div class="math"><span class="ml">Couple électromagnétique</span>
+<i>M</i><sub>em</sub> = <i>k</i>Φ · <i>i</i>        avec  <i>k</i>Φ  en  N·m/A  =  V·s/rad
+
+Sur le banc à excitation nominale :  <i>k</i>Φ ≈ 2,22 N·m/A
+      </div>
+
+      <table class="tbl">
+        <caption>Couple calculé avec kΦ = 2,22 N·m/A</caption>
+        <thead><tr><th>Courant d'induit <span class="fx">i</span></th><th class="num">0 A</th><th class="num">5 A</th><th class="num">10 A</th><th class="num">15 A</th><th class="num">17,2 A</th></tr></thead>
+        <tbody>
+          <tr><td>Couple <span class="fx">M<sub>em</sub></span></td><td class="num">0 N·m</td><td class="num">11,1 N·m</td><td class="num">22,2 N·m</td><td class="num">33,3 N·m</td><td class="num">38,2 N·m</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p><span class="fx">kΦ</span> est la même constante dans les deux équations de conversion : <span class="fx">M<sub>em</sub> = kΦ i</span> et <span class="fx">u<sub>i</sub> = kΦ Ω</span>. C'est le lien entre le monde électrique et le monde mécanique.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Pour une MCC à excitation bobinée, <span class="fx">kΦ</span> dépend de <span class="fx">I<sub>f</sub></span> : le couple n'est plus proportionnel au seul courant d'induit. C'est le cas du banc au défluxage (section 12).</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">M<sub>em</sub></span> n'est pas le couple à l'arbre : les pertes fer et mécaniques se retranchent. Le banc n'a pas de couplemètre : le relevé note <span class="fx">M<sub>é-m</sub></span> = <span class="fx">P<sub>i</sub>/Ω</span>, calculé à partir des grandeurs électriques, ce qui correspond au couple électromagnétique et non à un couple mesuré à l'arbre.</p>
+      </div>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">tension induite</div></div>
+      <h2>La tension induite est proportionnelle à la vitesse</h2>
+      <p class="lead">Les conducteurs coupent le flux : la fém induite vaut <span class="fx">u<sub>i</sub> = kΦ Ω</span>, avec la même <span class="fx">kΦ</span> que pour le couple. L'essai moteur du TP donne <span class="fx">U<sub>i</sub>/n = 0,2330 V/rpm</span>, soit <span class="fx">kΦ ≈ 2,22 V·s/rad</span>.</p>
+
+      <div class="math"><span class="ml">Tension induite</span>
+<i>u</i><sub>i</sub> = <i>k</i>Φ · Ω        Ω = 2π <i>n</i> / 60        <i>k</i>Φ = (<i>U</i><sub>i</sub>/<i>n</i>) · 60/(2π)
+
+0,2330 V/rpm × 60/(2π) = 2,2249 V·s/rad  →  arrondi à 2,22 V·s/rad
+      </div>
+
+      <table class="tbl">
+        <caption>Essai moteur du banc : 8 points, <span class="fx">U<sub>i</sub> = U<sub>a</sub> − R<sub>a</sub> I<sub>a</sub></span> recalculé</caption>
+        <thead><tr><th class="num">n (tr/min)</th><th class="num">U<sub>a</sub> (V)</th><th class="num">U<sub>i</sub> (V)</th><th class="num">U<sub>i</sub>/n (V/rpm)</th></tr></thead>
+        <tbody>
+          <tr><td class="num">209</td><td class="num">49,5</td><td class="num">48,6</td><td class="num">0,2323</td></tr>
+          <tr><td class="num">428</td><td class="num">101,0</td><td class="num">99,8</td><td class="num">0,2332</td></tr>
+          <tr><td class="num">641</td><td class="num">150,8</td><td class="num">149,4</td><td class="num">0,2331</td></tr>
+          <tr><td class="num">854</td><td class="num">200,9</td><td class="num">199,4</td><td class="num">0,2335</td></tr>
+          <tr><td class="num">1 071</td><td class="num">251,0</td><td class="num">249,4</td><td class="num">0,2328</td></tr>
+          <tr><td class="num">1 283</td><td class="num">300,0</td><td class="num">298,3</td><td class="num">0,2325</td></tr>
+          <tr><td class="num">1 491</td><td class="num">350,0</td><td class="num">348,2</td><td class="num">0,2335</td></tr>
+          <tr><td class="num">1 710</td><td class="num">400,0</td><td class="num">398,0</td><td class="num">0,2328</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Moyenne <span class="fx">U<sub>i</sub>/n = 0,2330 V/rpm</span> ; l'étendue relative des 8 points (écart maximal rapporté à la moyenne) vaut 0,51 %, ce qui justifie le modèle <span class="fx">u<sub>i</sub> = kΦ Ω</span> à <span class="fx">kΦ</span> constant.</p>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Schéma de mesure de l'essai moteur : alimentation réglable, ampèremètre, voltmètre, induit, tachymètre et excitation séparée">
+            <rect x="36" y="58" width="80" height="34" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="th" x="76" y="80" text-anchor="middle">u</text>
+            <text class="ts" x="36" y="108">réglable</text>
+            <path d="M116 75 H 156" class="wire"/>
+            <circle cx="170" cy="75" r="14" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="t" x="170" y="80" text-anchor="middle">A</text>
+            <path d="M184 75 H 330" class="wire"/>
+            <path d="M290 66 H 320" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="296" y="58">i</text>
+            <circle cx="330" cy="110" r="36" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="th" x="330" y="116" text-anchor="middle">M</text>
+            <path d="M250 75 V 98" class="wire"/>
+            <circle cx="250" cy="112" r="14" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="t" x="250" y="117" text-anchor="middle">V</text>
+            <path d="M250 126 V 182 H 76 V 92" class="wire"/>
+            <path d="M330 146 V 182" class="wire"/>
+            <line x1="366" y1="110" x2="420" y2="110" class="wire-d"/>
+            <rect x="420" y="96" width="100" height="28" rx="4" fill="var(--card)" stroke="var(--muted)" stroke-width="1.2"/>
+            <text class="ts" x="470" y="115" text-anchor="middle">n (tachymètre)</text>
+            <text class="ts" x="330" y="204" text-anchor="middle">induit MCC</text>
+            <rect x="36" y="236" width="60" height="28" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="th" x="66" y="255" text-anchor="middle">U<tspan class="tm">f</tspan></text>
+            <path d="M96 250 H 140" class="wire"/>
+            <circle cx="154" cy="250" r="12" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+            <text class="ts" x="154" y="254" text-anchor="middle">A</text>
+            <path d="M166 250 H 180" class="wire"/>
+            <rect x="180" y="240" width="50" height="20" rx="3" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+            <text class="ts" x="205" y="232" text-anchor="middle">R<tspan class="tm">exc</tspan></text>
+            <path d="M230 250 H 280" class="wire"/>
+            <circle cx="306" cy="250" r="26" fill="var(--card2)" stroke="var(--coral)" stroke-width="1.8"/>
+            <text class="t" x="306" y="255" text-anchor="middle" fill="var(--coral)">f</text>
+            <path d="M306 276 H 66 V 264" class="wire"/>
+            <text class="ts" x="360" y="246">excitation séparée : R_exc, réglage de I<tspan class="tm">f</tspan></text>
+            <text class="ts" x="360" y="264">R<tspan class="tm">f</tspan> = 64 Ω mesurée à l'ohmmètre</text>
+          </svg>
+        </div>
+        <figcaption>Montage de l'essai moteur du TP2 (d'après la source CircuiTikZ du cours) : alimentation d'induit réglable, ampèremètre série, voltmètre en parallèle sur l'induit, tachymètre sur l'arbre. Sur le banc, l'excitation est bobinée séparée (<span class="fx">U<sub>f</sub></span>, <span class="fx">I<sub>f</sub></span>) ; le chapitre modélise la MCC à aimants permanents, où cette partie n'existe pas.</figcaption>
+      </figure>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">U<sub>i</sub></span> n'est pas <span class="fx">U<sub>a</sub></span> : l'écart vaut <span class="fx">R<sub>a</sub> I<sub>a</sub></span> (2,0 V à 400 V pour <span class="fx">I<sub>a</sub> = 1,34 A</span>). Attention au signe : en moteur <span class="fx">U<sub>i</sub> = U<sub>a</sub> − R<sub>a</sub> I<sub>a</sub></span>, en génératrice <span class="fx">U<sub>i</sub> = U<sub>a</sub> + R<sub>a</sub> I<sub>a</sub></span>, avec <span class="fx">I<sub>a</sub></span> positif dans le sens de fonctionnement.</p>
+      </div>
+
+      <details class="try">
+        <summary style="flex-wrap:wrap;row-gap:4px">Calculer <span class="fx">u<sub>i</sub></span> pour <span class="fx">n = 1 000 tr/min</span> avec <span class="fx">kΦ = 2,22 V·s/rad</span>.</summary>
+        <div class="ans"><span class="fx">Ω = 2π × 1 000 / 60 = 104,7 rad/s</span>, donc <span class="fx">u<sub>i</sub> = 2,22 × 104,7 ≈ 232 V</span>. La fém est bien proportionnelle à la vitesse.</div>
+      </details>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">modèle</div></div>
+      <h2>L'équation électrique de l'induit</h2>
+      <p class="lead">L'induit est un circuit <span class="fx">R-L</span> en série avec la fém <span class="fx">u<sub>i</sub></span>. La tension <span class="fx">u</span> imposée se partage entre la chute ohmique, le terme inductif et la fém.</p>
+
+      <div class="math"><span class="ml">Équation électrique</span>
+<i>u</i> = <i>R</i> · <i>i</i> + <i>L</i> · d<i>i</i>/d<i>t</i> + <i>u</i><sub>i</sub>        avec  <i>u</i><sub>i</sub> = <i>k</i>Φ Ω
+
+En régime permanent (d<i>i</i>/d<i>t</i> = 0) :   <i>u</i> = <i>R</i> · <i>i</i> + <i>k</i>Φ Ω
+      </div>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 220" role="img" aria-label="Circuit équivalent de l'induit : source u, résistance R, inductance L et force électromotrice u indice i">
+            <circle cx="80" cy="110" r="26" fill="var(--card)" stroke="var(--ink)" stroke-width="1.8"/>
+            <text class="th" x="80" y="116" text-anchor="middle">u</text>
+            <path d="M80 84 V 50 H 200" class="wire"/>
+            <rect x="200" y="38" width="60" height="24" rx="3" fill="var(--card)" stroke="var(--ink)" stroke-width="1.8"/>
+            <text class="th" x="230" y="30" text-anchor="middle">R</text>
+            <path d="M260 50 H 300" class="wire"/>
+            <path d="M300 50 q 10 -18 20 0 q 10 -18 20 0 q 10 -18 20 0" fill="none" stroke="var(--ink)" stroke-width="1.9" stroke-linecap="round"/>
+            <text class="th" x="340" y="26" text-anchor="middle">L</text>
+            <path d="M360 50 H 560" class="wire"/>
+            <path d="M272 44 H 292" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="282" y="66">i</text>
+            <path d="M80 136 V 170 H 560" class="wire"/>
+            <path d="M560 50 V 84" class="wire"/>
+            <circle cx="560" cy="110" r="26" fill="var(--card)" stroke="var(--ink)" stroke-width="1.8"/>
+            <text class="t" x="560" y="116" text-anchor="middle">u<tspan class="tm">i</tspan></text>
+            <text class="ts" x="596" y="102">+</text>
+            <text class="ts" x="596" y="126">−</text>
+            <path d="M560 136 V 170" class="wire"/>
+          </svg>
+        </div>
+        <figcaption>Induit : résistance <span class="fx">R</span>, inductance <span class="fx">L</span> et fém <span class="fx">u<sub>i</sub></span> en série. La tension <span class="fx">u</span> se répartit entre la chute ohmique <span class="fx">R i</span>, la tension inductive <span class="fx">L di/dt</span> et la fém.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>En régime permanent, <span class="fx">i = (u − u<sub>i</sub>)/R</span>. C'est la forme à utiliser pour un point de fonctionnement ; la forme différentielle ne sert que pour les transitoires.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p><span class="fx">L</span> (inductance d'induit) n'est pas mesurée sur le banc : elle n'intervient que dans le transitoire, via <span class="fx">τ<sub>e</sub> = L/R</span> (section 10). Aucune valeur numérique de <span class="fx">L</span> n'est affichée.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Le terme <span class="fx">L di/dt</span> n'est pas une chute ohmique : il ne dissipe pas de puissance, il stocke de l'énergie magnétique. Ne pas l'ajouter à <span class="fx">R i</span> pour calculer des pertes.</p>
+      </div>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">modèle</div></div>
+      <h2>L'équation mécanique de l'arbre</h2>
+      <p class="lead">Le rotor a une inertie <span class="fx">J</span>. Le couple électromagnétique l'accélère ; le couple résistant de la charge et le frottement visqueux s'y opposent.</p>
+
+      <div class="math"><span class="ml">Équation mécanique</span>
+<i>J</i> · dΩ/d<i>t</i> = <i>M</i><sub>em</sub> − <i>M</i><sub>r</sub> − <i>f</i> · Ω
+
+En régime permanent :   <i>M</i><sub>em</sub> = <i>M</i><sub>r</sub> + <i>f</i> · Ω
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le couple électromagnétique ne sert pas seulement à entraîner la charge : il doit aussi couvrir le frottement. À vitesse constante, <span class="fx">M<sub>em</sub></span> égale exactement la somme des couples résistants.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p><span class="fx">J</span> et <span class="fx">f</span> ne sont pas mesurés sur le banc : l'équation donne la structure du modèle, pas les valeurs. Sur le relevé, le courant à vide du moteur (<span class="fx">I<sub>a</sub> = 1,34 A</span> à 400 V) traduit le couple de frottement.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">M<sub>r</sub></span> est le couple de la charge ; il ne dépend pas de la vitesse du moteur. Le frottement <span class="fx">f Ω</span>, lui, augmente avec <span class="fx">Ω</span> : les deux termes ne se confondent pas.</p>
+      </div>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">schéma-bloc</div></div>
+      <h2>Le modèle dynamique couple les deux équations</h2>
+      <p class="lead">Les deux équations forment un système : la tension <span class="fx">u</span> et le couple résistant <span class="fx">M<sub>r</sub></span> sont les entrées, le courant <span class="fx">i</span> et la vitesse <span class="fx">Ω</span> les sorties. La fém <span class="fx">u<sub>i</sub> = kΦ Ω</span> est la contre-réaction qui relie les deux mondes.</p>
+
+      <div class="math"><span class="ml">Système d'équations</span>
+<i>u</i> = <i>R</i> · <i>i</i> + <i>L</i> · d<i>i</i>/d<i>t</i> + <i>k</i>Φ · Ω
+<i>J</i> · dΩ/d<i>t</i> = <i>k</i>Φ · <i>i</i> − <i>M</i><sub>r</sub> − <i>f</i> · Ω
+
+Entrées : <i>u</i>, <i>M</i><sub>r</sub>        Sorties : <i>i</i>, Ω
+      </div>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Schéma-bloc du modèle dynamique : somme, bloc électrique, bloc de conversion, somme mécanique, bloc mécanique et contre-réaction de la fém">
+            <text class="ts" x="24" y="78">u</text>
+            <path d="M20 90 H 54" class="arr" marker-end="url(#ar)"/>
+            <circle cx="72" cy="90" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="t" x="72" y="95" text-anchor="middle">Σ</text>
+            <rect x="110" y="64" width="130" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
+            <text class="ts" x="175" y="95" text-anchor="middle">1/(R + L·s)</text>
+            <path d="M90 90 H 110" class="arr" marker-end="url(#ar)"/>
+            <path d="M240 90 H 276" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="258" y="80">i</text>
+            <rect x="276" y="64" width="80" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
+            <text class="t" x="316" y="95" text-anchor="middle">kΦ</text>
+            <path d="M356 90 H 396" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="376" y="80">M<tspan class="tm">em</tspan></text>
+            <circle cx="414" cy="90" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
+            <text class="t" x="414" y="95" text-anchor="middle">Σ</text>
+            <path d="M414 20 V 72" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="424" y="42">M<tspan class="tm">r</tspan></text>
+            <path d="M432 90 H 456" class="arr" marker-end="url(#ar)"/>
+            <rect x="456" y="64" width="130" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
+            <text class="ts" x="521" y="95" text-anchor="middle">1/(J·s + f)</text>
+            <path d="M586 90 H 620" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="604" y="80">Ω</text>
+            <path d="M600 90 V 240 H 72 V 108" class="arr" marker-end="url(#ar)"/>
+            <text class="ts" x="240" y="232">u<tspan class="tm">i</tspan> = kΦ · Ω (contre-réaction)</text>
+            <rect x="100" y="40" width="300" height="110" fill="none" stroke="var(--faint)" stroke-width="1" stroke-dasharray="4 4" rx="8"/>
+            <text class="ts" x="104" y="34">partie électrique</text>
+            <rect x="448" y="40" width="146" height="110" fill="none" stroke="var(--faint)" stroke-width="1" stroke-dasharray="4 4" rx="8"/>
+            <text class="ts" x="452" y="34">partie mécanique</text>
+          </svg>
+        </div>
+        <figcaption>Boucle de régulation naturelle de la machine : la vitesse crée la fém, qui réduit le courant ; le courant crée le couple, qui augmente la vitesse. Le schéma-bloc est linéaire tant que <span class="fx">kΦ</span> est constant.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Avec <span class="fx">kΦ</span> constant, le système est linéaire : deux équations du premier ordre couplées, caractérisées par <span class="fx">τ<sub>e</sub></span> et <span class="fx">τ<sub>m</sub></span> (section 10). Pour une entrée <span class="fx">u</span>, la vitesse <span class="fx">Ω</span> se comporte comme un système du deuxième ordre.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Le modèle réel comporte des non-linéarités : saturation du circuit magnétique (qui fait varier <span class="fx">kΦ</span>), frottement non visqueux, jeu mécanique, commutation. Le modèle linéaire reste le cadre d'analyse et de dimensionnement.</p>
+      </div>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">régime permanent</div></div>
+      <h2>Le régime permanent fixe le point de fonctionnement</h2>
+      <p class="lead">Quand les transitoires sont terminés, les deux équations donnent <span class="fx">i = (u − kΦ Ω)/R</span> et <span class="fx">Ω = (u − R i)/(kΦ)</span>. Le point de fonctionnement est l'intersection de la caractéristique du moteur et de celle de la charge.</p>
+
+      <div class="math"><span class="ml">Régime permanent</span>
+<i>i</i> = (<i>u</i> − <i>k</i>Φ · Ω) / <i>R</i>        Ω = <i>u</i> / (<i>k</i>Φ) − <i>R</i> · <i>M</i><sub>r</sub> / (<i>k</i>Φ)²
+
+Vitesse à vide (couple résistant nul) :  <i>n</i><sub>0</sub> = 60 · <i>u</i> / (2π · <i>k</i>Φ)
+      </div>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 320" role="img" aria-label="Caractéristiques mécaniques n en fonction de M pour trois tensions d'induit">
+            <path d="M70 40 V 250 H 610" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <text class="ts" x="64" y="254" text-anchor="end">0</text>
+            <text class="ts" x="64" y="196" text-anchor="end">500</text>
+            <text class="ts" x="64" y="138" text-anchor="end">1 000</text>
+            <text class="ts" x="64" y="80" text-anchor="end">1 500</text>
+            <text class="ts" x="70" y="268" text-anchor="middle">0</text>
+            <text class="ts" x="202" y="268" text-anchor="middle">10</text>
+            <text class="ts" x="335" y="268" text-anchor="middle">20</text>
+            <text class="ts" x="467" y="268" text-anchor="middle">30</text>
+            <text class="ts" x="600" y="268" text-anchor="middle">40</text>
+            <text class="ts" x="335" y="292" text-anchor="middle">M (N·m)</text>
+            <text class="ts" x="0" y="0" transform="translate(22 145) rotate(-90)" text-anchor="middle">n (tr/min)</text>
+            <line x1="70" y1="50" x2="585" y2="63" stroke="var(--accent)" stroke-width="2.4"/>
+            <line x1="70" y1="100" x2="585" y2="113" stroke="var(--teal)" stroke-width="2.4"/>
+            <line x1="70" y1="200" x2="585" y2="213" stroke="var(--coral)" stroke-width="2.4"/>
+            <text class="ts" x="580" y="45" text-anchor="end">u = 400 V</text>
+            <text class="ts" x="580" y="95" text-anchor="end">u = 300 V</text>
+            <text class="ts" x="580" y="195" text-anchor="end">u = 100 V</text>
+            <line x1="202" y1="250" x2="202" y2="54" class="ax"/>
+            <circle cx="202" cy="53" r="4" fill="var(--ink)"/>
+            <text class="ts" x="208" y="68">M<tspan class="tm">r</tspan> = 10 N·m</text>
+          </svg>
+        </div>
+        <figcaption>Caractéristiques mécaniques calculées avec <span class="fx">R<sub>a</sub> = 1,474 Ω</span> et <span class="fx">kΦ = 2,22 V·s/rad</span> : à tension d'induit constante, la vitesse baisse peu quand le couple augmente (de 1 721 à 1 610 tr/min pour 38,9 N·m à 400 V).</figcaption>
+      </figure>
+
+      <div class="lab" data-lab="couple-charge">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · point de fonctionnement à u constant</div><div class="lab-sub">six états — Ra = 1,474 Ω, kΦ = 2,22 V·s/rad, u = 400 V</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"À vide, couple résistant nul : <b>i = 0</b>, <b>u_i = u = 400 V</b> et <b>n = 1 721 tr/min</b> (vitesse théorique ; le point mesuré à vide donne 1 710 tr/min car les frottements demandent un peu de courant).","code":"n0 = 60·u/(2π·kΦ)","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"0 N·m","type":"couple","kind":"heap"},
+            {"id":"i","name":"i","value":"0,00 A","type":"courant","kind":"int"},
+            {"id":"ri","name":"R·i","value":"0,0 V","type":"chute","kind":"ptr"},
+            {"id":"ui","name":"u_i","value":"400,0 V","type":"fém","kind":"char"},
+            {"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[]},
+          {"label":"On charge à <b>M_r = 5 N·m</b> : le moteur appelle <b>i = M_r/kΦ = 2,25 A</b>, la chute vaut 3,3 V.","code":"i = M_r / kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"5 N·m","type":"couple","kind":"heap","state":"changed"},
+            {"id":"i","name":"i","value":"2,25 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ri","name":"R·i","value":"3,3 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"ui","name":"u_i","value":"396,7 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"1 706 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>M_r = 10 N·m</b> : <b>i = 4,50 A</b>, chute 6,6 V, <b>n = 1 692 tr/min</b>.","code":"Ω = (u − R·i)/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"10 N·m","type":"couple","kind":"heap","state":"changed"},
+            {"id":"i","name":"i","value":"4,50 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ri","name":"R·i","value":"6,6 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"ui","name":"u_i","value":"393,4 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"1 692 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>M_r = 20 N·m</b> : <b>i = 9,01 A</b>, chute 13,3 V, <b>n = 1 663 tr/min</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"20 N·m","type":"couple","kind":"heap","state":"changed"},
+            {"id":"i","name":"i","value":"9,01 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ri","name":"R·i","value":"13,3 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"ui","name":"u_i","value":"386,7 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"1 663 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>M_r = 30 N·m</b> : <b>i = 13,51 A</b>, chute 19,9 V, <b>n = 1 635 tr/min</b>.","code":"n ne dépend de M que par R·i","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"30 N·m","type":"couple","kind":"heap","state":"changed"},
+            {"id":"i","name":"i","value":"13,51 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ri","name":"R·i","value":"19,9 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"ui","name":"u_i","value":"380,1 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"1 635 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>M_r = 38,9 N·m</b> : <b>i = 17,52 A</b>, <b>n = 1 610 tr/min</b>. La vitesse a baissé de 111 tr/min (6,5 %) pour 38,9 N·m : la caractéristique est dure.","code":"Δn/n0 = R·i/u","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"mr","name":"M_r","value":"38,9 N·m","type":"couple","kind":"heap","state":"changed"},
+            {"id":"i","name":"i","value":"17,52 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ri","name":"R·i","value":"25,8 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"ui","name":"u_i","value":"374,2 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"1 610 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>À tension d'induit constante, la vitesse ne dépend du couple que par la chute <span class="fx">R i</span>. La caractéristique est dite « dure » : 6,5 % de vitesse pour 38,9 N·m, ce qui explique l'usage de la MCC en entraînement à vitesse stable.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Croire que la vitesse baisse fortement quand la charge augmente, ou croire qu'elle est totalement indépendante du couple : les deux sont faux. Le bon raisonnement passe par <span class="fx">i</span> puis par la chute <span class="fx">R i</span>.</p>
+      </div>
+
+      <details class="try">
+        <summary style="flex-wrap:wrap;row-gap:4px">À <span class="fx">u = 400 V</span> et <span class="fx">M<sub>r</sub> = 10 N·m</span>, calculer <span class="fx">i</span> puis <span class="fx">n</span>.</summary>
+        <div class="ans"><span class="fx">i = M<sub>r</sub>/kΦ = 10/2,22 = 4,50 A</span> ; <span class="fx">u<sub>i</sub> = 400 − 1,474 × 4,50 = 393,4 V</span> ; <span class="fx">n = 60 × 393,4/(2π × 2,22) ≈ 1 692 tr/min</span>.</div>
+      </details>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">démarrage</div></div>
+      <h2>Le démarrage impose une limitation du courant</h2>
+      <p class="lead">À l'enclenchement, <span class="fx">Ω = 0</span> donc <span class="fx">u<sub>i</sub> = 0</span> : toute la tension tombe dans la résistance, <span class="fx">i = u/R</span>. Avec <span class="fx">u = 400 V</span> et <span class="fx">R<sub>a</sub> = 1,474 Ω</span>, <span class="fx">i ≈ 271 A</span>. L'inductance ne limite que le tout premier instant.</p>
+
+      <div class="math"><span class="ml">Courant de démarrage</span>
+À Ω = 0 :   <i>i</i><sub>démarrage</sub> = <i>u</i> / <i>R</i> = 400 / 1,474 = 271 A
+
+Avec un rhéostat série <i>R</i><sub>d</sub> :   <i>i</i> = <i>u</i> / (<i>R</i> + <i>R</i><sub>d</sub>)
+      </div>
+
+      <div class="lab" data-lab="demarrage">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · établissement de la vitesse</div><div class="lab-sub">six états — u = 400 V, couple résistant négligé, L négligée</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"À l'enclenchement, <b>Ω = 0</b> donc <b>u_i = 0</b> : <b>i = 400/1,474 = 271 A</b>, soit environ 200 fois le courant de régime.","code":"i = u / R","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"0 V","type":"fém","kind":"char"},
+            {"id":"ri","name":"R·i","value":"400 V","type":"chute","kind":"ptr","state":"err"},
+            {"id":"i","name":"i","value":"271 A","type":"courant","kind":"int","state":"err"},
+            {"id":"n","name":"n","value":"0 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[]},
+          {"label":"La vitesse monte : <b>Ω = 50 rad/s</b> (477 tr/min), <b>u_i = 111 V</b>, <b>i = 196 A</b>.","code":"u_i = kΦ · Ω","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"111 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"ri","name":"R·i","value":"289 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"i","name":"i","value":"196 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"n","name":"n","value":"477 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>Ω = 100 rad/s</b> (955 tr/min) : <b>u_i = 222 V</b>, <b>i = 121 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"222 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"ri","name":"R·i","value":"178 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"i","name":"i","value":"121 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"n","name":"n","value":"955 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>Ω = 150 rad/s</b> (1 432 tr/min) : <b>u_i = 333 V</b>, <b>i = 45,5 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"333 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"ri","name":"R·i","value":"67,0 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"i","name":"i","value":"45,5 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"n","name":"n","value":"1 432 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>Ω = 175 rad/s</b> (1 671 tr/min) : <b>u_i = 388,5 V</b>, <b>i = 7,80 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"388,5 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"ri","name":"R·i","value":"11,5 V","type":"chute","kind":"ptr","state":"changed"},
+            {"id":"i","name":"i","value":"7,80 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"n","name":"n","value":"1 671 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>Ω = 180,2 rad/s</b> (1 721 tr/min) : <b>u_i = 400 V</b>, <b>i = 0</b>. Le courant de démarrage est limité par R seul : d'où le démarrage sous tension réduite.","code":"Ω → u/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
+            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
+            {"id":"ui","name":"u_i","value":"400 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"ri","name":"R·i","value":"0 V","type":"chute","kind":"ptr"},
+            {"id":"i","name":"i","value":"0 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>On démarre sous tension réduite (variateur) ou avec un rhéostat en série. Abaisser la tension à 100 V donne <span class="fx">i = 67,9 A</span>, quatre fois moins qu'à 400 V. Le rhéostat, lui, dissipe de la puissance : il ne sert qu'au démarrage.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">L</span> ne limite pas le courant de démarrage durable : la constante <span class="fx">τ<sub>e</sub> = L/R</span> est très courte, et c'est <span class="fx">R</span> qui fixe le courant après le transitoire. Le courant d'appel reste donc <span class="fx">u/R</span> tant que la vitesse est nulle.</p>
+      </div>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">dynamique</div></div>
+      <h2>Les constantes de temps séparent les échelles</h2>
+      <p class="lead">Le modèle linéaire a deux constantes : <span class="fx">τ<sub>e</sub> = L/R</span> pour le courant, <span class="fx">τ<sub>m</sub> = JR/(kΦ)²</span> pour la vitesse. Ni <span class="fx">L</span> ni <span class="fx">J</span> ne sont mesurés sur le banc : on donne la structure, pas les valeurs.</p>
+
+      <div class="math"><span class="ml">Constantes de temps</span>
+τ<sub>e</sub> = <i>L</i> / <i>R</i>        τ<sub>m</sub> = <i>J</i> · <i>R</i> / (<i>k</i>Φ)²
+
+Ordre de grandeur :   τ<sub>m</sub> ≫ τ<sub>e</sub>   (le courant s'établit avant que la vitesse ne change)
+      </div>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 280" role="img" aria-label="Réponses qualitatives à un échelon de tension : pic de courant puis montée de la vitesse">
+            <path d="M60 30 V 240 H 610" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <text class="ts" x="335" y="266" text-anchor="middle">t (échelle arbitraire)</text>
+            <text class="ts" x="0" y="0" transform="translate(22 135) rotate(-90)" text-anchor="middle">grandeur (normalisée)</text>
+            <path d="M60 240 C 68 240, 74 78, 92 78 C 200 79, 400 150, 610 168" fill="none" stroke="var(--accent)" stroke-width="2.4"/>
+            <path d="M60 240 C 250 236, 380 140, 610 96" fill="none" stroke="var(--teal)" stroke-width="2.4"/>
+            <text class="ts" x="132" y="66" style="fill:var(--accent)">i(t)</text>
+            <text class="ts" x="548" y="128" style="fill:var(--teal)">Ω(t)</text>
+            <text class="ts" x="96" y="62">≈ u/R</text>
+            <line x1="86" y1="240" x2="86" y2="140" class="ax"/>
+            <text class="ts" x="86" y="256" text-anchor="middle">τ<tspan class="tm">e</tspan></text>
+            <line x1="400" y1="240" x2="400" y2="139" class="ax"/>
+            <text class="ts" x="400" y="256" text-anchor="middle">τ<tspan class="tm">m</tspan></text>
+          </svg>
+        </div>
+        <figcaption>Réponse qualitative à un échelon de tension en charge : le courant atteint d'abord <span class="fx">u/R</span>, limité par <span class="fx">R</span> et lissé par <span class="fx">τ<sub>e</sub></span>, puis décroît pendant que la vitesse monte avec <span class="fx">τ<sub>m</sub></span>. Échelles arbitraires : ni <span class="fx">L</span> ni <span class="fx">J</span> ne sont mesurés.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p><span class="fx">τ<sub>m</sub> ≫ τ<sub>e</sub></span> est la raison pour laquelle on peut régler le courant (donc le couple) indépendamment de la vitesse, en cascade : la boucle de courant est beaucoup plus rapide que la boucle de vitesse.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p><span class="fx">τ<sub>m</sub></span> est proportionnel à <span class="fx">J</span> et à <span class="fx">1/(kΦ)²</span> : un rotor plus inerte ou moins fortement aimanté est plus lent. Sur le banc, aucune valeur de <span class="fx">L</span> ou de <span class="fx">J</span> n'est disponible.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Ne pas confondre les deux échelles : <span class="fx">τ<sub>e</sub></span> concerne le courant et le circuit électrique, <span class="fx">τ<sub>m</sub></span> concerne la vitesse et l'inertie. Écrire une valeur chiffrée sans <span class="fx">L</span> ni <span class="fx">J</span> serait une invention.</p>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">énergie</div></div>
+      <h2>Le bilan des puissances donne le rendement</h2>
+      <p class="lead">La puissance électrique absorbée vaut <span class="fx">P<sub>él</sub> = u i</span> ; la puissance convertie vaut <span class="fx">P<sub>méc</sub> = M<sub>em</sub> Ω = u<sub>i</sub> i</span>. L'écart est la perte cuivre <span class="fx">R i²</span>. En génératrice, le sens s'inverse.</p>
+
+      <div class="math"><span class="ml">Bilan des puissances</span>
+<i>P</i><sub>él</sub> = <i>u</i> · <i>i</i>        <i>P</i><sub>méc</sub> = <i>M</i><sub>em</sub> · Ω = <i>u</i><sub>i</sub> · <i>i</i>        <i>P</i><sub>cu</sub> = <i>R</i> · <i>i</i>²
+
+Moteur :  η = <i>P</i><sub>méc</sub> / <i>P</i><sub>él</sub>        Génératrice :  η = <i>P</i><sub>él</sub> / <i>P</i><sub>méc</sub>
+      </div>
+
+      <table class="tbl">
+        <caption>Point de pleine charge de la génératrice mesuré au banc (<span class="fx">n = 1 700 tr/min</span>)</caption>
+        <thead><tr><th>Grandeur</th><th class="num">Valeur</th><th>Origine</th></tr></thead>
+        <tbody>
+          <tr><td><span class="fx">I<sub>a</sub></span></td><td class="num">17,2 A</td><td>mesure</td></tr>
+          <tr><td><span class="fx">U<sub>a</sub></span></td><td class="num">377 V</td><td>mesure</td></tr>
+          <tr><td><span class="fx">R<sub>a</sub> I<sub>a</sub></span></td><td class="num">25,4 V</td><td>calcul</td></tr>
+          <tr><td><span class="fx">U<sub>i</sub> = U<sub>a</sub> + R<sub>a</sub> I<sub>a</sub></span></td><td class="num">402,3 V</td><td>calcul</td></tr>
+          <tr><td><span class="fx">P<sub>i</sub> = U<sub>i</sub> I<sub>a</sub></span></td><td class="num">6 920 W</td><td>calcul</td></tr>
+          <tr><td><span class="fx">M<sub>é-m</sub> = P<sub>i</sub>/Ω</span></td><td class="num">38,9 N·m</td><td>calcul</td></tr>
+          <tr><td><span class="fx">P<sub>cu</sub> = R<sub>a</sub> I<sub>a</sub>²</span></td><td class="num">436 W</td><td>calcul</td></tr>
+          <tr><td><span class="fx">P<sub>él</sub> = U<sub>a</sub> I<sub>a</sub></span></td><td class="num">6 484 W</td><td>calcul</td></tr>
+          <tr><td><span class="fx">η = P<sub>él</sub>/P<sub>i</sub></span></td><td class="num">93,7 %</td><td>calcul</td></tr>
+        </tbody>
+      </table>
+
+      <div class="lab" data-lab="generateur">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · essai en génératrice</div><div class="lab-sub">six états — n = 1 700 tr/min, points mesurés du relevé</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Point à vide : <b>I_a = 0,15 A</b>, <b>U_a = 400 V</b>, <b>U_i = 400,2 V</b>. Le relevé note <b>P_i = 60 W</b>, ce n'est pas un vrai point à vide.","code":"U_i = U_a + R_a·I_a","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"0,15 A","type":"courant","kind":"int"},
+            {"id":"ua","name":"U_a","value":"400 V","type":"tension","kind":"char"},
+            {"id":"ui","name":"U_i","value":"400,2 V","type":"fém","kind":"char"},
+            {"id":"pi","name":"P_i","value":"60 W","type":"puissance","kind":"heap"},
+            {"id":"m","name":"M_é-m","value":"0,34 N·m","type":"couple","kind":"ptr"}]}],"arrows":[]},
+          {"label":"<b>I_a = 1,4 A</b> : <b>U_a = 396 V</b>, <b>U_i = 398,1 V</b>, <b>P_i = 557 W</b>.","code":"P_i = U_i · I_a","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"1,4 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ua","name":"U_a","value":"396 V","type":"tension","kind":"char","state":"changed"},
+            {"id":"ui","name":"U_i","value":"398,1 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"pi","name":"P_i","value":"557 W","type":"puissance","kind":"heap","state":"changed"},
+            {"id":"m","name":"M_é-m","value":"3,13 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>I_a = 4,63 A</b> : <b>P_i = 1 847 W</b>, <b>M_é-m = 10,4 N·m</b>. La chute <b>R_a I_a = 6,8 V</b> explique l'écart <b>U_i − U_a</b>.","code":"M_é-m = P_i / Ω","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"4,63 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ua","name":"U_a","value":"392 V","type":"tension","kind":"char","state":"changed"},
+            {"id":"ui","name":"U_i","value":"398,8 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"pi","name":"P_i","value":"1 847 W","type":"puissance","kind":"heap","state":"changed"},
+            {"id":"m","name":"M_é-m","value":"10,4 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>I_a = 10,5 A</b> : <b>P_i = 4 215 W</b>, <b>M_é-m = 23,7 N·m</b>.","code":"Ω = 2πn/60 = 178,02 rad/s","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"10,5 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ua","name":"U_a","value":"386 V","type":"tension","kind":"char","state":"changed"},
+            {"id":"ui","name":"U_i","value":"401,5 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"pi","name":"P_i","value":"4 215 W","type":"puissance","kind":"heap","state":"changed"},
+            {"id":"m","name":"M_é-m","value":"23,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"<b>I_a = 15,1 A</b> : <b>U_a = 375 V</b>, <b>P_i = 5 999 W</b>, <b>M_é-m = 33,7 N·m</b>.","code":"U_a = U_i − R_a·I_a","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"15,1 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ua","name":"U_a","value":"375 V","type":"tension","kind":"char","state":"changed"},
+            {"id":"ui","name":"U_i","value":"397,3 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"pi","name":"P_i","value":"5 999 W","type":"puissance","kind":"heap","state":"changed"},
+            {"id":"m","name":"M_é-m","value":"33,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"Pleine charge : <b>I_a = 17,2 A</b>, <b>U_a = 377 V</b>, <b>U_i = 402,3 V</b>, <b>P_i = 6 920 W</b>, <b>M_é-m = 38,9 N·m</b>. <b>ΔU = 23 V</b> contre <b>R_a I_a = 25,4 V</b> : <b>U_i</b> n'est pas exactement constant (dispersion 1,95 % sur les 10 points).","code":"ΔU = U_i − U_a","groups":[{"title":"Génératrice","cells":[
+            {"id":"ia","name":"I_a","value":"17,2 A","type":"courant","kind":"int","state":"changed"},
+            {"id":"ua","name":"U_a","value":"377 V","type":"tension","kind":"char","state":"changed"},
+            {"id":"ui","name":"U_i","value":"402,3 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"pi","name":"P_i","value":"6 920 W","type":"puissance","kind":"heap","state":"changed"},
+            {"id":"m","name":"M_é-m","value":"38,9 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Les pertes fer et mécaniques ne sont pas mesurées : le rendement calculé avec seulement la perte cuivre (<span class="fx">93,7 %</span> ici) est un <b>majorant</b>. Le point à <span class="fx">I<sub>a</sub> = 0,15 A</span> n'est pas un vrai point à vide : le relevé note <span class="fx">R<sub>L</sub> = 0 Ω</span> et <span class="fx">P<sub>i</sub> = 60 W</span>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Oublier <span class="fx">R<sub>a</sub> I<sub>a</sub></span> en génératrice, et confondre <span class="fx">P<sub>i</sub> = U<sub>i</sub> I<sub>a</sub></span> (puissance convertie) avec <span class="fx">P<sub>él</sub> = U<sub>a</sub> I<sub>a</sub></span> (puissance aux bornes). L'écart vaut exactement <span class="fx">R<sub>a</sub> I<sub>a</sub>²</span>.</p>
+      </div>
+    </section>
+
+    
+    <section id="s12">
+      <div class="kicker"><div class="badge">12</div><div class="tag">commande</div></div>
+      <h2>Le réglage de la vitesse agit sur la tension et sur le flux</h2>
+      <p class="lead">Comme <span class="fx">Ω ≈ u/(kΦ)</span>, on règle la vitesse par la tension d'induit. Pour une MCC à aimants permanents, <span class="fx">kΦ</span> est fixé par les aimants ; sur une machine à excitation bobinée, on peut aussi réduire <span class="fx">I<sub>f</sub></span> : c'est le défluxage.</p>
+
+      <div class="math"><span class="ml">Réglage de la vitesse</span>
+Ω = <i>u</i> / (<i>k</i>Φ)   →   <i>n</i> = 60 · <i>u</i> / (2π · <i>k</i>Φ)
+
+Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><sub>f</sub>
+      </div>
+
+      <table class="tbl">
+        <caption>Trois points mesurés du moteur à flux variable (Ui quasi maintenu)</caption>
+        <thead><tr><th class="num">I<sub>f</sub> (A)</th><th class="num">n (tr/min)</th><th class="num">U<sub>i</sub> (V)</th><th class="num">kΦ calculé (V·s/rad)</th></tr></thead>
+        <tbody>
+          <tr><td class="num">2,09</td><td class="num">201</td><td class="num">46,8</td><td class="num">2,23</td></tr>
+          <tr><td class="num">1,394</td><td class="num">243</td><td class="num">45,6</td><td class="num">1,79</td></tr>
+          <tr><td class="num">0,715</td><td class="num">408</td><td class="num">43,4</td><td class="num">1,02</td></tr>
+        </tbody>
+      </table>
+
+      <figure class="fig-wide">
+        <div class="figcard">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Points mesurés du défluxage et loi théorique n proportionnel à 1 sur If">
+            <path d="M70 40 V 250 H 610" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <text class="ts" x="64" y="254" text-anchor="end">0</text>
+            <text class="ts" x="64" y="190" text-anchor="end">200</text>
+            <text class="ts" x="64" y="125" text-anchor="end">400</text>
+            <text class="ts" x="64" y="61" text-anchor="end">600</text>
+            <text class="ts" x="70" y="268" text-anchor="middle">0</text>
+            <text class="ts" x="190" y="268" text-anchor="middle">0,5</text>
+            <text class="ts" x="311" y="268" text-anchor="middle">1,0</text>
+            <text class="ts" x="431" y="268" text-anchor="middle">1,5</text>
+            <text class="ts" x="552" y="268" text-anchor="middle">2,0</text>
+            <text class="ts" x="335" y="292" text-anchor="middle">I_f (A)</text>
+            <text class="ts" x="0" y="0" transform="translate(22 145) rotate(-90)" text-anchor="middle">n (tr/min)</text>
+            <path d="M573 185 C 520 175, 450 160, 406 153 C 350 142, 280 78, 242 60" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-dasharray="6 4"/>
+            <circle cx="573" cy="185" r="5" fill="var(--accent)"/>
+            <circle cx="406" cy="172" r="5" fill="var(--accent)"/>
+            <circle cx="242" cy="118" r="5" fill="var(--accent)"/>
+            <text class="ts" x="584" y="182">201</text>
+            <text class="ts" x="416" y="168">243</text>
+            <text class="ts" x="252" y="114">408</text>
+            <text class="ts" x="300" y="58">n ∝ 1/I<tspan class="tm">f</tspan> (théorique)</text>
+          </svg>
+        </div>
+        <figcaption>Points mesurés du défluxage et loi théorique <span class="fx">n ∝ 1/I<sub>f</sub></span> : les points restent sous la courbe théorique, car le flux ne baisse pas proportionnellement à <span class="fx">I<sub>f</sub></span> (saturation, rémanence) et parce que <span class="fx">U<sub>i</sub></span> n'est pas resté constant (46,8 → 43,4 V).</figcaption>
+      </figure>
+
+      <div class="lab" data-lab="defluxage">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · défluxage</div><div class="lab-sub">six états — If de 2,09 à 0,715 A, trois points mesurés</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="mem-stage" data-stage>
+          <div class="mem-groups" data-groups></div>
+          <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {"states":[
+          {"label":"Point de départ : <b>I_f = 2,09 A</b> (nominal du banc), <b>n = 201 tr/min</b>, <b>U_i = 46,8 V</b>, donc <b>kΦ = 2,23 V·s/rad</b>.","code":"kΦ = U_i / Ω","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"2,09 A","type":"excitation","kind":"int"},
+            {"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},
+            {"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},
+            {"id":"n","name":"n","value":"201 tr/min","type":"vitesse","kind":"char"},
+            {"id":"om","name":"Ω","value":"21,0 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[]},
+          {"label":"On réduit <b>I_f</b> à <b>1,394 A</b> (⅔). Si <b>Φ ∝ I_f</b>, la vitesse devrait monter dans le rapport <b>2,09/1,394 = 1,50</b>, soit <b>301 tr/min</b>.","code":"n théorique = n1 · If1 / If","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int","state":"changed"},
+            {"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},
+            {"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},
+            {"id":"n","name":"n","value":"301 tr/min","type":"vitesse","kind":"char","state":"new"},
+            {"id":"om","name":"Ω","value":"31,6 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[]},
+          {"label":"Mesure : <b>n = 243 tr/min</b>, soit <b>×1,21</b> seulement, <b>kΦ = 1,79 V·s/rad</b> : le flux n'a pas baissé dans le rapport des courants. Écart à la loi : <b>−19,4 %</b>.","code":"écart = (n − n_théorique)/n_théorique","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int"},
+            {"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},
+            {"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"243 tr/min","type":"vitesse","kind":"char","state":"changed"},
+            {"id":"om","name":"Ω","value":"25,4 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"On passe à <b>I_f = 0,715 A</b> (⅓). La loi <b>n ∝ 1/I_f</b> prédirait <b>588 tr/min</b>.","code":"n théorique = 201 · 2,09 / 0,715","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int","state":"changed"},
+            {"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","w":132},
+            {"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char"},
+            {"id":"n","name":"n","value":"588 tr/min","type":"vitesse","kind":"char","state":"new"},
+            {"id":"om","name":"Ω","value":"61,5 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[]},
+          {"label":"Mesure : <b>n = 408 tr/min</b>, soit <b>×2,03</b> quand le courant d'excitation est divisé par <b>2,92</b>. <b>kΦ</b> ne vaut plus que <b>1,02 V·s/rad</b> : <b>−30,6 %</b> par rapport à la loi.","code":"rapport n = 2,03  ≠  2,92","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},
+            {"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},
+            {"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char","state":"changed"},
+            {"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char","state":"changed"},
+            {"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[]},
+          {"label":"Bilan : le défluxage augmente bien la vitesse, mais la loi <b>n ∝ 1/I_f</b> ne vaut que si <b>Φ ∝ I_f</b>. Saturation et rémanence l'en écartent ; <b>U_i</b> a baissé de <b>−7,4 %</b>.","code":"saturation + rémanence","groups":[{"title":"Moteur à flux variable","cells":[
+            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},
+            {"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","w":132},
+            {"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char"},
+            {"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char"},
+            {"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[]}
+        ]}
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Défluxer augmente la vitesse à tension donnée, mais diminue le couple disponible à courant égal (<span class="fx">M = kΦ i</span>). Pour une MCC à aimants permanents, ce réglage n'existe pas : la vitesse se règle par la tension d'induit.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Note</div>
+        <p>Sur le banc, <span class="fx">U<sub>i</sub></span> n'est pas resté constant : 46,8 → 43,4 V, soit −7,4 %. Le relevé s'écarte donc de l'hypothèse de l'énoncé (<span class="fx">U<sub>i</sub></span> maintenu) : les points mesurés et la loi théorique ne se superposent pas.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><span class="fx">n ∝ 1/I<sub>f</sub></span> n'est vrai que si <span class="fx">Φ ∝ I<sub>f</sub></span>, donc loin de la saturation et sans rémanence. Ce n'est pas le cas ici. Et ne pas appliquer le défluxage à une MCC à aimants permanents : le flux y est fixé.</p>
+      </div>
+    </section>
+
+    
+    <section id="s13">
+      <div class="kicker"><div class="badge">13</div><div class="tag">bilan</div></div>
+      <h2>Erreurs fréquentes, QCM et mémo</h2>
+      <p class="lead">Les erreurs ci-dessous reviennent dans les exercices et les comptes rendus ; le QCM les reprend, le mémo rassemble ce qui doit rester accessible.</p>
+
+      <table class="tbl">
+        <caption>Erreurs fréquentes et correction</caption>
+        <thead><tr><th>Erreur</th><th>Correction</th></tr></thead>
+        <tbody>
+          <tr><td>Confondre <span class="fx">U<sub>a</sub></span> et <span class="fx">U<sub>i</sub></span></td><td><span class="fx">U<sub>a</sub></span> est la tension aux bornes, <span class="fx">U<sub>i</sub></span> la fém interne : en moteur <span class="fx">U<sub>i</sub> = U<sub>a</sub> − R<sub>a</sub> I<sub>a</sub></span>, en génératrice <span class="fx">U<sub>i</sub> = U<sub>a</sub> + R<sub>a</sub> I<sub>a</sub></span>.</td></tr>
+          <tr><td>Vitesse et couple</td><td>À <span class="fx">u</span> constant, <span class="fx">Ω = (u − R i)/kΦ</span> : le couple agit par le courant, donc par la chute <span class="fx">R i</span>.</td></tr>
+          <tr><td><span class="fx">kΦ</span> variable</td><td>La relation reste vraie à chaque instant, mais <span class="fx">kΦ</span> n'est constant que pour les aimants permanents ; avec une excitation bobinée, il dépend de <span class="fx">I<sub>f</sub></span>.</td></tr>
+          <tr><td>Oublier <span class="fx">R<sub>a</sub> I<sub>a</sub></span></td><td>La chute ohmique existe dans les deux sens : <span class="fx">U<sub>a</sub> = U<sub>i</sub> − R<sub>a</sub> I<sub>a</sub></span>.</td></tr>
+          <tr><td>Confondre <span class="fx">P<sub>i</sub></span> et <span class="fx">P<sub>él</sub></span></td><td><span class="fx">P<sub>i</sub></span> est la puissance convertie, <span class="fx">P<sub>él</sub></span> la puissance aux bornes ; l'écart vaut <span class="fx">R<sub>a</sub> I<sub>a</sub>²</span>.</td></tr>
+          <tr><td><span class="fx">L</span> et le démarrage</td><td><span class="fx">L</span> ne fixe que le transitoire ; le courant durable vaut <span class="fx">u/R</span>.</td></tr>
+          <tr><td><span class="fx">M<sub>é-m</sub></span> à l'arbre</td><td><span class="fx">M<sub>é-m</sub> = P<sub>i</sub>/Ω</span> est calculé à partir des grandeurs électriques ; le banc n'a pas de couplemètre.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Formules</h4>
+          <ul>
+            <li><span class="fx">M<sub>em</sub> = kΦ i</span> ; <span class="fx">u<sub>i</sub> = kΦ Ω</span> ; <span class="fx">Ω = 2πn/60</span>.</li>
+            <li><span class="fx">u = R i + L di/dt + u<sub>i</sub></span> ; <span class="fx">J dΩ/dt = M<sub>em</sub> − M<sub>r</sub> − f Ω</span>.</li>
+            <li>Régime permanent : <span class="fx">i = (u − kΦ Ω)/R</span>, <span class="fx">n<sub>0</sub> = 60u/(2π kΦ)</span>.</li>
+            <li><span class="fx">P<sub>él</sub> = u i</span>, <span class="fx">P<sub>méc</sub> = M<sub>em</sub> Ω = u<sub>i</sub> i</span>, <span class="fx">P<sub>cu</sub> = R i²</span>, <span class="fx">η = P<sub>méc</sub>/P<sub>él</sub></span>.</li>
+            <li><span class="fx">τ<sub>e</sub> = L/R</span> ; <span class="fx">τ<sub>m</sub> = JR/(kΦ)²</span>.</li>
+            <li>Signes : moteur <span class="fx">U<sub>i</sub> = U<sub>a</sub> − R<sub>a</sub> I<sub>a</sub></span> ; génératrice <span class="fx">U<sub>i</sub> = U<sub>a</sub> + R<sub>a</sub> I<sub>a</sub></span>.</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Checklist</h4>
+          <ul>
+            <li>Repérer le sens de fonctionnement avant d'écrire un signe.</li>
+            <li>Vérifier <span class="fx">kΦ</span> : constant (aimants) ou dépendant de <span class="fx">I<sub>f</sub></span> (bobiné).</li>
+            <li>À l'arrêt, <span class="fx">u<sub>i</sub> = 0</span> : le courant vaut <span class="fx">u/R</span>.</li>
+            <li>En génératrice, retrancher <span class="fx">R<sub>a</sub> I<sub>a</sub></span> de <span class="fx">U<sub>i</sub></span> pour obtenir <span class="fx">U<sub>a</sub></span>.</li>
+            <li>Contrôler les unités : <span class="fx">kΦ</span> en N·m/A = V·s/rad.</li>
+            <li>Distinguer <span class="fx">M<sub>em</sub></span> (converti) et couple à l'arbre (non mesuré).</li>
+            <li>Rendement : ne compter que les pertes connues.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const NS = 'http://www.w3.org/2000/svg';
+  let UID = 0;
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint32_t|int16_t|uint8_t|ptrdiff_t';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function svgEl(name, attrs){
+    const n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function(k){ n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur mémoire : cases + flèches
+     ============================================================ */
+  function makeMemory(root){
+    const groupsEl = root.querySelector('[data-groups]');
+    const stage = root.querySelector('[data-stage]');
+    const svg = root.querySelector('[data-arrows]');
+    if (!groupsEl || !stage || !svg) return { render: function(){} };
+
+    const mid = 'mm' + (++UID);
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="' + mid + 'i" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+        '<marker id="' + mid + 'a" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+          '<path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>';
+
+    let prevIds = new Set();
+    let lastState = null;
+    let lastAnimate = true;
+
+    function cellHTML(c, isNew){
+      const cls = ['cell'];
+      if (c.kind) cls.push('is-' + c.kind);
+      if (c.state) String(c.state).split(/\s+/).forEach(function(t){ if (t) cls.push('is-' + t); });
+      if (isNew) cls.push('is-new');
+
+      let body = '<div class="cname">' + esc(c.name);
+      if (c.type) body += '<span class="ctype">' + esc(c.type) + '</span>';
+      body += '</div>';
+
+      if (c.fields) {
+        body += '<div class="cfields">' + c.fields.map(function(f){
+          return '<div class="cf"><span>' + esc(f.k) + '</span><b>' + esc(f.v) + '</b></div>';
+        }).join('') + '</div>';
+      } else {
+        body += '<div class="cval">' + (c.value === '' || c.value === null || c.value === undefined ? '&nbsp;' : esc(c.value)) + '</div>';
+      }
+      if (c.addr) body += '<div class="caddr">' + esc(c.addr) + '</div>';
+
+      const style = c.w ? ' style="--cw:' + Number(c.w) + 'px"' : '';
+      return '<div class="' + cls.join(' ') + '" data-id="' + esc(c.id) + '"' + style + '>' + body + '</div>';
+    }
+
+    function drawArrows(state, animate){
+      if (!state) return;
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return;
+      const sr = stage.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.querySelectorAll('.arrow,.alabel').forEach(function(n){ n.remove(); });
+
+      (state.arrows || []).forEach(function(a){
+        const fe = groupsEl.querySelector('[data-id="' + a.from + '"]');
+        const te = groupsEl.querySelector('[data-id="' + a.to + '"]');
+        if (!fe || !te) return;
+
+        const fr = fe.getBoundingClientRect();
+        const tr = te.getBoundingClientRect();
+        const f = {x: fr.left - sr.left, y: fr.top - sr.top, w: fr.width, h: fr.height};
+        const t = {x: tr.left - sr.left, y: tr.top - sr.top, w: tr.width, h: tr.height};
+        const fc = {x: f.x + f.w / 2, y: f.y + f.h / 2};
+        const tc = {x: t.x + t.w / 2, y: t.y + t.h / 2};
+        const dx = tc.x - fc.x;
+        const dy = tc.y - fc.y;
+        const vertical = Math.abs(dy) >= Math.abs(dx) * 0.72;
+        const gap = 4;
+        let p1, p2, c1, c2;
+
+        if (vertical) {
+          const dir = dy >= 0 ? 1 : -1;
+          p1 = {x: fc.x, y: dir > 0 ? f.y + f.h + gap : f.y - gap};
+          p2 = {x: tc.x, y: dir > 0 ? t.y - gap : t.y + t.h + gap};
+          const k = Math.max(26, Math.abs(p2.y - p1.y) * 0.46);
+          c1 = {x: p1.x, y: p1.y + dir * k};
+          c2 = {x: p2.x, y: p2.y - dir * k};
+        } else {
+          const dir = dx >= 0 ? 1 : -1;
+          p1 = {x: dir > 0 ? f.x + f.w + gap : f.x - gap, y: fc.y};
+          p2 = {x: dir > 0 ? t.x - gap : t.x + t.w + gap, y: tc.y};
+          const k = Math.max(26, Math.abs(p2.x - p1.x) * 0.46);
+          c1 = {x: p1.x + dir * k, y: p1.y};
+          c2 = {x: p2.x - dir * k, y: p2.y};
+        }
+
+        const path = svgEl('path', {
+          d: 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y,
+          'class': 'arrow' + (a.accent ? ' is-accent' : ''),
+          'marker-end': 'url(#' + mid + (a.accent ? 'a' : 'i') + ')'
+        });
+        svg.appendChild(path);
+
+        const len = path.getTotalLength();
+        if (animate && !reduceMotion.matches) {
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect();
+          path.style.transition = 'stroke-dashoffset .55s ease';
+          path.style.strokeDashoffset = '0';
+        }
+
+        if (a.label) {
+          const pt = path.getPointAtLength(len * 0.52);
+          const label = svgEl('text', {
+            x: pt.x + (vertical ? 7 : 0),
+            y: pt.y + (vertical ? 3 : -6),
+            'class': 'alabel',
+            'text-anchor': vertical ? 'start' : 'middle'
+          });
+          label.textContent = a.label;
+          svg.appendChild(label);
+        }
+      });
+    }
+
+    function render(state, animate){
+      lastState = state;
+      lastAnimate = animate !== false;
+      const nextIds = new Set();
+
+      groupsEl.classList.toggle('is-stack', (state.groups || []).length > 1);
+      const column = root.hasAttribute('data-column');
+      groupsEl.innerHTML = (state.groups || []).map(function(g){
+        const cells = (g.cells || []).map(function(c){
+          nextIds.add(c.id);
+          return cellHTML(c, !prevIds.has(c.id));
+        }).join('');
+        return '<div class="mem-group">' +
+          (g.title ? '<div class="mem-gtitle">' + esc(g.title) + '</div>' : '') +
+          '<div class="cells' + (column ? ' is-column' : '') + '">' + cells + '</div>' +
+          (g.hint ? '<div class="mem-ghint">' + esc(g.hint) + '</div>' : '') +
+        '</div>';
+      }).join('');
+      prevIds = nextIds;
+      requestAnimationFrame(function(){ drawArrows(lastState, lastAnimate); });
+    }
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){
+        if (!lastState) return;
+        requestAnimationFrame(function(){ drawArrows(lastState, false); });
+      });
+      ro.observe(stage);
+    }
+
+    return { render: render };
+  }
+
+  /* ============================================================
+     contrôleur de laboratoire (étapes, lecture, points)
+     ============================================================ */
+  function mountLab(root, spec){
+    const mem = makeMemory(root);
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const linesEl = root.querySelector('[data-lines]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    if (linesEl && spec.lines) {
+      linesEl.innerHTML = spec.lines.map(function(line, k){
+        return '<li data-line="' + k + '"><span class="ln">' + (k + 1) + '</span><span class="src">' + hl(line) + '</span></li>';
+      }).join('');
+      linesEl.addEventListener('click', function(e){
+        const li = e.target.closest('li[data-line]');
+        if (!li) return;
+        const lineNo = Number(li.getAttribute('data-line'));
+        const idx = states.findIndex(function(s){ return s.line === lineNo; });
+        if (idx >= 0) { stop(); i = idx; paint(); }
+      });
+    }
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(animate){
+      const s = states[i];
+      mem.render(s, animate !== false);
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      if (linesEl) {
+        Array.prototype.forEach.call(linesEl.children, function(li, k){
+          li.classList.toggle('on', k === s.line);
+        });
+      }
+      setOutput(s.output);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(false); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint(false);
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(false); }
+      }, spec.interval || 2900);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(false); });
+
+    paint(false);
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountLab(root, spec);
+  });
+
+  /* ============================================================
+     traducteur de déclarations
+     ============================================================ */
+  const DECLS = [
+    {d: 'int *p', fr: 'p est un <b>pointeur vers un int</b>.', why: 'Une étoile, un saut : <code>*p</code> est un int.'},
+    {d: 'int **pp', fr: 'pp est un <b>pointeur vers un pointeur vers int</b>.', why: 'Deux étoiles, deux sauts : <code>**pp</code> est un int.'},
+    {d: 'int *p[5]', fr: 'p est un <b>tableau de 5 pointeurs vers int</b>.', why: '<code>[]</code> est prioritaire sur <code>*</code> : d’abord un tableau, ensuite des pointeurs.'},
+    {d: 'int (*p)[5]', fr: 'p est un <b>pointeur vers un tableau de 5 int</b>.', why: 'Les parenthèses forcent <code>*</code> d’abord : un seul pointeur, qui avance de 20 octets.'},
+    {d: 'int *f(int)', fr: 'f est une <b>fonction</b> qui renvoie un <b>pointeur vers int</b>.', why: '<code>f</code> est suivi de <code>(int)</code> : c’est une fonction, pas un pointeur.'},
+    {d: 'int (*f)(int, int)', fr: 'f est un <b>pointeur vers une fonction</b> prenant deux int et renvoyant un int.', why: 'Les parenthèses autour de <code>*f</code> font de f un pointeur ; la fonction est la cible.'},
+    {d: 'const int *p', fr: 'p est un pointeur vers un <b>int constant</b>.', why: 'On ne peut pas modifier <code>*p</code>, mais on peut réaffecter <code>p</code>.'},
+    {d: 'int *const p', fr: 'p est un <b>pointeur constant</b> vers un int.', why: 'On peut modifier <code>*p</code>, mais pas réaffecter <code>p</code>.'},
+    {d: 'void *p', fr: 'p est un <b>pointeur générique</b>, sans type de cible.', why: 'On ne peut pas le déréférencer tel quel : il faut le convertir, <code>*(int *)p</code>.'},
+    {d: 'char *argv[]', fr: 'argv est un <b>tableau de pointeurs vers char</b>.', why: 'Dans une liste de paramètres, <code>char *argv[]</code> équivaut à <code>char **argv</code>.'},
+    {d: 'struct Point *p', fr: 'p est un <b>pointeur vers une struct Point</b>.', why: 'On accède aux membres avec <code>p-&gt;x</code> ou <code>(*p).x</code>.'}
+  ];
+
+  (function(){
+    const root = document.querySelector('[data-translator]');
+    if (!root) return;
+    const list = root.querySelector('[data-translist]');
+    const out = root.querySelector('[data-transout]');
+    const buttons = [];
+
+    DECLS.forEach(function(x, k){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<code>' + esc(x.d) + '</code>';
+      b.addEventListener('click', function(){ select(k); });
+      list.appendChild(b);
+      buttons.push(b);
+    });
+
+    function select(k){
+      buttons.forEach(function(b, n){ b.classList.toggle('on', n === k); });
+      const x = DECLS[k];
+      out.innerHTML = '<div class="decl">' + esc(x.d) + '</div>' +
+        '<div class="fr">' + x.fr + '</div>' +
+        '<div class="why">' + x.why + '</div>';
+    }
+
+    select(0);
+  })();
+
+  /* ============================================================
+     explorateur d'octets
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-addrlab]');
+    if (!root) return;
+    const grid = root.querySelector('[data-bytes]');
+    const info = root.querySelector('[data-info]');
+    const buttons = Array.prototype.slice.call(root.querySelectorAll('[data-var]'));
+
+    const BYTES = ['2A','00','00','00','41','··','··','··','00','10','00','00','00','00','00','00'];
+    const OWNER = ['x','x','x','x','c',null,null,null,'p','p','p','p','p','p','p','p'];
+    const META = {
+      x: {name:'x', type:'int', size:4, addr:'0x1000', value:'42 (0x2A)', bytes:'2A 00 00 00', note:'Petit-boutisme : l’octet de poids faible est le premier. 0x0000002A = 42.'},
+      c: {name:'c', type:'char', size:1, addr:'0x1004', value:"'A' (0x41)", bytes:'41', note:'Un seul octet. Les octets 0x1005 à 0x1007 sont du bourrage, pour aligner p.'},
+      p: {name:'p', type:'int *', size:8, addr:'0x1008', value:'0x1000', bytes:'00 10 00 00 00 00 00 00', note:'p contient l’adresse de x : c’est exactement ce qu’on appelle un pointeur.'}
+    };
+    let selected = 'x';
+
+    function paint(sel){
+      selected = sel;
+      grid.innerHTML = BYTES.map(function(b, i){
+        const owner = OWNER[i];
+        const cls = ['byte'];
+        if (owner) cls.push('v-' + owner); else cls.push('pad');
+        if (sel && owner === sel) cls.push('sel');
+        const addr = '0x10' + i.toString(16).toUpperCase().padStart(2, '0');
+        return '<div class="' + cls.join(' ') + '" data-byte="' + i + '">' +
+          '<span class="ba">' + addr + '</span><span class="bv">' + b + '</span></div>';
+      }).join('');
+
+      buttons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-var') === sel); });
+      if (!sel) return;
+      const m = META[sel];
+      info.innerHTML = '<b>' + m.name + '</b> · ' + m.type + ' · ' + m.size + ' ' + (m.size > 1 ? 'octets' : 'octet') + ' · adresse ' +
+        '<span class="mono">' + m.addr + '</span><br>valeur : <span class="mono">' + m.value +
+        '</span> — octets : <span class="mono">' + m.bytes + '</span><br>' + m.note;
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ paint(b.getAttribute('data-var')); });
+    });
+
+    grid.addEventListener('click', function(e){
+      const el = e.target.closest('[data-byte]');
+      if (!el) return;
+      const owner = OWNER[Number(el.getAttribute('data-byte'))];
+      if (owner) paint(owner);
+    });
+
+    paint('x');
+  })();
+
+  /* ============================================================
+     widget tableau : p + i
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-arrlab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-arrstage]');
+    const track = root.querySelector('[data-arrtrack]');
+    const cells = Array.prototype.slice.call(root.querySelectorAll('.arr-cell'));
+    const cur = root.querySelector('[data-cur]');
+    const range = root.querySelector('[data-range]');
+    const iout = root.querySelector('[data-iout]');
+    const formula = root.querySelector('[data-formula]');
+    const svg = root.querySelector('[data-arrsvg]');
+    const pcard = root.querySelector('.arr-p');
+
+    const BASE = 0x1000;
+    const VALUES = [10, 20, 30, 40];
+    let i = 2;
+
+    function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const pr = pcard.getBoundingClientRect();
+      const ar = cells[0].getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      let d;
+      if (window.matchMedia('(max-width: 620px)').matches) {
+        const x1 = pr.left + pr.width / 2 - sr.left;
+        const y1 = pr.bottom - sr.top + 3;
+        const x2 = ar.left + ar.width / 2 - sr.left;
+        const y2 = ar.top - sr.top - 5;
+        const my = (y1 + y2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = pr.right - sr.left + 4;
+        const y1 = pr.top - sr.top + pr.height / 2;
+        const x2 = ar.left - sr.left - 5;
+        const y2 = ar.top - sr.top + ar.height / 2;
+        const mx = (x1 + x2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + mx + ' ' + y1 + ', ' + mx + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      }
+      svg.innerHTML = '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ar-accent)"/>';
+    }
+
+    function layout(){
+      const idx = Math.min(i, 3);
+      const cell = cells[idx];
+      let x;
+      if (i < 4) {
+        x = cell.offsetLeft + cell.offsetWidth / 2;
+      } else {
+        const last = cells[3];
+        x = last.offsetLeft + last.offsetWidth + 13;
+      }
+      cur.style.left = x + 'px';
+      cur.textContent = 'p + ' + i;
+      cells.forEach(function(c, k){ c.classList.toggle('sel', k === i); });
+      range.value = i;
+      iout.textContent = 'i = ' + i;
+
+      if (i < 4) {
+        formula.innerHTML = 'p + ' + i + ' = <b>' + hex(BASE + 4 * i) + '</b> → <b>*(p + ' + i + ')</b> = a[' + i + '] = <b>' + VALUES[i] + '</b> <span class="ok">✓</span>';
+      } else {
+        formula.innerHTML = 'p + 4 = <b>' + hex(BASE + 16) + '</b> : adresse juste après le tableau. <b>Valide</b> pour comparer, <span class="ko">interdit</span> à déréférencer.';
+      }
+      drawArrow();
+    }
+
+    range.addEventListener('input', function(){
+      i = Math.max(0, Math.min(4, parseInt(range.value, 10) || 0));
+      layout();
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(layout); });
+      ro.observe(stage);
+    }
+
+    requestAnimationFrame(layout);
+  })();
+
+  /* ============================================================
+     widget const
+     ============================================================ */
+  (function(){
+    document.querySelectorAll('.const-card').forEach(function(card){
+      const kind = card.getAttribute('data-case');
+      const fb = card.querySelector('[data-fb]');
+      if (!fb) return;
+      card.querySelectorAll('[data-act]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          const act = btn.getAttribute('data-act');
+          let ok = false;
+          let msg = '';
+          if (kind === 'c1') {
+            if (act === 'val') { ok = false; msg = '✗ error: assignment of read-only location ‘*p’ — la cible est const.'; }
+            else { ok = true; msg = '✓ p = &y est permis : le pointeur lui-même n’est pas const.'; }
+          } else if (kind === 'c2') {
+            if (act === 'val') { ok = true; msg = '✓ *p = 5 est permis : la cible n’est pas const.'; }
+            else { ok = false; msg = '✗ error: assignment of read-only variable ‘p’ — le pointeur est const.'; }
+          } else {
+            ok = false;
+            msg = act === 'val'
+              ? '✗ *p est const : la cible est protégée.'
+              : '✗ p est const : le pointeur est protégé.';
+          }
+          fb.textContent = msg;
+          fb.className = 'const-fb ' + (ok ? 'ok' : 'ko');
+        });
+      });
+    });
+  })();
+
+  /* ============================================================
+     widget pointeur de fonction
+     ============================================================ */
+  (function(){
+    const root = document.querySelector('[data-fplab]');
+    if (!root) return;
+    const stage = root.querySelector('[data-fpstage]');
+    const svg = root.querySelector('[data-fpsvg]');
+    const opval = root.querySelector('[data-opval]');
+    const out = root.querySelector('[data-fpout]');
+    const fnButtons = Array.prototype.slice.call(root.querySelectorAll('.fp-fn'));
+
+    const FUNCS = {
+      add: {addr: '0x401000', value: 7},
+      mul: {addr: '0x401040', value: 12}
+    };
+
+    function drawArrow(){
+      const sr = stage.getBoundingClientRect();
+      const op = root.querySelector('.fp-op').getBoundingClientRect();
+      const targetEl = root.querySelector('.fp-fn.on');
+      if (!targetEl) return;
+      const target = targetEl.getBoundingClientRect();
+      if (!sr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+      const x1 = op.left + op.width / 2 - sr.left;
+      const y1 = op.bottom - sr.top + 3;
+      const x2 = target.left + target.width / 2 - sr.left;
+      const y2 = target.top - sr.top - 5;
+      const my = (y1 + y2) / 2;
+      svg.innerHTML = '<path d="M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2 +
+        '" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ar-accent)"/>';
+    }
+
+    function pick(k){
+      const f = FUNCS[k];
+      if (!f) return;
+      opval.textContent = f.addr;
+      out.innerHTML = 'op(3, 4) = <b>' + f.value + '</b>';
+      fnButtons.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fn') === k); });
+      requestAnimationFrame(drawArrow);
+    }
+
+    root.querySelectorAll('[data-fn]').forEach(function(b){
+      b.addEventListener('click', function(){ pick(b.getAttribute('data-fn')); });
+    });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(function(){ requestAnimationFrame(drawArrow); });
+      ro.observe(stage);
+    }
+
+    pick('add');
+  })();
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'À quoi sert le collecteur dans une machine à courant continu ?',
+     o: ['À redresser la tension d’alimentation',
+         'À inverser le courant dans les conducteurs pour garder le couple dans le même sens',
+         'À réduire le courant de démarrage',
+         'À augmenter la fém induite'], a: 1,
+     fb: 'Le collecteur est un commutateur mécanique : il inverse le courant quand le conducteur change de pôle, ce qui maintient le couple dans le même sens. Il ne redresse pas la tension et ne limite pas le courant.'},
+    {q: 'Pour une MCC à aimants permanents, <span class="fx">kΦ</span> est…',
+     o: ['proportionnel au courant d’induit',
+         'proportionnel à la tension d’induit',
+         'constant, fixé par les aimants',
+         'égal à la résistance d’induit'], a: 2,
+     fb: 'Les aimants fixent le flux : <span class="fx">kΦ</span> ne dépend ni de <span class="fx">u</span> ni de <span class="fx">i</span>. Il dépend en revanche de <span class="fx">I<sub>f</sub></span> pour une machine à excitation bobinée.'},
+    {q: 'Avec <span class="fx">kΦ = 2,22 V·s/rad</span> et <span class="fx">n = 1 710 tr/min</span>, que vaut <span class="fx">u<sub>i</sub></span> ?',
+     o: ['≈ 44 V', '≈ 398 V', '≈ 22 V', '≈ 3,8 V'], a: 1,
+     fb: '<span class="fx">Ω = 2π × 1 710/60 = 179,1 rad/s</span>, puis <span class="fx">u<sub>i</sub> = 2,22 × 179,1 ≈ 398 V</span>. En moteur, <span class="fx">U<sub>a</sub> = U<sub>i</sub> + R<sub>a</sub> I<sub>a</sub></span>.'},
+    {q: '<span class="fx">u = 400 V</span>, <span class="fx">R<sub>a</sub> = 1,474 Ω</span>, rotor bloqué : que vaut le courant ?',
+     o: ['2,7 A', '27 A', '590 A', '271 A'], a: 3,
+     fb: '<span class="fx">Ω = 0</span> donc <span class="fx">u<sub>i</sub> = 0</span> : <span class="fx">i = u/R<sub>a</sub> = 400/1,474 = 271 A</span>. L’inductance ne limite que le transitoire ; c’est <span class="fx">R</span> qui fixe le courant durable.'},
+    {q: 'À tension d’induit constante, la charge augmente. La vitesse…',
+     o: ['augmente', 'ne change pas', 'diminue légèrement', 's’annule'], a: 2,
+     fb: 'La charge demande plus de courant ; la chute <span class="fx">R i</span> augmente et <span class="fx">u<sub>i</sub></span> baisse, donc <span class="fx">Ω = (u − R i)/kΦ</span> diminue. La caractéristique est dite dure : la baisse reste faible.'},
+    {q: 'Quelle est l’équation électrique de l’induit en moteur ?',
+     o: ['<span class="fx">u = R i − L di/dt − u<sub>i</sub></span>',
+         '<span class="fx">u = L di/dt − u<sub>i</sub></span>',
+         '<span class="fx">u = u<sub>i</sub> − R i</span>',
+         '<span class="fx">u = R i + L di/dt + u<sub>i</sub></span>'], a: 3,
+     fb: 'La tension imposée couvre la chute ohmique, la tension inductive et la fém. En régime permanent, <span class="fx">di/dt = 0</span> et <span class="fx">u = R i + u<sub>i</sub></span>.'},
+    {q: 'Quelle est l’équation mécanique de l’arbre ?',
+     o: ['<span class="fx">J dΩ/dt = M<sub>em</sub> − M<sub>r</sub> − f Ω</span>',
+         '<span class="fx">J dΩ/dt = M<sub>r</sub> − M<sub>em</sub> + f Ω</span>',
+         '<span class="fx">J Ω = M<sub>em</sub> − M<sub>r</sub></span>',
+         '<span class="fx">M<sub>em</sub> = J Ω + M<sub>r</sub></span>'], a: 0,
+     fb: 'Le couple électromagnétique accélère l’inertie et doit vaincre le couple résistant et le frottement visqueux. En régime permanent, <span class="fx">M<sub>em</sub> = M<sub>r</sub> + f Ω</span>.'},
+    {q: 'En génératrice, <span class="fx">I<sub>a</sub> = 17,2 A</span> et <span class="fx">R<sub>a</sub> = 1,474 Ω</span>. Que vaut la chute ohmique <span class="fx">R<sub>a</sub> I<sub>a</sub></span> ?',
+     o: ['23 V', '2,4 V', '25,4 V', '402 V'], a: 2,
+     fb: '<span class="fx">R<sub>a</sub> I<sub>a</sub> = 1,474 × 17,2 = 25,4 V</span>. Le relevé donne <span class="fx">ΔU = 23 V</span> ; l’écart vient de la variation de <span class="fx">U<sub>i</sub></span> entre les points.'},
+    {q: 'Au même point (<span class="fx">I<sub>a</sub> = 17,2 A</span>, <span class="fx">U<sub>i</sub> = 402,3 V</span>), que vaut <span class="fx">P<sub>i</sub> = U<sub>i</sub> I<sub>a</sub></span> ?',
+     o: ['6 920 W', '6 484 W', '436 W', '377 W'], a: 0,
+     fb: '<span class="fx">P<sub>i</sub> = 402,3 × 17,2 = 6 920 W</span>. C’est la puissance convertie ; la puissance aux bornes vaut <span class="fx">U<sub>a</sub> I<sub>a</sub> = 377 × 17,2 = 6 484 W</span>.'},
+    {q: 'Au même point (<span class="fx">P<sub>i</sub> = 6 920 W</span>, <span class="fx">n = 1 700 tr/min</span>), que vaut <span class="fx">M<sub>é-m</sub> = P<sub>i</sub>/Ω</span> ?',
+     o: ['0,34 N·m', '2,22 N·m', '38,9 N·m', '6,48 N·m'], a: 2,
+     fb: '<span class="fx">Ω = 2π × 1 700/60 = 178,02 rad/s</span> ; <span class="fx">M<sub>é-m</sub> = 6 920/178,02 = 38,9 N·m</span>. C’est le couple déduit de <span class="fx">P<sub>i</sub>/Ω</span>, pas un couple mesuré à l’arbre.'},
+    {q: 'Quelle est l’expression de la constante de temps mécanique ?',
+     o: ['<span class="fx">L/R</span>',
+         '<span class="fx">(kΦ)²/(J R)</span>',
+         '<span class="fx">R/(kΦ)</span>',
+         '<span class="fx">J R/(kΦ)²</span>'], a: 3,
+     fb: '<span class="fx">τ<sub>e</sub> = L/R</span> (électrique) et <span class="fx">τ<sub>m</sub> = J R/(kΦ)²</span> (mécanique). En général <span class="fx">τ<sub>m</sub> ≫ τ<sub>e</sub></span> : le courant s’établit avant que la vitesse ne change.'},
+    {q: 'Au défluxage, <span class="fx">n</span> passe de 201 à 408 tr/min quand <span class="fx">I<sub>f</sub></span> est divisé par 2,92. Pourquoi le rapport n’est-il que 2,03 ?',
+     o: ['Parce que le flux ne baisse pas proportionnellement à <span class="fx">I<sub>f</sub></span> (saturation, rémanence)',
+         'Parce que les frottements augmentent avec la vitesse',
+         'Parce que l’inertie limite la vitesse',
+         'Parce que le collecteur inverse le courant'], a: 0,
+     fb: 'La loi <span class="fx">n ∝ 1/I<sub>f</sub></span> suppose <span class="fx">Φ ∝ I<sub>f</sub></span>. Le fer sature et garde une rémanence : <span class="fx">kΦ</span> ne passe que de 2,23 à 1,02 V·s/rad. En plus, <span class="fx">U<sub>i</sub></span> a baissé de 7,4 %.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ELMEC1">← E2-ELMEC1</a>
+</body>
+</html>

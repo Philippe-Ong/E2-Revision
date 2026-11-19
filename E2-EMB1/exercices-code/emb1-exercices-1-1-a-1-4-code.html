@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E2-EMB1 — code des exercices 1.1 à 1.4</title>
+<style>
+  :root {
+    --bg:#f4f2ec; --card:#fff; --ink:#1a1a18; --muted:#5f5e5a; --faint:#88877f;
+    --line:rgba(0,0,0,.12); --line2:rgba(0,0,0,.07); --accent:#534ab7; --accent-s:#eeedfe;
+    --ok:#3b6d11; --ok-s:#eaf3de;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --card:#1f1f1d; --ink:#e8e6de; --muted:#b4b2a9; --faint:#888780;
+             --line:rgba(255,255,255,.16); --line2:rgba(255,255,255,.07);
+             --accent:#afaaec; --accent-s:#26215c; --ok:#97c459; --ok-s:#173404; }
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font:16px/1.6 system-ui,-apple-system,sans-serif;
+          max-width:1000px; margin:0 auto; padding:48px 24px 96px; }
+  h1 { font-size:clamp(26px,3.4vw,36px); line-height:1.15; letter-spacing:-.02em; }
+  .eyebrow { font:600 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase;
+              color:var(--faint); margin-bottom:14px; }
+  .sub { color:var(--muted); margin-top:14px; max-width:70ch; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:20px; }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:13px;
+           color:var(--muted); background:var(--card); }
+  .chip b { color:var(--ink); }
+  .chip.ok { background:var(--ok-s); border-color:transparent; color:var(--ok); font-weight:600; }
+  section { margin-top:56px; }
+  .head { display:flex; align-items:baseline; gap:12px; }
+  h2 { font-size:22px; letter-spacing:-.01em; }
+  .n { font:12px var(--mono); color:var(--faint); }
+  .lead { color:var(--muted); margin-top:8px; max-width:74ch; }
+  .delta { font-size:13.5px; color:var(--accent); background:var(--accent-s); border-radius:8px;
+            padding:8px 12px; margin:12px 0 18px; display:inline-block; }
+  .code { background:#1d1d1b; border-radius:12px; margin:16px 0; overflow:hidden; }
+  details.same { margin:10px 0; }
+  details.same summary { cursor:pointer; font:12.5px var(--mono); color:var(--faint);
+                          padding:6px 10px; border:1px dashed var(--line); border-radius:8px; }
+  details.same[open] summary { margin-bottom:8px; }
+  .code header { display:flex; justify-content:space-between; gap:12px; padding:8px 14px;
+                  border-bottom:1px solid rgba(255,255,255,.1); }
+  .code header span { font:12px var(--mono); color:#a9a7a0; }
+  .code header .meta { color:#6f6d66; }
+  .code button { background:rgba(255,255,255,.08); color:#d8d6cf; border:0; border-radius:6px;
+                  padding:3px 8px; font:11px var(--mono); cursor:pointer; }
+  .code button:hover { background:rgba(255,255,255,.18); }
+  .code pre { margin:0; padding:12px 16px 16px; overflow-x:auto; }
+  .code code { font:12.5px/1.55 var(--mono); color:#e6e4dd; white-space:pre; tab-size:4; }
+  .code .c { color:#8a8880; font-style:italic; } .code .k { color:#9ec7f3; }
+  .code .f { color:#c4a7f7; } .code .n { color:#e7b06a; }
+  .code .s { color:#a5d6a7; } .code .p { color:#e5a3a3; }
+  footer { margin-top:64px; border-top:1px solid var(--line); padding-top:18px;
+            font-size:13px; color:var(--faint); }
+  @media print {
+    body { background:#fff; max-width:none; padding:0; }
+    .code { background:#f7f7f5; break-inside:avoid; }
+    .code code { color:#111; } .code button { display:none; }
+    .code .c { color:#6b6b66; } .code .k { color:#2a5db0; } .code .f { color:#6b3fa0; }
+    .code .n { color:#a8610b; } .code .s { color:#2e7d32; } .code .p { color:#a33; }
+    section { break-before:page; }
+  }
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="eyebrow">E2-EMB1 · Eingebettete Systeme 1 · code complet</div>
+<h1>Les exercices 1.1 à 1.4, fichier par fichier</h1>
+<p class="sub">Quatre projets CCS complets — HAL, application, tampon — dans l'ordre où le cours les
+construit. Chaque exercice est autonome : on copie le précédent, on modifie ce qui change, on
+garde le reste.</p>
+<div class="chips">
+  <span class="chip"><b>32</b> fichiers</span>
+  <span class="chip"><b>984</b> lignes de C</span>
+  <span class="chip"><b>4</b> projets</span>
+  <span class="chip ok">compile -Wall -Wextra -Werror</span>
+  <span class="chip ok">4 tests fonctionnels OK</span>
+</div>
+<section>
+  <div class="head"><h2>Exercice 1.1 — Basic</h2><span class="n">7 fichiers</span></div>
+  <p class="lead">Horloge, GPIO, polling : les LEDs suivent les boutons, sans interruption.</p>
+  <p class="delta">Aucun fichier préexistant : tout est écrit.</p>
+  <div class="code" data-fichier="ex1_1-basic/main.c">
+  <header><span>ex1_1-basic/main.c</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* main.c — exercice 1.1 : les LEDs suivent les boutons, en polling pur. */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Buttons.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">int</span> main(<span class="k">void</span>)
+{
+    clockInit();
+    HAL_Button_Init();
+    HAL_Led_Init();
+
+    <span class="k">while</span> (<span class="n">1</span>)
+    {
+        HAL_Led_Write(eLED1, buttonState(eBUTTON_USR_SW1));
+        HAL_Led_Write(eLED2, buttonState(eBUTTON_USR_SW2));
+    }
+}</code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_Buttons.c">
+  <header><span>ex1_1-basic/HAL/HAL_Buttons.c</span>
+    <span class="meta">27 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.c — entrées PJ0/PJ1 avec pull-up interne (exercice 1.1). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Buttons.h&quot;</span>
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPIOJ))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+}
+
+<span class="k">bool</span> buttonState(Button_t button)
+{
+    <span class="c">/* Boutons actifs bas : relâché = 1 (pull-up), appuyé = 0. */</span>
+    <span class="k">return</span> (<span class="f">GPIOPinRead</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)button) == <span class="n">0</span>);
+}</code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_Buttons.h">
+  <header><span>ex1_1-basic/HAL/HAL_Buttons.h</span>
+    <span class="meta">19 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.h — les deux boutons poussoirs, actifs bas (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_BUTTONS_H_</span>
+<span class="p">#define HAL_BUTTONS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_USR_SW1 = GPIO_PIN_0,   <span class="c">/* PJ0 */</span>
+    eBUTTON_USR_SW2 = GPIO_PIN_1    <span class="c">/* PJ1 */</span>
+} Button_t;
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>);
+<span class="k">bool</span> buttonState(Button_t button);
+<span class="p">
+#endif /* HAL_BUTTONS_H_ */</span></code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_Leds.c">
+  <header><span>ex1_1-basic/HAL/HAL_Leds.c</span>
+    <span class="meta">26 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.c — sorties PN0/PN1 à 6 mA (exercice 1.1). */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPION);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPION))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOOutput</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2),
+                     GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD);
+}
+
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state)
+{
+    <span class="c">/* GPIOPinWrite n&#x27;agit que sur les bits du masque : on écrit le masque, pas 1. */</span>
+    <span class="f">GPIOPinWrite</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)led, state ? (<span class="k">uint8_t</span>)led : <span class="n">0u</span>);
+}</code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_Leds.h">
+  <header><span>ex1_1-basic/HAL/HAL_Leds.h</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.h — les deux LEDs de la carte (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_LEDS_H_</span>
+<span class="p">#define HAL_LEDS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="c">/* Les valeurs de l&#x27;énumération sont des masques de broches, pas des numéros. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eLED1 = GPIO_PIN_1,     <span class="c">/* D1 = PN1 : l&#x27;ordre est inversé */</span>
+    eLED2 = GPIO_PIN_0      <span class="c">/* D2 = PN0 */</span>
+} ledType_t;
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>);
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state);
+<span class="p">
+#endif /* HAL_LEDS_H_ */</span></code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_TM4C1294.c">
+  <header><span>ex1_1-basic/HAL/HAL_TM4C1294.c</span>
+    <span class="meta">15 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.c — horloge à 120 MHz : oscillateur interne 16 MHz, PLL 480 MHz. */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+
+<span class="k">uint32_t</span> g_sysClockHz = <span class="n">0u</span>;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>)
+{
+    g_sysClockHz = <span class="f">SysCtlClockFreqSet</span>((SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+                                     MAIN_CLOCK_FREQUENCY);
+}</code></pre>
+</div><div class="code" data-fichier="ex1_1-basic/HAL/HAL_TM4C1294.h">
+  <header><span>ex1_1-basic/HAL/HAL_TM4C1294.h</span>
+    <span class="meta">14 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.h — horloge du système (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_TM4C1294_H_</span>
+<span class="p">#define HAL_TM4C1294_H_</span>
+<span class="p">
+#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define MAIN_CLOCK_FREQUENCY 120000000u</span>
+
+<span class="c">/* Fréquence réellement obtenue après configuration de la PLL. */</span>
+<span class="k">extern</span> <span class="k">uint32_t</span> g_sysClockHz;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>);
+<span class="p">
+#endif /* HAL_TM4C1294_H_ */</span></code></pre>
+</div>
+</section><section>
+  <div class="head"><h2>Exercice 1.2 — Interrupt</h2><span class="n">7 fichiers</span></div>
+  <p class="lead">Le port J lève une interruption sur les deux flancs ; deux Event-Flags retiennent l&#x27;état.</p>
+  <p class="delta">Nouveau : ButtonEvent_t, button_ISR(), HAL_Button_Init() arme les trois verrous.</p>
+  <div class="code" data-fichier="ex1_2-interrupt/main.c">
+  <header><span>ex1_2-interrupt/main.c</span>
+    <span class="meta">31 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* main.c — exercice 1.2 : les LEDs suivent les boutons, sur interruption. */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Buttons.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">int</span> main(<span class="k">void</span>)
+{
+    clockInit();
+    HAL_Button_Init();      <span class="c">/* broches + interruption */</span>
+    HAL_Led_Init();
+
+    <span class="k">while</span> (<span class="n">1</span>)
+    {
+        <span class="k">switch</span> (HAL_Button_Event(eBUTTON_USR_SW1))
+        {
+            <span class="k">case</span> eBUTTON_EVENT_PRESSED:  HAL_Led_Write(eLED1, <span class="k">true</span>);  <span class="k">break</span>;
+            <span class="k">case</span> eBUTTON_EVENT_RELEASED: HAL_Led_Write(eLED1, <span class="k">false</span>); <span class="k">break</span>;
+            <span class="k">default</span>: <span class="k">break</span>;
+        }
+
+        <span class="k">switch</span> (HAL_Button_Event(eBUTTON_USR_SW2))
+        {
+            <span class="k">case</span> eBUTTON_EVENT_PRESSED:  HAL_Led_Write(eLED2, <span class="k">true</span>);  <span class="k">break</span>;
+            <span class="k">case</span> eBUTTON_EVENT_RELEASED: HAL_Led_Write(eLED2, <span class="k">false</span>); <span class="k">break</span>;
+            <span class="k">default</span>: <span class="k">break</span>;
+        }
+    }
+}</code></pre>
+</div><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_Buttons.c">
+  <header><span>ex1_2-interrupt/HAL/HAL_Buttons.c</span>
+    <span class="meta">81 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.c — interruption sur les deux flancs de PJ0/PJ1 (exercice 1.2). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/interrupt.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Buttons.h&quot;</span>
+
+<span class="c">/* Partagées entre l&#x27;ISR et main : volatile obligatoire. */</span>
+<span class="k">static</span> <span class="k">volatile</span> ButtonEvent_t s_sw1Event = eBUTTON_NO_EVENT;
+<span class="k">static</span> <span class="k">volatile</span> ButtonEvent_t s_sw2Event = eBUTTON_NO_EVENT;
+
+<span class="k">static</span> <span class="k">void</span> button_ISR(<span class="k">void</span>)
+{
+    <span class="k">uint32_t</span> <span class="k">const</span> status = <span class="f">GPIOIntStatus</span>(GPIO_PORTJ_BASE, <span class="k">true</span>);
+
+    <span class="k">if</span> ((status &amp; eBUTTON_USR_SW1) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1);      <span class="c">/* acquitter TÔT */</span>
+        s_sw1Event = buttonState(eBUTTON_USR_SW1) ? eBUTTON_EVENT_PRESSED
+                                                  : eBUTTON_EVENT_RELEASED;
+    }
+    <span class="k">else</span> <span class="k">if</span> ((status &amp; eBUTTON_USR_SW2) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW2);
+        s_sw2Event = buttonState(eBUTTON_USR_SW2) ? eBUTTON_EVENT_PRESSED
+                                                  : eBUTTON_EVENT_RELEASED;
+    }
+}
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPIOJ))
+    {
+    }
+
+    <span class="c">/* 1. la broche : entrée avec pull-up */</span>
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+
+    <span class="c">/* 2. la source d&#x27;interruption : les deux flancs */</span>
+    <span class="f">GPIOIntTypeSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                   GPIO_BOTH_EDGES);
+
+    <span class="c">/* 3. le vecteur puis le NVIC, enfin le masque global */</span>
+    <span class="f">GPIOIntRegister</span>(GPIO_PORTJ_BASE, button_ISR);
+    <span class="f">GPIOIntEnable</span>(GPIO_PORTJ_BASE, GPIO_INT_PIN_0 | GPIO_INT_PIN_1);
+    <span class="f">IntMasterEnable</span>();
+}
+
+<span class="k">bool</span> buttonState(Button_t button)
+{
+    <span class="k">return</span> (<span class="f">GPIOPinRead</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)button) == <span class="n">0</span>);
+}
+
+ButtonEvent_t HAL_Button_Event(Button_t button)
+{
+    ButtonEvent_t event;
+
+    <span class="c">/* Lire puis effacer n&#x27;est pas atomique : l&#x27;ISR peut se glisser entre les deux. */</span>
+    <span class="f">IntMasterDisable</span>();
+
+    <span class="k">if</span> (button == eBUTTON_USR_SW1)
+    {
+        event = s_sw1Event;
+        s_sw1Event = eBUTTON_NO_EVENT;
+    }
+    <span class="k">else</span>
+    {
+        event = s_sw2Event;
+        s_sw2Event = eBUTTON_NO_EVENT;
+    }
+
+    <span class="f">IntMasterEnable</span>();
+    <span class="k">return</span> event;
+}</code></pre>
+</div><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_Buttons.h">
+  <header><span>ex1_2-interrupt/HAL/HAL_Buttons.h</span>
+    <span class="meta">28 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.h — boutons sur interruption, deux flancs (exercice 1.2). */</span>
+<span class="p">#ifndef HAL_BUTTONS_H_</span>
+<span class="p">#define HAL_BUTTONS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_USR_SW1 = GPIO_PIN_0,   <span class="c">/* PJ0 */</span>
+    eBUTTON_USR_SW2 = GPIO_PIN_1    <span class="c">/* PJ1 */</span>
+} Button_t;
+
+<span class="c">/* Un seul événement mémorisé par bouton : c&#x27;est la limite de l&#x27;Event-Flag. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_NO_EVENT = <span class="n">0</span>,
+    eBUTTON_EVENT_PRESSED,
+    eBUTTON_EVENT_RELEASED
+} ButtonEvent_t;
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>);              <span class="c">/* broches + interruption, les trois verrous */</span>
+<span class="k">bool</span> buttonState(Button_t button);
+ButtonEvent_t HAL_Button_Event(Button_t button);   <span class="c">/* lit ET efface, en section critique */</span>
+<span class="p">
+#endif /* HAL_BUTTONS_H_ */</span></code></pre>
+</div><details class="same"><summary>HAL/HAL_Leds.c — identique à l&#x27;exercice 1.1</summary><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_Leds.c">
+  <header><span>ex1_2-interrupt/HAL/HAL_Leds.c</span>
+    <span class="meta">26 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.c — sorties PN0/PN1 à 6 mA (exercice 1.1). */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPION);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPION))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOOutput</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2),
+                     GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD);
+}
+
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state)
+{
+    <span class="c">/* GPIOPinWrite n&#x27;agit que sur les bits du masque : on écrit le masque, pas 1. */</span>
+    <span class="f">GPIOPinWrite</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)led, state ? (<span class="k">uint8_t</span>)led : <span class="n">0u</span>);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_Leds.h — identique à l&#x27;exercice 1.1</summary><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_Leds.h">
+  <header><span>ex1_2-interrupt/HAL/HAL_Leds.h</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.h — les deux LEDs de la carte (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_LEDS_H_</span>
+<span class="p">#define HAL_LEDS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="c">/* Les valeurs de l&#x27;énumération sont des masques de broches, pas des numéros. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eLED1 = GPIO_PIN_1,     <span class="c">/* D1 = PN1 : l&#x27;ordre est inversé */</span>
+    eLED2 = GPIO_PIN_0      <span class="c">/* D2 = PN0 */</span>
+} ledType_t;
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>);
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state);
+<span class="p">
+#endif /* HAL_LEDS_H_ */</span></code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.c — identique à l&#x27;exercice 1.1</summary><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_TM4C1294.c">
+  <header><span>ex1_2-interrupt/HAL/HAL_TM4C1294.c</span>
+    <span class="meta">15 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.c — horloge à 120 MHz : oscillateur interne 16 MHz, PLL 480 MHz. */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+
+<span class="k">uint32_t</span> g_sysClockHz = <span class="n">0u</span>;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>)
+{
+    g_sysClockHz = <span class="f">SysCtlClockFreqSet</span>((SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+                                     MAIN_CLOCK_FREQUENCY);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.h — identique à l&#x27;exercice 1.1</summary><div class="code" data-fichier="ex1_2-interrupt/HAL/HAL_TM4C1294.h">
+  <header><span>ex1_2-interrupt/HAL/HAL_TM4C1294.h</span>
+    <span class="meta">14 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.h — horloge du système (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_TM4C1294_H_</span>
+<span class="p">#define HAL_TM4C1294_H_</span>
+<span class="p">
+#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define MAIN_CLOCK_FREQUENCY 120000000u</span>
+
+<span class="c">/* Fréquence réellement obtenue après configuration de la PLL. */</span>
+<span class="k">extern</span> <span class="k">uint32_t</span> g_sysClockHz;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>);
+<span class="p">
+#endif /* HAL_TM4C1294_H_ */</span></code></pre>
+</div></details>
+</section><section>
+  <div class="head"><h2>Exercice 1.3 — Interrupt FIFO</h2><span class="n">9 fichiers</span></div>
+  <p class="lead">L&#x27;ISR dépose un ButtonEvent_t dans une FIFO ; main() la vide. Plus rien n&#x27;est écrasé.</p>
+  <p class="delta">Nouveau : Serial/SerialBuffer (2.1 partie 1, non générique) ; la HAL possède la file.</p>
+  <div class="code" data-fichier="ex1_3-interrupt-fifo/main.c">
+  <header><span>ex1_3-interrupt-fifo/main.c</span>
+    <span class="meta">26 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* main.c — exercice 1.3 : la boucle vide la FIFO et pilote les LEDs. */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Buttons.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">int</span> main(<span class="k">void</span>)
+{
+    clockInit();
+    HAL_Button_Init();
+    HAL_Led_Init();
+
+    <span class="k">while</span> (<span class="n">1</span>)
+    {
+        <span class="k">switch</span> (HAL_Button_Event())
+        {
+            <span class="k">case</span> eBUTTON_EVENT_SW1_PRESSED:  HAL_Led_Write(eLED1, <span class="k">true</span>);  <span class="k">break</span>;
+            <span class="k">case</span> eBUTTON_EVENT_SW1_RELEASED: HAL_Led_Write(eLED1, <span class="k">false</span>); <span class="k">break</span>;
+            <span class="k">case</span> eBUTTON_EVENT_SW2_PRESSED:  HAL_Led_Write(eLED2, <span class="k">true</span>);  <span class="k">break</span>;
+            <span class="k">case</span> eBUTTON_EVENT_SW2_RELEASED: HAL_Led_Write(eLED2, <span class="k">false</span>); <span class="k">break</span>;
+            <span class="k">default</span>: <span class="k">break</span>;
+        }
+    }
+}</code></pre>
+</div><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_Buttons.c">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_Buttons.c</span>
+    <span class="meta">77 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.c — l&#x27;ISR dépose dans la FIFO, main la vide (exercice 1.3). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/interrupt.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Buttons.h&quot;</span>
+<span class="p">#include &quot;Serial/SerialBuffer.h&quot;</span>
+
+<span class="k">bool</span> buttonState(Button_t button);
+
+<span class="k">static</span> <span class="k">void</span> button_ISR(<span class="k">void</span>)
+{
+    <span class="k">uint32_t</span> <span class="k">const</span> status = <span class="f">GPIOIntStatus</span>(GPIO_PORTJ_BASE, <span class="k">true</span>);
+
+    <span class="c">/* L&#x27;ISR fait le minimum : acquitter, déposer un événement, sortir. */</span>
+    <span class="k">if</span> ((status &amp; eBUTTON_USR_SW1) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1);
+        <span class="k">if</span> (!SerialBuffer_isFull())
+        {
+            (<span class="k">void</span>)SerialBuffer_addData((<span class="k">char</span>)(buttonState(eBUTTON_USR_SW1)
+                                              ? eBUTTON_EVENT_SW1_PRESSED
+                                              : eBUTTON_EVENT_SW1_RELEASED));
+        }
+    }
+    <span class="k">else</span> <span class="k">if</span> ((status &amp; eBUTTON_USR_SW2) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW2);
+        <span class="k">if</span> (!SerialBuffer_isFull())
+        {
+            (<span class="k">void</span>)SerialBuffer_addData((<span class="k">char</span>)(buttonState(eBUTTON_USR_SW2)
+                                              ? eBUTTON_EVENT_SW2_PRESSED
+                                              : eBUTTON_EVENT_SW2_RELEASED));
+        }
+    }
+}
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPIOJ))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+
+    SerialBuffer_init();               <span class="c">/* la FIFO appartient à la HAL */</span>
+
+    <span class="f">GPIOIntTypeSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                   GPIO_BOTH_EDGES);
+    <span class="f">GPIOIntRegister</span>(GPIO_PORTJ_BASE, button_ISR);
+    <span class="f">GPIOIntEnable</span>(GPIO_PORTJ_BASE, GPIO_INT_PIN_0 | GPIO_INT_PIN_1);
+    <span class="f">IntMasterEnable</span>();
+}
+
+<span class="k">bool</span> buttonState(Button_t button)
+{
+    <span class="k">return</span> (<span class="f">GPIOPinRead</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)button) == <span class="n">0</span>);
+}
+
+ButtonEvent_t HAL_Button_Event(<span class="k">void</span>)
+{
+    <span class="k">char</span> raw = <span class="n">0</span>;
+
+    <span class="k">if</span> (!SerialBuffer_getData(&amp;raw))
+    {
+        <span class="k">return</span> eBUTTON_NO_EVENT;
+    }
+
+    <span class="k">return</span> (ButtonEvent_t)raw;
+}</code></pre>
+</div><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_Buttons.h">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_Buttons.h</span>
+    <span class="meta">30 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.h — boutons sur interruption, événements dans une FIFO (exercice 1.3). */</span>
+<span class="p">#ifndef HAL_BUTTONS_H_</span>
+<span class="p">#define HAL_BUTTONS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_USR_SW1 = GPIO_PIN_0,   <span class="c">/* PJ0 */</span>
+    eBUTTON_USR_SW2 = GPIO_PIN_1    <span class="c">/* PJ1 */</span>
+} Button_t;
+
+<span class="c">/* L&#x27;événement dit maintenant QUEL bouton et QUEL flanc. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_NO_EVENT = <span class="n">0</span>,
+    eBUTTON_EVENT_SW1_PRESSED,
+    eBUTTON_EVENT_SW1_RELEASED,
+    eBUTTON_EVENT_SW2_PRESSED,
+    eBUTTON_EVENT_SW2_RELEASED
+} ButtonEvent_t;
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>);         <span class="c">/* broches + interruption + FIFO */</span>
+<span class="k">bool</span> buttonState(Button_t button);
+ButtonEvent_t HAL_Button_Event(<span class="k">void</span>);   <span class="c">/* retire un événement de la FIFO */</span>
+<span class="p">
+#endif /* HAL_BUTTONS_H_ */</span></code></pre>
+</div><details class="same"><summary>HAL/HAL_Leds.c — identique à l&#x27;exercice 1.2</summary><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_Leds.c">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_Leds.c</span>
+    <span class="meta">26 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.c — sorties PN0/PN1 à 6 mA (exercice 1.1). */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPION);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPION))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOOutput</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2),
+                     GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD);
+}
+
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state)
+{
+    <span class="c">/* GPIOPinWrite n&#x27;agit que sur les bits du masque : on écrit le masque, pas 1. */</span>
+    <span class="f">GPIOPinWrite</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)led, state ? (<span class="k">uint8_t</span>)led : <span class="n">0u</span>);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_Leds.h — identique à l&#x27;exercice 1.2</summary><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_Leds.h">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_Leds.h</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.h — les deux LEDs de la carte (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_LEDS_H_</span>
+<span class="p">#define HAL_LEDS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="c">/* Les valeurs de l&#x27;énumération sont des masques de broches, pas des numéros. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eLED1 = GPIO_PIN_1,     <span class="c">/* D1 = PN1 : l&#x27;ordre est inversé */</span>
+    eLED2 = GPIO_PIN_0      <span class="c">/* D2 = PN0 */</span>
+} ledType_t;
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>);
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state);
+<span class="p">
+#endif /* HAL_LEDS_H_ */</span></code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.c — identique à l&#x27;exercice 1.2</summary><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_TM4C1294.c">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_TM4C1294.c</span>
+    <span class="meta">15 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.c — horloge à 120 MHz : oscillateur interne 16 MHz, PLL 480 MHz. */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+
+<span class="k">uint32_t</span> g_sysClockHz = <span class="n">0u</span>;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>)
+{
+    g_sysClockHz = <span class="f">SysCtlClockFreqSet</span>((SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+                                     MAIN_CLOCK_FREQUENCY);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.h — identique à l&#x27;exercice 1.2</summary><div class="code" data-fichier="ex1_3-interrupt-fifo/HAL/HAL_TM4C1294.h">
+  <header><span>ex1_3-interrupt-fifo/HAL/HAL_TM4C1294.h</span>
+    <span class="meta">14 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.h — horloge du système (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_TM4C1294_H_</span>
+<span class="p">#define HAL_TM4C1294_H_</span>
+<span class="p">
+#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define MAIN_CLOCK_FREQUENCY 120000000u</span>
+
+<span class="c">/* Fréquence réellement obtenue après configuration de la PLL. */</span>
+<span class="k">extern</span> <span class="k">uint32_t</span> g_sysClockHz;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>);
+<span class="p">
+#endif /* HAL_TM4C1294_H_ */</span></code></pre>
+</div></details><div class="code" data-fichier="ex1_3-interrupt-fifo/Serial/SerialBuffer.c">
+  <header><span>ex1_3-interrupt-fifo/Serial/SerialBuffer.c</span>
+    <span class="meta">53 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* SerialBuffer.c — tampon circulaire de 16 octets (exercice 2.1, partie 1). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;Serial/SerialBuffer.h&quot;</span>
+
+<span class="k">static</span> <span class="k">char</span> s_data[SERIAL_BUFFER_SIZE];
+<span class="k">static</span> <span class="k">uint16_t</span> s_readIndex = <span class="n">0u</span>;
+<span class="k">static</span> <span class="k">uint16_t</span> s_writeIndex = <span class="n">0u</span>;
+<span class="k">static</span> <span class="k">uint16_t</span> s_lostData = <span class="n">0u</span>;
+
+<span class="k">void</span> SerialBuffer_init(<span class="k">void</span>)
+{
+    s_readIndex = <span class="n">0u</span>;
+    s_writeIndex = <span class="n">0u</span>;
+    s_lostData = <span class="n">0u</span>;
+}
+
+<span class="k">bool</span> SerialBuffer_isEmpty(<span class="k">void</span>)
+{
+    <span class="k">return</span> (s_readIndex == s_writeIndex);
+}
+
+<span class="k">bool</span> SerialBuffer_isFull(<span class="k">void</span>)
+{
+    <span class="c">/* Une case reste libre : c&#x27;est elle qui distingue « plein » de « vide ». */</span>
+    <span class="k">return</span> ((<span class="k">uint16_t</span>)((s_writeIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE) == s_readIndex);
+}
+
+<span class="k">bool</span> SerialBuffer_addData(<span class="k">char</span> value)
+{
+    <span class="k">if</span> (SerialBuffer_isFull())
+    {
+        s_lostData++;                    <span class="c">/* FIFO pleine : on perd, on ne bloque pas */</span>
+        <span class="k">return</span> <span class="k">false</span>;
+    }
+
+    s_data[s_writeIndex] = value;         <span class="c">/* écrire d&#x27;abord... */</span>
+    s_writeIndex = (<span class="k">uint16_t</span>)((s_writeIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE);   <span class="c">/* ...puis avancer */</span>
+    <span class="k">return</span> <span class="k">true</span>;
+}
+
+<span class="k">bool</span> SerialBuffer_getData(<span class="k">char</span> *value)
+{
+    <span class="k">if</span> (SerialBuffer_isEmpty())
+    {
+        <span class="k">return</span> <span class="k">false</span>;
+    }
+
+    *value = s_data[s_readIndex];         <span class="c">/* lire d&#x27;abord... */</span>
+    s_readIndex = (<span class="k">uint16_t</span>)((s_readIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE);     <span class="c">/* ...puis avancer */</span>
+    <span class="k">return</span> <span class="k">true</span>;
+}</code></pre>
+</div><div class="code" data-fichier="ex1_3-interrupt-fifo/Serial/SerialBuffer.h">
+  <header><span>ex1_3-interrupt-fifo/Serial/SerialBuffer.h</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* SerialBuffer.h — FIFO d&#x27;octets NON générique (exercice 2.1, partie 1).
+ *
+ * Une seule file par programme : les fonctions n&#x27;ont pas de paramètre de buffer.
+ * C&#x27;est cette version que l&#x27;exercice 1.3 copie dans le projet CCS.
+ */</span>
+<span class="p">#ifndef SERIAL_BUFFER_H_</span>
+<span class="p">#define SERIAL_BUFFER_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define SERIAL_BUFFER_SIZE 16u          /* 16 cases, 15 utilisables */</span>
+
+<span class="k">void</span> SerialBuffer_init(<span class="k">void</span>);
+<span class="k">bool</span> SerialBuffer_addData(<span class="k">char</span> value);
+<span class="k">bool</span> SerialBuffer_getData(<span class="k">char</span> *value);
+<span class="k">bool</span> SerialBuffer_isEmpty(<span class="k">void</span>);
+<span class="k">bool</span> SerialBuffer_isFull(<span class="k">void</span>);
+<span class="p">
+#endif /* SERIAL_BUFFER_H_ */</span></code></pre>
+</div>
+</section><section>
+  <div class="head"><h2>Exercice 1.4 — Interrupt FIFO + callback</h2><span class="n">9 fichiers</span></div>
+  <p class="lead">L&#x27;ISR appelle un callback enregistré par l&#x27;application ; la FIFO générique appartient à main.</p>
+  <p class="delta">Nouveau : ButtonCallback_t, HAL_Button_RegisterCallback(), SerialBuffer générique (2.1 partie 2).</p>
+  <div class="code" data-fichier="ex1_4-interrupt-fifo-cb/main.c">
+  <header><span>ex1_4-interrupt-fifo-cb/main.c</span>
+    <span class="meta">53 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* main.c — exercice 1.4 : la FIFO appartient à l&#x27;application, la HAL l&#x27;alimente. */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Buttons.h&quot;</span>
+<span class="p">#include &quot;HAL/HAL_Leds.h&quot;</span>
+<span class="p">#include &quot;Serial/SerialBuffer.h&quot;</span>
+
+<span class="k">static</span> SerialBuffer_t g_events;      <span class="c">/* la file est ici, pas dans la HAL */</span>
+
+<span class="c">/* Appelée DEPUIS L&#x27;ISR : elle doit rester courte. */</span>
+<span class="k">static</span> <span class="k">void</span> onButtonEvent(Button_t button, ButtonEvent_t event)
+{
+    (<span class="k">void</span>)button;                    <span class="c">/* l&#x27;événement encode déjà le bouton */</span>
+
+    <span class="k">if</span> (!g_events.isFull(&amp;g_events))
+    {
+        (<span class="k">void</span>)g_events.addData(&amp;g_events, (<span class="k">char</span>)event);
+    }
+}
+
+<span class="k">static</span> <span class="k">void</span> traiterEvenement(ButtonEvent_t event)
+{
+    <span class="k">switch</span> (event)
+    {
+        <span class="k">case</span> eBUTTON_EVENT_SW1_PRESSED:  HAL_Led_Write(eLED1, <span class="k">true</span>);  <span class="k">break</span>;
+        <span class="k">case</span> eBUTTON_EVENT_SW1_RELEASED: HAL_Led_Write(eLED1, <span class="k">false</span>); <span class="k">break</span>;
+        <span class="k">case</span> eBUTTON_EVENT_SW2_PRESSED:  HAL_Led_Write(eLED2, <span class="k">true</span>);  <span class="k">break</span>;
+        <span class="k">case</span> eBUTTON_EVENT_SW2_RELEASED: HAL_Led_Write(eLED2, <span class="k">false</span>); <span class="k">break</span>;
+        <span class="k">default</span>: <span class="k">break</span>;
+    }
+}
+
+<span class="k">int</span> main(<span class="k">void</span>)
+{
+    <span class="k">char</span> raw;
+
+    clockInit();
+    HAL_Button_Init();
+    HAL_Led_Init();
+
+    SerialBuffer_init(&amp;g_events);
+    HAL_Button_RegisterCallback(onButtonEvent);
+
+    <span class="k">while</span> (<span class="n">1</span>)
+    {
+        <span class="k">while</span> (g_events.getData(&amp;g_events, &amp;raw))
+        {
+            traiterEvenement((ButtonEvent_t)raw);
+        }
+    }
+}</code></pre>
+</div><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_Buttons.c">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_Buttons.c</span>
+    <span class="meta">68 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.c — l&#x27;ISR appelle le callback, sans connaître l&#x27;application (exercice 1.4). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stddef.h&gt;      /* NULL */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/interrupt.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Buttons.h&quot;</span>
+
+<span class="c">/* static du MODULE : le pointeur doit survivre à la fonction d&#x27;enregistrement. */</span>
+<span class="k">static</span> ButtonCallback_t s_callback = <span class="k">NULL</span>;
+
+<span class="k">static</span> <span class="k">void</span> button_ISR(<span class="k">void</span>)
+{
+    <span class="k">uint32_t</span> <span class="k">const</span> status = <span class="f">GPIOIntStatus</span>(GPIO_PORTJ_BASE, <span class="k">true</span>);
+
+    <span class="k">if</span> ((status &amp; eBUTTON_USR_SW1) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW1);
+        <span class="k">if</span> (s_callback != <span class="k">NULL</span>)
+        {
+            s_callback(eBUTTON_USR_SW1, buttonState(eBUTTON_USR_SW1)
+                                        ? eBUTTON_EVENT_SW1_PRESSED
+                                        : eBUTTON_EVENT_SW1_RELEASED);
+        }
+    }
+    <span class="k">else</span> <span class="k">if</span> ((status &amp; eBUTTON_USR_SW2) != <span class="n">0u</span>)
+    {
+        <span class="f">GPIOIntClear</span>(GPIO_PORTJ_BASE, eBUTTON_USR_SW2);
+        <span class="k">if</span> (s_callback != <span class="k">NULL</span>)
+        {
+            s_callback(eBUTTON_USR_SW2, buttonState(eBUTTON_USR_SW2)
+                                        ? eBUTTON_EVENT_SW2_PRESSED
+                                        : eBUTTON_EVENT_SW2_RELEASED);
+        }
+    }
+}
+
+<span class="k">void</span> HAL_Button_RegisterCallback(ButtonCallback_t callback)
+{
+    s_callback = callback;
+}
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPIOJ);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPIOJ))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOInput</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+
+    <span class="f">GPIOIntTypeSet</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)(eBUTTON_USR_SW1 | eBUTTON_USR_SW2),
+                   GPIO_BOTH_EDGES);
+    <span class="f">GPIOIntRegister</span>(GPIO_PORTJ_BASE, button_ISR);
+    <span class="f">GPIOIntEnable</span>(GPIO_PORTJ_BASE, GPIO_INT_PIN_0 | GPIO_INT_PIN_1);
+    <span class="f">IntMasterEnable</span>();
+}
+
+<span class="k">bool</span> buttonState(Button_t button)
+{
+    <span class="k">return</span> (<span class="f">GPIOPinRead</span>(GPIO_PORTJ_BASE, (<span class="k">uint8_t</span>)button) == <span class="n">0</span>);
+}</code></pre>
+</div><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_Buttons.h">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_Buttons.h</span>
+    <span class="meta">35 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Buttons.h — boutons avec callback (exercice 1.4).
+ *
+ * La HAL ne connaît plus l&#x27;application : elle garde une adresse de fonction et l&#x27;appelle.
+ */</span>
+<span class="p">#ifndef HAL_BUTTONS_H_</span>
+<span class="p">#define HAL_BUTTONS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_USR_SW1 = GPIO_PIN_0,   <span class="c">/* PJ0 */</span>
+    eBUTTON_USR_SW2 = GPIO_PIN_1    <span class="c">/* PJ1 */</span>
+} Button_t;
+
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eBUTTON_NO_EVENT = <span class="n">0</span>,
+    eBUTTON_EVENT_SW1_PRESSED,
+    eBUTTON_EVENT_SW1_RELEASED,
+    eBUTTON_EVENT_SW2_PRESSED,
+    eBUTTON_EVENT_SW2_RELEASED
+} ButtonEvent_t;
+
+<span class="c">/* Signature du callback : le bouton et son événement. */</span>
+<span class="k">typedef</span> <span class="k">void</span> (*ButtonCallback_t)(Button_t button, ButtonEvent_t event);
+
+<span class="k">void</span> HAL_Button_Init(<span class="k">void</span>);
+<span class="k">void</span> HAL_Button_RegisterCallback(ButtonCallback_t callback);
+<span class="k">bool</span> buttonState(Button_t button);
+<span class="p">
+#endif /* HAL_BUTTONS_H_ */</span></code></pre>
+</div><details class="same"><summary>HAL/HAL_Leds.c — identique à l&#x27;exercice 1.3</summary><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_Leds.c">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_Leds.c</span>
+    <span class="meta">26 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.c — sorties PN0/PN1 à 6 mA (exercice 1.1). */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/gpio.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_Leds.h&quot;</span>
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>)
+{
+    <span class="f">SysCtlPeripheralEnable</span>(SYSCTL_PERIPH_GPION);
+    <span class="k">while</span> (!<span class="f">SysCtlPeripheralReady</span>(SYSCTL_PERIPH_GPION))
+    {
+    }
+
+    <span class="f">GPIOPinTypeGPIOOutput</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2));
+    <span class="f">GPIOPadConfigSet</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)(eLED1 | eLED2),
+                     GPIO_STRENGTH_6MA, GPIO_PIN_TYPE_STD);
+}
+
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state)
+{
+    <span class="c">/* GPIOPinWrite n&#x27;agit que sur les bits du masque : on écrit le masque, pas 1. */</span>
+    <span class="f">GPIOPinWrite</span>(GPIO_PORTN_BASE, (<span class="k">uint8_t</span>)led, state ? (<span class="k">uint8_t</span>)led : <span class="n">0u</span>);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_Leds.h — identique à l&#x27;exercice 1.3</summary><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_Leds.h">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_Leds.h</span>
+    <span class="meta">20 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_Leds.h — les deux LEDs de la carte (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_LEDS_H_</span>
+<span class="p">#define HAL_LEDS_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;driverlib/gpio.h&quot;</span>
+
+<span class="c">/* Les valeurs de l&#x27;énumération sont des masques de broches, pas des numéros. */</span>
+<span class="k">typedef</span> <span class="k">enum</span>
+{
+    eLED1 = GPIO_PIN_1,     <span class="c">/* D1 = PN1 : l&#x27;ordre est inversé */</span>
+    eLED2 = GPIO_PIN_0      <span class="c">/* D2 = PN0 */</span>
+} ledType_t;
+
+<span class="k">void</span> HAL_Led_Init(<span class="k">void</span>);
+<span class="k">void</span> HAL_Led_Write(ledType_t led, <span class="k">bool</span> state);
+<span class="p">
+#endif /* HAL_LEDS_H_ */</span></code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.c — identique à l&#x27;exercice 1.3</summary><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_TM4C1294.c">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_TM4C1294.c</span>
+    <span class="meta">15 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.c — horloge à 120 MHz : oscillateur interne 16 MHz, PLL 480 MHz. */</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;inc/hw_memmap.h&quot;</span>
+<span class="p">#include &quot;driverlib/sysctl.h&quot;</span>
+<span class="p">
+#include &quot;HAL/HAL_TM4C1294.h&quot;</span>
+
+<span class="k">uint32_t</span> g_sysClockHz = <span class="n">0u</span>;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>)
+{
+    g_sysClockHz = <span class="f">SysCtlClockFreqSet</span>((SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+                                     MAIN_CLOCK_FREQUENCY);
+}</code></pre>
+</div></details><details class="same"><summary>HAL/HAL_TM4C1294.h — identique à l&#x27;exercice 1.3</summary><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/HAL/HAL_TM4C1294.h">
+  <header><span>ex1_4-interrupt-fifo-cb/HAL/HAL_TM4C1294.h</span>
+    <span class="meta">14 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* HAL_TM4C1294.h — horloge du système (exercice 1.1). */</span>
+<span class="p">#ifndef HAL_TM4C1294_H_</span>
+<span class="p">#define HAL_TM4C1294_H_</span>
+<span class="p">
+#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define MAIN_CLOCK_FREQUENCY 120000000u</span>
+
+<span class="c">/* Fréquence réellement obtenue après configuration de la PLL. */</span>
+<span class="k">extern</span> <span class="k">uint32_t</span> g_sysClockHz;
+
+<span class="k">void</span> clockInit(<span class="k">void</span>);
+<span class="p">
+#endif /* HAL_TM4C1294_H_ */</span></code></pre>
+</div></details><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/Serial/SerialBuffer.c">
+  <header><span>ex1_4-interrupt-fifo-cb/Serial/SerialBuffer.c</span>
+    <span class="meta">53 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* SerialBuffer.c — tampon circulaire générique (exercice 2.1, partie 2). */</span>
+<span class="p">#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#include &quot;Serial/SerialBuffer.h&quot;</span>
+
+<span class="k">static</span> <span class="k">bool</span> prv_isEmpty(SerialBuffer_t *self)
+{
+    <span class="k">return</span> (self-&gt;readIndex == self-&gt;writeIndex);
+}
+
+<span class="k">static</span> <span class="k">bool</span> prv_isFull(SerialBuffer_t *self)
+{
+    <span class="k">return</span> ((<span class="k">uint16_t</span>)((self-&gt;writeIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE) == self-&gt;readIndex);
+}
+
+<span class="k">static</span> <span class="k">bool</span> prv_addData(SerialBuffer_t *self, <span class="k">char</span> value)
+{
+    <span class="k">if</span> (self-&gt;isFull(self))
+    {
+        self-&gt;lostData++;
+        <span class="k">return</span> <span class="k">false</span>;
+    }
+
+    self-&gt;data[self-&gt;writeIndex] = value;
+    self-&gt;writeIndex = (<span class="k">uint16_t</span>)((self-&gt;writeIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE);
+    <span class="k">return</span> <span class="k">true</span>;
+}
+
+<span class="k">static</span> <span class="k">bool</span> prv_getData(SerialBuffer_t *self, <span class="k">char</span> *value)
+{
+    <span class="k">if</span> (self-&gt;isEmpty(self))
+    {
+        <span class="k">return</span> <span class="k">false</span>;
+    }
+
+    *value = self-&gt;data[self-&gt;readIndex];
+    self-&gt;readIndex = (<span class="k">uint16_t</span>)((self-&gt;readIndex + <span class="n">1u</span>) % SERIAL_BUFFER_SIZE);
+    <span class="k">return</span> <span class="k">true</span>;
+}
+
+<span class="k">void</span> SerialBuffer_init(SerialBuffer_t *self)
+{
+    self-&gt;readIndex = <span class="n">0u</span>;
+    self-&gt;writeIndex = <span class="n">0u</span>;
+    self-&gt;lostData = <span class="n">0u</span>;
+
+    <span class="c">/* Les quatre méthodes sont choisies ici, une fois pour toutes. */</span>
+    self-&gt;addData = prv_addData;
+    self-&gt;getData = prv_getData;
+    self-&gt;isEmpty = prv_isEmpty;
+    self-&gt;isFull = prv_isFull;
+}</code></pre>
+</div><div class="code" data-fichier="ex1_4-interrupt-fifo-cb/Serial/SerialBuffer.h">
+  <header><span>ex1_4-interrupt-fifo-cb/Serial/SerialBuffer.h</span>
+    <span class="meta">31 lignes · <button data-copy>copier</button></span></header>
+  <pre><code><span class="c">/* SerialBuffer.h — FIFO d&#x27;octets GÉNÉRIQUE (exercice 2.1, partie 2).
+ *
+ * Le buffer se passe lui-même en paramètre : on peut en déclarer plusieurs.
+ * Les quatre opérations sont des pointeurs de fonction, fixés à l&#x27;initialisation.
+ */</span>
+<span class="p">#ifndef SERIAL_BUFFER_H_</span>
+<span class="p">#define SERIAL_BUFFER_H_</span>
+<span class="p">
+#include &lt;stdbool.h&gt;</span>
+<span class="p">#include &lt;stdint.h&gt;</span>
+<span class="p">
+#define SERIAL_BUFFER_SIZE 16u          /* 16 cases, 15 utilisables */</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> SerialBuffer SerialBuffer_t;
+
+<span class="k">struct</span> SerialBuffer
+{
+    <span class="k">char</span> data[SERIAL_BUFFER_SIZE];
+    <span class="k">uint16_t</span> readIndex;
+    <span class="k">uint16_t</span> writeIndex;
+    <span class="k">uint16_t</span> lostData;
+
+    <span class="k">bool</span> (*addData)(SerialBuffer_t *self, <span class="k">char</span> value);
+    <span class="k">bool</span> (*getData)(SerialBuffer_t *self, <span class="k">char</span> *value);
+    <span class="k">bool</span> (*isEmpty)(SerialBuffer_t *self);
+    <span class="k">bool</span> (*isFull)(SerialBuffer_t *self);
+};
+
+<span class="k">void</span> SerialBuffer_init(SerialBuffer_t *self);
+<span class="p">
+#endif /* SERIAL_BUFFER_H_ */</span></code></pre>
+</div>
+</section>
+<footer>Sources : <code>Fiches-Revision/exercices-code/</code> · tests hôtes dans
+<code>test/</code> (substitut DriverLib, voir <code>test/stub/</code>) · page générée par
+<code>scripts/gen_code_exercices_html.py</code>.</footer>
+<script>
+document.querySelectorAll('[data-copy]').forEach(b => {
+  b.addEventListener('click', async () => {
+    const code = b.closest('.code').querySelector('code').innerText;
+    try { await navigator.clipboard.writeText(code); b.textContent = 'copié ✓'; }
+    catch (e) { b.textContent = 'Ctrl+C'; }
+    setTimeout(() => b.textContent = 'copier', 1400);
+  });
+});
+</script>
+<a class="site-retour" href="../index.html#E2-EMB1">← E2-EMB1</a>
+</body>
+</html>

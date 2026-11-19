@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235146b8'/%3E%3Cpath d='M18 20h28M18 32h20M18 44h24' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Exercice 1.6 — Convertisseur °C vers °F. Théorie, méthode et QCM.">
+<title>Exercice 1.6 — Convertisseur °C vers °F</title>
+<style>
+:root{
+  --bg:#f4f2ec;--card:#fffdf9;--card2:#efede5;--ink:#1b1a17;--muted:#5d5b54;--faint:#8b887e;
+  --line:rgba(27,26,23,.16);--line2:rgba(27,26,23,.08);--accent:#5146b8;--accent-s:#eae8fb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151412;--card:#1e1d1a;--card2:#262420;--ink:#e9e6dd;--muted:#b3afa5;--faint:#8b877c;
+  --line:rgba(255,255,255,.17);--line2:rgba(255,255,255,.075);--accent:#b3abff;--accent-s:#2a2451;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top a{text-decoration:none;font-size:12.5px;color:var(--muted);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.top a:hover{background:var(--card2);color:var(--ink)}
+.top .spacer{flex:1}
+.top .exam{font:650 9.5px/1 var(--mono);letter-spacing:.08em;background:var(--accent-s);color:var(--accent);border-radius:999px;padding:5px 8px}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px 70px}
+.eyebrow{font:650 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.07;letter-spacing:-.03em;font-weight:680;margin:10px 0 12px}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:65ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;font:11.5px/1.4 var(--mono);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:650}
+section{margin-top:34px}
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:650 10px var(--mono)}
+.tag{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+h2{font-size:clamp(20px,3vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 8px}
+h3{font-size:15px;font-weight:650;margin:0 0 4px}
+p{margin:0 0 10px}
+ul,ol{margin:8px 0 10px;padding-left:22px}
+li{margin:5px 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0}
+.box{border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:14px}
+.box.rule{border-left-color:#0e6b55}
+.box.trap{border-left-color:#b33a2b}
+.box .lbl{font:650 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.code{margin:12px 0;border-radius:10px;overflow:hidden;background:#1c1c1a;border:1px solid #2d2d29}
+.code code{background:none;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+.code header{display:flex;justify-content:space-between;padding:7px 11px;background:#242420;color:#a9a79e;font:10.5px var(--mono)}
+.code pre{margin:0;padding:12px 13px;overflow:auto;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.tbl th,.tbl td{border-bottom:1px solid var(--line2);padding:7px 8px;text-align:left;vertical-align:top}
+.tbl th{font:650 10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tbl tr:last-child td{border-bottom:0}
+.result{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:11px 13px;margin:12px 0;font-size:14px}
+.viz{margin:14px 0 4px;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:12px 13px;overflow-x:auto}
+.viz-title{font:650 10px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.viz-caption{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+.viz-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.viz-node{min-width:54px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:7px 9px;text-align:center;font:12px/1.3 var(--mono);color:var(--ink)}
+.viz-node b{display:block;font:9px/1.3 var(--mono);letter-spacing:.04em;color:var(--accent);margin-bottom:2px}
+.viz-arrow{font:14px/1 var(--mono);color:var(--faint);white-space:nowrap}
+.viz-label{font:9.5px/1.4 var(--mono);color:var(--faint);text-align:center}
+.viz-stack{display:flex;flex-direction:column;gap:5px;align-items:center;padding:4px 0}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:5px;padding:4px 0}
+.viz-cell{border:1px solid var(--line2);background:var(--card2);border-radius:6px;padding:6px 5px;text-align:center;font:11px/1.3 var(--mono)}
+.viz-bar{height:10px;border-radius:3px;background:var(--accent);min-width:2px}
+.viz-note{font-size:12px;color:var(--muted);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px}
+.viz svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.qcm{margin-top:12px}
+.q{background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:13px 14px;margin-top:10px}
+.qq{font-weight:600;margin:0 0 9px;font-size:14.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:8px 10px;font:13px/1.45 var(--sans);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{border-color:#0e6b55;background:rgba(14,107,85,.14)}
+.opt.ko{border-color:#b33a2b;background:rgba(179,58,43,.14)}
+.fb{margin-top:9px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:9px}
+.score{font:12px var(--mono);color:var(--faint);margin-top:12px}
+.hero{max-width:860px;margin:0 auto;padding:32px 22px 0}
+.home{max-width:1050px;margin:0 auto;padding:42px 22px 70px}
+.home h1{margin-bottom:8px}
+.group{margin-top:28px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line2);padding-bottom:7px;margin-bottom:11px}
+.group-head h2{font-size:14px;font-weight:650;margin:0}
+.group-head span{font:10.5px var(--mono);color:var(--faint)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.ex-card{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line2);border-top:3px solid var(--accent);border-radius:11px;padding:13px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .14s ease}
+.ex-card:hover{transform:translateY(-2px)}
+.ex-card .num{font:650 10px var(--mono);color:var(--accent)}
+.ex-card h3{font-size:15.5px;margin:1px 0 0}
+.ex-card p{font-size:12.5px;line-height:1.45;color:var(--muted);margin:0;flex:1}
+.ex-card .go{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px}
+@media (max-width:640px){
+  .wrap,.hero{padding:24px 15px 55px}
+  .home{padding:28px 15px 60px}
+  .lead{font-size:15.5px}
+  .cards{grid-template-columns:1fr}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:5px 4px}
+  .top{gap:6px;padding:8px 10px}
+  .top a{font-size:11.5px}
+  .top .spacer{display:none}
+  .top .exam{margin-left:auto}
+  .code pre{font-size:11.5px;line-height:1.65}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.001ms!important}}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="index.html">← Tous les exercices</a>
+  <span class="spacer"></span>
+  <a href="../c-bases/algo-c-bases-theorie-animee.html">Version théorie · Langage C : bases</a>
+  <span class="exam">TE1</span>
+</div>
+<header class="hero">
+  <div class="eyebrow">E2-ALGO · exercice 1.6 · Chapitre 1</div>
+  <h1>Convertisseur °C vers °F</h1>
+  <p class="lead">Convertir une température de °C en °F avec une fonction, puis afficher la table de −20 °C à 30 °C.</p>
+  <div class="chips">
+    <span class="chip">exercice <b>1.6</b></span>
+    <span class="chip">fonction · paramètre · valeur de retour · boucle · constantes · format</span>
+    <span class="chip">théorie : <b>Langage C : bases</b></span>
+  </div>
+</header>
+<main class="wrap">
+  <section>
+    <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
+    <h2>Ce que demande l’exercice</h2>
+    <p>a) Afficher une ligne d'information sur le programme, puis une conversion, avec la formule T(°F) = T(°C) × 1,8 + 32.</p>
+<p>b) Écrire une fonction qui reçoit une température en °C et retourne sa valeur en °F, puis ajouter son appel dans main.</p>
+<p>c) Afficher la table des conversions de −20 °C à 30 °C par pas de 1 °C, en utilisant des constantes pour les bornes.</p>
+<p>Le symbole ° peut s'écrire sur la console par le caractère de code 0xF8, soit 248.</p>
+    <table class="tbl"><tr><th>°C</th><th>°F</th><th>contrôle</th></tr><tr><td>−40</td><td>−40,0</td><td>seule température où les échelles coïncident</td></tr><tr><td>−20</td><td>−4,0</td><td>première ligne de la table</td></tr><tr><td>−19</td><td>−2,2</td><td>deuxième ligne</td></tr><tr><td>0</td><td>32,0</td><td>point de congélation</td></tr><tr><td>10</td><td>50,0</td><td>exemple de l'énoncé</td></tr><tr><td>29</td><td>84,2</td><td>avant-dernière ligne</td></tr><tr><td>30</td><td>86,0</td><td>dernière ligne</td></tr></table>
+    <div class="viz"><div class="viz-title">Deux échelles, une droite</div><svg viewBox='0 0 440 272' role='img' aria-label='Droite de conversion de degres Celsius en degres Fahrenheit' style='display:block;width:100%;max-width:440px;height:auto;font-family:system-ui,-apple-system,Segoe UI,sans-serif'><g stroke='#e2dfd6' stroke-width='1' stroke-dasharray='4 4'><line x1='56' y1='227.0' x2='416' y2='227.0'/><line x1='56' y1='182.1' x2='416' y2='182.1'/><line x1='56' y1='137.2' x2='416' y2='137.2'/><line x1='56' y1='92.4' x2='416' y2='92.4'/><line x1='56' y1='47.5' x2='416' y2='47.5'/></g><g stroke='#b6b3a8' stroke-width='1.5'><line x1='56' y1='236' x2='416' y2='236'/><line x1='56' y1='34' x2='56' y2='236'/><line x1='56.0' y1='236' x2='56.0' y2='240'/><line x1='128.0' y1='236' x2='128.0' y2='240'/><line x1='200.0' y1='236' x2='200.0' y2='240'/><line x1='272.0' y1='236' x2='272.0' y2='240'/><line x1='344.0' y1='236' x2='344.0' y2='240'/><line x1='416.0' y1='236' x2='416.0' y2='240'/></g><g font-size='14' fill='#5d5b54'><text x='56.0' y='258' text-anchor='middle'>−20</text><text x='128.0' y='258' text-anchor='middle'>−10</text><text x='200.0' y='258' text-anchor='middle'>0</text><text x='272.0' y='258' text-anchor='middle'>10</text><text x='344.0' y='258' text-anchor='middle'>20</text><text x='416.0' y='258' text-anchor='middle'>30</text><text x='48' y='231.5' text-anchor='end'>0</text><text x='48' y='186.6' text-anchor='end'>20</text><text x='48' y='141.7' text-anchor='end'>40</text><text x='48' y='96.9' text-anchor='end'>60</text><text x='48' y='52.0' text-anchor='end'>80</text><text x='420' y='258' font-size='15' fill='#1b1a17'>°C</text><text x='12' y='30' font-size='15' fill='#1b1a17'>°F</text></g><line x1='56' y1='236' x2='416' y2='34' stroke='#5146b8' stroke-width='2.5'/><g fill='#0e6b55' stroke='#fffdf9' stroke-width='2'><circle cx='56.0' cy='236.0' r='5.5'/><circle cx='200.0' cy='155.2' r='5.5'/><circle cx='272.0' cy='114.8' r='5.5'/><circle cx='416.0' cy='34.0' r='5.5'/></g><g font-size='14' fill='#1b1a17'><text x='62' y='226' text-anchor='start'>−20 °C → −4 °F</text><text x='208' y='141' text-anchor='start'>0 °C → 32 °F</text><text x='280' y='101' text-anchor='start'>10 °C → 50 °F</text><text x='410' y='26' text-anchor='end'>30 °C → 86 °F</text></g></svg><div class='viz-note' style='margin-top:8px;font-size:13px;color:#5d5b54'>La droite monte de 1,8 °F par degré Celsius ; à −40 les deux échelles se rejoignent, hors du cadre.</div><div class="viz-caption">T(°F) = T(°C) × 1,8 + 32 : la droite passe par les quatre points de contrôle (−20 ; −4), (0 ; 32), (10 ; 50) et (30 ; 86).</div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
+    <h2>Les notions à mobiliser</h2>
+    <div class="grid"><div class="card"><h3>Une fonction, une valeur</h3><p><code>double celsiusToFahrenheit(double c)</code> reçoit une copie de l'argument et retourne un double. Le prototype placé avant main suffit au compilateur ; le corps peut venir après.</p></div>
+<div class="card"><h3>Le facteur 1,8</h3><p>1,8 s'écrit <code>1.8</code> en C et reste un littéral double : <code>c * 1.8 + 32.0</code> calcule tout en virgule flottante. Avec des entiers, <code>c * 9 / 5 + 32</code> tronque à chaque division.</p></div>
+<div class="card"><h3>Constantes et bornes</h3><p>Deux constantes fixent la plage : <code>enum { eMinC = -20, eMaxC = 30 };</code>. La boucle va de eMinC à eMaxC inclus, soit 30 − (−20) + 1 = 51 tours.</p></div>
+<div class="card"><h3>Le symbole °</h3><p>0xF8 = 248 est le ° de la page de code de la console Windows (CP850 ou CP437). En UTF-8, le même symbole n'a pas ce code : <code>(char)0xF8</code> n'affiche ° que dans cette page de code.</p></div></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
+    <h2>Comment procéder</h2>
+    <ol><li>Écrire la formule en double : c * 1.8 + 32.0.</li>
+<li>Isoler le calcul dans une fonction à un paramètre et à valeur de retour.</li>
+<li>Déclarer les bornes en constantes, puis boucler de −20 à 30 inclus.</li>
+<li>Afficher avec %+.1f pour garder le signe, et %c avec (char)0xF8 pour le degré.</li>
+<li>Vérifier quatre points de contrôle : −20, 0, 10 et 30.</li></ol>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">04</div><div class="tag">application</div></div>
+    <h2>Application à l’énoncé</h2>
+    <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>#include &lt;stdio.h&gt;
+
+enum { eMinC = -20, eMaxC = 30 };   /* les bornes, en constantes */
+
+double celsiusToFahrenheit(double c)
+{
+    return c * 1.8 + 32.0;
+}
+
+int main(void)
+{
+    printf("%cC to %cF converter!\n", (char)0xF8, (char)0xF8);
+    printf("Value of %5.2f%cC corresponds to %5.2f%cF\n",
+           10.0, (char)0xF8, celsiusToFahrenheit(10.0), (char)0xF8);
+
+    for (int c = eMinC; c &lt;= eMaxC; c++)
+    {
+        printf("Value of %+5.1f%cC corresponds to %+5.1f%cF\n",
+               (double)c, (char)0xF8, celsiusToFahrenheit(c), (char)0xF8);
+    }
+    return 0;
+}
+</code></pre></div>
+    <table class="tbl"><tr><th>ligne</th><th>sortie</th></tr><tr><td>information</td><td>°C to °F converter!</td></tr><tr><td>exemple b)</td><td>Value of 10.00°C corresponds to 50.00°F</td></tr><tr><td>table, début</td><td>Value of -20.0°C corresponds to -4.0°F, puis -19.0 et -2.2</td></tr><tr><td>table, fin</td><td>Value of +29.0°C corresponds to +84.2°F, puis +30.0 et +86.0</td></tr></table><p>51 lignes, une par degré de −20 à 30 : les deux bornes comptent, et 0 se trouve au milieu. Le signe vient du drapeau <code>%+</code> ; <code>%5.1f</code> réserve cinq colonnes, signe compris, et une décimale, ce qui aligne la colonne des valeurs.</p>
+    <div class="result"><b>Résultat.</b> 10,0 °C donne 50,0 °F ; −20 donne −4,0 ; −19 donne −2,2 ; 29 donne 84,2 ; 30 donne 86,0. La table compte 51 lignes.</div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
+    <h2>Les pièges</h2>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Écrire c * 9 / 5 + 32 avec un int : 7 °C donne 44 au lieu de 44,6, la division tronque.</li>
+<li>Taper 1,8 : la virgule est un opérateur en C, et l'expression 1,8 vaut 8.</li>
+<li>Boucler jusqu'à 30 exclu : 50 lignes seulement, et la dernière valeur manque.</li>
+<li>Attendre ° d'un printf en UTF-8 avec 0xF8 : ce code n'est celui du symbole que dans la page de code de la console.</li></ul></div>
+  </section>
+
+  <section>
+    <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
+    <h2>Trois questions</h2>
+    <div class="qcm" data-qcm>
+<div class="q" data-answer="2" data-why="Les deux bornes sont incluses : 30 − (−20) + 1 = 51 valeurs.">
+<p class="qq">1. Combien de lignes compte la table de −20 °C à 30 °C ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">49</button>
+<button class="opt" type="button" data-opt="1">50</button>
+<button class="opt" type="button" data-opt="2">51</button>
+<button class="opt" type="button" data-opt="3">52</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="0" data-why="−40 × 1,8 = −72, plus 32 donne −40 : c&#x27;est le seul point fixe des deux échelles.">
+<p class="qq">2. Que vaut −40 °C en °F ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">−40,0</button>
+<button class="opt" type="button" data-opt="1">−32,0</button>
+<button class="opt" type="button" data-opt="2">0,0</button>
+<button class="opt" type="button" data-opt="3">−72,0</button>
+</div><div class="fb" hidden></div></div>
+<div class="q" data-answer="1" data-why="Le littéral 1.8 est un double : la multiplication et l&#x27;addition se font en virgule flottante.">
+<p class="qq">3. Quel calcul garde les décimales ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">c * 9 / 5 + 32 en int</button>
+<button class="opt" type="button" data-opt="1">c * 1.8 + 32.0</button>
+<button class="opt" type="button" data-opt="2">(int)c * 1.8 + 32</button>
+<button class="opt" type="button" data-opt="3">c / 1.8 + 32</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 3</div></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-qcm]').forEach(function (qcm) {
+    var score = 0, total = 0;
+    qcm.querySelectorAll('.q').forEach(function (q) {
+      total++;
+      var answer = Number(q.getAttribute('data-answer'));
+      var fb = q.querySelector('.fb');
+      q.querySelectorAll('.opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (q.getAttribute('data-done')) return;
+          q.setAttribute('data-done', '1');
+          var pick = Number(btn.getAttribute('data-opt'));
+          q.querySelectorAll('.opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (i === answer) b.classList.add('ok');
+            if (i === pick && i !== answer) b.classList.add('ko');
+          });
+          fb.hidden = false;
+          fb.innerHTML = (pick === answer ? '<b>Correct.</b> ' : '<b>À revoir.</b> ') + q.getAttribute('data-why');
+          if (pick === answer) score++;
+          var out = qcm.querySelector('.score b');
+          if (out) out.textContent = score;
+        });
+      });
+    });
+    var out = qcm.querySelector('.score b');
+    if (out) out.textContent = '0';
+  });
+})();
+</script>
+
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

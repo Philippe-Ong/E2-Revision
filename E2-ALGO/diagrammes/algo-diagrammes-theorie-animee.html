@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Algorithmes et diagrammes — fiche de révision</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#fffdf9; --card2:#efede5;
+    --ink:#1b1a17; --muted:#5d5b54; --faint:#8b887e;
+    --line:rgba(27,26,23,.16); --line2:rgba(27,26,23,.075);
+    --accent:#5146b8; --accent-s:#eae8fb; --accent-2:#7a6cf0;
+    --blue:#1d64a8; --blue-s:#e7f1fb;
+    --teal:#0e6b55; --teal-s:#e0f3ec;
+    --green:#3f6d14; --green-s:#eaf2dc;
+    --coral:#a14422; --coral-s:#fbeae3;
+    --amber:#8a520c; --amber-s:#fbf0dc;
+    --red:#a52a2a; --red-s:#fbe8e8;
+    --purple:#5b3fa8; --purple-s:#efe9fb;
+    --gray:#5d5b54; --gray-s:#f0eee7;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151412; --card:#1e1d1a; --card2:#262420;
+      --ink:#e9e6dd; --muted:#b3afa5; --faint:#8b877c;
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.075);
+      --accent:#b3abff; --accent-s:#2a2451; --accent-2:#9a8dff;
+      --blue:#8fbff0; --blue-s:#12273e;
+      --teal:#62cba9; --teal-s:#0b332b;
+      --green:#a6cf6d; --green-s:#1b3008;
+      --coral:#f0a184; --coral-s:#43190b;
+      --amber:#efaf4e; --amber-s:#3b2604;
+      --red:#f09a9a; --red-s:#471313;
+      --purple:#c4b2f5; --purple-s:#2a1f47;
+      --gray:#b3afa5; --gray-s:#2a2823;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background:
+      radial-gradient(1100px 500px at 15% -10%, color-mix(in srgb,var(--accent-s) 55%,transparent), transparent 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.67 var(--sans);
+    font-variant-ligatures:none;
+    font-feature-settings:"liga" 0,"calt" 0;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-s);color:var(--ink)}
+  a{color:inherit}
+  code{font:13.5px/1.45 var(--mono);color:var(--ink);background:var(--card2);border:1px solid var(--line2);border-radius:5px;padding:1px 5px}
+  b,strong{font-weight:650}
+
+  /* ---------- barre de progression ---------- */
+  #progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:80;transition:width .08s linear}
+
+  /* ---------- gabarit ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:76px 28px 110px}
+  main{min-width:0;max-width:820px;margin:0 auto}
+
+  /* ---------- tiroir de sommaire ---------- */
+  .nav-toggle{position:fixed;top:16px;left:16px;z-index:110;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 13px;font:600 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer;transition:background .15s,transform .25s ease,opacity .25s ease}
+  .nav-toggle:hover{background:var(--card2)}
+  .nav-toggle:active{transform:scale(.98)}
+  .nav-toggle.hide{transform:translateY(-64px);opacity:0;pointer-events:none}
+  .nav-toggle .ico{font-size:14px;line-height:1;color:var(--accent)}
+  .nav-scrim{position:fixed;inset:0;z-index:120;background:rgba(10,9,7,.48);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .nav-scrim.open{opacity:1;pointer-events:auto}
+  .side{position:fixed;z-index:125;top:0;left:0;height:100vh;height:100dvh;width:300px;max-width:88vw;background:var(--card);border-right:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:22px 18px 28px;overflow:auto;transform:translateX(-104%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s}
+  .side.open{transform:none;visibility:visible}
+  .side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .side-head .brandsub{margin-bottom:0}
+  .side-close{width:32px;height:32px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:8px;cursor:pointer;font:16px/1 var(--sans);display:grid;place-items:center}
+  .side-close:hover{background:var(--card);color:var(--ink)}
+  body.nav-open{overflow:hidden}
+  .brand{display:flex;align-items:center;gap:8px;font:650 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-s)}
+  .brandsub{font-size:12px;color:var(--faint);margin:7px 0 24px;line-height:1.45}
+  nav{font-size:13.5px}
+  nav a{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:8px;text-decoration:none;color:var(--muted);transition:background .15s,color .15s}
+  nav a i{font:10.5px/1 var(--mono);font-style:normal;color:var(--faint);min-width:17px}
+  nav a:hover{background:var(--card2);color:var(--ink)}
+  nav a.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:var(--shadow)}
+  nav a.on i{color:var(--accent)}
+  .sidefoot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line2);font:11px/1.6 var(--mono);color:var(--faint)}
+  .sidefoot b{color:var(--muted);font-weight:600}
+
+  /* ---------- héros ---------- */
+  .hero{margin-bottom:56px}
+  .eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:680;max-width:20ch}
+  .sub{margin-top:20px;font-size:18px;line-height:1.62;color:var(--muted);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .chip b{color:var(--ink);font-weight:650}
+
+  /* ---------- cartes du parcours ---------- */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:13px 14px 12px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+  .step:hover{transform:translateY(-2px);border-color:var(--line)}
+  .step .n{font:600 10.5px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+  .step h3{font-size:13.5px;font-weight:650;margin:7px 0 3px}
+  .step p{font-size:12px;color:var(--muted);line-height:1.42}
+
+  /* ---------- légende du langage visuel ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:13px;height:11px;border:1px solid transparent}
+  .sw-start{background:var(--teal-s);border-color:var(--teal);border-radius:999px}
+  .sw-proc{background:var(--blue-s);border-color:var(--blue);border-radius:2px}
+  .sw-dec{background:var(--amber-s);border-color:var(--amber);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+  .sw-io{background:var(--purple-s);border-color:var(--purple);transform:skewX(-14deg)}
+  .sw-conn{background:var(--gray-s);border-color:var(--gray);border-radius:50%;width:11px}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:82px;margin-bottom:76px}
+  .kicker{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .badge{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;font:650 13px/1 var(--mono);background:var(--accent-s);color:var(--accent)}
+  .tag{font:600 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  h2{font-size:clamp(24px,3.1vw,31px);line-height:1.16;letter-spacing:-.022em;font-weight:670;margin-bottom:12px;max-width:30ch}
+  .lead{font-size:16.5px;line-height:1.62;color:var(--muted);max-width:64ch;margin-bottom:22px}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 9px;letter-spacing:-.005em}
+  h4{font-size:12px;font-weight:650;margin:20px 0 7px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  p{max-width:66ch}
+  p+p{margin-top:11px}
+  ul,ol{max-width:66ch;padding-left:20px}
+  li{margin:6px 0}
+  li::marker{color:var(--faint)}
+  .small{font-size:13px;color:var(--muted)}
+
+  h2 code,h3 code{background:none;border:0;padding:0;font-size:.92em;color:var(--accent);letter-spacing:-.02em}
+
+  /* ---------- encadrés ---------- */
+  .box{border-radius:13px;padding:15px 18px;margin:18px 0;border:1px solid var(--line2);background:var(--card);box-shadow:var(--shadow)}
+  .box .lbl{font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .box p,.box ul{max-width:62ch}
+  .box p+p{margin-top:7px}
+  .box.idea{background:var(--blue-s);border-color:transparent}
+  .box.idea .lbl{color:var(--blue)}
+  .box.rule{background:var(--teal-s);border-color:transparent}
+  .box.rule .lbl{color:var(--teal)}
+  .box.trap{background:var(--red-s);border-color:transparent}
+  .box.trap .lbl{color:var(--red)}
+  .box.note{background:var(--amber-s);border-color:transparent}
+  .box.note .lbl{color:var(--amber)}
+  .box.plus{background:var(--purple-s);border-color:transparent}
+  .box.plus .lbl{color:var(--purple)}
+
+  /* ---------- code ---------- */
+  .code{background:#1c1c1a;border-radius:13px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .code header span{font:11.5px/1 var(--mono);color:#a9a7a0}
+  .code button{background:rgba(255,255,255,.08);color:#d8d6cf;border:0;border-radius:6px;padding:5px 9px;font:10.5px/1 var(--mono);cursor:pointer}
+  .code button:hover{background:rgba(255,255,255,.16)}
+  .code pre{margin:0;padding:13px 15px 15px;overflow-x:auto}
+  .code code{background:none;border:0;padding:0;color:#e8e5de;font:12.5px/1.7 var(--mono);white-space:pre;display:block}
+  .code .c{color:#8b8880} .code .k{color:#9ec7f3} .code .n{color:#e7b06a} .code .s{color:#a7d8a9} .code .f{color:#c6a9f8}
+  .code .pp{color:#e8c07d}
+
+  /* ---------- tableaux ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;max-width:760px}
+  .tbl caption{text-align:left;font-size:12px;color:var(--faint);padding-bottom:7px}
+  .tbl th,.tbl td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  .tbl th{font-weight:650;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line)}
+  .tbl tr:hover td{background:var(--card2)}
+  .tbl td:first-child{white-space:nowrap}
+  .tbl code{font-size:12px}
+  .tbl .warn{color:var(--red);font-weight:650}
+  .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+  .tbl.trace tr.off{display:none}
+  .tbl.trace tr.fresh td{background:var(--accent-s)}
+  .tbl.trace tr.fresh:hover td{background:var(--accent-s)}
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0}
+  .tblwrap .tbl{margin:0;min-width:500px}
+
+  /* ---------- figures ---------- */
+  figure{margin:22px 0 26px}
+  .figcard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px 20px 14px;box-shadow:var(--shadow)}
+  figcaption{font-size:12.5px;line-height:1.55;color:var(--faint);margin-top:9px;max-width:66ch}
+  svg{width:100%;height:auto;display:block}
+  .t{font-family:var(--sans);font-size:14px;fill:var(--ink)}
+  .ts{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+
+  /* ---------- schéma Input → traitement → Output ---------- */
+  .flow3{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch;margin:6px 0 2px}
+  .fbox{border:1.4px solid var(--blue);background:var(--blue-s);border-radius:10px;padding:9px 10px;text-align:center;font:12.5px/1.45 var(--sans);color:var(--blue)}
+  .fbox b{display:block;font:650 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;color:var(--blue)}
+  .fbox.io{border-color:var(--purple);background:var(--purple-s);color:var(--purple)}
+  .fbox.io b{color:var(--purple)}
+  .farr{display:grid;place-items:center;font:16px/1 var(--mono);color:var(--faint)}
+  @media (max-width:620px){
+    .flow3{grid-template-columns:1fr;gap:4px}
+    .farr{transform:rotate(90deg);padding:2px 0}
+  }
+
+  /* ---------- mini-schémas (symboles et constructions) ---------- */
+  .tbl .sym{width:86px;height:auto;max-width:none}
+  .symtext{font-family:var(--mono);font-size:8px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+  .tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 2px}
+  @media (max-width:700px){.tri{grid-template-columns:1fr}}
+  .tri figure{margin:0}
+  .tri .mini{width:100%;max-width:190px;margin:0 auto}
+  .figcard .mini.flowfig{max-width:340px;margin:0 auto}
+  .mini rect,.mini polygon,.mini ellipse{fill:var(--card2);stroke:var(--line);stroke-width:1.2}
+  .mini .k-dec{fill:var(--amber-s);stroke:var(--amber)}
+  .mini .k-start{fill:var(--teal-s);stroke:var(--teal)}
+  .mini .k-proc{fill:var(--blue-s);stroke:var(--blue)}
+  .mini .ft{font-family:var(--mono);font-size:8.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+  .mini .fl{font-family:var(--sans);font-size:8px;fill:var(--faint)}
+  .mini .ae{fill:none;stroke:var(--muted);stroke-width:1.1}
+
+  /* ---------- laboratoires ---------- */
+  .lab{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:17px 17px 15px;margin:24px 0;box-shadow:var(--shadow)}
+  .lab-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .lab-title{font-size:14.5px;font-weight:650}
+  .lab-sub{font:11px/1.4 var(--mono);color:var(--faint)}
+  .lab-tag{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-s);border-radius:999px;padding:5px 8px;white-space:nowrap}
+  .lab-code{display:block;background:#1c1c1a;color:#e8e5de;border-radius:9px;padding:8px 11px;font:12px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;min-height:2.05em;margin-bottom:12px}
+  .lab-code .k{color:#9ec7f3} .lab-code .n{color:#e7b06a} .lab-code .s{color:#a7d8a9} .lab-code .c{color:#8b8880} .lab-code .f{color:#c6a9f8}
+
+  .scene{position:relative;margin-top:2px}
+  .scene svg{width:100%;height:auto;max-width:520px;margin:0 auto;display:block}
+  .scene.ns svg{max-width:540px}
+  .scene.sims{max-width:330px;margin:0 auto}
+  .scene.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .scene.scroll svg{min-width:320px}
+  .scene .fl{font-family:var(--sans);font-size:9px;fill:var(--faint)}
+  .scene .ae{fill:none;stroke:var(--muted);stroke-width:1.2}
+
+  .fnode rect,.fnode polygon,.fnode ellipse,.fnode path.sh{fill:var(--card2);stroke:var(--line);stroke-width:1.2;transition:fill .2s,stroke .2s,stroke-width .2s,opacity .2s}
+  .fnode.k-start rect,.fnode.k-start ellipse{fill:var(--teal-s);stroke:var(--teal)}
+  .fnode.k-proc rect{fill:var(--blue-s);stroke:var(--blue)}
+  .fnode.k-dec polygon{fill:var(--amber-s);stroke:var(--amber)}
+  .fnode.k-io path{fill:var(--purple-s);stroke:var(--purple)}
+  .fnode.k-out rect{fill:var(--purple-s);stroke:var(--purple)}
+  .fnode.k-conn ellipse,.fnode.k-conn circle{fill:var(--gray-s);stroke:var(--gray)}
+  .fnode.frame rect{fill:none;stroke:var(--ink);stroke-width:1.4}
+  .fnode .ft{font-family:var(--mono);font-size:9.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+  .fnode .fl{font-family:var(--sans);font-size:8px;fill:var(--muted)}
+  .fnode.on rect,.fnode.on polygon,.fnode.on ellipse,.fnode.on path.sh{fill:var(--accent-s);stroke:var(--accent);stroke-width:2.6}
+  .fnode.on .ft{fill:var(--accent);font-weight:700}
+  .fnode.on.frame rect{fill:none;stroke:var(--accent);stroke-width:3.2}
+  .fnode.done{opacity:.55}
+  .fedge{fill:none;stroke:var(--muted);stroke-width:1.3;transition:stroke .2s,stroke-width .2s,opacity .2s}
+  .fedge.on{stroke:var(--accent);stroke-width:2.8}
+  .fedge.done{opacity:.45}
+
+  .vars{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .var{display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:4px 8px;font:11px/1.35 var(--mono);color:var(--faint)}
+  .var b{color:var(--ink);font-weight:650}
+  .var span{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+
+  .sim-out{display:flex;align-items:baseline;gap:9px;background:var(--card2);border:1px solid var(--line2);border-radius:9px;padding:7px 11px;margin-top:10px;font:11px/1.4 var(--mono);color:var(--faint)}
+  .sim-out code{background:none;border:0;padding:0;color:var(--muted);font-size:12.5px;white-space:pre-wrap}
+  .sim-out code.has{color:var(--teal);font-weight:650}
+
+  .lab-note{min-height:3.2em;font-size:13.5px;line-height:1.55;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 11px;margin-top:12px}
+  .lab-note b{color:var(--ink)}
+  .lab-note .warn{color:var(--red);font-weight:600}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);background:transparent;padding:0;cursor:pointer;transition:background .15s,transform .15s}
+  .dots button:hover{transform:scale(1.25)}
+  .dots button.on{background:var(--accent);border-color:var(--accent)}
+  .lab-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:7px 12px;font:550 12.5px var(--sans);cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap}
+  .btn:hover{background:var(--card)}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){.btn.primary{color:#141312}}
+  .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+  .btn.ghost:hover{background:var(--card2);color:var(--ink)}
+  .btn:disabled{opacity:.32;cursor:not-allowed}
+  .stepno{margin-left:auto;font:11px/1 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums}
+
+  /* ---------- à toi ---------- */
+  details.try{background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:11px;padding:12px 16px;margin:20px 0;box-shadow:var(--shadow)}
+  details.try summary{cursor:pointer;font-weight:550;list-style:none;display:block}
+  details.try summary::-webkit-details-marker{display:none}
+  details.try summary::before{content:"À toi";font:650 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--accent);background:var(--accent-s);padding:4px 6px;border-radius:5px;flex:none;display:inline-block;margin-right:9px;vertical-align:1px}
+  details.try[open] summary{margin-bottom:8px}
+  details.try .ans{color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:3px;font-size:14px}
+  details.try .ans code{font-size:12px}
+
+  /* ---------- QCM ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin:24px 0}
+  .q{padding:12px 0;border-bottom:1px solid var(--line2)}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{font-weight:550;margin-bottom:9px;max-width:64ch;font-size:14.5px}
+  .opts{display:grid;gap:5px;max-width:64ch}
+  .opt{display:flex;gap:9px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13.5px;background:var(--card2);transition:background .15s,border-color .15s}
+  .opt:hover{border-color:var(--line)}
+  .opt input{accent-color:var(--accent)}
+  .opt.right{background:var(--green-s);border-color:var(--green)}
+  .opt.wrong{background:var(--red-s);border-color:var(--red)}
+  .fb{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:7px;display:none}
+  .fb.show{display:block}
+  .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px}
+  .score{font:650 13px var(--mono);color:var(--accent)}
+  .quizbar button{border:1px solid var(--line);background:var(--card2);border-radius:7px;padding:6px 11px;font:12px var(--sans);color:var(--muted);cursor:pointer}
+  .quizbar button:hover{color:var(--ink)}
+
+  /* ---------- mémo ---------- */
+  .memo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  @media (max-width:760px){.memo{grid-template-columns:1fr}}
+  .minicard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .minicard h4{margin:0 0 6px}
+  .minicard ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .minicard li{margin:4px 0}
+  .minicard code{font-size:12px}
+
+  footer{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:12.5px;color:var(--faint)}
+  footer p{max-width:70ch}
+  .totop{display:inline-block;margin-top:10px;font:11.5px var(--mono);color:var(--faint);text-decoration:none}
+  .totop:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1040px){
+    .shell{padding:72px 20px 80px}
+    main{max-width:none}
+  }
+  @media (max-width:620px){
+    .nav-toggle{top:12px;left:12px;padding:8px 12px}
+    h1{font-size:clamp(30px,9vw,40px)}
+    .sub{font-size:16px}
+    .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lab{padding:13px}
+    .fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .fig-wide svg{min-width:520px}
+  }
+  @media (max-width:700px){
+    .tbl{table-layout:fixed;width:100%;font-size:13px}
+    .tbl th,.tbl td{padding:6px 6px;overflow-wrap:anywhere;white-space:normal}
+    .tbl td:first-child{white-space:normal}
+    .tbl code{overflow-wrap:anywhere}
+    .tblwrap .tbl{table-layout:auto;width:auto;min-width:500px}
+    .tblwrap .tbl th,.tblwrap .tbl td{white-space:nowrap;overflow-wrap:normal}
+    .tblwrap .tbl td:first-child{white-space:nowrap}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  @media print{
+    #progress,.side,.nav-toggle,.nav-scrim,.lab-ctrl,.dots,.code button,.quizbar button{display:none}
+    body{background:#fff}
+    .shell{display:block;max-width:none;padding:0}
+    section{break-inside:avoid;margin-bottom:34px}
+    .code{background:#f6f5f1;border:1px solid #ddd}
+    .code code{color:#111}
+    .code .c{color:#666}.code .k{color:#2a5db0}.code .n{color:#a8610b}.code .s{color:#2e7d32}.code .f{color:#6b3fa0}
+    .lab,.quiz,.box{box-shadow:none}
+    .tbl.trace tr.off{display:table-row}
+  }
+
+  /* ---------- exercices du cours ---------- */
+  .exos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px;font:11.5px/1.5 var(--mono);color:var(--faint)}
+  .exos .exos-label{font:650 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .exos a{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:4px 7px;text-decoration:none;color:var(--muted)}
+  .exos a:hover{border-color:var(--accent);color:var(--accent)}
+/* Couleurs de la coloration C sur fond sombre. */
+.code .tok-c{color:#8a949e;font-style:italic}
+.code .tok-s{color:#c3e88d}
+.code .tok-p{color:#ffcb6b}
+.code .tok-t{color:#82aaff}
+.code .tok-k{color:#c792ea}
+.code .tok-n{color:#f78c6c}
+.code .tok-f{color:#82aaff}
+.code .tok-c .tok-k{color:inherit}
+</style>
+<meta name="robots" content="noindex">
+
+<style>
+.site-retour{position:fixed;top:12px;right:12px;z-index:300;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,0,0,.18);background:#fffdf9;color:#1b1a17;border-radius:999px;padding:7px 11px;
+  font:600 11.5px/1 ui-monospace,"Cascadia Code",Consolas,monospace;text-decoration:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:.92}
+.site-retour:hover{opacity:1;border-color:#5146b8;color:#5146b8}
+.doc-ref{border-bottom:1px dotted currentColor;opacity:.72;cursor:default}
+/* Les pages d'autres cours peuvent avoir des blocs de code non contenus : on
+   borne leur largeur au lieu de faire déborder toute la page (mobile). */
+pre{max-width:100%;overflow-x:auto}
+table{max-width:100%}
+@media (max-width:700px){
+  .tbl{table-layout:fixed;width:100%}
+  .tbl th,.tbl td{white-space:normal;overflow-wrap:anywhere}
+}
+@media (prefers-color-scheme: dark){
+  .site-retour{background:#1e1d1a;color:#e9e6dd;border-color:rgba(255,255,255,.22);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .site-retour:hover{border-color:#b3abff;color:#b3abff}
+}
+@media (max-width:620px){.site-retour{top:10px;right:10px;padding:6px 9px;font-size:10.5px}}
+@media print{.site-retour{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="fl-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="fl-acc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs></svg>
+
+<button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
+  <span class="ico" aria-hidden="true">☰</span><span>Sommaire</span>
+</button>
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Sommaire" aria-hidden="true">
+    <div class="side-head">
+      <div>
+        <div class="brand"><span class="dot"></span>E2-ALGO</div>
+        <div class="brandsub">Algorithmes et diagrammes<br>Fiche de révision · TE1</div>
+      </div>
+      <button class="side-close" id="navClose" type="button" aria-label="Fermer le sommaire">✕</button>
+    </div>
+    <nav id="nav">
+      <a href="#s1"><i>01</i>Définition</a>
+      <a href="#s2"><i>02</i>Pseudocode</a>
+      <a href="#s3"><i>03</i>Diagramme de flux</a>
+      <a href="#s4"><i>04</i>Nassi-Shneiderman</a>
+      <a href="#s5"><i>05</i>Table de trace</a>
+      <a href="#s6"><i>06</i>Exercice 1.3</a>
+      <a href="#s7"><i>07</i>Exemples guidés</a>
+      <a href="#s8"><i>08</i>Flowgorithm</a>
+      <a href="#s9"><i>09</i>Erreurs fréquentes</a>
+      <a href="#s10"><i>10</i>QCM</a>
+      <a href="#s11"><i>11</i>Mémo et checklist</a>
+    </nav>
+    <div class="sidefoot"><b>TE1</b> · vendredi 20.11.2026<br><span>11 sections · 5 laboratoires</span></div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">E2-ALGO · chapitre 1 · algorithmes, diagrammes, traces</div>
+      <h1>Algorithmes et diagrammes</h1>
+      <p class="sub">De l'énoncé au pseudocode, puis au diagramme de flux, au Nassi-Shneiderman et à la table de trace, avec cinq laboratoires pas à pas sur la boucle de l'exercice 1.3.</p>
+      <div class="meta">
+        <span class="chip"><b>11</b> sections</span>
+        <span class="chip"><b>5</b> laboratoires pas à pas</span>
+        <span class="chip">C11 · <b>gcc 13.2</b></span>
+        <span class="chip">5 fruits · <b>5 tours</b></span>
+        <span class="chip">TE1 · <b>20.11.2026</b></span>
+      </div>
+
+      <div class="path">
+        <a class="step" href="#s1"><div class="n">01</div><h3>Définition</h3><p>Entrées, sorties, finitude, déterminisme, efficacité.</p></a>
+        <a class="step" href="#s2"><div class="n">02</div><h3>Pseudocode</h3><p>Séquence, sélection, itération ; conventions.</p></a>
+        <a class="step" href="#s3"><div class="n">03</div><h3>Diagramme de flux</h3><p>Cinq symboles, trois constructions.</p></a>
+        <a class="step" href="#s4"><div class="n">04</div><h3>Nassi-Shneiderman</h3><p>Blocs imbriqués, triangle oui/non.</p></a>
+        <a class="step" href="#s5"><div class="n">05</div><h3>Table de trace</h3><p>Une ligne par tour, une colonne par variable.</p></a>
+        <a class="step" href="#s9"><div class="n">06</div><h3>Erreurs &amp; test</h3><p>Quatre pièges, QCM, mémo.</p></a>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw sw-start"></i>début, fin</span>
+        <span><i class="sw sw-proc"></i>traitement</span>
+        <span><i class="sw sw-dec"></i>décision</span>
+        <span><i class="sw sw-io"></i>entrée / sortie</span>
+        <span><i class="sw sw-conn"></i>connecteur</span>
+      </div>
+    </header>
+
+    <div class="box idea" style="margin-top:0">
+      <div class="lbl">Navigation</div>
+      <p>Les laboratoires se pilotent avec <b>Suivant</b>, <b>Précédent</b> ou <b>Lire</b>. Les états suivent le code de l'exercice 1.3, compilé et exécuté avec gcc ; le sommaire s'ouvre avec le bouton <b>Sommaire</b>, en haut à gauche.</p>
+    </div>
+
+    
+    <div class="exos">
+      <span class="exos-label">Exercices</span>
+      <span class="doc-ref" title="Document du cours non publié">1.3</span><span class="doc-ref" title="Document du cours non publié">1.4</span><span class="doc-ref" title="Document du cours non publié">1.6</span>
+    </div>
+
+    
+    <section id="s1">
+      <div class="kicker"><div class="badge">01</div><div class="tag">définition</div></div>
+      <h2>Un algorithme : une suite finie d'opérations non ambiguës</h2>
+      <p class="lead">Les diapositives du cours donnent deux définitions : « une suite finie et non ambiguë d'opérations ou d'instructions permettant de résoudre un problème ou d'obtenir un résultat » (Wikipédia), et « une suite d'actions que devra effectuer un automate pour arriver, en un temps fini, à un résultat déterminé », d'une précondition à une postcondition (Courtin et Kowarski).</p>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>L'algorithme est la recette, le programme n'est qu'une de ses écritures. La même boucle se lit en pseudocode, se dessine en diagramme de flux ou en Nassi-Shneiderman, puis se code en C : quatre représentations, une seule logique.</p>
+      </div>
+
+      <table class="tbl">
+        <caption>Les critères du cours : trois indispensables, un souhaité</caption>
+        <tr><th>critère</th><th>question à poser</th><th>contre-exemple</th></tr>
+        <tr><td>entrées</td><td>que reçoit l'algorithme, sous quelle forme ?</td><td>un algorithme dont personne ne peut dire ce qu'il reçoit</td></tr>
+        <tr><td>sorties</td><td>que rend-il, et comment le vérifier ?</td><td>un calcul juste que rien n'affiche ni ne retourne</td></tr>
+        <tr><td>finitude</td><td>s'arrête-t-il pour toute entrée valide ?</td><td><code>for (int i = 0; i &lt; n; i--)</code> : la condition reste vraie</td></tr>
+        <tr><td>déterminisme</td><td>deux exécutions donnent-elles le même résultat ?</td><td>lire une variable locale non initialisée</td></tr>
+        <tr><td>efficacité <span class="small">(souhaitée)</span></td><td>combien d'opérations pour <code>n</code> entrées ?</td><td>un parcours quadratique là où un seul passage suffit</td></tr>
+      </table>
+
+      <p>La diapositive 7 résume la démarche en trois temps : analyser la fonctionnalité, la décomposer sur papier, puis planifier l'implémentation. Chaque étape reste indépendante du langage.</p>
+
+      <figure>
+        <div class="figcard">
+          <div class="flow3">
+            <div class="fbox io"><b>entrée</b>les données du problème</div>
+            <div class="farr" aria-hidden="true">→</div>
+            <div class="fbox"><b>traitement</b>séquence, décision, répétition</div>
+            <div class="farr" aria-hidden="true">→</div>
+            <div class="fbox io"><b>sortie</b>le résultat attendu</div>
+          </div>
+        </div>
+        <figcaption>Le schéma « Input / Data manipulation / Output » des diapositives 4, 5 et 7. Un tri reçoit une suite, la manipule, rend la suite ordonnée.</figcaption>
+      </figure>
+
+      <div class="box rule">
+        <div class="lbl">La démarche</div>
+        <p>Pour l'exercice 1.3 : la fonctionnalité est « afficher chaque fruit et sa première lettre en majuscule » ; la décomposition donne une boucle, une lecture d'un caractère, un test de minuscule, un masque, un affichage ; l'implémentation tient dans une seule boucle.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un algorithme qui boucle n'est pas un algorithme. La finitude ne se constate pas en exécutant : elle se prouve en montrant quelle variable avance vers la condition d'arrêt. Un corps de boucle qui ne modifie pas la variable testée ne s'arrête jamais, même s'il compile.</p>
+      </div>
+
+      <details class="try">
+        <summary>Quel critère indispensable manque à <code>for (int i = 0; i &lt; n; i--)</code> ?</summary>
+        <div class="ans">La finitude. <code>i</code> part de 0 et décroît ; <code>i &lt; n</code> reste vrai pour tout <code>n</code> positif, donc la boucle ne s'arrête jamais. Le déterminisme et les entrées/sorties ne sont pas en cause.</div>
+      </details>
+    </section>
+
+    
+    <section id="s2">
+      <div class="kicker"><div class="badge">02</div><div class="tag">pseudocode</div></div>
+      <h2>Trois constructions suffisent : séquence, sélection, itération</h2>
+      <p class="lead">Le pseudocode écrit l'algorithme dans une langue lisible, sans la syntaxe du C. Il garde trois constructions et une règle : chaque bloc imbriqué est indenté. La diapositive 8 du cours dessine ces trois constructions et étiquette la décision <code>cond_expr?</code> avec deux sorties, <code>true</code> et <code>false</code>.</p>
+
+      <table class="tbl">
+        <caption>Correspondance pseudocode, C et diagramme</caption>
+        <tr><th>construction</th><th>pseudocode</th><th>C</th><th>diagramme</th></tr>
+        <tr><td>séquence</td><td><code>acc ← 1</code> puis <code>acc ← acc × 2</code></td><td><code>acc = 1; acc = acc * 2;</code></td><td>rectangles empilés</td></tr>
+        <tr><td>sélection</td><td><code>si cond alors … sinon … fin si</code></td><td><code>if (cond) {…} else {…}</code></td><td>losange, deux sorties</td></tr>
+        <tr><td>itération</td><td><code>tant que cond faire … fin tant que</code></td><td><code>while (cond) {…}</code></td><td>losange et retour</td></tr>
+        <tr><td>itération comptée</td><td><code>pour i ← 0 à n−1 faire … fin pour</code></td><td><code>for (int i = 0; i &lt; n; i++)</code></td><td>losange, test avant</td></tr>
+      </table>
+
+      <div class="code"><header><span>somme.pseudo</span><button data-copy>copier</button></header><pre><code>// somme des entiers de 0 à n-1
+somme ← 0
+i ← 0
+tant que i &lt; n faire
+    somme ← somme + i
+    i ← i + 1
+fin tant que
+afficher somme          // pour n = 5 : 0+1+2+3+4 = 10</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">Les conventions retenues</div>
+        <ul>
+          <li><code>←</code> pour l'affectation, <code>=</code> pour la comparaison : la confusion est la première erreur.</li>
+          <li>Un bloc par ligne, quatre espaces d'indentation ; chaque bloc ouvert est fermé (<code>fin si</code>, <code>fin tant que</code>, <code>fin pour</code>).</li>
+          <li>Les identifiants gardent la forme du cours : camelCase et préfixe <code>c</code> pour les constantes (<code>cMyfruits</code>, <code>cNbrOfFruits</code>), <code>e</code> pour les énumérations (<code>eNameLen</code>).</li>
+          <li>Une décision s'écrit avec deux issues explicites, jamais avec une condition composée non parenthésée.</li>
+          <li>Les commentaires commencent par <code>//</code> ou <code>/* … */</code>, comme en C.</li>
+        </ul>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><code>'a' &lt;= c &lt;= 'z'</code> se lit <code>('a' &lt;= c) &lt;= 'z'</code> : la comparaison rend 0 ou 1, et 1 est toujours inférieur à <code>'z'</code>. L'expression est vraie pour <code>'3'</code> comme pour <code>'o'</code>. Il faut écrire <code>(c &gt;= 'a') &amp;&amp; (c &lt;= 'z')</code>.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Test avant, test après</div>
+        <p><code>while</code> et <code>for</code> testent <b>avant</b> le corps : zéro tour est possible. <code>do … while</code> teste <b>après</b> : au moins un tour, même si la condition est fausse dès le départ. Le diagramme montre la différence par la place du losange.</p>
+      </div>
+
+      <details class="try">
+        <summary>Combien de tours pour <code>for (int i = 0; i &lt; 0; i++)</code>, et pour un <code>do … while</code> de même condition ?</summary>
+        <div class="ans">Zéro tour pour le <code>for</code>, un tour pour le <code>do … while</code> : le test du <code>do</code> vient après le corps.</div>
+      </details>
+    </section>
+
+    
+    <section id="s3">
+      <div class="kicker"><div class="badge">03</div><div class="tag">diagramme de flux</div></div>
+      <h2>Le diagramme de flux : cinq symboles, un seul sens de lecture</h2>
+      <p class="lead">Un organigramme se lit de haut en bas, comme le programme s'exécute. Chaque forme a un sens fixe ; les flèches portent le contrôle. Un losange a toujours <b>deux</b> sorties, un ovale ne sert qu'à ouvrir et fermer le schéma.</p>
+
+      <table class="tbl">
+        <caption>Les cinq symboles employés au cours</caption>
+        <tr><th>symbole</th><th>sens</th><th>exemple</th></tr>
+        <tr>
+          <td><svg class="mini sym" viewBox="0 0 68 30" role="img" aria-label="Ovale"><ellipse class="k-start" cx="34" cy="15" rx="24" ry="10"/><text class="symtext" x="34" y="15">Début</text></svg></td>
+          <td><b>ovale</b> — début et fin du programme</td><td>un seul ovale de début, un seul de fin</td>
+        </tr>
+        <tr>
+          <td><svg class="mini sym" viewBox="0 0 68 30" role="img" aria-label="Rectangle"><rect class="k-proc" x="8" y="5" width="52" height="20" rx="2"/><text class="symtext" x="34" y="15">acc ← 1</text></svg></td>
+          <td><b>rectangle</b> — traitement : une affectation, un calcul</td><td><code>i ← 0</code>, <code>firstChar &amp;= ~0x20</code></td>
+        </tr>
+        <tr>
+          <td><svg class="mini sym" viewBox="0 0 68 30" role="img" aria-label="Losange"><polygon class="k-dec" points="34,3 62,15 34,27 6,15"/><text class="symtext" x="34" y="15">cond ?</text></svg></td>
+          <td><b>losange</b> — décision : une entrée, deux sorties <code>true</code> / <code>false</code></td><td><code>i &lt; 5 ?</code>, <code>(c &gt;= 'a') &amp;&amp; (c &lt;= 'z') ?</code></td>
+        </tr>
+        <tr>
+          <td><svg class="mini sym" viewBox="0 0 68 30" role="img" aria-label="Parallélogramme"><polygon class="k-io" points="14,5 62,5 54,25 6,25"/><text class="symtext" x="34" y="15">lire n</text></svg></td>
+          <td><b>parallélogramme</b> — entrée ou sortie de données</td><td><code>printf(…)</code>, <code>scanf(…)</code></td>
+        </tr>
+        <tr>
+          <td><svg class="mini sym" viewBox="0 0 68 30" role="img" aria-label="Connecteur"><ellipse class="k-conn" cx="34" cy="15" rx="10" ry="10"/><text class="symtext" x="34" y="15">A</text></svg></td>
+          <td><b>connecteur</b> — renvoi à un autre point du schéma</td><td>évite une flèche qui traverse la page</td>
+        </tr>
+      </table>
+
+      <div class="box rule">
+        <div class="lbl">La règle de lecture</div>
+        <p>Une flèche par issue, et l'étiquette de l'issue écrite à côté : <code>true</code> / <code>false</code> sur les diapositives, <code>vrai</code> / <code>faux</code> ou <code>oui</code> / <code>non</code> dans les corrigés. Le retour d'une boucle repart vers le losange du test, jamais vers le premier bloc du corps.</p>
+      </div>
+
+      <figure>
+        <div class="figcard">
+          <div class="tri">
+            <figure>
+              <svg class="mini" viewBox="0 0 160 170" role="img" aria-label="Séquence : trois rectangles empilés">
+                <rect class="k-proc" x="46" y="18" width="68" height="22"/><text class="ft" x="80" y="29">S1</text>
+                <path class="ae" d="M80 40 V 54" marker-end="url(#fl-ink)"/>
+                <rect class="k-proc" x="46" y="56" width="68" height="22"/><text class="ft" x="80" y="67">S2</text>
+                <path class="ae" d="M80 78 V 92" marker-end="url(#fl-ink)"/>
+                <rect class="k-proc" x="46" y="94" width="68" height="22"/><text class="ft" x="80" y="105">S3</text>
+                <path class="ae" d="M80 116 V 131" marker-end="url(#fl-ink)"/>
+                <ellipse class="k-start" cx="80" cy="146" rx="26" ry="11"/><text class="ft" x="80" y="146">Fin</text>
+              </svg>
+              <figcaption>Séquence : les blocs s'enchaînent, une seule sortie par bloc.</figcaption>
+            </figure>
+            <figure>
+              <svg class="mini" viewBox="0 0 160 170" role="img" aria-label="Décision : losange à deux sorties">
+                <polygon class="k-dec" points="70,8 120,28 70,48 20,28"/><text class="ft" x="70" y="28">cond ?</text>
+                <text class="fl" x="76" y="56">vrai</text><text class="fl" x="124" y="23">faux</text>
+                <path class="ae" d="M70 48 V 58" marker-end="url(#fl-ink)"/>
+                <rect class="k-proc" x="36" y="60" width="68" height="24"/><text class="ft" x="70" y="72">S1</text>
+                <path class="ae" d="M70 84 V 128" marker-end="url(#fl-ink)"/>
+                <path class="ae" d="M120 28 H 146 V 110 H 74"/>
+                <ellipse class="k-start" cx="70" cy="146" rx="26" ry="11"/><text class="ft" x="70" y="146">Fin</text>
+              </svg>
+              <figcaption>Décision : la branche <code>faux</code> contourne le bloc et rejoint la sortie.</figcaption>
+            </figure>
+            <figure>
+              <svg class="mini" viewBox="0 0 160 170" role="img" aria-label="Répétition : test avant, retour vers le losange">
+                <polygon class="k-dec" points="70,12 120,30 70,48 20,30"/><text class="ft" x="70" y="30">cond ?</text>
+                <text class="fl" x="76" y="58">vrai</text><text class="fl" x="124" y="25">faux</text>
+                <path class="ae" d="M70 48 V 60" marker-end="url(#fl-ink)"/>
+                <rect class="k-proc" x="36" y="62" width="68" height="22"/><text class="ft" x="70" y="73">S1</text>
+                <path class="ae" d="M36 73 H 12 V 30 H 16" marker-end="url(#fl-ink)"/>
+                <path class="ae" d="M120 30 H 146 V 130 H 100" marker-end="url(#fl-ink)"/>
+                <ellipse class="k-start" cx="70" cy="130" rx="26" ry="11"/><text class="ft" x="70" y="130">Fin</text>
+              </svg>
+              <figcaption>Répétition : après le corps, la flèche remonte au losange. Le test est avant, comme <code>while</code> et <code>for</code>.</figcaption>
+            </figure>
+          </div>
+        </div>
+        <figcaption>Les trois constructions de la diapositive 8 du cours. Pour un <code>do … while</code>, le losange passe sous le corps : le corps s'exécute avant le premier test.</figcaption>
+      </figure>
+
+      <div class="box note">
+        <div class="lbl">Connecteurs</div>
+        <p>Un connecteur étiqueté <b>A</b> remplace une longue flèche de retour : on ferme la flèche sur un cercle <b>A</b> et on la reprend sur un autre cercle <b>A</b>. Deux connecteurs de même lettre désignent le même point du schéma.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un diagramme incomplet se reconnaît à trois signes : un losange qui n'a qu'une sortie, un bloc qui n'a ni entrée ni sortie, une boucle dont la flèche repart vers le corps au lieu du test. Le schéma doit se lire sans le code à côté.</p>
+      </div>
+
+      <details class="try">
+        <summary>Peut-on dessiner une boucle sans losange ?</summary>
+        <div class="ans">Non : il faut un test pour décider de répéter ou de sortir. Une flèche qui remonte sans condition décrit une répétition infinie, ce qui viole la finitude.</div>
+      </details>
+    </section>
+
+    
+    <section id="s4">
+      <div class="kicker"><div class="badge">04</div><div class="tag">nassi-shneiderman</div></div>
+      <h2>Nassi-Shneiderman : les blocs imbriqués, sans une flèche</h2>
+      <p class="lead">Le Nassi-Shneiderman (NS) remplace les flèches par l'imbrication : un bloc contenu dans un autre est répété par lui. Une séquence est une pile de bandes ; une décision est un triangle dont la pointe descend entre deux colonnes, <b>oui</b> à gauche et <b>non</b> à droite ; une boucle est un cadre qui englobe son corps.</p>
+
+      <table class="tbl">
+        <caption>Les trois conventions du NS</caption>
+        <tr><th>construction</th><th>dessin</th><th>ce qu'il faut vérifier</th></tr>
+        <tr><td>séquence</td><td>bandes empilées, de même largeur</td><td>une bande = une instruction, dans l'ordre d'exécution</td></tr>
+        <tr><td>si / sinon</td><td>triangle sur toute la largeur, puis deux colonnes</td><td>les deux branches ont la même hauteur, même si l'une est vide (<code>(rien)</code>)</td></tr>
+        <tr><td>boucle</td><td>cadre autour d'un en-tête et du corps</td><td>l'en-tête donne le test ; tout ce qui est dans le cadre est répété</td></tr>
+      </table>
+
+      <div class="lab" data-lab="ns">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · Nassi-Shneiderman de l'exercice 1.3</div><div class="lab-sub">un bloc actif par étape, aucun chevauchement</div></div>
+          <span class="lab-tag">8 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="scene ns">
+          <svg viewBox="0 0 340 222" role="img" aria-label="Nassi-Shneiderman de la boucle de l'exercice 1.3 : en-tête de boucle, lecture de la première lettre, triangle de décision, branche oui avec le masque, branche non vide, affichage.">
+            <g class="fnode frame" data-node="NS-frame"><rect x="20" y="12" width="300" height="200" rx="2"/></g>
+            <g class="fnode k-proc" data-node="NS-head"><rect x="20" y="12" width="300" height="32"/><text class="ft" x="170" y="28">pour i ← 0 à 4 faire</text></g>
+            <g class="fnode k-proc" data-node="NS-read"><rect x="20" y="44" width="300" height="34"/><text class="ft" x="170" y="61">firstChar ← cMyfruits[i][0]</text></g>
+            <g class="fnode k-dec" data-node="NS-cond">
+              <polygon points="20,78 320,78 170,146"/>
+              <text class="fl" x="48" y="86">oui</text><text class="fl" x="292" y="86">non</text>
+              <text class="ft" x="170" y="98">firstChar &gt;= 'a'</text>
+              <text class="ft" x="170" y="111">&amp;&amp; firstChar &lt;= 'z'</text>
+            </g>
+            <g class="fnode k-proc" data-node="NS-yes"><rect x="20" y="146" width="150" height="32"/><text class="ft" x="95" y="162">firstChar &amp;= ~0x20</text></g>
+            <g class="fnode k-proc" data-node="NS-no"><rect x="170" y="146" width="150" height="32"/><text class="ft" x="245" y="162">(rien)</text></g>
+            <g class="fnode k-out" data-node="NS-print"><rect x="20" y="178" width="300" height="34"/><text class="ft" x="170" y="195">printf("Fruit %u) is %s - …")</text></g>
+            <path class="ae" d="M170 146 V 178" stroke="var(--line)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "states":[
+            {"label":"La première bande est l'en-tête de la boucle : <code>pour i ← 0 à 4 faire</code>. Elle se lit une fois, avant le premier tour, et commande tout le cadre.","code":"for (int i = 0; i < cNbrOfFruits; i++)","nodes":{"NS-head":"on"}},
+            {"label":"Le cadre extérieur <b>est</b> la boucle : tout ce qu'il entoure est répété. Rien n'en sort par une flèche, c'est l'imbrication qui porte la répétition.","code":"for (int i = 0; i < cNbrOfFruits; i++)","nodes":{"NS-frame":"on","NS-head":"on"}},
+            {"label":"Premier bloc du corps : lire la première lettre du fruit courant. Le bloc est <b>dans</b> le cadre, donc il s'exécute à chaque tour.","code":"  char firstChar = cMyfruits[i][0];","nodes":{"NS-frame":"on","NS-head":"done","NS-read":"on"}},
+            {"label":"Le triangle est la décision : la condition s'écrit sur deux lignes, <b>oui</b> part à gauche, <b>non</b> à droite. La pointe descend entre les deux colonnes.","code":"  if ((firstChar >= 'a') && (firstChar <= 'z'))","nodes":{"NS-frame":"on","NS-read":"done","NS-cond":"on"}},
+            {"label":"Branche <b>oui</b> : le masque éteint le bit 0x20 et met la lettre en majuscule. C'est la seule instruction de cette branche.","code":"    firstChar &= ~0x20;","nodes":{"NS-frame":"on","NS-cond":"on","NS-yes":"on"}},
+            {"label":"Branche <b>non</b> : <code>(rien)</code>. Elle existe pour les caractères qui ne sont pas des minuscules ; les cinq fruits de l'exercice passent tous par <code>oui</code>, mais le bloc vide doit être dessiné.","code":"  /* branche non : aucune instruction */","nodes":{"NS-frame":"on","NS-cond":"on","NS-no":"on"}},
+            {"label":"Dernier bloc du corps : l'affichage. Il est dans le cadre, donc il imprime une ligne par tour, cinq lignes en tout.","code":"  printf(\"Fruit %u) is %s - starts with %c\\n\", i, cMyfruits[i], firstChar);","nodes":{"NS-frame":"on","NS-print":"on"}},
+            {"label":"Le cadre se referme : aucune bande n'est à cheval sur deux branches, et il n'y a aucune flèche. Cinq tours signifient cinq passages dans le même cadre.","code":"}","nodes":{"NS-frame":"on","NS-print":"done"}}
+          ]
+        }
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>La largeur totale ne change jamais : le triangle occupe toute la largeur, puis se partage en deux colonnes. Une boucle ajoute un cadre à l'intérieur du cadre existant. On lit un NS comme un plan : de haut en bas, puis de gauche à droite dans chaque triangle.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">NS ou diagramme de flux</div>
+        <p>Le NS montre la <b>structure</b> (imbrication) et tient dans un rectangle ; le diagramme de flux montre le <b>trajet</b> et se prête aux retours. Pour un rapport, le NS est plus compact ; pour expliquer un algorithme à quelqu'un qui ne lit pas le code, le diagramme de flux est plus direct.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un bloc placé <b>en dehors</b> du cadre ne se répète pas : c'est l'erreur classique sur l'en-tête ou sur l'initialisation. Dans l'exercice 1.3, <code>char firstChar</code> est déclarée dans le corps : sa portée s'arrête à la fin du tour, et sa valeur ne survit pas d'un tour à l'autre.</p>
+      </div>
+
+      <details class="try">
+        <summary>Dans le NS ci-dessus, quelle bande s'exécute cinq fois ?</summary>
+        <div class="ans">Toutes celles qui sont dans le cadre : la lecture, le triangle, la branche prise et l'affichage. L'en-tête, lui, fixe le nombre de tours ; il n'est pas « exécuté » cinq fois. Les blocs <code>oui</code> et <code>non</code> ne s'exécutent qu'un seul des deux par tour.</div>
+      </details>
+    </section>
+
+    
+    <section id="s5">
+      <div class="kicker"><div class="badge">05</div><div class="tag">table de trace</div></div>
+      <h2>Table de trace : une ligne par tour, une colonne par variable</h2>
+      <p class="lead">La table de trace est l'exécution écrite à la main. Une colonne par variable, une colonne pour la condition testée, une colonne pour ce qui sort à l'écran, et <b>une ligne par exécution du corps</b> — plus une ligne finale pour le test qui échoue.</p>
+
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>Trace de <code>factIter(4)</code> : <code>acc ← 1</code> puis <code>for (i = 2; i &lt;= 4; i++) acc *= i;</code></caption>
+          <tr><th>tour</th><th>i</th><th>acc</th><th>effet</th></tr>
+          <tr><td>tour 1</td><td class="num">2</td><td class="num">1</td><td>2 ≤ 4 vrai → <code>acc ← 1 × 2 = 2</code></td></tr>
+          <tr><td>tour 2</td><td class="num">3</td><td class="num">2</td><td>3 ≤ 4 vrai → <code>acc ← 2 × 3 = 6</code></td></tr>
+          <tr><td>tour 3</td><td class="num">4</td><td class="num">6</td><td>4 ≤ 4 vrai → <code>acc ← 6 × 4 = 24</code></td></tr>
+          <tr><td>fin</td><td class="num">5</td><td class="num">24</td><td>5 ≤ 4 faux → sortie de la boucle</td></tr>
+        </table>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">Les trois colonnes obligatoires</div>
+        <ul>
+          <li><b>variables</b> : une colonne par variable lue ou écrite dans le corps, dans l'ordre de la déclaration.</li>
+          <li><b>conditions</b> : la valeur du test au moment où il est évalué, pas après le pas suivant.</li>
+          <li><b>sortie</b> : ce que le programme affiche, recopié exactement, sans arrondi ni reformulation.</li>
+        </ul>
+      </div>
+
+      <div class="lab" data-lab="trace">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · trace de la boucle des fruits</div><div class="lab-sub">cinq tours, une ligne par tour, la console en bas</div></div>
+          <span class="lab-tag">7 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="tblwrap">
+        <table class="tbl trace">
+          <thead><tr><th>tour</th><th>i</th><th>firstChar</th><th>cMyfruits[i]</th><th>test 'a' … 'z'</th><th>sortie</th></tr></thead>
+          <tbody>
+            <tr class="off" data-row><td>1</td><td class="num">0</td><td><code>'o'</code> 0x6F</td><td>orange</td><td>vrai → <code>'O'</code></td><td>Fruit 0) is orange - starts with O</td></tr>
+            <tr class="off" data-row><td>2</td><td class="num">1</td><td><code>'a'</code> 0x61</td><td>apple</td><td>vrai → <code>'A'</code></td><td>Fruit 1) is apple - starts with A</td></tr>
+            <tr class="off" data-row><td>3</td><td class="num">2</td><td><code>'b'</code> 0x62</td><td>banana</td><td>vrai → <code>'B'</code></td><td>Fruit 2) is banana - starts with B</td></tr>
+            <tr class="off" data-row><td>4</td><td class="num">3</td><td><code>'m'</code> 0x6D</td><td>mango</td><td>vrai → <code>'M'</code></td><td>Fruit 3) is mango - starts with M</td></tr>
+            <tr class="off" data-row><td>5</td><td class="num">4</td><td><code>'l'</code> 0x6C</td><td>litchi</td><td>vrai → <code>'L'</code></td><td>Fruit 4) is litchi - starts with L</td></tr>
+            <tr class="off" data-row><td>fin</td><td class="num">5</td><td>—</td><td>hors bornes</td><td>5 &lt; 5 : faux</td><td>(aucune ligne)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="sim-out"><span>Console</span><code data-out>—</code></div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "states":[
+            {"label":"La table est vide et la console aussi. La première ligne s'écrira quand le corps s'exécutera pour la première fois.","code":"int i = 0;","rows":0},
+            {"label":"<b>Tour 1.</b> <code>i = 0</code> désigne <code>\"orange\"</code> ; <code>firstChar</code> reçoit <code>'o'</code> (0x6F). Le test est vrai, le masque donne <code>'O'</code> (0x4F), et la console reçoit la ligne complète.","code":"char firstChar = cMyfruits[i][0];","rows":1,"out":"Fruit 0) is orange - starts with O"},
+            {"label":"<b>Tour 2.</b> <code>i = 1</code> : <code>\"apple\"</code>, <code>'a'</code> → <code>'A'</code>. La colonne du milieu note la valeur <b>après</b> le masque, c'est elle qui part dans le <code>printf</code>.","code":"char firstChar = cMyfruits[i][0];","rows":2,"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A"},
+            {"label":"<b>Tour 3.</b> <code>i = 2</code> : <code>\"banana\"</code>, <code>'b'</code> → <code>'B'</code>.","code":"char firstChar = cMyfruits[i][0];","rows":3,"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B"},
+            {"label":"<b>Tour 4.</b> <code>i = 3</code> : <code>\"mango\"</code>, <code>'m'</code> → <code>'M'</code>.","code":"char firstChar = cMyfruits[i][0];","rows":4,"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M"},
+            {"label":"<b>Tour 5.</b> <code>i = 4</code> : <code>\"litchi\"</code>, <code>'l'</code> → <code>'L'</code>. Cinq tours, cinq lignes : le tableau contient exactement cinq fruits.","code":"char firstChar = cMyfruits[i][0];","rows":5,"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M\nFruit 4) is litchi - starts with L"},
+            {"label":"<b>Test final.</b> <code>i</code> vaut 5 : <code>5 &lt; 5</code> est faux, la boucle s'arrête. Cette ligne n'ajoute aucune sortie ; l'indice 5 serait hors du tableau, on ne le lit pas.","code":"/* i == 5 : sortie de la boucle */","rows":6,"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M\nFruit 4) is litchi - starts with L"}
+          ]
+        }
+        </script>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Ce que la trace prouve</div>
+        <p>La trace rend l'erreur visible : un tour de trop se voit dans le nombre de lignes, une valeur fausse se voit dans une colonne, un masque oublié se voit dans la colonne <code>firstChar</code>. C'est le seul contrôle qui ne demande pas d'exécuter le programme.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Deux fautes de méthode : noter la valeur d'après le pas <code>i++</code> au lieu de celle du tour, et oublier la ligne finale du test. Une table sans la dernière ligne laisse croire que la boucle s'arrête « après le dernier tour », sans dire sur quelle valeur.</p>
+      </div>
+
+      <details class="try">
+        <summary>Combien de lignes pour une boucle de 5 tours qui imprime à chaque tour ?</summary>
+        <div class="ans">Cinq lignes de corps, plus la ligne du test final qui échoue : six lignes en tout, et cinq lignes de sortie. La ligne finale ne produit aucune sortie.</div>
+      </details>
+    </section>
+
+    
+    <section id="s6">
+      <div class="kicker"><div class="badge">06</div><div class="tag">exercice 1.3</div></div>
+      <h2>Exercice 1.3 : cinq fruits, cinq tours, un masque</h2>
+      <p class="lead">L'énoncé demande de documenter une boucle <code>for</code> donnée en C par un Nassi-Shneiderman et un diagramme de flux. Le code imprime chaque fruit, puis sa première lettre convertie en majuscule. La conversion tient à un seul opérateur : <code>&amp;= ~0x20</code>.</p>
+
+      <div class="code"><header><span>ex1-3.c — code de l'énoncé, <code>NameLen</code> ajouté</span><button data-copy>copier</button></header><pre><code data-hl>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+enum { NameLen = 16 };      /* l'énoncé utilise NameLen sans le définir */
+
+char const cMyfruits[][NameLen] = {"orange", "apple", "banana",
+                                   "mango", "litchi"};
+uint16_t const cNbrOfFruits = sizeof cMyfruits / sizeof cMyfruits[0];
+
+int main(void)
+{
+    for (int i=0; i&lt;cNbrOfFruits; i++)
+    {
+      char firstChar = cMyfruits[i][0];
+      if ((firstChar&gt;='a' ) &amp;&amp; (firstChar&lt;='z'))
+      {
+        firstChar &amp;= ~0x20;
+      }
+      printf("Fruit %u) is %s - starts with %c\n", i, cMyfruits[i], firstChar);
+    }
+    return 0;
+}</code></pre></div>
+
+      <div class="box note">
+        <div class="lbl"><code>NameLen</code> et <code>sizeof</code></div>
+        <p>L'énoncé écrit <code>char const cMyfruits[][NameLen]</code> sans définir <code>NameLen</code> : il faut l'ajouter pour compiler. Avec 16, le tableau occupe <b>80 octets</b> (5 × 16) et <code>sizeof cMyfruits / sizeof cMyfruits[0]</code> vaut <b>5</b> — le nombre de lignes ne dépend pas de <code>NameLen</code>, tant qu'il laisse la place au <code>'\0'</code> de <code>"banana"</code>.</p>
+      </div>
+
+      <div class="code"><header><span>sortie console — gcc 13.2, exécutée</span><button data-copy>copier</button></header><pre><code>Fruit 0) is orange - starts with O
+Fruit 1) is apple - starts with A
+Fruit 2) is banana - starts with B
+Fruit 3) is mango - starts with M
+Fruit 4) is litchi - starts with L</code></pre></div>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Le <code>%s</code> affiche <b>orange</b>, le <code>%c</code> affiche <b>O</b> : le masque s'applique à <code>firstChar</code>, une copie d'un caractère, jamais au tableau. C'est pourquoi les noms restent en minuscules dans la même ligne de sortie.</p>
+      </div>
+
+      <h3>Le masque, bit par bit</h3>
+      <p>En ASCII, <code>'a'</code> vaut 0x61 et <code>'A'</code> vaut 0x41 : les deux lettres ne diffèrent que par le bit 5 (0x20). <code>~0x20</code> est un <code>int</code> négatif (0xFFFFFFDF, soit −33) ; le ET garde les huit bits utiles et <b>éteint</b> le bit 5, ce qui met une minuscule en majuscule.</p>
+
+      <table class="tbl">
+        <caption>Valeurs vérifiées à l'exécution avec gcc 13.2</caption>
+        <tr><th>caractère</th><th>code</th><th>test <code>'a' ≤ c ≤ 'z'</code></th><th><code>c &amp; ~0x20</code></th><th>résultat</th></tr>
+        <tr><td><code>'o'</code></td><td>0x6F</td><td>vrai</td><td>0x4F</td><td><code>'O'</code> (79)</td></tr>
+        <tr><td><code>'a'</code></td><td>0x61</td><td>vrai</td><td>0x41</td><td><code>'A'</code> (65)</td></tr>
+        <tr><td><code>'z'</code></td><td>0x7A</td><td>vrai</td><td>0x5A</td><td><code>'Z'</code> (90)</td></tr>
+        <tr><td><code>'A'</code></td><td>0x41</td><td>faux</td><td>0x41</td><td><code>'A'</code>, inchangé</td></tr>
+        <tr><td><code>'Z'</code></td><td>0x5A</td><td>faux</td><td>0x5A</td><td><code>'Z'</code>, inchangé</td></tr>
+        <tr><td><code>'3'</code></td><td>0x33</td><td>faux</td><td>0x13</td><td>caractère de contrôle (19)</td></tr>
+        <tr><td><code>'!'</code></td><td>0x21</td><td>faux</td><td>0x01</td><td>caractère de contrôle (1)</td></tr>
+        <tr><td><code>' '</code></td><td>0x20</td><td>faux</td><td>0x00</td><td><code>'\0'</code></td></tr>
+      </table>
+
+      <div class="lab" data-lab="flux">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · diagramme de flux exécuté</div><div class="lab-sub">la boucle de l'exercice 1.3, nœud actif et variables</div></div>
+          <span class="lab-tag">11 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="scene">
+          <svg viewBox="0 0 300 478" role="img" aria-label="Diagramme de flux de la boucle des fruits : début, i égale zéro, test i inférieur à 5, lecture de la première lettre, test de minuscule, masque, affichage, incrément et retour au test, fin.">
+            <g class="fnode k-start" data-node="F-start"><ellipse cx="150" cy="20" rx="46" ry="14"/><text class="ft" x="150" y="20">Début</text></g>
+            <path class="fedge" data-node="FE-start" d="M150 34 V 44" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc" data-node="F-init"><rect x="75" y="46" width="150" height="28"/><text class="ft" x="150" y="60">i ← 0</text></g>
+            <path class="fedge" data-node="FE-init" d="M150 74 V 84" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-dec" data-node="F-test"><polygon points="150,86 208,110 150,134 92,110"/><text class="ft" x="150" y="110">i &lt; 5 ?</text></g>
+            <text class="fl" x="158" y="148">vrai</text>
+            <text class="fl" x="214" y="102">faux</text>
+            <path class="fedge" data-node="FE-test-oui" d="M150 134 V 154" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc" data-node="F-read"><rect x="40" y="156" width="220" height="30"/><text class="ft" x="150" y="171">firstChar ← cMyfruits[i][0]</text></g>
+            <path class="fedge" data-node="FE-read" d="M150 186 V 198" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-dec" data-node="F-cond">
+              <polygon points="150,200 250,226 150,252 50,226"/>
+              <text class="ft" x="150" y="220">firstChar &gt;= 'a'</text>
+              <text class="ft" x="150" y="232">&amp;&amp; firstChar &lt;= 'z'</text>
+            </g>
+            <text class="fl" x="158" y="266">oui</text>
+            <text class="fl" x="258" y="218">non</text>
+            <path class="fedge" data-node="FE-cond-oui" d="M150 252 V 266" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc" data-node="F-yes"><rect x="75" y="268" width="150" height="28"/><text class="ft" x="150" y="282">firstChar &amp;= ~0x20</text></g>
+            <path class="fedge" data-node="FE-yes" d="M150 296 V 303" marker-end="url(#fl-ink)"/>
+            <path class="fedge" data-node="FE-cond-non" d="M250 226 H 274 V 322 H 257" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-io" data-node="F-print"><path class="sh" d="M58 306 H 255 L 242 338 H 45 Z"/><text class="ft" x="150" y="322">printf("Fruit %u) is %s …")</text></g>
+            <path class="fedge" data-node="FE-print" d="M150 338 V 353" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc" data-node="F-incr"><rect x="85" y="354" width="130" height="28"/><text class="ft" x="150" y="368">i ← i + 1</text></g>
+            <path class="fedge" data-node="FE-loop" d="M85 368 H 26 V 110 H 86" marker-end="url(#fl-ink)"/>
+            <path class="fedge" data-node="FE-test-non" d="M208 110 H 286 V 450 H 200" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-start" data-node="F-end"><ellipse cx="150" cy="450" rx="46" ry="14"/><text class="ft" x="150" y="450">Fin</text></g>
+          </svg>
+        </div>
+        <div class="vars">
+          <span class="var"><b>i</b><span data-var="i">—</span></span>
+          <span class="var"><b>cMyfruits[i]</b><span data-var="fruit">—</span></span>
+          <span class="var"><b>firstChar</b><span data-var="fc">—</span></span>
+        </div>
+        <div class="sim-out"><span>Console</span><code data-out>—</code></div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "states":[
+            {"label":"Le schéma part de l'ovale <b>Début</b>. Aucune variable n'existe encore : la boucle n'a pas commencé.","code":"/* début du programme */","nodes":{"F-start":"on"}},
+            {"label":"L'initialisation de la boucle pose <b>i = 0</b>. C'est la seule instruction qui s'exécute avant le premier test.","code":"for (int i=0; i<cNbrOfFruits; i++)","vars":{"i":"0"},"nodes":{"F-start":"done","FE-start":"done","F-init":"on"}},
+            {"label":"Premier test : <code>0 &lt; 5</code> est <b>vrai</b>. Le chemin continue vers le corps ; la branche <code>faux</code> de droite n'est pas prise.","code":"/* 0 < 5 : vrai */","vars":{"i":"0"},"nodes":{"F-init":"done","FE-init":"done","F-test":"on","FE-test-oui":"on"}},
+            {"label":"<code>cMyfruits[0][0]</code> est le premier caractère de <code>\"orange\"</code> : <b>firstChar = 'o'</b> (0x6F).","code":"char firstChar = cMyfruits[i][0];","vars":{"i":"0","fruit":"\"orange\"","fc":"'o' (0x6F)"},"nodes":{"FE-test-oui":"done","F-read":"on"}},
+            {"label":"Le test de minuscule est <b>vrai</b> : <code>'o'</code> est compris entre <code>'a'</code> et <code>'z'</code>. La branche <code>oui</code> descend vers le masque.","code":"if ((firstChar>='a' ) && (firstChar<='z'))","vars":{"i":"0","fruit":"\"orange\"","fc":"'o' (0x6F)"},"nodes":{"F-read":"done","FE-read":"done","F-cond":"on","FE-cond-oui":"on"}},
+            {"label":"Le masque éteint le bit 0x20 : 0x6F devient 0x4F, soit <b>'O'</b>. La variable change, pas le tableau.","code":"firstChar &= ~0x20;","vars":{"i":"0","fruit":"\"orange\"","fc":"'O' (0x4F)"},"nodes":{"FE-cond-oui":"done","F-yes":"on"}},
+            {"label":"Le <code>printf</code> imprime une ligne. Le parallélogramme est une sortie : c'est le seul nœud qui produit du texte.","code":"printf(\"Fruit %u) is %s - starts with %c\\n\", i, cMyfruits[i], firstChar);","vars":{"i":"0","fruit":"\"orange\"","fc":"'O' (0x4F)"},"out":"Fruit 0) is orange - starts with O","nodes":{"F-yes":"done","FE-yes":"done","F-print":"on"}},
+            {"label":"Le pas <code>i++</code> porte i à <b>1</b> et la flèche de retour remonte au losange du test. C'est le seul retour du schéma.","code":"i++","vars":{"i":"1","fruit":"\"apple\"","fc":"'O' (0x4F)"},"out":"Fruit 0) is orange - starts with O","nodes":{"F-print":"done","FE-print":"done","F-incr":"on","FE-loop":"on"}},
+            {"label":"Les quatre tours suivants repassent par le même chemin : <code>'a'</code> → <code>'A'</code>, <code>'b'</code> → <code>'B'</code>, <code>'m'</code> → <code>'M'</code>, <code>'l'</code> → <code>'L'</code>. Au cinquième tour, i vaut 4 et la console compte cinq lignes.","code":"/* tours 2 à 5 : même chemin */","vars":{"i":"4","fruit":"\"litchi\"","fc":"'L' (0x4C)"},"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M\nFruit 4) is litchi - starts with L","nodes":{"F-incr":"done","F-test":"on","FE-loop":"done"}},
+            {"label":"Après le cinquième tour, <code>i</code> vaut 5 et le test <code>5 &lt; 5</code> est <b>faux</b> : la branche de droite mène à la fin. Aucun sixième tour, aucune sixième ligne.","code":"/* 5 < 5 : faux */","vars":{"i":"5","fruit":"hors bornes","fc":"'L' (0x4C)"},"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M\nFruit 4) is litchi - starts with L","nodes":{"F-test":"on","FE-test-non":"on"}},
+            {"label":"Le schéma se ferme sur l'ovale <b>Fin</b>. Cinq nœuds de traitement ont été traversés cinq fois ; les deux losanges ont décidé du chemin à chaque tour.","code":"return 0;","vars":{"i":"5","fruit":"hors bornes","fc":"'L' (0x4C)"},"out":"Fruit 0) is orange - starts with O\nFruit 1) is apple - starts with A\nFruit 2) is banana - starts with B\nFruit 3) is mango - starts with M\nFruit 4) is litchi - starts with L","nodes":{"FE-test-non":"done","F-end":"on"}}
+          ]
+        }
+        </script>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">La règle du masque</div>
+        <p>Le test de plage passe <b>avant</b> le masque : sans lui, <code>'3'</code> (0x33) deviendrait 0x13 et <code>'!'</code> (0x21) deviendrait 0x01. Et le masque s'applique à la <b>copie</b> <code>firstChar</code>, pas à <code>cMyfruits[i][0]</code>, qui est <code>const</code>.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p><code>firstChar *= 0x20</code> multiplie au lieu de masquer ; <code>firstChar | 0x20</code> force la <b>minuscule</b> ; <code>firstChar -= 0x20</code> ne marche que pour les lettres dont le bit 5 vaut 1, et abîme les autres. Le masque correct est <code>&amp;= ~0x20</code> : il éteint le bit, il ne soustrait pas.</p>
+      </div>
+
+      <details class="try">
+        <summary>Que vaut <code>sizeof cMyfruits[0]</code>, et <code>sizeof cMyfruits</code> ?</summary>
+        <div class="ans">16 et 80 avec <code>NameLen = 16</code> : chaque ligne fait 16 octets, le tableau en contient 5. Le quotient vaut 5, quelle que soit la valeur de <code>NameLen</code> (à condition qu'elle contienne <code>"banana"</code> et son <code>'\0'</code>).</div>
+      </details>
+    </section>
+
+    
+    <section id="s7">
+      <div class="kicker"><div class="badge">07</div><div class="tag">exemples guidés</div></div>
+      <h2>Trois exemples : algorithme, diagramme, trace</h2>
+      <p class="lead">La factorielle (exercice 1.2), le convertisseur (1.6) et la boucle <code>for</code> (1.4) suivent la même chaîne : un énoncé, un algorithme en pseudocode, un diagramme, puis une trace et une sortie vérifiée.</p>
+
+      <h3>Factorielle : 20! tient dans un <code>unsigned long long</code></h3>
+      <p>La factorielle de <code>n</code> est le produit des entiers de 1 à <code>n</code>, avec <code>0! = 1</code>. L'algorithme itératif tient en trois lignes de pseudocode et en un accumulateur.</p>
+
+      <div class="code"><header><span>factorielle.pseudo</span><button data-copy>copier</button></header><pre><code>fonction factIter(n) : entier long non signé
+    acc ← 1
+    pour i ← 2 à n faire
+        acc ← acc × i
+    fin pour
+    retourner acc</code></pre></div>
+
+      <figure>
+        <div class="figcard">
+          <svg class="mini flowfig" viewBox="0 0 300 380" role="img" aria-label="Diagramme de flux de la factorielle itérative : début, acc reçoit 1, i reçoit 2, test i inférieur ou égal à n, acc fois i, i plus 1, retour au test, retour de acc, fin.">
+            <g class="fnode k-start"><ellipse cx="150" cy="20" rx="52" ry="13"/><text class="ft" x="150" y="20">Début</text></g>
+            <path class="ae" d="M150 33 V 46" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc"><rect x="70" y="48" width="160" height="26"/><text class="ft" x="150" y="61">acc ← 1</text></g>
+            <path class="ae" d="M150 74 V 88" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc"><rect x="70" y="90" width="160" height="26"/><text class="ft" x="150" y="103">i ← 2</text></g>
+            <path class="ae" d="M150 116 V 130" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-dec"><polygon points="150,132 214,158 150,184 86,158"/><text class="ft" x="150" y="158">i &lt;= n ?</text></g>
+            <text class="fl" x="158" y="198">oui</text>
+            <text class="fl" x="220" y="152">non</text>
+            <path class="ae" d="M150 184 V 208" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc"><rect x="70" y="210" width="160" height="26"/><text class="ft" x="150" y="223">acc ← acc × i</text></g>
+            <path class="ae" d="M150 236 V 250" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-proc"><rect x="90" y="252" width="120" height="26"/><text class="ft" x="150" y="265">i ← i + 1</text></g>
+            <path class="ae" d="M90 265 H 30 V 158 H 82" marker-end="url(#fl-ink)"/>
+            <path class="ae" d="M214 158 H 272 V 313 H 242" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-io"><path class="sh" d="M62 300 H 238 L 228 326 H 52 Z"/><text class="ft" x="145" y="313">retourner acc</text></g>
+            <path class="ae" d="M145 326 V 342" marker-end="url(#fl-ink)"/>
+            <g class="fnode k-start"><ellipse cx="150" cy="358" rx="52" ry="13"/><text class="ft" x="150" y="358">Fin</text></g>
+          </svg>
+        </div>
+        <figcaption>Diagramme de flux de <code>factIter</code> : le losange teste <code>i ≤ n</code>, le retour repart du pas <code>i ← i + 1</code>, et la branche <code>non</code> sort par la droite vers le retour de <code>acc</code>.</figcaption>
+      </figure>
+
+      <div class="code"><header><span>factorielle.c</span><button data-copy>copier</button></header><pre><code data-hl>#include &lt;stdio.h&gt;
+
+unsigned long long factIter(unsigned n)
+{
+    unsigned long long acc = 1;
+    for (unsigned i = 2; i &lt;= n; i++) {
+        acc *= i;
+    }
+    return acc;
+}
+
+int main(void)
+{
+    for (unsigned n = 0; n &lt;= 20; n++) {
+        printf("The factorial of %2u using loop is: %llu\n", n, factIter(n));
+    }
+    return 0;
+}</code></pre></div>
+
+      <table class="tbl">
+        <caption>Sortie réelle, extraite des 21 lignes</caption>
+        <tr><th>n</th><th>n!</th><th>remarque</th></tr>
+        <tr><td>0</td><td class="num">1</td><td>cas de base, la boucle ne tourne pas</td></tr>
+        <tr><td>5</td><td class="num">120</td><td>4 multiplications (2 × 3 × 4 × 5)</td></tr>
+        <tr><td>10</td><td class="num">3 628 800</td><td>tient dans 32 bits</td></tr>
+        <tr><td>13</td><td class="num">6 227 020 800</td><td>dépasse un <code>unsigned</code> 32 bits</td></tr>
+        <tr><td>20</td><td class="num">2 432 902 008 176 640 000</td><td>plus grand <code>n</code> qui tient dans 64 bits</td></tr>
+        <tr><td>21</td><td>5,1·10<sup>19</sup></td><td>dépasse 2<sup>64</sup>−1 : le calcul déborde</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Formats et limites</div>
+        <p>Avec gcc, le format d'un <code>unsigned long long</code> est <code>%llu</code> ; la note de l'énoncé propose <code>%Ilu</code>, une variante propre à Visual Studio, dont les sorties imprimées dans l'énoncé portent la trace (<code>bin\Debug</code>). 21! vaut 51 090 942 171 709 440 000, au-delà de 2<sup>64</sup>−1 = 18 446 744 073 709 551 615 : la multiplication déborde et n'a pas de résultat garanti en unsigned (ici 14 197 454 024 290 336 768).</p>
+      </div>
+
+      <div class="lab" data-lab="facto">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · trace de <code>factIter(5)</code></div><div class="lab-sub">l'algorithme, le diagramme, puis une ligne par tour</div></div>
+          <span class="lab-tag">7 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="tblwrap">
+        <table class="tbl trace">
+          <thead><tr><th>ligne</th><th>i</th><th>acc avant</th><th>test i ≤ 5</th><th>effet</th></tr></thead>
+          <tbody>
+            <tr class="off" data-row><td>tour 1</td><td class="num">2</td><td class="num">1</td><td>2 ≤ 5 : vrai</td><td><code>acc ← 1 × 2 = 2</code></td></tr>
+            <tr class="off" data-row><td>tour 2</td><td class="num">3</td><td class="num">2</td><td>3 ≤ 5 : vrai</td><td><code>acc ← 2 × 3 = 6</code></td></tr>
+            <tr class="off" data-row><td>tour 3</td><td class="num">4</td><td class="num">6</td><td>4 ≤ 5 : vrai</td><td><code>acc ← 6 × 4 = 24</code></td></tr>
+            <tr class="off" data-row><td>tour 4</td><td class="num">5</td><td class="num">24</td><td>5 ≤ 5 : vrai</td><td><code>acc ← 24 × 5 = 120</code></td></tr>
+            <tr class="off" data-row><td>fin</td><td class="num">6</td><td class="num">120</td><td>6 ≤ 5 : faux</td><td>sortie de la boucle</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="vars">
+          <span class="var"><b>n</b><span>5</span></span>
+          <span class="var"><b>i</b><span data-var="i">—</span></span>
+          <span class="var"><b>acc</b><span data-var="acc">—</span></span>
+        </div>
+        <div class="sim-out"><span>Retour</span><code data-out>—</code></div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "states":[
+            {"label":"Appel <code>factIter(5)</code> : <code>n</code> vaut 5, l'accumulateur n'est pas encore créé, la table est vide.","code":"unsigned long long factIter(unsigned n)   /* n = 5 */","vars":{"i":"—","acc":"—"},"rows":0},
+            {"label":"<b>Initialisation.</b> <code>acc</code> reçoit 1 et <code>i</code> reçoit 2 : la boucle commence à 2, parce que multiplier par 1 ne change rien.","code":"unsigned long long acc = 1;\nfor (unsigned i = 2; i <= n; i++) {","vars":{"i":"2","acc":"1"},"rows":1},
+            {"label":"<b>Premier tour.</b> Le test <code>2 ≤ 5</code> est vrai ; <code>acc</code> devient 1 × 2 = <b>2</b>, puis le pas porte <code>i</code> à 3.","code":"acc *= i;   /* i = 2 */","vars":{"i":"3","acc":"2"},"rows":2},
+            {"label":"<b>Deuxième tour.</b> <code>3 ≤ 5</code> : <code>acc</code> = 2 × 3 = <b>6</b>, <code>i</code> passe à 4.","code":"acc *= i;   /* i = 3 */","vars":{"i":"4","acc":"6"},"rows":3},
+            {"label":"<b>Troisième tour.</b> <code>4 ≤ 5</code> : <code>acc</code> = 6 × 4 = <b>24</b>, <code>i</code> passe à 5.","code":"acc *= i;   /* i = 4 */","vars":{"i":"5","acc":"24"},"rows":4},
+            {"label":"<b>Quatrième tour.</b> <code>5 ≤ 5</code> est encore vrai : <code>acc</code> = 24 × 5 = <b>120</b>, <code>i</code> passe à 6.","code":"acc *= i;   /* i = 5 */","vars":{"i":"6","acc":"120"},"rows":5},
+            {"label":"<b>Test final.</b> <code>6 ≤ 5</code> est faux : la boucle s'arrête et la fonction retourne <b>120</b>. Quatre multiplications, quatre lignes de corps, une ligne de fin.","code":"return acc;   /* 120 */","vars":{"i":"6","acc":"120"},"rows":5,"out":"factIter(5) → 120"}
+          ]
+        }
+        </script>
+      </div>
+
+      <h3>Convertisseur : 51 tours, de −20 °C à 30 °C</h3>
+      <p>La formule de l'exercice 1.6 est <code>T(°F) = T(°C) × 1,8 + 32</code>. Une fonction isole le calcul, une boucle produit la table, deux constantes fixent les bornes.</p>
+
+      <div class="code"><header><span>convertisseur.c</span><button data-copy>copier</button></header><pre><code data-hl>#include &lt;stdio.h&gt;
+
+enum { eMinC = -20, eMaxC = 30 };   /* les bornes, en constantes */
+
+double celsiusToFahrenheit(double c)
+{
+    return c * 1.8 + 32.0;
+}
+
+int main(void)
+{
+    printf("Value of %6.2f%cC corresponds to %6.2f%cF\n",
+           10.0, (char)0xF8, celsiusToFahrenheit(10.0), (char)0xF8);
+
+    for (int c = eMinC; c &lt;= eMaxC; c++) {
+        printf("Value of %+6.1f%cC corresponds to %+6.1f%cF\n",
+               (double)c, (char)0xF8, celsiusToFahrenheit(c), (char)0xF8);
+    }
+    return 0;
+}</code></pre></div>
+
+      <table class="tbl">
+        <caption>Valeurs vérifiées ; la boucle fait 30 − (−20) + 1 = 51 tours</caption>
+        <tr><th>°C</th><th>°F</th><th>contrôle</th></tr>
+        <tr><td>−20</td><td class="num">−4,0</td><td>−20 × 1,8 = −36, plus 32</td></tr>
+        <tr><td>−19</td><td class="num">−2,2</td><td>première ligne de la table de l'énoncé</td></tr>
+        <tr><td>0</td><td class="num">+32,0</td><td>point de congélation</td></tr>
+        <tr><td>10</td><td class="num">+50,0</td><td>l'exemple de l'énoncé</td></tr>
+        <tr><td>29</td><td class="num">+84,2</td><td>avant-dernière ligne</td></tr>
+        <tr><td>30</td><td class="num">+86,0</td><td>dernière ligne</td></tr>
+        <tr><td>−40</td><td class="num">−40,0</td><td>seule température où les deux échelles coïncident</td></tr>
+      </table>
+
+      <div class="box note">
+        <div class="lbl">Le symbole <code>°</code></div>
+        <p>L'énoncé propose la valeur <b>248 (0xF8)</b> pour afficher <code>°</code> sur la console. C'est exact dans la page de code de la console Windows (CP850 ou CP437, où 0xF8 est U+00B0) ; en UTF-8 ou en Windows-1252, le même symbole n'est pas 248.</p>
+      </div>
+
+      <h3>Boucle <code>for</code> : afficher le tableau, puis la majuscule</h3>
+      <p>L'exercice 1.4 empile les trois usages : parcours complet du tableau, première lettre en majuscule par masque, puis opérateurs logiques et ternaire. Le tableau et les bornes sont ceux de l'exercice 1.3.</p>
+
+      <div class="code"><header><span>ex1-4.c</span><button data-copy>copier</button></header><pre><code data-hl>/* a) parcourir le tableau et l'afficher */
+for (int i = 0; i &lt; cNbrOfFruits; i++)
+    printf("%d : %s\n", i, cMyfruits[i]);
+
+/* b) + c) + d) : masque, comparaison et ternaire */
+for (int i = 0; i &lt; cNbrOfFruits; i++) {
+    char c   = cMyfruits[i][0];
+    char maj = ((c &gt;= 'a') &amp;&amp; (c &lt;= 'z')) ? (char)(c &amp; ~0x20) : c;
+    printf("%-7s %c (0x%02X) -&gt; %c (0x%02X)\n", cMyfruits[i], c,
+           (unsigned char)c, maj, (unsigned char)maj);
+}</code></pre></div>
+
+      <div class="code"><header><span>sortie console — gcc 13.2, exécutée</span><button data-copy>copier</button></header><pre><code>0 : orange
+1 : apple
+2 : banana
+3 : mango
+4 : litchi
+---
+orange  o (0x6F) -&gt; O (0x4F)
+apple   a (0x61) -&gt; A (0x41)
+banana  b (0x62) -&gt; B (0x42)
+mango   m (0x6D) -&gt; M (0x4D)
+litchi  l (0x6C) -&gt; L (0x4C)</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">La règle</div>
+        <p>Le ternaire <code>cond ? si_vrai : si_faux</code> est une expression, pas une instruction : il rend une valeur, ce qui permet d'initialiser <code>maj</code> en une ligne. Le masque reste le même : <code>c &amp; ~0x20</code>, appliqué seulement si le test de plage est vrai.</p>
+      </div>
+
+      <details class="try">
+        <summary>Pourquoi la boucle du convertisseur fait-elle 51 tours et non 50 ?</summary>
+        <div class="ans">Parce que les deux bornes sont incluses : <code>c</code> va de −20 à 30 en passant par 0, soit 30 − (−20) + 1 = 51 valeurs. Un <code>for (c = -20; c &lt; 30; c++)</code> n'en ferait que 50 et oublierait la dernière ligne.</div>
+      </details>
+    </section>
+
+    
+    <section id="s8">
+      <div class="kicker"><div class="badge">08</div><div class="tag">flowgorithm</div></div>
+      <h2>Flowgorithm : dessiner le logigramme, obtenir le code</h2>
+      <p class="lead">Flowgorithm est le programme utilisé en cours et en TP : on y construit le logigramme avec les mêmes symboles, on l'exécute pas à pas, puis on exporte le programme en C, en Python ou en Java. Le fichier enregistré est un <code>.fprg</code>, du XML lisible : chaque symbole y est un élément.</p>
+
+      <table class="tbl">
+        <caption>Un élément <code>.fprg</code> par symbole du logigramme (version de fichier 4.2)</caption>
+        <tr><th>élément</th><th>symbole</th><th>C équivalent</th></tr>
+        <tr><td><code>&lt;declare name type array size/&gt;</code></td><td>rectangle</td><td><code>int n;</code>, <code>int t[10];</code></td></tr>
+        <tr><td><code>&lt;assign variable expression/&gt;</code></td><td>rectangle</td><td><code>n = 10;</code></td></tr>
+        <tr><td><code>&lt;input variable/&gt;</code></td><td>parallélogramme</td><td><code>scanf("%d", &amp;n);</code></td></tr>
+        <tr><td><code>&lt;output expression newline/&gt;</code></td><td>parallélogramme</td><td><code>printf("%d\n", n);</code></td></tr>
+        <tr><td><code>&lt;if expression&gt;</code> + <code>&lt;then&gt;</code> / <code>&lt;else&gt;</code></td><td>losange, deux branches</td><td><code>if (cond) {…} else {…}</code></td></tr>
+        <tr><td><code>&lt;for variable start end step/&gt;</code></td><td>cadre de boucle</td><td><code>for (i = start; i &lt;= end; i += step)</code></td></tr>
+        <tr><td><code>&lt;while expression/&gt;</code></td><td>cadre, test avant</td><td><code>while (cond) {…}</code></td></tr>
+        <tr><td><code>&lt;do expression/&gt;</code></td><td>cadre, test après</td><td><code>do {…} while (cond);</code></td></tr>
+      </table>
+
+      <div class="code"><header><span>1-5.fprg — extrait réel (tri à bulles, exercice 1.5)</span><button data-copy>copier</button></header><pre><code>&lt;declare name="n" type="Integer" array="False" size=""/&gt;
+&lt;assign variable="n" expression="10"/&gt;
+&lt;for variable="i" start="0" end="n - 1" direction="inc" step="1"&gt;
+    &lt;assign variable="ligne" expression="ligne &amp; " " &amp; ToString(Unsorted[i])"/&gt;
+&lt;/for&gt;
+&lt;output expression="ligne" newline="True"/&gt;
+&lt;if expression="Unsorted[i] &gt; Unsorted[i + 1]"&gt;
+    &lt;then&gt;
+        &lt;assign variable="temporaire" expression="Unsorted[i]"/&gt;
+        &lt;assign variable="Unsorted[i]" expression="Unsorted[i + 1]"/&gt;
+        &lt;assign variable="Unsorted[i + 1]" expression="temporaire"/&gt;
+    &lt;/then&gt;
+    &lt;else/&gt;
+&lt;/if&gt;</code></pre></div>
+
+      <div class="box rule">
+        <div class="lbl">La règle de correspondance</div>
+        <p>Flowgorithm compte <b>bornes comprises</b> : <code>start="0" end="n - 1"</code> parcourt les indices 0 à <code>n−1</code>, soit exactement <code>for (i = 0; i &lt; n; i++)</code> en C. Un logigramme qui affiche <code>end="n"</code> décrit un tour de trop, et l'export en C le reproduit.</p>
+      </div>
+
+      <div class="box note">
+        <div class="lbl">Ce que Flowgorithm apporte</div>
+        <p>L'exécution pas à pas montre le chemin dans le logigramme, pas seulement les valeurs : on voit quel losange a été pris, ce qu'aucun débogueur de C ne montre directement. C'est l'outil de la phase « décomposer sur papier », avant l'implémentation.</p>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Un logigramme juste ne garantit pas un code juste, et l'inverse est vrai aussi : l'export C d'un <code>&lt;for&gt;</code> mal borné compile sans avertissement. Corrige le logigramme <b>et</b> le code, jamais l'un sans l'autre.</p>
+      </div>
+
+      <details class="try">
+        <summary>À quel C correspond <code>&lt;do expression="a != 0"&gt;</code> ?</summary>
+        <div class="ans">À un <code>do {…} while (a != 0);</code> : le test vient après le corps, donc le corps s'exécute au moins une fois. Dans <code>1-5.fprg</code>, c'est la boucle du tri à bulles, qui s'arrête quand aucun échange n'a eu lieu.</div>
+      </details>
+    </section>
+
+    
+    <section id="s9">
+      <div class="kicker"><div class="badge">09</div><div class="tag">erreurs fréquentes</div></div>
+      <h2>Erreurs fréquentes : condition inversée, borne, initialisation, diagramme incomplet</h2>
+      <p class="lead">Quatre familles d'erreurs reviennent dans les exercices 1.2 à 1.6. Trois se voient à la compilation ou à la trace ; la quatrième, la condition inversée, ne se voit pas du tout sur les données de l'exercice 1.3.</p>
+
+      <table class="tbl">
+        <caption>Erreurs fréquentes, symptôme et remède</caption>
+        <tr><th>erreur</th><th>ce qui se passe</th><th>le remède</th></tr>
+        <tr><td>condition inversée <code>||</code> au lieu de <code>&amp;&amp;</code></td><td>le test est vrai pour presque tout caractère : <code>'3'</code> devient 0x13</td><td>écrire <code>(c &gt;= 'a') &amp;&amp; (c &lt;= 'z')</code>, tester avec un chiffre</td></tr>
+        <tr><td><code>'a' &lt;= c &lt;= 'z'</code></td><td>la comparaison rend 0 ou 1, toujours ≤ <code>'z'</code> : test toujours vrai</td><td>deux comparaisons reliées par <code>&amp;&amp;</code></td></tr>
+        <tr><td>borne <code>i &lt;= cNbrOfFruits</code></td><td>six tours au lieu de cinq ; le dernier lit <code>cMyfruits[5]</code>, hors bornes</td><td>indices <code>0 … n−1</code> : <code>i &lt; cNbrOfFruits</code></td></tr>
+        <tr><td>départ à <code>i = 1</code></td><td><code>"orange"</code> n'est jamais affiché, et l'indice 5 est lu</td><td>partir de 0 pour un tableau</td></tr>
+        <tr><td>pas <code>i--</code> au lieu de <code>i++</code></td><td>la condition reste vraie : boucle infinie, défaut de finitude</td><td>vérifier quelle variable avance vers l'arrêt</td></tr>
+        <tr><td>accumulateur non initialisé</td><td><code>acc *= i</code> sur une valeur indéterminée : résultat faux et variable</td><td><code>acc = 1</code> avant la boucle (et <code>somme = 0</code>)</td></tr>
+        <tr><td>masque avant le test de plage</td><td>les chiffres et la ponctuation sont abîmés</td><td>tester d'abord, masquer ensuite</td></tr>
+        <tr><td>diagramme incomplet</td><td>losange à une seule sortie, boucle sans retour au test, bloc orphelin</td><td>relire le schéma sans le code : chaque chemin doit mener à la fin</td></tr>
+      </table>
+
+      <div class="lab" data-lab="piege">
+        <div class="lab-head">
+          <div><div class="lab-title">Laboratoire · la condition inversée, caractère par caractère</div><div class="lab-sub">ce que <code>&amp;&amp;</code> et <code>||</code> donnent sur quatre caractères</div></div>
+          <span class="lab-tag">6 états</span>
+        </div>
+        <code class="lab-code" data-code></code>
+        <div class="tblwrap">
+        <table class="tbl trace">
+          <thead><tr><th>caractère</th><th>code</th><th><code>&amp;&amp;</code></th><th><code>||</code></th><th>masque si <code>&amp;&amp;</code></th><th>masque si <code>||</code></th></tr></thead>
+          <tbody>
+            <tr class="off" data-row><td><code>'o'</code></td><td>0x6F</td><td>vrai</td><td>vrai</td><td><code>'O'</code> 0x4F</td><td><code>'O'</code> 0x4F</td></tr>
+            <tr class="off" data-row><td><code>'Z'</code></td><td>0x5A</td><td>faux</td><td>vrai</td><td><code>'Z'</code> 0x5A</td><td><code>'Z'</code> 0x5A</td></tr>
+            <tr class="off" data-row><td><code>'3'</code></td><td>0x33</td><td>faux</td><td>vrai</td><td><code>'3'</code> 0x33</td><td><span class="warn">0x13</span> (19)</td></tr>
+            <tr class="off" data-row><td><code>'!'</code></td><td>0x21</td><td>faux</td><td>vrai</td><td><code>'!'</code> 0x21</td><td><span class="warn">0x01</span> (1)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="lab-note" data-note aria-live="polite"></div>
+        <div class="dots" data-dots></div>
+        <div class="lab-ctrl">
+          <button class="btn" type="button" data-prev>← Précédent</button>
+          <button class="btn primary" type="button" data-play>Lire</button>
+          <button class="btn" type="button" data-next>Suivant →</button>
+          <button class="btn ghost" type="button" data-reset>↺</button>
+          <span class="stepno" data-step></span>
+        </div>
+        <script type="application/json" data-spec>
+        {
+          "states":[
+            {"label":"Deux tests pour la même intention : <code>(c &gt;= 'a') &amp;&amp; (c &lt;= 'z')</code> et <code>(c &gt;= 'a') || (c &lt;= 'z')</code>. Le second est vrai dès qu'un des deux côtés est vrai — or <code>c &lt;= 'z'</code> est presque toujours vrai.","code":"if ((c >= 'a') && (c <= 'z'))   /* correct */","rows":0},
+            {"label":"<code>'o'</code> (0x6F) est une minuscule : les deux tests sont vrais et le masque donne <code>'O'</code>. Les deux versions se comportent pareil.","code":"/* 'o' : && vrai, || vrai */","rows":1},
+            {"label":"<code>'Z'</code> (0x5A) n'est pas une minuscule : <code>&amp;&amp;</code> est faux, <code>||</code> est vrai. Mais le masque sur <code>'Z'</code> redonne <code>'Z'</code> (0x5A), car le bit 0x20 est déjà éteint : la faute reste invisible.","code":"/* 'Z' : && faux, || vrai */","rows":2},
+            {"label":"<code>'3'</code> (0x33) : <code>&amp;&amp;</code> est faux et le caractère reste <code>'3'</code> ; <code>||</code> est vrai et le masque éteint le bit 0x20, ce qui donne <span class='warn'>0x13</span>, un caractère de contrôle. C'est ici que la faute devient visible.","code":"/* '3' : && faux, || vrai -> 0x13 */","rows":3},
+            {"label":"<code>'!'</code> (0x21) : même mécanisme, le masque donne <span class='warn'>0x01</span>. La branche du masque ne devrait jamais s'exécuter pour ces caractères.","code":"/* '!' : && faux, || vrai -> 0x01 */","rows":4},
+            {"label":"Sur les cinq fruits de l'exercice 1.3, tous en minuscules, <code>&amp;&amp;</code> et <code>||</code> produisent la <b>même</b> sortie : l'erreur ne se voit ni à l'exécution ni dans la trace. Seul un jeu d'essai contenant un chiffre ou une majuscule la révèle.","code":"/* 'o','a','b','m','l' : aucune différence */","rows":4}
+          ]
+        }
+        </script>
+      </div>
+
+      <div class="box trap">
+        <div class="lbl">Le piège</div>
+        <p>Une erreur de condition ne se teste pas avec les données de l'énoncé : celui-ci est choisi pour que le cas nominal marche. Ajoute toujours deux essais limites — un caractère non alphabétique, un indice à la borne — avant de conclure qu'un test est correct.</p>
+      </div>
+
+      <details class="try">
+        <summary>Que vaut <code>cMyfruits[5][0]</code>, et que se passe-t-il à la compilation ?</summary>
+        <div class="ans">Rien de défini : l'indice 5 est hors du tableau (les indices valides vont de 0 à 4). Le compilateur ne dit rien, l'accès lit la mémoire voisine — comportement indéfini. La borne correcte est <code>i &lt; cNbrOfFruits</code>.</div>
+      </details>
+    </section>
+
+    
+    <section id="s10">
+      <div class="kicker"><div class="badge">10</div><div class="tag">QCM</div></div>
+      <h2>Auto-test : douze questions</h2>
+      <p class="lead">Une seule réponse par question. Le retour s'affiche immédiatement, avec le pourquoi.</p>
+
+      <div class="quiz" id="quiz"></div>
+      <div class="quizbar">
+        <span class="score" id="score">0 / 12</span>
+        <button type="button" id="quizReset">Recommencer</button>
+      </div>
+    </section>
+
+    
+    <section id="s11">
+      <div class="kicker"><div class="badge">11</div><div class="tag">mémo</div></div>
+      <h2>Mémo et checklist</h2>
+      <p class="lead">Les symboles et les valeurs à retrouver sans hésiter, puis les contrôles à faire avant de rendre un diagramme ou un programme.</p>
+
+      <div class="memo">
+        <div class="minicard">
+          <h4>Symboles</h4>
+          <ul>
+            <li>ovale : début, fin</li>
+            <li>rectangle : traitement, affectation</li>
+            <li>losange : décision, deux sorties</li>
+            <li>parallélogramme : entrée, sortie</li>
+            <li>connecteur : renvoi étiqueté</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Pseudocode</h4>
+          <ul>
+            <li><code>←</code> affectation, <code>=</code> comparaison</li>
+            <li><code>si … alors … sinon … fin si</code></li>
+            <li><code>tant que … faire … fin tant que</code></li>
+            <li><code>pour i ← 0 à n−1 faire … fin pour</code></li>
+            <li>un bloc ouvert est fermé, l'indentation porte l'imbrication</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Exercice 1.3</h4>
+          <ul>
+            <li><code>cNbrOfFruits</code> = <b>5</b> (80 / 16 octets)</li>
+            <li><code>'o'</code> 0x6F → <code>&amp;= ~0x20</code> → <code>'O'</code> 0x4F</li>
+            <li><code>~0x20</code> = −33 (0xFFFFFFDF)</li>
+            <li>cinq tours, cinq lignes de sortie</li>
+            <li>le masque touche <code>firstChar</code>, pas le tableau</li>
+          </ul>
+        </div>
+        <div class="minicard">
+          <h4>Table de trace</h4>
+          <ul>
+            <li>une ligne par exécution du corps</li>
+            <li>une colonne par variable, plus la condition</li>
+            <li>la sortie recopiée exactement</li>
+            <li>une dernière ligne pour le test qui échoue</li>
+            <li>5 tours → 5 lignes de corps et 1 ligne de fin</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="box idea">
+        <div class="lbl">À retenir</div>
+        <p>Un même algorithme s'écrit quatre fois : pseudocode, diagramme de flux, Nassi-Shneiderman, C. Les trois premières écritures se relisent sans machine ; c'est leur intérêt principal.</p>
+      </div>
+
+      <div class="box rule">
+        <div class="lbl">Checklist avant de rendre</div>
+        <ul>
+          <li>Le pseudocode a ses trois constructions et ses blocs fermés.</li>
+          <li>Chaque losange a deux sorties étiquetées ; chaque boucle revient au test.</li>
+          <li>Le NS a un cadre par boucle et deux colonnes de même hauteur par décision.</li>
+          <li>La table de trace a une ligne par tour et la ligne finale du test.</li>
+          <li>Les bornes sont <code>0 … n−1</code> et la sortie est recopiée telle quelle.</li>
+          <li>Le test de plage précède le masque, et un caractère limite a été essayé.</li>
+          <li>Le programme compile avec <code>-std=c11 -Wall -Wextra -Werror -pedantic</code>.</li>
+          <li>Le logigramme et le code disent la même chose, bornes comprises.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ============================================================
+     utilitaires
+     ============================================================ */
+  const ESC = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ESC[c]; }); }
+
+  const KEYWORDS = 'auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|bool|true|false|NULL|size_t|uint16_t|uint32_t|uint8_t|unsigned long long';
+  const TOKEN = new RegExp(
+    '(\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*)|("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')|\\b(' + KEYWORDS + ')\\b|(\\b0x[0-9a-fA-F]+\\b|\\b\\d+\\b)|([A-Za-z_]\\w*)(?=\\s*\\()',
+    'g'
+  );
+
+  function hl(src){
+    let out = '', last = 0, m;
+    TOKEN.lastIndex = 0;
+    src = String(src);
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="n">' + esc(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="f">' + esc(m[5]) + '</span>';
+      last = TOKEN.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  /* coloration des blocs statiques */
+  document.querySelectorAll('[data-hl]').forEach(function(el){
+    el.innerHTML = hl(el.textContent);
+  });
+
+  /* copie des blocs de code */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      const block = btn.closest('.code');
+      const code = block ? block.querySelector('code') : null;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copié ✓';
+      } catch (e) {
+        btn.textContent = 'Ctrl+C';
+      }
+      setTimeout(function(){ btn.textContent = 'copier'; }, 1500);
+    });
+  });
+
+  /* ============================================================
+     moteur de scène : nœuds actifs, variables, lignes de table
+     ============================================================ */
+  function mountScene(root, spec){
+    const note = root.querySelector('[data-note]');
+    const codeEl = root.querySelector('[data-code]');
+    const outEl = root.querySelector('[data-out]');
+    const stepEl = root.querySelector('[data-step]');
+    const dotsEl = root.querySelector('[data-dots]');
+    const prevB = root.querySelector('[data-prev]');
+    const nextB = root.querySelector('[data-next]');
+    const playB = root.querySelector('[data-play]');
+    const resetB = root.querySelector('[data-reset]');
+    const states = spec.states;
+
+    const nodes = Array.prototype.slice.call(root.querySelectorAll('[data-node]'));
+    const varEls = Array.prototype.slice.call(root.querySelectorAll('[data-var]'));
+    const rows = Array.prototype.slice.call(root.querySelectorAll('[data-row]'));
+
+    let i = 0;
+    let playing = false;
+    let timer = null;
+
+    const dots = [];
+    if (dotsEl) {
+      states.forEach(function(_, k){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Étape ' + (k + 1));
+        b.addEventListener('click', function(){ stop(); i = k; paint(); });
+        dotsEl.appendChild(b);
+        dots.push(b);
+      });
+    }
+
+    function setOutput(out){
+      if (!outEl) return;
+      const has = !(out === undefined || out === null || out === '');
+      outEl.textContent = has ? out : '—';
+      outEl.classList.toggle('has', has);
+    }
+
+    function paint(){
+      const s = states[i];
+
+      nodes.forEach(function(el){
+        const key = el.getAttribute('data-node');
+        const v = s.nodes ? s.nodes[key] : undefined;
+        el.classList.remove('on', 'done', 'err');
+        if (v) String(v).split(/\s+/).forEach(function(t){ if (t) el.classList.add(t); });
+        if (el.tagName.toLowerCase() === 'path' && el.getAttribute('marker-end')) {
+          el.setAttribute('marker-end', 'url(#fl-' + (el.classList.contains('on') ? 'acc' : 'ink') + ')');
+        }
+      });
+
+      varEls.forEach(function(el){
+        const key = el.getAttribute('data-var');
+        const v = s.vars ? s.vars[key] : undefined;
+        el.textContent = (v === undefined || v === null || v === '') ? '—' : v;
+      });
+
+      const n = s.rows || 0;
+      rows.forEach(function(el, k){
+        el.classList.toggle('off', k >= n);
+        el.classList.toggle('fresh', k === n - 1);
+      });
+
+      if (note) note.innerHTML = s.label;
+      if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
+      setOutput(s.output !== undefined ? s.output : s.out);
+      if (stepEl) stepEl.textContent = (i + 1) + ' / ' + states.length;
+      dots.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+      if (prevB) prevB.disabled = i === 0;
+      if (nextB) nextB.disabled = i === states.length - 1;
+      if (playB) {
+        playB.textContent = playing ? 'Pause' : (i === states.length - 1 ? 'Revoir' : 'Lire');
+        playB.setAttribute('aria-pressed', String(playing));
+      }
+    }
+
+    function stop(){
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function start(){
+      if (playing) { stop(); paint(); return; }
+      if (i === states.length - 1) i = 0;
+      playing = true;
+      paint();
+      timer = setInterval(function(){
+        if (i < states.length - 1) { i++; paint(); }
+        else { stop(); paint(); }
+      }, spec.interval || 3200);
+    }
+
+    if (prevB) prevB.addEventListener('click', function(){ stop(); if (i > 0) { i--; paint(); } });
+    if (nextB) nextB.addEventListener('click', function(){ stop(); if (i < states.length - 1) { i++; paint(); } });
+    if (playB) playB.addEventListener('click', start);
+    if (resetB) resetB.addEventListener('click', function(){ stop(); i = 0; paint(); });
+
+    paint();
+  }
+
+  document.querySelectorAll('[data-lab]').forEach(function(root){
+    const specEl = root.querySelector('script[data-spec]');
+    if (!specEl) return;
+    let spec;
+    try {
+      spec = JSON.parse(specEl.textContent);
+    } catch (err) {
+      console.error('Spécification invalide pour', root.getAttribute('data-lab'), err);
+      return;
+    }
+    if (spec && Array.isArray(spec.states)) mountScene(root, spec);
+  });
+
+  /* ============================================================
+     QCM
+     ============================================================ */
+  const QUIZ = [
+    {q: 'Parmi les critères du cours, lequel est <b>souhaité</b> mais pas indispensable ?',
+     o: ['des entrées et des sorties', 'la finitude', 'le déterminisme', 'l’efficacité'], a: 3,
+     fb: 'Les trois conditions indispensables sont : des entrées et des sorties, la terminaison et le déterminisme. L’efficacité, la simplicité et la robustesse sont souhaitées.'},
+    {q: 'Avec cinq fruits de 16 octets, que vaut <code>cNbrOfFruits</code> ?',
+     o: ['5', '16', '80', '10'], a: 0,
+     fb: '<code>sizeof cMyfruits</code> vaut 80, <code>sizeof cMyfruits[0]</code> vaut 16 : le quotient donne 5, le nombre de lignes du tableau.'},
+    {q: 'Que vaut <code>\'o\' &amp; ~0x20</code> ?',
+     o: ['<code>\'O\'</code> (0x4F)', '<code>\'o\'</code> inchangé', '0x20', '<code>\'o\'</code> moins 32'], a: 0,
+     fb: '0x6F ET 0xDF = 0x4F, soit <code>\'O\'</code> (79). Le masque éteint le bit 5, qui distingue une minuscule de sa majuscule.'},
+    {q: 'Que vaut <code>~0x20</code> pour un <code>int</code> signé ?',
+     o: ['−32', '−33', '32', '0x20'], a: 1,
+     fb: 'Le complément à un vaut −x − 1 : <code>~0x20</code> = −33, soit 0xFFFFFFDF. Le ET avec un <code>char</code> ne garde que les huit bits utiles.'},
+    {q: 'Quelle expression teste correctement que <code>c</code> est une minuscule ?',
+     o: ['<code>\'a\' &lt;= c &lt;= \'z\'</code>', '<code>(c &gt;= \'a\') &amp;&amp; (c &lt;= \'z\')</code>', '<code>(c &gt;= \'a\') || (c &lt;= \'z\')</code>', '<code>c &gt;= \'a\'</code>'], a: 1,
+     fb: 'La première se lit <code>(\'a\' &lt;= c) &lt;= \'z\'</code> et vaut toujours 1 ≤ <code>\'z\'</code> ; la troisième est vraie pour tout caractère ≤ <code>\'z\'</code>, donc pour <code>\'3\'</code> aussi.'},
+    {q: 'Dans un diagramme de flux, quel symbole porte une décision ?',
+     o: ['le rectangle', 'le losange', 'le parallélogramme', 'l’ovale'], a: 1,
+     fb: 'Le losange a une entrée et <b>deux</b> sorties, <code>true</code> et <code>false</code>. Le rectangle traite, le parallélogramme entre ou sort des données, l’ovale ouvre et ferme.'},
+    {q: 'Quel symbole représente une entrée ou une sortie de données ?',
+     o: ['le losange', 'le rectangle', 'le parallélogramme', 'le connecteur'], a: 2,
+     fb: 'Le parallélogramme porte les <code>printf</code> et <code>scanf</code>. Le connecteur, lui, sert à renvoyer un chemin à un autre point du schéma.'},
+    {q: 'Dans un Nassi-Shneiderman, où se trouve la branche <code>non</code> d’un triangle de décision ?',
+     o: ['à gauche', 'à droite', 'au-dessus du triangle', 'en dehors du cadre'], a: 1,
+     fb: '<code>oui</code> occupe la colonne de gauche, <code>non</code> celle de droite. Les deux colonnes ont la même hauteur, même si l’une ne contient qu’un bloc <code>(rien)</code>.'},
+    {q: 'Dans une table de trace, que contient la colonne « sortie » ?',
+     o: ['la valeur de chaque variable', 'ce que le programme affiche réellement', 'le nombre de tours', 'la condition testée'], a: 1,
+     fb: 'La colonne « sortie » recopie exactement ce qui s’affiche, ligne par ligne. Les variables ont leurs propres colonnes et la condition la sienne.'},
+    {q: 'Que vaut <code>factIter(5)</code> avec la boucle de l’exercice 1.2 ?',
+     o: ['24', '120', '720', '5'], a: 1,
+     fb: '5! = 1 × 2 × 3 × 4 × 5 = 120. La boucle part de <code>i = 2</code> : quatre multiplications suffisent, puisque multiplier par 1 ne change rien.'},
+    {q: 'Avec <code>for (int i = 1; i &lt;= cNbrOfFruits; i++)</code> sur cinq fruits, que se passe-t-il ?',
+     o: ['4 tours, aucun fruit oublié', '5 tours, dont un indice 5 hors bornes', '6 tours, tous valides', 'le compilateur refuse'], a: 1,
+     fb: '<code>i</code> va de 1 à 5 : <code>"orange"</code> (indice 0) n’est jamais lu et l’indice 5 sort du tableau. La bonne borne est <code>i = 0; i &lt; 5</code>.'},
+    {q: 'À quel C correspond <code>&lt;for start="0" end="n - 1" step="1"&gt;</code> de Flowgorithm ?',
+     o: ['<code>for (i = 0; i &lt;= n; i++)</code>', '<code>for (i = 0; i &lt; n; i++)</code>', '<code>for (i = 1; i &lt; n; i++)</code>', '<code>for (i = 0; i &lt; n - 1; i++)</code>'], a: 1,
+     fb: 'Flowgorithm compte les bornes comprises : <code>end = n − 1</code> parcourt 0 à n−1, soit <code>i &lt; n</code>. Un <code>end = n</code> ferait un tour de trop.'}
+  ];
+
+  (function(){
+    const box = document.getElementById('quiz');
+    const score = document.getElementById('score');
+    const reset = document.getElementById('quizReset');
+    if (!box || !score) return;
+    let done = [];
+
+    function build(){
+      box.innerHTML = '';
+      done = new Array(QUIZ.length).fill(false);
+      score.textContent = '0 / ' + QUIZ.length;
+
+      QUIZ.forEach(function(item, qi){
+        const d = document.createElement('div');
+        d.className = 'q';
+        d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + item.q + '</div>';
+
+        const opts = document.createElement('div');
+        opts.className = 'opts';
+
+        item.o.forEach(function(txt, oi){
+          const lab = document.createElement('label');
+          lab.className = 'opt';
+          lab.innerHTML = '<input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + txt + '</span>';
+          lab.querySelector('input').addEventListener('change', function(){
+            const good = oi === item.a;
+            Array.prototype.forEach.call(opts.children, function(l, k){
+              l.classList.remove('right', 'wrong');
+              if (k === item.a) l.classList.add('right');
+              if (k === oi && !good) l.classList.add('wrong');
+            });
+            d.querySelector('.fb').classList.add('show');
+            done[qi] = good;
+            score.textContent = done.filter(Boolean).length + ' / ' + QUIZ.length;
+          });
+          opts.appendChild(lab);
+        });
+
+        d.appendChild(opts);
+        const fb = document.createElement('div');
+        fb.className = 'fb';
+        fb.innerHTML = item.fb;
+        d.appendChild(fb);
+        box.appendChild(d);
+      });
+    }
+
+    if (reset) reset.addEventListener('click', build);
+    build();
+  })();
+
+  /* ============================================================
+     tiroir de sommaire
+     ============================================================ */
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const side = document.getElementById('side');
+    const scrim = document.getElementById('navScrim');
+    const closeBtn = document.getElementById('navClose');
+    if (!toggle || !side || !scrim) return;
+
+    let lastFocus = null;
+    function isOpen(){ return side.classList.contains('open'); }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      toggle.classList.remove('hide');
+      side.classList.add('open');
+      scrim.classList.add('open');
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      side.setAttribute('aria-hidden', 'false');
+      const target = side.querySelector('nav a.on') || side.querySelector('nav a');
+      if (target) setTimeout(function(){ target.focus(); target.scrollIntoView({ block: 'nearest' }); }, 60);
+    }
+
+    function closeDrawer(){
+      if (!isOpen()) return;
+      side.classList.remove('open');
+      scrim.classList.remove('open');
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      side.setAttribute('aria-hidden', 'true');
+      toggle.classList.remove('hide');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      else toggle.focus();
+    }
+
+    toggle.addEventListener('click', function(){ isOpen() ? closeDrawer() : openDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    scrim.addEventListener('click', closeDrawer);
+    side.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (isOpen() || y < 140) toggle.classList.remove('hide');
+      else if (y > lastY + 3) toggle.classList.add('hide');
+      else if (y < lastY - 3) toggle.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+      if (e.key !== 'Tab') return;
+      const items = Array.prototype.slice.call(side.querySelectorAll('a[href], button:not([disabled])'));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
+  /* ============================================================
+     progression + sommaire actif
+     ============================================================ */
+  (function(){
+    const bar = document.getElementById('progress');
+    const links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0).toFixed(2) + '%';
+
+      let current = secs[0];
+      secs.forEach(function(s){
+        if (s.getBoundingClientRect().top <= 150) current = s;
+      });
+      if (!current) return;
+      links.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function(){ update(); ticking = false; });
+      }
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+})();
+</script>
+<script>
+/* Coloration syntaxique C, sans dépendance. */
+(function () {
+  if (window.__dshHighlight) return;
+  window.__dshHighlight = true;
+
+  var TYPES = "void|char|short|int|long|float|double|signed|unsigned|bool|size_t|" +
+    "uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|" +
+    "struct|union|enum|typedef|const|static|extern|volatile|register|inline|restrict";
+  var KEYWORDS = "if|else|for|while|do|switch|case|default|break|continue|return|" +
+    "goto|sizeof|true|false|NULL";
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')" +
+    "|(^[ \\t]*#[^\\n]*)" +
+    "|(\\b(?:" + TYPES + ")\\b)" +
+    "|(\\b(?:" + KEYWORDS + ")\\b)" +
+    "|(\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?)\\b)" +
+    "|(\\b[A-Za-z_]\\w*_t\\b|\\b[A-Za-z_]\\w*(?=\\s*\\())",
+    "gm"
+  );
+
+  function esc(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function mark(token, cls) {
+    return '<span class="' + cls + '">' + esc(token) + "</span>";
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    if (code.getAttribute("data-hl-done")) return;
+    var text = code.textContent;
+    var out = "";
+    var last = 0;
+    var match;
+    RE.lastIndex = 0;
+
+    while ((match = RE.exec(text)) !== null) {
+      out += esc(text.slice(last, match.index));
+      var cls = "tok-k";
+      if (match[1]) cls = "tok-c";
+      else if (match[2]) cls = "tok-s";
+      else if (match[3]) cls = "tok-p";
+      else if (match[4]) cls = "tok-t";
+      else if (match[5]) cls = "tok-k";
+      else if (match[6]) cls = "tok-n";
+      else if (match[7]) cls = "tok-f";
+      out += mark(match[0], cls);
+      last = match.index + match[0].length;
+    }
+    out += esc(text.slice(last));
+    code.innerHTML = out;
+    code.setAttribute("data-hl-done", "1");
+  });
+})();
+
+</script>
+<a class="site-retour" href="../index.html#E2-ALGO">← E2-ALGO</a>
+</body>
+</html>

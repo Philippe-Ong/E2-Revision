@@ -160,7 +160,7 @@ table{max-width:100%}
 <header class="hero">
   <div class="eyebrow">E2-ALGO · exercice 3.4 · Chapitre 3</div>
   <h1>Lotto : huit tirages sur liste doublement chaînée</h1>
-  <p class="lead">Générer huit tirages de six numéros distincts dans une liste doublement chaînée triée, puis vider la liste après chaque tirage.</p>
+  <p class="lead">Générer huit tirages de six numéros distincts dans une liste doublement chaînée triée, en suivant les opérations numérotées 1) à 7) du corrigé officiel.</p>
   <div class="chips">
     <span class="chip">exercice <b>3.4</b></span>
     <span class="chip">liste doublement chaînée · pNext/pPrev · put · doublons · rand/srand</span>
@@ -172,30 +172,31 @@ table{max-width:100%}
     <div class="kicker"><div class="badge">01</div><div class="tag">énoncé</div></div>
     <h2>Ce que demande l’exercice</h2>
     <p>Le programme simule huit tirages SwissLotto. Chaque tirage contient six numéros distincts choisis entre 1 et 42, plus un numéro chance entre 1 et 6.</p>
-<p>La liste est <b>doublement chaînée</b> : chaque <code>Element_t</code> contient <code>number</code>, <code>pNext</code> et <code>pPrev</code>. Elle reste triée par ordre croissant.</p>
+<p>La liste est <b>doublement chaînée</b> : chaque <code>Element_t</code> contient <code>number</code> (<code>LottoNbr_t</code> = <code>unsigned char</code>), <code>pNext</code> et <code>pPrev</code>. Elle reste triée par ordre croissant.</p>
 <p>a) implémenter <code>showList</code> ; b) dessiner l'insertion de 3 dans une liste contenant déjà 2 et 8 ; c) traiter les cas 1 (nouvelle tête) et 42 (nouvelle queue) ; d) implémenter <code>put</code>.</p>
 <p>Le programme initialise <code>srand(time(0))</code> une seule fois, génère les six numéros avec <code>generateNumbers</code>, affiche la liste et le numéro chance, puis appelle <code>clearList</code>.</p>
+<p>Le corrigé officiel (6 pages) donne <code>showList</code>, les schémas b) et c) avec les opérations 1) à 7), et <code>put</code> qui reprend cette numérotation.</p>
     <table class="tbl"><tr><th>constante</th><th>valeur</th><th>rôle</th></tr><tr><td><code>eTotalNbrOfLottoNumbers</code></td><td class="num">42</td><td>numéros possibles, de 1 à 42</td></tr><tr><td><code>eRequiredLottoNumbers</code></td><td class="num">6</td><td>numéros par tirage</td></tr><tr><td><code>eTotalNbrOfLuckyNumbers</code></td><td class="num">6</td><td>numéro chance, de 1 à 6</td></tr><tr><td><code>eNbrOfDrawings</code></td><td class="num">8</td><td>tirages successifs</td></tr></table>
-    <div class="viz"><div class="viz-title">2 ⇄ 8, puis insertion de 3, 1 et 42</div><div class="viz-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 312" width="100%" role="img" aria-label="liste doublement chaînée triée, insertion de 3, 1 et 42" style="max-width:100%;height:auto"><defs><marker id="ar34" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--muted,#5d5b54)"/></marker><marker id="ar34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--accent,#5146b8)"/></marker></defs><text x="20" y="44" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">départ</text><rect x="200" y="24" width="64" height="44" rx="8" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="232" y="53" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:600">2</text><rect x="330" y="24" width="64" height="44" rx="8" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="362" y="53" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:600">8</text><path d="M266 36 H326" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M328 58 H268" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M297 74 V112" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:1.8;stroke-dasharray:5 4" marker-end="url(#ar34a)"/><text x="312" y="100" text-anchor="start" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">insertions : 3, 1 puis 42</text><rect x="55" y="150" width="80" height="52" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="95" y="182" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:700">1</text><rect x="175" y="150" width="80" height="52" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="215" y="182" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:700">2</text><rect x="295" y="150" width="80" height="52" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="335" y="182" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:700">3</text><rect x="415" y="150" width="80" height="52" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="455" y="182" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:700">8</text><rect x="535" y="150" width="80" height="52" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="575" y="182" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:18px;font-weight:700">42</text><text x="95" y="142" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">tête</text><text x="575" y="142" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">queue</text><text x="10" y="181" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:500">pNext</text><text x="10" y="221" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:500">pPrev</text><path d="M135 176 H173" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M255 176 H293" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M375 176 H413" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M495 176 H533" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M173 216 H137" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M293 216 H257" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M413 216 H377" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><path d="M533 216 H497" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar34)"/><text x="20" y="272" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:400">1 devient la tête, 3 s'insère entre 2 et 8, 42 devient la queue.</text><text x="20" y="296" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:400">Chaque nœud porte pNext et pPrev ; la liste reste triée.</text></svg></div><div class="viz-caption">La liste triée part de 2 ⇄ 8 et devient 1 ⇄ 2 ⇄ 3 ⇄ 8 ⇄ 42 ; chaque nœud porte pNext et pPrev.</div></div>
+    <div class="viz"><div class="viz-title">Insertion de 3 entre 2 et 8 — opérations 1) à 4)</div><div class="viz-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" width="100%" role="img" aria-label="insertion de 3 entre 2 et 8, opérations 1 à 4" style="max-width:100%;height:auto"><defs><marker id="ar34" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--muted,#5d5b54)"/></marker><marker id="ar34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--accent,#5146b8)"/></marker></defs><rect x="120" y="40" width="90" height="56" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="165" y="75" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">2</text><rect x="470" y="40" width="90" height="56" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="515" y="75" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">8</text><rect x="295" y="190" width="90" height="56" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="340" y="225" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">3</text><path d="M212 58 H466" style="stroke:var(--muted,#5d5b54);stroke-width:1.6;stroke-dasharray:5 4" marker-end="url(#ar34)"/><path d="M468 80 H214" style="stroke:var(--muted,#5d5b54);stroke-width:1.6;stroke-dasharray:5 4" marker-end="url(#ar34)"/><text x="340" y="50" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:500">avant : 2 ⇄ 8</text><path d="M185 98 V206 H291" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar34a)"/><path d="M293 230 H150 V100" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar34a)"/><path d="M535 98 V230 H389" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar34a)"/><path d="M387 206 H500 V100" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar34a)"/><text x="192" y="160" text-anchor="start" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:14px;font-weight:700">1)</text><text x="143" y="160" text-anchor="end" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:14px;font-weight:700">2)</text><text x="542" y="160" text-anchor="start" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:14px;font-weight:700">3)</text><text x="493" y="160" text-anchor="end" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:14px;font-weight:700">4)</text><text x="20" y="282" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">1) 2.pNext = 3 · 2) 3.pPrev = 2 · 3) 8.pPrev = 3 · 4) 3.pNext = 8</text></svg></div><div class="viz-caption">Schéma b) du corrigé : les liens 2 → 8 et 8 → 2 (pointillés) sont remplacés par quatre liens numérotés dans l'ordre du code de put.</div></div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
     <h2>Les notions à mobiliser</h2>
-    <div class="grid"><div class="card"><h3>Nœud double</h3><p>Chaque <code>Element_t</code> contient <code>number</code>, <code>pNext</code> et <code>pPrev</code>. La liste est triée par ordre croissant ; le parcours avance tant que <code>pCur-&gt;number &lt; number</code>.</p></div>
-<div class="card"><h3>Insertion triée</h3><p><code>put</code> cherche la position, puis relie le nouveau nœud à ses deux voisins : <code>pNew-&gt;pPrev = pPrev</code>, <code>pNew-&gt;pNext = pCur</code>, puis met à jour <code>pPrev-&gt;pNext</code> et <code>pCur-&gt;pPrev</code>.</p></div>
-<div class="card"><h3>Tête et queue</h3><p>Si <code>pPrev == NULL</code>, le nouveau nœud devient la tête ; si <code>pCur == NULL</code>, il devient la queue. Les deux cas mettent à jour <code>pNext</code>/<code>pPrev</code> et la tête de liste.</p></div>
-<div class="card"><h3>Doublons et aléatoire</h3><p><code>isAlreadyTaken</code> rejette un numéro déjà présent. <code>srand(time(0))</code> est appelé une seule fois ; <code>rand() % 42 + 1</code> donne 1 à 42, <code>rand() % 6 + 1</code> le numéro chance.</p></div></div>
+    <div class="grid"><div class="card"><h3>Nœud double</h3><p>Chaque <code>Element_t</code> contient <code>number</code>, <code>pNext</code> et <code>pPrev</code>. La tête a <code>pPrev == NULL</code>, la queue <code>pNext == NULL</code>. <code>showList</code> parcourt avec <code>pFlow</code> et affiche <code>%2d</code>, ou « List is empty... ».</p></div>
+<div class="card"><h3>Trouver la place</h3><p>Le corrigé alloue et initialise (<code>pNext = pPrev = NULL</code>), traite la liste vide (<code>*ppList = pElem</code>), puis avance <code>pFlow</code> tant que <code>pElem-&gt;number &gt; pFlow-&gt;number</code> <b>et</b> <code>pFlow-&gt;pNext != NULL</code>. <code>pFlow</code> s'arrête sur le premier plus grand, ou sur le dernier nœud.</p></div>
+<div class="card"><h3>Avant pFlow : 1) à 4), et 7) en tête</h3><p>Si <code>pElem-&gt;number &lt; pFlow-&gt;number</code> : en tête (<code>pFlow-&gt;pPrev == NULL</code>), 7) <code>*ppList = pElem</code> ; sinon 1) <code>pFlow-&gt;pPrev-&gt;pNext = pElem</code>, 2) <code>pElem-&gt;pPrev = pFlow-&gt;pPrev</code>. Puis toujours 3) <code>pFlow-&gt;pPrev = pElem</code>, 4) <code>pElem-&gt;pNext = pFlow</code>.</p></div>
+<div class="card"><h3>Après le dernier : 5) et 6)</h3><p>Sinon le nombre dépasse le dernier : 5) <code>pElem-&gt;pPrev = pFlow</code>, 6) <code>pFlow-&gt;pNext = pElem</code>. Les doublons sont exclus en amont par <code>isAlreadyTaken</code> dans <code>generateNumbers</code> ; <code>srand(time(0))</code> est appelé une seule fois.</p></div></div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
     <h2>Comment procéder</h2>
-    <ol><li>Créer la liste vide avec createSortedList.</li>
-<li>Initialiser le générateur une seule fois avec srand(time(0)).</li>
-<li>Pour chacun des 8 tirages, générer 6 numéros avec rand() % 42 + 1, en rejetant les doublons.</li>
-<li>Insérer chaque numéro avec put en mettant à jour pNext et pPrev ; traiter la tête et la queue.</li>
-<li>Afficher la liste triée et le numéro chance, puis vider la liste avec clearList.</li></ol>
+    <ol><li>showList : parcourir avec pFlow et afficher chaque numéro en %2d ; « List is empty... » si la liste est vide.</li>
+<li>put a)–d) : allouer, tester malloc, initialiser pNext et pPrev à NULL ; liste vide → *ppList = pElem.</li>
+<li>put e)–g) : avancer pFlow tant que le nombre est plus grand et qu'il reste un suivant.</li>
+<li>Plus petit que pFlow : 1) et 2) (ou 7) en tête), puis 3) et 4) ; sinon après le dernier : 5) et 6).</li>
+<li>main : 8 tirages de 6 numéros (rand() % 42 + 1, sans doublon), numéro chance rand() % 6 + 1, puis clearList.</li></ol>
   </section>
 
   <section>
@@ -209,6 +210,62 @@ typedef struct Element_s {
     struct Element_s* pPrev;
 } Element_t;
 
+/// a) Shows the stored elements of the sorted list
+void showList(Element_t* pList)
+{
+    Element_t* pFlow = pList;
+    if (NULL == pFlow) {
+        printf("List is empty...");
+    } else {
+        while (NULL != pFlow) {
+            printf("%2d ", pFlow-&gt;number);
+            pFlow = pFlow-&gt;pNext;
+        }
+    }
+}
+
+/// d) Add a new element to the sorted list (lower numbers first)
+bool put(Element_t** ppList, LottoNbr_t nbr)
+{
+    // a) allocate memory
+    Element_t* pElem = (Element_t*) malloc(sizeof(Element_t));
+    if (NULL == pElem) {
+        return false;
+    }
+    // b) initialize element
+    pElem-&gt;number = nbr;
+    pElem-&gt;pNext  = NULL;
+    pElem-&gt;pPrev  = NULL;
+
+    // c) Check if list is empty?
+    if (NULL == *ppList) {
+        *ppList = pElem;                  // d) Adjust list pointer
+        return true;
+    } else {
+        Element_t* pFlow = *ppList;       // e) get first element
+        // f) Check where to insert
+        while ((pElem-&gt;number &gt; pFlow-&gt;number) &amp;&amp; (NULL != pFlow-&gt;pNext)) {
+            pFlow = pFlow-&gt;pNext;         // g) point to next element
+        }
+        if (pElem-&gt;number &lt; pFlow-&gt;number) {
+            // before pFlow
+            if (NULL == pFlow-&gt;pPrev) {
+                *ppList = pElem;              // 7) new head
+            } else {
+                pFlow-&gt;pPrev-&gt;pNext = pElem;  // 1)
+                pElem-&gt;pPrev = pFlow-&gt;pPrev;  // 2)
+            }
+            pFlow-&gt;pPrev = pElem;             // 3)
+            pElem-&gt;pNext = pFlow;             // 4)
+        } else {
+            // after last element
+            pElem-&gt;pPrev = pFlow;             // 5)
+            pFlow-&gt;pNext = pElem;             // 6)
+        }
+        return true;
+    }
+}
+
 static void generateNumbers(Element_t** ppList, unsigned int nbrOfNumbers)
 {
     for (unsigned int i = 0; i &lt; nbrOfNumbers; i++) {
@@ -218,39 +275,18 @@ static void generateNumbers(Element_t** ppList, unsigned int nbrOfNumbers)
         } while (isAlreadyTaken(*ppList, newNumber));
         put(ppList, newNumber);
     }
-}
-
-void put(Element_t** ppHead, LottoNbr_t number)
-{
-    Element_t* pNew = malloc(sizeof *pNew);
-    if (pNew == NULL) return;
-
-    Element_t* pCur  = *ppHead;
-    Element_t* pPrev = NULL;
-    while (pCur != NULL &amp;&amp; pCur-&gt;number &lt; number) {
-        pPrev = pCur;
-        pCur  = pCur-&gt;pNext;
-    }
-
-    pNew-&gt;number = number;
-    pNew-&gt;pPrev  = pPrev;
-    pNew-&gt;pNext  = pCur;
-
-    if (pPrev != NULL) pPrev-&gt;pNext = pNew;
-    else               *ppHead      = pNew;
-    if (pCur  != NULL) pCur-&gt;pPrev  = pNew;
 }</code></pre></div>
-    <p>Insertion de <b>3</b> entre 2 et 8 : <code>pCur</code> s'arrête sur 8, <code>pPrev</code> vaut 2 ; le nouveau nœud pointe vers 2 et 8, puis 2 et 8 pointent vers lui.</p><p>Insertion de <b>1</b> : <code>pPrev == NULL</code>, le nœud devient la tête. Insertion de <b>42</b> : <code>pCur == NULL</code>, le nœud devient la queue. Dans les deux cas, <code>pPrev</code> ou <code>pNext</code> vaut <code>NULL</code> du côté concerné.</p>
-    <div class="result"><b>Résultat.</b> Huit tirages, six numéros triés et un numéro chance par ligne, sans doublon ; la liste doublement chaînée est vidée après chaque tirage.</div>
+    <p>Opérations du corrigé, sur la liste de départ 2 ⇄ 8 :</p><table class="tbl"><tr><th>numéro tiré</th><th>arrêt de <code>pFlow</code></th><th>branche</th><th>opérations</th><th>résultat</th></tr><tr><td class="num">3</td><td>8 (3 &lt; 8)</td><td>avant, au milieu</td><td>1) 2→pNext = 3 · 2) 3→pPrev = 2 · 3) 8→pPrev = 3 · 4) 3→pNext = 8</td><td>2 ⇄ 3 ⇄ 8</td></tr><tr><td class="num">1</td><td>2 (1 &lt; 2)</td><td>avant, en tête</td><td>7) <code>*ppList</code> = 1 · 3) 2→pPrev = 1 · 4) 1→pNext = 2</td><td>1 ⇄ 2 ⇄ 8</td></tr><tr><td class="num">42</td><td>8 (dernier)</td><td>après le dernier</td><td>5) 42→pPrev = 8 · 6) 8→pNext = 42</td><td>2 ⇄ 8 ⇄ 42</td></tr></table><p>L'ordre compte : 2) lit <code>pFlow-&gt;pPrev</code> avant que 3) ne l'écrase. Banc du corrigé : 8 contrôles, 0 échec, dont les 120 ordres d'insertion de {1, 5, 17, 30, 42}, l'exemple 2 3 8 12 24 36 de l'énoncé et 8 tirages à graine fixée.</p>
+    <div class="result"><b>Résultat.</b> Huit lignes de six numéros triés et distincts, suivies du numéro chance ; la liste doublement chaînée est vidée après chaque tirage.</div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
     <h2>Les pièges</h2>
-    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Oublier de mettre à jour pPrev : le parcours arrière est faux.</li>
-<li>Oublier le cas de la tête (pPrev == NULL) ou de la queue (pCur == NULL).</li>
-<li>Appeler srand dans la boucle des tirages : la suite devient répétitive.</li>
-<li>Oublier isAlreadyTaken ou clearList : doublons ou fuite mémoire.</li></ul></div>
+    <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Faire 3) avant 1) et 2) : pFlow->pPrev pointe déjà sur le nouveau nœud, qui se relie à lui-même et 2 reste relié à 8.</li>
+<li>Oublier 7) : un plus petit numéro est relié devant la tête, mais *ppList pointe toujours sur l'ancienne.</li>
+<li>Supprimer isAlreadyTaken : le put du corrigé place un doublon « après » pFlow et coupe la liste (2, 8 puis 2 → 2 ⇄ 2, le 8 est perdu).</li>
+<li>Appeler srand dans la boucle des tirages, ou oublier clearList : suite répétitive ou fuite mémoire.</li></ul></div>
   </section>
 
   <section>
@@ -264,26 +300,26 @@ void put(Element_t** ppHead, LottoNbr_t number)
 <button class="opt" type="button" data-opt="2">number, pNext et pPrev</button>
 <button class="opt" type="button" data-opt="3">pNext et pPrev</button>
 </div><div class="fb" hidden></div></div>
-<div class="q" data-answer="1" data-why="Aucun nœud n&#x27;est plus petit : pPrev reste NULL et la tête devient le nouveau nœud.">
-<p class="qq">2. Que se passe-t-il quand on insère 1 dans une liste triée ?</p><div class="opts">
-<button class="opt" type="button" data-opt="0">Il devient la queue</button>
-<button class="opt" type="button" data-opt="1">Il devient la tête</button>
-<button class="opt" type="button" data-opt="2">Il est ignoré</button>
-<button class="opt" type="button" data-opt="3">Il remplace le dernier nœud</button>
+<div class="q" data-answer="1" data-why="&lt;code&gt;pFlow&lt;/code&gt; s&#x27;arrête sur 2, dont &lt;code&gt;pPrev&lt;/code&gt; vaut &lt;code&gt;NULL&lt;/code&gt; : 7) change la tête, puis 3) et 4) relient 1 et 2.">
+<p class="qq">2. On tire 1 dans la liste 2 ⇄ 8 : quelles opérations du corrigé s'exécutent ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">1), 2), 3), 4)</button>
+<button class="opt" type="button" data-opt="1">7), 3), 4)</button>
+<button class="opt" type="button" data-opt="2">5), 6)</button>
+<button class="opt" type="button" data-opt="3">1), 2), 7)</button>
 </div><div class="fb" hidden></div></div>
-<div class="q" data-answer="1" data-why="Le parcours atteint la fin : pCur vaut NULL et le nouveau nœud devient la queue.">
-<p class="qq">3. Que se passe-t-il quand on insère 42 ?</p><div class="opts">
-<button class="opt" type="button" data-opt="0">Il devient la tête</button>
-<button class="opt" type="button" data-opt="1">Il devient la queue</button>
-<button class="opt" type="button" data-opt="2">Il est rejeté</button>
-<button class="opt" type="button" data-opt="3">Il est inséré au milieu</button>
+<div class="q" data-answer="2" data-why="La boucle s&#x27;arrête quand &lt;code&gt;pFlow-&amp;gt;pNext == NULL&lt;/code&gt; ; 42 &amp;gt; 8, donc branche « after last element ».">
+<p class="qq">3. On tire 42 dans la liste 2 ⇄ 8 : où s'arrête pFlow et que se passe-t-il ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">sur 2, insertion en tête</button>
+<button class="opt" type="button" data-opt="1">sur NULL, insertion en queue</button>
+<button class="opt" type="button" data-opt="2">sur 8, le dernier ; 5) et 6) accrochent 42 après lui</button>
+<button class="opt" type="button" data-opt="3">sur 8 ; 1) à 4) insèrent 42 avant lui</button>
 </div><div class="fb" hidden></div></div>
-<div class="q" data-answer="1" data-why="Une réinitialisation à chaque tour répéterait la même suite.">
-<p class="qq">4. Pourquoi appeler srand une seule fois ?</p><div class="opts">
-<button class="opt" type="button" data-opt="0">Pour trier la liste</button>
-<button class="opt" type="button" data-opt="1">Pour éviter de réinitialiser la suite aléatoire à chaque tirage</button>
-<button class="opt" type="button" data-opt="2">Pour libérer la liste</button>
-<button class="opt" type="button" data-opt="3">Pour compter les doublons</button>
+<div class="q" data-answer="1" data-why="Après 3), &lt;code&gt;pFlow-&amp;gt;pPrev&lt;/code&gt; ne désigne plus le voisin de gauche : 1) et 2) relieraient le nœud à lui-même.">
+<p class="qq">4. Pourquoi l'opération 2) doit-elle précéder 3) ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">pour libérer la mémoire</button>
+<button class="opt" type="button" data-opt="1">parce que 2) lit pFlow-&gt;pPrev, que 3) remplace par pElem</button>
+<button class="opt" type="button" data-opt="2">pour trier la liste</button>
+<button class="opt" type="button" data-opt="3">l'ordre n'a aucune importance</button>
 </div><div class="fb" hidden></div></div>
 <div class="score">Score : <b>0</b> / 4</div></div>
   </section>

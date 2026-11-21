@@ -160,7 +160,7 @@ table{max-width:100%}
 <header class="hero">
   <div class="eyebrow">E2-ALGO · exercice 3.1 · Chapitre 3</div>
   <h1>FIFO sur liste chaînée</h1>
-  <p class="lead">Implémenter une file FIFO sur liste chaînée : ajout en queue, retrait en tête, tests des cas limites.</p>
+  <p class="lead">Implémenter une file FIFO sur liste chaînée : ajout en queue, retrait en tête, tests des cas limites — d'après le corrigé officiel.</p>
   <div class="chips">
     <span class="chip">exercice <b>3.1</b></span>
     <span class="chip">createFIFO · put · get · Data_t** · pointeur de queue · cas limites</span>
@@ -175,6 +175,7 @@ table{max-width:100%}
 <p>Trois fonctions sont imposées : createFIFO retourne la tête, put(Data_t**, Data_t) ajoute, get(Data_t**, Data_t*) retire et copie la valeur.</p>
 <p>put et get reçoivent l'adresse du pointeur de tête, car ils peuvent le changer ; le booléen signale un échec.</p>
 <p>L'énoncé demande aussi showList et un programme qui teste les exceptions, par exemple get sur une liste vide.</p>
+<p>Le corrigé officiel (4 pages) donne createFIFO, put, get et showList avec leurs étapes numérotées ; le code ci-dessous en est la transcription, compilée et testée.</p>
     <table class="tbl"><tr><th>fonction</th><th>rôle</th><th>retour</th></tr><tr><td><code>createFIFO</code></td><td>créer une file vide</td><td><code>NULL</code></td></tr><tr><td><code>put</code></td><td>ajouter en queue</td><td><code>true</code> / <code>false</code></td></tr><tr><td><code>get</code></td><td>retirer en tête</td><td><code>true</code> / <code>false</code></td></tr><tr><td><code>showList</code></td><td>parcourir et afficher</td><td>—</td></tr></table>
     <div class="viz"><div class="viz-title">Tête, queue, get et put</div><div class="viz-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 252" width="100%" role="img" aria-label="file FIFO tête A B C queue, get et put" style="max-width:100%;height:auto"><defs><marker id="ar31" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--muted,#5d5b54)"/></marker><marker id="ar31a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--accent,#5146b8)"/></marker></defs><rect x="20" y="92" width="62" height="36" rx="7" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="51" y="115" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">pList</text><path d="M84 110 H114" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar31)"/><rect x="120" y="80" width="90" height="56" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="165" y="115" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">A</text><rect x="255" y="80" width="90" height="56" rx="9" style="fill:var(--card2,#efede5);stroke:var(--line,#cfccc2);stroke-width:1.5"/><text x="300" y="115" text-anchor="middle" style="fill:var(--ink,#1b1a17);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">B</text><rect x="390" y="80" width="90" height="56" rx="9" style="fill:var(--accent-s,#eae8fb);stroke:var(--accent,#5146b8);stroke-width:2"/><text x="435" y="115" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:20px;font-weight:700">C</text><text x="165" y="68" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">tête</text><text x="435" y="68" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:600">queue</text><path d="M210 104 H251" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar31)"/><path d="M345 104 H386" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar31)"/><rect x="505" y="88" width="62" height="40" rx="7" style="fill:none;stroke:var(--line,#cfccc2);stroke-width:1.5;stroke-dasharray:5 4"/><text x="536" y="114" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:14px;font-weight:600">NULL</text><path d="M482 108 H501" style="stroke:var(--muted,#5d5b54);stroke-width:1.8" marker-end="url(#ar31)"/><path d="M165 138 V172 H96" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar31a)"/><text x="112" y="192" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:15px;font-weight:700">get</text><text x="112" y="210" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">retrait en tête</text><path d="M640 172 H435 V140" style="fill:none;stroke:var(--accent,#5146b8);stroke-width:2" marker-end="url(#ar31a)"/><text x="545" y="192" text-anchor="middle" style="fill:var(--accent,#5146b8);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:15px;font-weight:700">put</text><text x="545" y="210" text-anchor="middle" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:12px;font-weight:400">ajout en queue</text><text x="20" y="240" text-anchor="start" style="fill:var(--muted,#5d5b54);font-family:var(--mono,ui-monospace,Consolas,monospace);font-size:13px;font-weight:400">Le premier entré (A) sort le premier ; le dernier entré (C) reste en queue.</text></svg></div><div class="viz-caption">get retire A en tête, put ajoute en queue derrière C ; la file se parcourt de la tête vers la queue.</div></div>
   </section>
@@ -182,20 +183,21 @@ table{max-width:100%}
   <section>
     <div class="kicker"><div class="badge">02</div><div class="tag">théorie nécessaire</div></div>
     <h2>Les notions à mobiliser</h2>
-    <div class="grid"><div class="card"><h3>Deux bouts, deux coûts</h3><p><code>put</code> ajoute en queue, <code>get</code> retire en tête : premier entré, premier sorti. Une file vide vaut <code>NULL</code>. Avec la seule tête, <code>put</code> est O(n) et <code>get</code> O(1) ; un pointeur de queue <code>pTail</code> rend <code>put</code> O(1), mais <code>get</code> doit le remettre à <code>NULL</code> quand la file se vide.</p></div>
-<div class="card"><h3>Data_t** : changer la tête de l'appelant</h3><p>Un argument est copié : pour changer <code>pList</code> de <code>main</code>, <code>put</code> et <code>get</code> reçoivent <code>&amp;pList</code>, de type <code>Data_t**</code>. <code>*ppList</code> est la tête, <code>(*ppList)-&gt;pNext</code> le deuxième nœud.</p></div>
-<div class="card"><h3>put : allouer, remplir, accrocher</h3><p><code>malloc</code>, puis <code>*pNew = newElement</code> et <code>pNew-&gt;pNext = NULL</code>. File vide : <code>*ppList = pNew</code> ; sinon on parcourt jusqu'au dernier et on écrit <code>pFlow-&gt;pNext = pNew</code>. malloc en échec : <code>false</code>, liste intacte.</p></div>
-<div class="card"><h3>get : détacher, copier, libérer</h3><p>Tester <code>*ppList == NULL</code>. Sauver <code>pOld</code>, avancer la tête <code>*ppList = pOld-&gt;pNext</code>, recopier les champs, mettre <code>pElement-&gt;pNext = NULL</code>, puis <code>free(pOld)</code>.</p></div></div>
+    <div class="grid"><div class="card"><h3>Deux bouts, deux coûts</h3><p><code>put</code> ajoute en queue, <code>get</code> retire en tête : premier entré, premier sorti. Une file vide vaut <code>NULL</code> : <code>createFIFO</code> du corrigé fait seulement <code>return NULL;</code>. Avec la seule tête, <code>put</code> parcourt toute la liste (O(n)) et <code>get</code> est O(1).</p></div>
+<div class="card"><h3>Data_t** : changer la tête de l'appelant</h3><p>Un argument est copié : pour changer <code>pList</code> de <code>main</code>, <code>put</code> et <code>get</code> reçoivent <code>&amp;pList</code>, de type <code>Data_t**</code>. <code>*ppList</code> est la tête ; le corrigé la modifie en 5) dans <code>put</code> (liste vide) et en 4) dans <code>get</code>.</p></div>
+<div class="card"><h3>put : 1) allouer, 2–3) copier, 4–9) accrocher</h3><p>1) <code>malloc</code>, <code>false</code> si <code>NULL</code>. Le corrigé montre deux variantes de copie : 2) champ par champ, 3) copie profonde <code>*pElem = newElement</code> ; une seule suffit, mais toutes deux remettent <code>pNext = NULL</code>. 4–5) liste vide : <code>*ppList = pElem</code>. 6–9) sinon <code>pFlow</code> part de la tête, avance tant que <code>pFlow-&gt;pNext != NULL</code>, puis <code>pFlow-&gt;pNext = pElem</code>.</p></div>
+<div class="card"><h3>get : 1) tester, 3–4) détacher, 5) copier, 6) libérer</h3><p>1) <code>*ppList == NULL</code> → <code>false</code>. 3) <code>pFlow = *ppList</code>, 4) <code>*ppList = pFlow-&gt;pNext</code>, 5) copie profonde <code>*pElement = *pFlow</code>, 6) <code>free(pFlow)</code>. La copie emporte aussi <code>pNext</code> : il désigne la nouvelle tête, encore valide, mais ne sert pas à parcourir.</p></div></div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">03</div><div class="tag">méthode</div></div>
     <h2>Comment procéder</h2>
-    <ol><li>Définir Data_t avec ses quatre champs ; createFIFO retourne NULL.</li>
-<li>put : allouer, recopier, pNext = NULL, accrocher en queue.</li>
-<li>get : tester la file vide, avancer la tête, recopier, libérer.</li>
-<li>showList : parcourir sans modifier la tête.</li>
-<li>Tester 5 put, 5 get, get sur vide, put après vidage.</li></ol>
+    <ol><li>createFIFO : retourner NULL (file vide).</li>
+<li>put : allouer et tester malloc, copier l'élément, mettre pNext à NULL.</li>
+<li>put : si la file est vide, *ppList = pElem ; sinon parcourir jusqu'au dernier et l'y accrocher.</li>
+<li>get : si la file est vide, retourner false ; sinon avancer la tête, copier le nœud sorti, free.</li>
+<li>showList : parcourir avec pFlow sans toucher à la tête ; « List is empty... » si NULL.</li>
+<li>main : 5 put (sensorValue = 0.1·i²), showList, 5 get, puis showList sur la file vide.</li></ol>
   </section>
 
   <section>
@@ -203,100 +205,131 @@ table{max-width:100%}
     <h2>Application à l’énoncé</h2>
     <div class="code"><header><span>exemple.c</span><span>C11</span></header><pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
-#include &lt;stdbool.h&gt;
+#include &lt;stdbool.h&gt;   /* absent du corrigé : nécessaire avant C23 */
+#include &lt;time.h&gt;
 
-typedef struct Data_s {
+enum { eNbrOfElements = 5 };
+
+struct Data_s {
     unsigned int  sensorNumber;
     double        sensorValue;
     unsigned long time;
-    struct Data_s *pNext;
-} Data_t;
+    struct Data_s* pNext;
+};
+typedef struct Data_s Data_t;
 
-Data_t* createFIFO(void)
-{
-    return NULL;             /* file vide */
-}
-
-bool put(Data_t** ppList, Data_t newElement)
-{
-    if (ppList == NULL) { return false; }
-
-    Data_t* pNew = (Data_t*)malloc(sizeof(Data_t));
-    if (pNew == NULL) { return false; }  /* file intacte */
-
-    *pNew = newElement;
-    pNew-&gt;pNext = NULL;      /* nouveau dernier */
-
-    if (*ppList == NULL) {
-        *ppList = pNew;      /* file vide : tete = queue */
-    } else {
-        Data_t* pFlow = *ppList;
-        while (pFlow-&gt;pNext != NULL) {
-            pFlow = pFlow-&gt;pNext;
-        }
-        pFlow-&gt;pNext = pNew; /* accroche en queue */
-    }
-    return true;
-}
-
-bool get(Data_t** ppList, Data_t* pElement)
-{
-    if (ppList == NULL || pElement == NULL
-        || *ppList == NULL) {
-        return false;        /* file vide */
-    }
-
-    Data_t* pOld = *ppList;
-    *ppList = pOld-&gt;pNext;   /* la tete avance */
-
-    pElement-&gt;sensorNumber = pOld-&gt;sensorNumber;
-    pElement-&gt;sensorValue  = pOld-&gt;sensorValue;
-    pElement-&gt;time         = pOld-&gt;time;
-    pElement-&gt;pNext        = NULL; /* pas pOld-&gt;pNext */
-
-    free(pOld);
-    return true;
-}
+Data_t* createFIFO(void);
+bool put(Data_t** ppList, Data_t newElement);
+bool get(Data_t** ppList, Data_t* pElement);
+void showList(Data_t* pList); /* le corrigé déclare int, définit void */
 
 int main(void)
 {
     Data_t* pList = createFIFO();
-    for (unsigned int i = 0; i &lt; 5; i++) {
-        Data_t e = { i, 0.1 * i * i, 100UL + i, NULL };
-        if (!put(&amp;pList, e)) {
+    for (unsigned int i = 0; i &lt; eNbrOfElements; i++) {
+        Data_t element = { i, 0.1 * i * i, time(NULL) + i, NULL };
+        if (!put(&amp;pList, element)) {
             printf("No more memory\n");
-            return 1;
+            exit(-1);
         }
     }
+    showList(pList);
 
-    Data_t out;
-    while (get(&amp;pList, &amp;out)) {
-        printf("sensor=%u value=%f time=%lu\n",
-               out.sensorNumber, out.sensorValue, out.time);
+    for (unsigned int i = 0; i &lt; eNbrOfElements; i++) {
+        Data_t element2 = {0};
+        if (!get(&amp;pList, &amp;element2)) {
+            printf("Error in getting element...\n");
+        } else {
+            printf("get: sensor=%d, value=%f, time=%ld\n",
+                   element2.sensorNumber, element2.sensorValue, element2.time);
+        }
     }
-
-    printf("get sur vide : %s\n",
-           get(&amp;pList, &amp;out) ? "true" : "false");
+    showList(pList);
     return 0;
+}
+
+Data_t* createFIFO(void)
+{
+    return NULL;
+}
+
+bool put(Data_t** ppList, Data_t newElement)
+{
+    // 1) Allocate memory
+    Data_t* pElem = (Data_t*) malloc(sizeof(Data_t));
+    if (NULL == pElem) {
+        return false;
+    }
+    // 2) Variante 1 : element by element
+    pElem-&gt;sensorNumber = newElement.sensorNumber;
+    pElem-&gt;sensorValue  = newElement.sensorValue;
+    pElem-&gt;time         = newElement.time;
+    pElem-&gt;pNext        = NULL;
+    // 3) Variante 2 : deep copy of whole element
+    *pElem = newElement;
+    pElem-&gt;pNext = NULL;
+    // 4) List empty?
+    if (NULL == *ppList) {
+        *ppList = pElem;              // 5) Adjust list pointer
+        return true;
+    } else {
+        Data_t* pFlow = *ppList;      // 6) Get first element
+        // 7) Iterate to get last element
+        while (NULL != pFlow-&gt;pNext) {
+            pFlow = pFlow-&gt;pNext;     // 8) Point to next element
+        }
+        pFlow-&gt;pNext = pElem;         // 9) Last element -&gt; new element
+        return true;
+    }
+}
+
+bool get(Data_t** ppList, Data_t* pElement)
+{
+    // 1) Check first if list is not empty...
+    if (NULL == *ppList) {
+        return false;                 // List empty
+    } else {
+        Data_t* pFlow = *ppList;      // 3) Point to first element
+        *ppList = pFlow-&gt;pNext;       // 4) Adjust pointer to following element
+        *pElement = *pFlow;           // 5) Deep copy of whole element
+        free(pFlow);                  // 6) Free retrieved element
+        return true;
+    }
+}
+
+void showList(Data_t* pList)
+{
+    Data_t* pFlow = pList;            // 1) Check if empty?
+    if (NULL == pFlow) {
+        printf("List is empty...");
+    } else {
+        // 2) Parse all elements
+        while (NULL != pFlow) {
+            printf("sensor=%d, value=%f, time=%ld\n",
+                   pFlow-&gt;sensorNumber, pFlow-&gt;sensorValue, pFlow-&gt;time);
+            pFlow = pFlow-&gt;pNext;
+        }
+    }
+    printf("\n");
 }</code></pre></div>
-    <p>Cinq éléments 0 à 4 insérés puis retirés sortent dans l'ordre 0, 1, 2, 3, 4.</p><table class="tbl"><tr><th>opération</th><th>état de la file</th><th>retour</th></tr><tr><td><code>createFIFO()</code></td><td>vide, tête <code>NULL</code></td><td><code>NULL</code></td></tr><tr><td><code>put(&amp;pList, e0)</code></td><td>e0</td><td><code>true</code></td></tr><tr><td><code>put(&amp;pList, e4)</code></td><td>e0 e1 e2 e3 e4</td><td><code>true</code></td></tr><tr><td><code>get(&amp;pList, &amp;out)</code> × 5</td><td>0, 1, 2, 3, 4 puis vide</td><td><code>true</code></td></tr><tr><td><code>get(&amp;pList, &amp;out)</code></td><td>vide</td><td><code>false</code></td></tr></table><p>Après cinq <code>get</code>, la tête vaut <code>NULL</code> et un sixième retourne <code>false</code>. Pour <code>put</code> en O(1), on mémorise <code>pTail</code> : <code>pTail-&gt;pNext = pNew</code> puis <code>pTail = pNew</code>.</p>
-    <div class="result"><b>Résultat.</b> Ordre FIFO conservé : 0 sort le premier ; après cinq <code>get</code>, <code>get</code> retourne <code>false</code>.</div>
+    <p>Le <code>main</code> du corrigé insère cinq éléments <code>sensorNumber</code> 0 à 4 (<code>sensorValue</code> = 0,1·i² : 0, 0,1, 0,4, 0,9, 1,6), les affiche, puis les retire : ils sortent dans l'ordre 0, 1, 2, 3, 4.</p><table class="tbl"><tr><th>opération</th><th>étapes du corrigé</th><th>état de la file</th><th>retour</th></tr><tr><td><code>createFIFO()</code></td><td><code>return NULL</code></td><td>vide</td><td><code>NULL</code></td></tr><tr><td><code>put(&amp;pList, e0)</code></td><td>1, 2–3, 4, 5</td><td>e0</td><td><code>true</code></td></tr><tr><td><code>put(&amp;pList, e1…e4)</code></td><td>1, 2–3, 4, 6–9</td><td>e0 e1 e2 e3 e4</td><td><code>true</code></td></tr><tr><td><code>get(&amp;pList, &amp;element2)</code> × 5</td><td>1, 3–6</td><td>0, 1, 2, 3, 4 puis vide</td><td><code>true</code></td></tr><tr><td><code>showList(pList)</code></td><td>1</td><td>vide</td><td>« List is empty... »</td></tr></table><p>Banc de contrôle du corrigé : 38 contrôles, 0 échec (ordre FIFO, <code>get</code> sur file vide, réutilisation après vidage, 10 000 éléments). Pour un <code>put</code> en O(1), on mémoriserait un pointeur de queue <code>pTail</code>.</p>
+    <div class="result"><b>Résultat.</b> Ordre FIFO conservé : 0 sort le premier ; après cinq <code>get</code>, la tête vaut <code>NULL</code> et <code>showList</code> affiche « List is empty... ».</div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">05</div><div class="tag">erreurs fréquentes</div></div>
     <h2>Les pièges</h2>
     <div class="box trap"><div class="lbl">À vérifier</div><ul><li>Accrocher en tête au lieu de la queue : la liste devient un LIFO.</li>
-<li>Recopier le pNext du nœud sorti : pointeur vers un bloc libéré.</li>
-<li>Oublier free(pOld) dans get : fuite mémoire à chaque retrait.</li>
-<li>Ne pas tester malloc : écrire dans le nœud si pNew vaut NULL.</li></ul></div>
+<li>Oublier free(pFlow) dans get : fuite mémoire à chaque retrait.</li>
+<li>Ne pas tester malloc : écrire dans le nœud si pElem vaut NULL.</li>
+<li>Recopier tel quel le corrigé : prototype int showList mais définition void showList (conflicting types), et bool sans <stdbool.h> avant C23.</li></ul></div>
   </section>
 
   <section>
     <div class="kicker"><div class="badge">06</div><div class="tag">auto-test</div></div>
     <h2>Trois questions</h2>
     <div class="qcm" data-qcm>
-<div class="q" data-answer="1" data-why="Le FIFO entre par la queue ; accrocher en tête donnerait un LIFO.">
+<div class="q" data-answer="1" data-why="Étapes 6 à 9 du corrigé : parcourir jusqu&#x27;au nœud dont &lt;code&gt;pNext&lt;/code&gt; vaut &lt;code&gt;NULL&lt;/code&gt;, puis &lt;code&gt;pFlow-&amp;gt;pNext = pElem&lt;/code&gt;.">
 <p class="qq">1. Où put accroche-t-il le nouvel élément ?</p><div class="opts">
 <button class="opt" type="button" data-opt="0">en tête de liste</button>
 <button class="opt" type="button" data-opt="1">en queue, derrière le dernier nœud</button>
@@ -310,14 +343,21 @@ int main(void)
 <button class="opt" type="button" data-opt="2">pour afficher la liste</button>
 <button class="opt" type="button" data-opt="3">parce que Data_t contient pNext</button>
 </div><div class="fb" hidden></div></div>
-<div class="q" data-answer="1" data-why="Le test &lt;code&gt;*ppList == NULL&lt;/code&gt; retourne &lt;code&gt;false&lt;/code&gt; immédiatement.">
+<div class="q" data-answer="1" data-why="Étape 1 : &lt;code&gt;NULL == *ppList&lt;/code&gt; retourne &lt;code&gt;false&lt;/code&gt; immédiatement.">
 <p class="qq">3. Que renvoie get sur une liste vide ?</p><div class="opts">
 <button class="opt" type="button" data-opt="0">true avec un élément nul</button>
 <button class="opt" type="button" data-opt="1">false sans modifier pElement</button>
 <button class="opt" type="button" data-opt="2">NULL</button>
 <button class="opt" type="button" data-opt="3">une erreur d'exécution</button>
 </div><div class="fb" hidden></div></div>
-<div class="score">Score : <b>0</b> / 3</div></div>
+<div class="q" data-answer="2" data-why="La copie profonde recopie aussi &lt;code&gt;pNext&lt;/code&gt;, qui valait le deuxième nœud, devenu la tête en 4).">
+<p class="qq">4. Après *pElement = *pFlow; free(pFlow); dans get, que vaut pElement->pNext ?</p><div class="opts">
+<button class="opt" type="button" data-opt="0">NULL</button>
+<button class="opt" type="button" data-opt="1">l'adresse du nœud libéré</button>
+<button class="opt" type="button" data-opt="2">l'adresse de la nouvelle tête de la file</button>
+<button class="opt" type="button" data-opt="3">une valeur indéterminée</button>
+</div><div class="fb" hidden></div></div>
+<div class="score">Score : <b>0</b> / 4</div></div>
   </section>
 </main>
 

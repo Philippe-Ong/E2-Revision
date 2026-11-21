@@ -503,6 +503,54 @@
   .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
   .legend .sw-t{font-size:12px;color:var(--faint)}
   .tbl.wide{max-width:none}
+/* scenes:debut */
+  /* ---------- scènes animées des laboratoires (injecté par injecter_scenes.py) ---------- */
+  .scene-stage{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px 6px 4px;margin:2px 0 10px}
+  .scene-stage svg{width:100%;height:auto;display:block;overflow:visible}
+  @media (max-width:640px){.scene-stage{overflow-x:auto;-webkit-overflow-scrolling:touch}.scene-stage svg{width:600px;max-width:none}}
+  .sc-flow{animation:sc-flow 1.6s linear infinite;animation-delay:var(--sc-delay,0s)}
+  .sc-flow.sc-rev{animation-direction:reverse}
+  @keyframes sc-flow{to{stroke-dashoffset:-32}}
+  .sc-spin{animation:sc-spin 2s linear infinite}
+  .sc-spin.sc-ccw{animation-direction:reverse}
+  @keyframes sc-spin{to{transform:rotate(360deg)}}
+  .sc-grid{stroke:var(--line2);stroke-width:1}
+  .sc-tick{font:9.5px var(--mono);fill:var(--faint)}
+  .sc-axis{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-lbl{font:600 11.5px var(--sans);fill:var(--ink)}
+  .sc-val{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-big{font:700 15px var(--mono);fill:var(--ink)}
+  .sc-tagt{font:600 10.5px var(--mono)}
+  .sc-comp{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+  .sc-ind{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round}
+  .sc-wire{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .sc-dim{opacity:.28}
+  .sc-new{stroke:var(--accent)!important}
+  .sc-hl{fill:var(--accent-s);stroke:var(--accent);stroke-width:1.4}
+  .sc-air{fill:var(--card);stroke:none}
+  .sc-cu{fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4}
+  .sc-mag-n{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4}
+  .sc-mag-s{fill:var(--red-s);stroke:var(--red);stroke-width:1.4}
+  .sc-bar{fill:var(--accent);opacity:.85}
+  .sc-bar2{fill:var(--coral);opacity:.85}
+  .sc-bar3{fill:var(--teal);opacity:.85}
+  .sc-barbg{fill:var(--card);stroke:var(--line);stroke-width:1}
+  .sc-pt{fill:var(--accent);stroke:var(--card);stroke-width:1.5}
+  .sc-pt2{fill:var(--card);stroke:var(--muted);stroke-width:1.4}
+  .sc-zone{fill:var(--red-s);opacity:.7}
+  .lab.has-scene .mem-stage{padding:2px 0 0}
+  .lab.has-scene .arrow-layer{display:none}
+  .lab.has-scene .mem-groups,.lab.has-scene .mem-groups.is-stack{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;justify-content:center}
+  .lab.has-scene .mem-groups.is-stack .mem-group{width:auto;padding-top:0}
+  .lab.has-scene .mem-groups.is-stack .mem-gtitle,.lab.has-scene .mem-gtitle{position:static;font-size:8.5px}
+  .lab.has-scene .cells{gap:6px}
+  .lab.has-scene .cell{--cw:auto;min-width:74px;padding:4px 7px 3px;border-radius:8px}
+  .lab.has-scene .cname{font-size:10.5px;min-height:13px}
+  .lab.has-scene .ctype{display:none}
+  .lab.has-scene .cval{font-size:13px;margin:2px 0 0;min-height:16px}
+  .lab.has-scene .cf{font-size:10px}
+  @media (prefers-reduced-motion: reduce){.sc-flow,.sc-spin{animation:none}}
+  /* scenes:fin */
 </style>
 <meta name="robots" content="noindex">
 
@@ -545,6 +593,7 @@ table{max-width:100%}
   <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
     <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
+<marker id="fg-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--ink)"/></marker><marker id="fg-accent" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--accent)"/></marker><marker id="fg-coral" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--coral)"/></marker><marker id="fg-teal" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--teal)"/></marker><marker id="fg-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--muted)"/></marker><marker id="fg-faint" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--faint)"/></marker><marker id="fg-blue" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--blue)"/></marker><marker id="fg-red" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--red)"/></marker><marker id="fg-amber" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--amber)"/></marker>
 </defs></svg>
 
 <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
@@ -628,33 +677,8 @@ table{max-width:100%}
 
       <figure class="fig-wide">
         <div class="figcard">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Coupe schématique de la machine : stator à aimants permanents, induit au rotor, arbre">
-            <circle cx="170" cy="152" r="116" class="core"/>
-            <circle cx="170" cy="152" r="88" fill="var(--card)" stroke="var(--muted)" stroke-width="1.2"/>
-            <circle cx="170" cy="152" r="73" class="ax" fill="none"/>
-            <g class="c-blue"><rect x="54" y="118" width="20" height="68" rx="3"/></g>
-            <g class="c-coral"><rect x="266" y="118" width="20" height="68" rx="3"/></g>
-            <text class="ts" x="64" y="156" text-anchor="middle">N</text>
-            <text class="ts" x="276" y="156" text-anchor="middle">S</text>
-            <circle cx="170" cy="152" r="58" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
-            <g fill="var(--coral)">
-              <circle cx="214" cy="152" r="5.5"/><circle cx="201.1" cy="183.1" r="5.5"/>
-              <circle cx="170" cy="196" r="5.5"/><circle cx="138.9" cy="183.1" r="5.5"/>
-              <circle cx="126" cy="152" r="5.5"/><circle cx="138.9" cy="120.9" r="5.5"/>
-              <circle cx="170" cy="108" r="5.5"/><circle cx="201.1" cy="120.9" r="5.5"/>
-            </g>
-            <circle cx="170" cy="152" r="11" fill="var(--card)" stroke="var(--ink)" stroke-width="1.2"/>
-            <path d="M78 130 H 262" class="flux" marker-end="url(#ar-accent)"/>
-            <path d="M78 174 H 262" class="flux" marker-end="url(#ar-accent)"/>
-            <path d="M210 95 A 70 70 0 0 1 236 176" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="252" y="133">Ω</text>
-            <line x1="286" y1="100" x2="330" y2="72" class="wire-d"/>
-            <text class="ts" x="334" y="68">stator : aimants permanents</text>
-            <line x1="224" y1="150" x2="330" y2="150" class="wire-d"/>
-            <text class="ts" x="334" y="146">induit : conducteurs</text>
-            <line x1="222" y1="204" x2="330" y2="232" class="wire-d"/>
-            <text class="ts" x="334" y="230">entrefer</text>
-            <text class="ts" x="170" y="292" text-anchor="middle">arbre</text>
+          <svg viewBox="0 0 640 300" role="img" aria-label="Coupe schématique de la MCC : culasse, aimants N et S, entrefer, induit et arbre ; le flux va de N à S à travers l'induit et revient par la culasse">
+<circle cx="200" cy="150" r="128" class="core"/><circle cx="200" cy="150" r="104" fill="var(--card)" stroke="var(--muted)" stroke-width="1.4"/><path d="M133.2 70.3 A104 104 0 0 0 133.2 229.7 L146.0 214.3 A84 84 0 0 1 146.0 85.7 Z" class="sc-mag-n" style="fill:var(--blue-s);stroke:var(--blue)"/><text class="th" x="106.0" y="155.0" text-anchor="middle">N</text><path d="M266.8 70.3 A104 104 0 0 1 266.8 229.7 L254.0 214.3 A84 84 0 0 0 254.0 85.7 Z" class="sc-mag-s" style="fill:var(--red-s);stroke:var(--red)"/><text class="th" x="294.0" y="155.0" text-anchor="middle">S</text><circle cx="200" cy="150" r="76" class="core"/><circle cx="257.3" cy="126.3" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="223.7" cy="92.7" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="176.3" cy="92.7" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="142.7" cy="126.3" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="142.7" cy="173.7" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="176.3" cy="207.3" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="223.7" cy="207.3" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="257.3" cy="173.7" r="5" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="200" cy="150" r="13" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><path d="M116 136 H284" class="flux" marker-end="url(#fg-accent)"/><path d="M116 164 H284" class="flux" marker-end="url(#fg-accent)"/><path d="M312 120 A 116 116 0 0 0 88 120" class="flux" marker-end="url(#fg-accent)"/><path d="M312 180 A 116 116 0 0 1 88 180" class="flux" marker-end="url(#fg-accent)"/><path d="M260.0 46.1 L390 42 H402" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="260.0" cy="46.1" r="2.2" fill="var(--ink)"/><text class="ts" x="408.0" y="46.0">stator : culasse en fer</text><path d="M285.2 110.3 L390 92 H402" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="285.2" cy="110.3" r="2.2" fill="var(--ink)"/><text class="ts" x="408.0" y="96.0">aimants permanents N et S</text><path d="M279.2 138.9 L390 142 H402" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="279.2" cy="138.9" r="2.2" fill="var(--ink)"/><text class="ts" x="408.0" y="146.0">entrefer</text><path d="M257.5 173.2 L390 192 H402" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="257.5" cy="173.2" r="2.2" fill="var(--ink)"/><text class="ts" x="408.0" y="196.0">induit : conducteurs au rotor</text><path d="M209.0 159.0 L390 242 H402" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="209.0" cy="159.0" r="2.2" fill="var(--ink)"/><text class="ts" x="408.0" y="246.0">arbre (et collecteur)</text>
           </svg>
         </div>
         <figcaption>Coupe schématique : les aimants du stator imposent le flux (flèches pointillées, d'un pôle N vers un pôle S) ; l'induit tourne dans cet entrefer et le collecteur, solidaire de l'arbre, réalise la commutation. Le détail du collecteur est traité au laboratoire de la section 2.</figcaption>
@@ -696,35 +720,8 @@ Couple d'un conducteur à la distance <i>r</i> de l'axe :   <i>M</i> = <i>F</i> 
 
       <figure class="fig-wide">
         <div class="figcard">
-          <svg viewBox="0 0 640 260" role="img" aria-label="Force de Laplace sur un conducteur puis couple sur une spire">
-            <g transform="translate(30,22)">
-              <text class="th" x="0" y="0">Conducteur</text>
-              <path d="M20 120 H 220" class="arr" marker-end="url(#ar)"/>
-              <path d="M20 70 H 220" class="arr" marker-end="url(#ar)"/>
-              <path d="M20 170 H 220" class="arr" marker-end="url(#ar)"/>
-              <text class="t" x="230" y="124">B</text>
-              <circle cx="120" cy="120" r="28" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.8"/>
-              <circle cx="120" cy="120" r="5" fill="var(--ink)"/>
-              <path d="M120 88 V 22" class="arr" marker-end="url(#ar)"/>
-              <text class="t" x="132" y="46">F</text>
-              <text class="ts" x="0" y="215">• : courant <tspan class="tm">i</tspan> sortant</text>
-            </g>
-            <g transform="translate(370,22)">
-              <text class="th" x="0" y="0">Spire</text>
-              <path d="M0 60 H 190" class="arr" marker-end="url(#ar)"/>
-              <path d="M0 150 H 190" class="arr" marker-end="url(#ar)"/>
-              <rect x="45" y="45" width="110" height="120" fill="none" stroke="var(--coral)" stroke-width="2.1" rx="3"/>
-              <circle cx="45" cy="105" r="13" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
-              <circle cx="45" cy="105" r="4.5" fill="var(--ink)"/>
-              <circle cx="155" cy="105" r="13" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
-              <path d="M149 99 L161 111 M161 99 L149 111" class="wire"/>
-              <path d="M45 90 V 38" class="arr" marker-end="url(#ar)"/>
-              <text class="t" x="56" y="56">F</text>
-              <path d="M155 120 V 196" class="arr" marker-end="url(#ar)"/>
-              <text class="t" x="166" y="184">F</text>
-              <path d="M25 35 C 60 2, 140 2, 175 35" class="arr" marker-end="url(#ar)"/>
-              <text class="ts" x="96" y="24">M<tspan class="tm">em</tspan></text>
-            </g>
+          <svg viewBox="0 0 640 250" role="img" aria-label="Force de Laplace sur un conducteur, puis couple sur une spire vue en coupe">
+<text class="th" x="60.0" y="30.0">Conducteur seul</text><line x1="50.0" y1="70.0" x2="270.0" y2="70.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><line x1="50.0" y1="125.0" x2="270.0" y2="125.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><line x1="50.0" y1="180.0" x2="270.0" y2="180.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><text class="ts" x="278.0" y="129.0">B</text><circle cx="150" cy="125" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="150" cy="125" r="4.5" fill="var(--ink)"/><line x1="150.0" y1="104.0" x2="150.0" y2="52.0" stroke="var(--coral)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#fg-coral)"/><text class="ts" x="160.0" y="60.0">F = i l B</text><text class="tm" x="60.0" y="226.0">• courant sortant : F = i l × B vers le haut</text><text class="th" x="370.0" y="30.0">Spire en coupe (deux conducteurs)</text><line x1="350.0" y1="70.0" x2="610.0" y2="70.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><line x1="350.0" y1="125.0" x2="610.0" y2="125.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><line x1="350.0" y1="180.0" x2="610.0" y2="180.0" stroke="var(--faint)" stroke-width="1.3" stroke-linecap="round" marker-end="url(#fg-faint)"/><circle cx="480" cy="125" r="62" fill="none" stroke="var(--muted)" stroke-dasharray="4 4"/><circle cx="418" cy="125" r="13" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="418" cy="125" r="3.5" fill="var(--ink)"/><circle cx="542" cy="125" r="13" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><path d="M533 116 L551 134 M551 116 L533 134" stroke="var(--ink)" stroke-width="1.8"/><line x1="418.0" y1="110.0" x2="418.0" y2="66.0" stroke="var(--coral)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#fg-coral)"/><line x1="542.0" y1="140.0" x2="542.0" y2="184.0" stroke="var(--coral)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#fg-coral)"/><path d="M458 112 A 26 26 0 1 1 468 148" fill="none" stroke="var(--accent)" stroke-width="2.2" marker-end="url(#fg-accent)"/><text class="ts" x="480.0" y="129.0" text-anchor="middle">M</text><text class="tm" x="480.0" y="216.0" text-anchor="middle">forces opposées → couple (sens horaire)</text><text class="tm" x="480.0" y="234.0" text-anchor="middle">le collecteur inverse i à chaque demi-tour</text>
           </svg>
         </div>
         <figcaption>À gauche : un conducteur vu de dessus, courant sortant (•), champ <span class="fx">B</span> vers la droite, force <span class="fx">F</span> vers le haut. À droite : les deux conducteurs d'une spire portent des courants opposés ; les forces opposées forment un couple. Le collecteur inverse le courant à chaque demi-tour pour conserver le sens du couple.</figcaption>
@@ -741,6 +738,7 @@ Couple d'un conducteur à la distance <i>r</i> de l'axe :   <i>M</i> = <i>F</i> 
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="laplace" viewBox="0 0 640 260" role="img" aria-label="Coupe de MCC bipolaire, deux conducteurs, forces de Laplace, couple et commutation"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -756,36 +754,12 @@ Couple d'un conducteur à la distance <i>r</i> de l'axe :   <i>M</i> = <i>F</i> 
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Sans courant, aucune force : le conducteur immobile dans le champ ne produit rien.","code":"i = 0  →  F = 0","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"0 A","type":"courant","kind":"int"},
-            {"id":"f","name":"F","value":"0 N","type":"force","kind":"ptr"},
-            {"id":"m","name":"M","value":"0 N·m","type":"couple","kind":"char"}]}],"arrows":[]},
-          {"label":"On établit <b>i = 10 A</b> : la force vaut <b>F = i l B = 10 × 0,2 × 0,8 = 1,6 N</b>.","code":"F = i · l · B","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"10 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"new"},
-            {"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"new"}]}],"arrows":[]},
-          {"label":"On inverse le courant (<b>i = −10 A</b>) : la force et le couple changent de sens. Un moteur freinerait.","code":"i < 0 → F < 0","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"−10 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"f","name":"F","value":"−1,6 N","type":"force","kind":"ptr","state":"changed"},
-            {"id":"m","name":"M","value":"−0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"Le collecteur inverse le courant quand le conducteur passe sous l'autre pôle : le couple reste <b>positif</b>.","code":"commutation → i change de signe","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"+10 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"changed"},
-            {"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"Avec <b>i = 20 A</b>, la spire (deux conducteurs) produit <b>0,48 N·m</b> : le couple double avec le courant.","code":"M = 2 · F · r","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"20 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr","state":"changed"},
-            {"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"Résultat : un couple toujours dans le même sens et proportionnel au courant. C'est exactement <b>M<sub>em</sub> = kΦ i</b>, avec kΦ qui regroupe la géométrie et le champ.","code":"M_em = kΦ · i","groups":[{"title":"Grandeurs","cells":[
-            {"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},
-            {"id":"i","name":"i","value":"20 A","type":"courant","kind":"int"},
-            {"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr"},
-            {"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char"}]}],"arrows":[]}
+          {"label":"Sans courant, aucune force : le conducteur immobile dans le champ ne produit rien.","code":"i = 0  →  F = 0","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"0 A","type":"courant","kind":"int"},{"id":"f","name":"F","value":"0 N","type":"force","kind":"ptr"},{"id":"m","name":"M","value":"0 N·m","type":"couple","kind":"char"}]}],"arrows":[],"scene":{"th":180,"i":0,"F":0.0,"ti":"0 A","tF":"0,0 N","tM":"M = F·r = 0,00 N·m","note":"","note2":""}},
+          {"label":"On établit <b>i = 10 A</b> : la force vaut <b>F = i l B = 10 × 0,2 × 0,8 = 1,6 N</b>.","code":"F = i · l · B","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"10 A","type":"courant","kind":"int","state":"changed"},{"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"new"},{"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"new"}]}],"arrows":[],"scene":{"th":180,"i":10,"F":1.6,"ti":"10 A","tF":"1,6 N","tM":"M = F·r = 0,12 N·m","note":"le conducteur sous N pousse vers le haut,","note2":"celui sous S vers le bas : couple horaire"}},
+          {"label":"On inverse le courant (<b>i = −10 A</b>) : la force et le couple changent de sens. Un moteur freinerait.","code":"i < 0 → F < 0","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"−10 A","type":"courant","kind":"int","state":"changed"},{"id":"f","name":"F","value":"−1,6 N","type":"force","kind":"ptr","state":"changed"},{"id":"m","name":"M","value":"−0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"th":180,"i":-10,"F":-1.6,"ti":"−10 A","tF":"−1,6 N","tM":"M = F·r = −0,12 N·m","note":"courant inversé : forces et couple","note2":"changent de sens"}},
+          {"label":"Le collecteur inverse le courant quand le conducteur passe sous l'autre pôle : le couple reste <b>positif</b>.","code":"commutation → i change de signe","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"+10 A","type":"courant","kind":"int","state":"changed"},{"id":"f","name":"F","value":"1,6 N","type":"force","kind":"ptr","state":"changed"},{"id":"m","name":"M","value":"0,12 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"th":0,"i":10,"F":1.6,"ti":"10 A","tF":"1,6 N","tM":"M = F·r = 0,12 N·m","note":"a est passé sous S : le collecteur","note2":"a inversé son courant ; M garde son sens"}},
+          {"label":"Avec <b>i = 20 A</b>, la spire (deux conducteurs) produit <b>0,48 N·m</b> : le couple double avec le courant.","code":"M = 2 · F · r","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"20 A","type":"courant","kind":"int","state":"changed"},{"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr","state":"changed"},{"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"th":0,"i":20,"F":3.2,"ti":"20 A","tF":"3,2 N","tM":"M = 2·F·r = 0,48 N·m","note":"deux conducteurs, deux forces :","note2":"le couple double avec le courant"}},
+          {"label":"Résultat : un couple toujours dans le même sens et proportionnel au courant. C'est exactement <b>M<sub>em</sub> = kΦ i</b>, avec kΦ qui regroupe la géométrie et le champ.","code":"M_em = kΦ · i","groups":[{"title":"Grandeurs","cells":[{"id":"b","name":"B","value":"0,8 T","type":"champ","kind":"heap"},{"id":"i","name":"i","value":"20 A","type":"courant","kind":"int"},{"id":"f","name":"F","value":"3,2 N","type":"force","kind":"ptr"},{"id":"m","name":"M","value":"0,48 N·m","type":"couple","kind":"char"}]}],"arrows":[],"scene":{"th":0,"i":20,"F":3.2,"ti":"20 A","tF":"3,2 N","tM":"M = 2·F·r = 0,48 N·m","note":"M_em = kΦ · i","note2":""}}
         ]}
         </script>
       </div>
@@ -862,41 +836,8 @@ Sur le banc à excitation nominale :  <i>k</i>Φ ≈ 2,22 N·m/A
 
       <figure class="fig-wide">
         <div class="figcard">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Schéma de mesure de l'essai moteur : alimentation réglable, ampèremètre, voltmètre, induit, tachymètre et excitation séparée">
-            <rect x="36" y="58" width="80" height="34" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="th" x="76" y="80" text-anchor="middle">u</text>
-            <text class="ts" x="36" y="108">réglable</text>
-            <path d="M116 75 H 156" class="wire"/>
-            <circle cx="170" cy="75" r="14" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="t" x="170" y="80" text-anchor="middle">A</text>
-            <path d="M184 75 H 330" class="wire"/>
-            <path d="M290 66 H 320" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="296" y="58">i</text>
-            <circle cx="330" cy="110" r="36" fill="var(--card2)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="th" x="330" y="116" text-anchor="middle">M</text>
-            <path d="M250 75 V 98" class="wire"/>
-            <circle cx="250" cy="112" r="14" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="t" x="250" y="117" text-anchor="middle">V</text>
-            <path d="M250 126 V 182 H 76 V 92" class="wire"/>
-            <path d="M330 146 V 182" class="wire"/>
-            <line x1="366" y1="110" x2="420" y2="110" class="wire-d"/>
-            <rect x="420" y="96" width="100" height="28" rx="4" fill="var(--card)" stroke="var(--muted)" stroke-width="1.2"/>
-            <text class="ts" x="470" y="115" text-anchor="middle">n (tachymètre)</text>
-            <text class="ts" x="330" y="204" text-anchor="middle">induit MCC</text>
-            <rect x="36" y="236" width="60" height="28" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="th" x="66" y="255" text-anchor="middle">U<tspan class="tm">f</tspan></text>
-            <path d="M96 250 H 140" class="wire"/>
-            <circle cx="154" cy="250" r="12" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
-            <text class="ts" x="154" y="254" text-anchor="middle">A</text>
-            <path d="M166 250 H 180" class="wire"/>
-            <rect x="180" y="240" width="50" height="20" rx="3" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
-            <text class="ts" x="205" y="232" text-anchor="middle">R<tspan class="tm">exc</tspan></text>
-            <path d="M230 250 H 280" class="wire"/>
-            <circle cx="306" cy="250" r="26" fill="var(--card2)" stroke="var(--coral)" stroke-width="1.8"/>
-            <text class="t" x="306" y="255" text-anchor="middle" fill="var(--coral)">f</text>
-            <path d="M306 276 H 66 V 264" class="wire"/>
-            <text class="ts" x="360" y="246">excitation séparée : R_exc, réglage de I<tspan class="tm">f</tspan></text>
-            <text class="ts" x="360" y="264">R<tspan class="tm">f</tspan> = 64 Ω mesurée à l'ohmmètre</text>
+          <svg viewBox="0 0 640 280" role="img" aria-label="Schéma de mesure de l'essai moteur : alimentation réglable, ampèremètre série, voltmètre aux bornes de l'induit, tachymètre et circuit d'excitation séparé">
+<circle cx="70" cy="110" r="24" class="sc-comp" style="fill:var(--card);stroke:var(--ink);stroke-width:1.6"/><text class="th" x="70.0" y="115.0" text-anchor="middle">u</text><text class="tm" x="100.0" y="150.0">réglable</text><path d="M70 86 V50 H160 M196 50 H330 V82 M330 138 V170 H70 V134" fill="none" stroke="var(--ink)" stroke-width="1.6"/><circle cx="178" cy="50" r="16" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="th" x="178.0" y="55.0" text-anchor="middle">A</text><line x1="210.0" y1="40.0" x2="250.0" y2="40.0" stroke="var(--coral)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-coral)"/><text class="ts" x="230.0" y="32.0" text-anchor="middle">i</text><circle cx="330" cy="110" r="28" class="core"/><text class="th" x="330.0" y="115.0" text-anchor="middle">M</text><rect x="322" y="78" width="16" height="6" fill="var(--ink)"/><rect x="322" y="136" width="16" height="6" fill="var(--ink)"/><path d="M250 50 V88 M250 132 V170" fill="none" stroke="var(--ink)" stroke-width="1.6"/><circle cx="250" cy="110" r="16" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="th" x="250.0" y="115.0" text-anchor="middle">V</text><path d="M358 110 H450" fill="none" stroke="var(--muted)" stroke-width="3"/><circle cx="470" cy="110" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.4"/><text class="th" x="470.0" y="115.0" text-anchor="middle">n</text><text class="ts" x="498.0" y="114.0">tachymètre</text><text class="tm" x="330.0" y="158.0" text-anchor="middle">induit</text><circle cx="70" cy="232" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="ts" x="70.0" y="237.0" text-anchor="middle">U_f</text><path d="M70 214 V200 H140 M166 200 H200 M250 200 H300 M360 200 H390 V264 H70 V250" fill="none" stroke="var(--ink)" stroke-width="1.6"/><circle cx="153" cy="200" r="13" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="ts" x="153.0" y="205.0" text-anchor="middle">A</text><rect x="200" y="193" width="50" height="14" rx="2" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="tm" x="225.0" y="188.0" text-anchor="middle">R_exc</text><path d="M300.0 208.0 C 300.0 188.0, 312.0 188.0, 311.0 208.0 M312.0 208.0 C 312.0 188.0, 324.0 188.0, 323.0 208.0 M324.0 208.0 C 324.0 188.0, 336.0 188.0, 335.0 208.0 M336.0 208.0 C 336.0 188.0, 348.0 188.0, 347.0 208.0 M348.0 208.0 C 348.0 188.0, 360.0 188.0, 359.0 208.0 " class="coil" style="stroke:var(--coral)"/><text class="tm" x="330.0" y="230.0" text-anchor="middle">excitation f</text><text class="tm" x="420.0" y="226.0">banc : excitation bobinée séparée,</text><text class="tm" x="420.0" y="242.0">R_f = 64 Ω à l'ohmmètre</text>
           </svg>
         </div>
         <figcaption>Montage de l'essai moteur du TP2 (d'après la source CircuiTikZ du cours) : alimentation d'induit réglable, ampèremètre série, voltmètre en parallèle sur l'induit, tachymètre sur l'arbre. Sur le banc, l'excitation est bobinée séparée (<span class="fx">U<sub>f</sub></span>, <span class="fx">I<sub>f</sub></span>) ; le chapitre modélise la MCC à aimants permanents, où cette partie n'existe pas.</figcaption>
@@ -1010,35 +951,8 @@ Entrées : <i>u</i>, <i>M</i><sub>r</sub>        Sorties : <i>i</i>, Ω
 
       <figure class="fig-wide">
         <div class="figcard">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Schéma-bloc du modèle dynamique : somme, bloc électrique, bloc de conversion, somme mécanique, bloc mécanique et contre-réaction de la fém">
-            <text class="ts" x="24" y="78">u</text>
-            <path d="M20 90 H 54" class="arr" marker-end="url(#ar)"/>
-            <circle cx="72" cy="90" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="t" x="72" y="95" text-anchor="middle">Σ</text>
-            <rect x="110" y="64" width="130" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
-            <text class="ts" x="175" y="95" text-anchor="middle">1/(R + L·s)</text>
-            <path d="M90 90 H 110" class="arr" marker-end="url(#ar)"/>
-            <path d="M240 90 H 276" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="258" y="80">i</text>
-            <rect x="276" y="64" width="80" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
-            <text class="t" x="316" y="95" text-anchor="middle">kΦ</text>
-            <path d="M356 90 H 396" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="376" y="80">M<tspan class="tm">em</tspan></text>
-            <circle cx="414" cy="90" r="18" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="t" x="414" y="95" text-anchor="middle">Σ</text>
-            <path d="M414 20 V 72" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="424" y="42">M<tspan class="tm">r</tspan></text>
-            <path d="M432 90 H 456" class="arr" marker-end="url(#ar)"/>
-            <rect x="456" y="64" width="130" height="52" rx="6" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.4"/>
-            <text class="ts" x="521" y="95" text-anchor="middle">1/(J·s + f)</text>
-            <path d="M586 90 H 620" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="604" y="80">Ω</text>
-            <path d="M600 90 V 240 H 72 V 108" class="arr" marker-end="url(#ar)"/>
-            <text class="ts" x="240" y="232">u<tspan class="tm">i</tspan> = kΦ · Ω (contre-réaction)</text>
-            <rect x="100" y="40" width="300" height="110" fill="none" stroke="var(--faint)" stroke-width="1" stroke-dasharray="4 4" rx="8"/>
-            <text class="ts" x="104" y="34">partie électrique</text>
-            <rect x="448" y="40" width="146" height="110" fill="none" stroke="var(--faint)" stroke-width="1" stroke-dasharray="4 4" rx="8"/>
-            <text class="ts" x="452" y="34">partie mécanique</text>
+          <svg viewBox="0 0 640 260" role="img" aria-label="Schéma-bloc du modèle dynamique : u moins u_i, bloc électrique, kPhi, M_em moins M_r, bloc mécanique, retour par kPhi">
+<line x1="20.0" y1="110.0" x2="83.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="ts" x="30.0" y="102.0">u</text><text class="ts" x="76.0" y="96.0" text-anchor="middle">+</text><circle cx="100" cy="110" r="15" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="ts" x="100.0" y="115.0" text-anchor="middle">Σ</text><line x1="115.0" y1="110.0" x2="160.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><rect x="160" y="88" width="120" height="44" rx="8" class="core" style="stroke-width:1.4"/><text class="ts" x="220.0" y="115.0" text-anchor="middle">1/(R + L s)</text><line x1="280.0" y1="110.0" x2="330.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="ts" x="305.0" y="102.0" text-anchor="middle">i</text><rect x="330" y="88" width="60" height="44" rx="8" class="core" style="stroke-width:1.4"/><text class="ts" x="360.0" y="115.0" text-anchor="middle">kΦ</text><line x1="390.0" y1="110.0" x2="433.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="tm" x="410.0" y="102.0" text-anchor="middle">M_em</text><text class="ts" x="432.0" y="134.0" text-anchor="middle">+</text><circle cx="450" cy="110" r="15" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><text class="ts" x="450.0" y="115.0" text-anchor="middle">Σ</text><line x1="450.0" y1="30.0" x2="450.0" y2="93.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="ts" x="458.0" y="40.0">M_r</text><text class="ts" x="462.0" y="92.0">−</text><line x1="465.0" y1="110.0" x2="490.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><rect x="490" y="88" width="100" height="44" rx="8" class="core" style="stroke-width:1.4"/><text class="ts" x="540.0" y="115.0" text-anchor="middle">1/(J s + f)</text><line x1="590.0" y1="110.0" x2="630.0" y2="110.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="ts" x="612.0" y="102.0" text-anchor="middle">Ω</text><path d="M612 110 V230 H360" fill="none" stroke="var(--ink)" stroke-width="1.6"/><rect x="300" y="208" width="60" height="44" rx="8" class="core" style="stroke-width:1.4"/><text class="ts" x="330.0" y="235.0" text-anchor="middle">kΦ</text><path d="M300 230 H100 V127" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#fg-ink)"/><text class="tm" x="200.0" y="222.0" text-anchor="middle">u_i = kΦ · Ω</text><text class="ts" x="88.0" y="142.0" text-anchor="middle">−</text><rect x="135" y="56" width="275" height="96" rx="8" fill="none" stroke="var(--faint)" stroke-dasharray="5 4"/><text class="tm" x="140.0" y="50.0">partie électrique</text><rect x="440" y="56" width="160" height="96" rx="8" fill="none" stroke="var(--faint)" stroke-dasharray="5 4" transform="translate(40 0)"/><text class="tm" x="482.0" y="50.0">partie mécanique</text>
           </svg>
         </div>
         <figcaption>Boucle de régulation naturelle de la machine : la vitesse crée la fém, qui réduit le courant ; le courant crée le couple, qui augmente la vitesse. Le schéma-bloc est linéaire tant que <span class="fx">kΦ</span> est constant.</figcaption>
@@ -1093,7 +1007,7 @@ Vitesse à vide (couple résistant nul) :  <i>n</i><sub>0</sub> = 60 · <i>u</i>
             <text class="ts" x="208" y="68">M<tspan class="tm">r</tspan> = 10 N·m</text>
           </svg>
         </div>
-        <figcaption>Caractéristiques mécaniques calculées avec <span class="fx">R<sub>a</sub> = 1,474 Ω</span> et <span class="fx">kΦ = 2,22 V·s/rad</span> : à tension d'induit constante, la vitesse baisse peu quand le couple augmente (de 1 721 à 1 610 tr/min pour 38,9 N·m à 400 V).</figcaption>
+        <figcaption>Caractéristiques mécaniques calculées avec <span class="fx">R<sub>a</sub> = 1,474 Ω</span> et <span class="fx">kΦ = 2,22 V·s/rad</span> : à tension d'induit constante, la vitesse baisse peu quand le couple augmente (de 1 721 à 1 609 tr/min pour 38,9 N·m à 400 V).</figcaption>
       </figure>
 
       <div class="lab" data-lab="couple-charge">
@@ -1102,6 +1016,7 @@ Vitesse à vide (couple résistant nul) :  <i>n</i><sub>0</sub> = 60 · <i>u</i>
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="couple-charge" viewBox="0 0 640 260" role="img" aria-label="Circuit d'induit, partage de la tension et caractéristique n(M)"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1117,48 +1032,12 @@ Vitesse à vide (couple résistant nul) :  <i>n</i><sub>0</sub> = 60 · <i>u</i>
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"À vide, couple résistant nul : <b>i = 0</b>, <b>u_i = u = 400 V</b> et <b>n = 1 721 tr/min</b> (vitesse théorique ; le point mesuré à vide donne 1 710 tr/min car les frottements demandent un peu de courant).","code":"n0 = 60·u/(2π·kΦ)","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"0 N·m","type":"couple","kind":"heap"},
-            {"id":"i","name":"i","value":"0,00 A","type":"courant","kind":"int"},
-            {"id":"ri","name":"R·i","value":"0,0 V","type":"chute","kind":"ptr"},
-            {"id":"ui","name":"u_i","value":"400,0 V","type":"fém","kind":"char"},
-            {"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[]},
-          {"label":"On charge à <b>M_r = 5 N·m</b> : le moteur appelle <b>i = M_r/kΦ = 2,25 A</b>, la chute vaut 3,3 V.","code":"i = M_r / kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"5 N·m","type":"couple","kind":"heap","state":"changed"},
-            {"id":"i","name":"i","value":"2,25 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ri","name":"R·i","value":"3,3 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"ui","name":"u_i","value":"396,7 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"1 706 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>M_r = 10 N·m</b> : <b>i = 4,50 A</b>, chute 6,6 V, <b>n = 1 692 tr/min</b>.","code":"Ω = (u − R·i)/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"10 N·m","type":"couple","kind":"heap","state":"changed"},
-            {"id":"i","name":"i","value":"4,50 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ri","name":"R·i","value":"6,6 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"ui","name":"u_i","value":"393,4 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"1 692 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>M_r = 20 N·m</b> : <b>i = 9,01 A</b>, chute 13,3 V, <b>n = 1 663 tr/min</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"20 N·m","type":"couple","kind":"heap","state":"changed"},
-            {"id":"i","name":"i","value":"9,01 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ri","name":"R·i","value":"13,3 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"ui","name":"u_i","value":"386,7 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"1 663 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>M_r = 30 N·m</b> : <b>i = 13,51 A</b>, chute 19,9 V, <b>n = 1 635 tr/min</b>.","code":"n ne dépend de M que par R·i","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"30 N·m","type":"couple","kind":"heap","state":"changed"},
-            {"id":"i","name":"i","value":"13,51 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ri","name":"R·i","value":"19,9 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"ui","name":"u_i","value":"380,1 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"1 635 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>M_r = 38,9 N·m</b> : <b>i = 17,52 A</b>, <b>n = 1 610 tr/min</b>. La vitesse a baissé de 111 tr/min (6,5 %) pour 38,9 N·m : la caractéristique est dure.","code":"Δn/n0 = R·i/u","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"mr","name":"M_r","value":"38,9 N·m","type":"couple","kind":"heap","state":"changed"},
-            {"id":"i","name":"i","value":"17,52 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ri","name":"R·i","value":"25,8 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"ui","name":"u_i","value":"374,2 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"1 610 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]}
+          {"label":"À vide, couple résistant nul : <b>i = 0</b>, <b>u_i = u = 400 V</b> et <b>n = 1 721 tr/min</b> (vitesse théorique ; le point mesuré à vide donne 1 710 tr/min car les frottements demandent un peu de courant).","code":"n0 = 60·u/(2π·kΦ)","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"0 N·m","type":"couple","kind":"heap"},{"id":"i","name":"i","value":"0,00 A","type":"courant","kind":"int"},{"id":"ri","name":"R·i","value":"0,0 V","type":"chute","kind":"ptr"},{"id":"ui","name":"u_i","value":"400,0 V","type":"fém","kind":"char"},{"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[],"scene":{"M":0,"n":1720.5939793718414,"i":0.0,"Ri":0.0,"ui":400.0,"tM":"0 N·m","tRi":"0,0 V","tui":"400,0 V"}},
+          {"label":"On charge à <b>M_r = 5 N·m</b> : le moteur appelle <b>i = M_r/kΦ = 2,25 A</b>, la chute vaut 3,3 V.","code":"i = M_r / kΦ","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"5 N·m","type":"couple","kind":"heap","state":"changed"},{"id":"i","name":"i","value":"2,25 A","type":"courant","kind":"int","state":"changed"},{"id":"ri","name":"R·i","value":"3,3 V","type":"chute","kind":"ptr","state":"changed"},{"id":"ui","name":"u_i","value":"396,7 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"1 706 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"M":5,"n":1706.3138243853884,"i":2.252252252252252,"Ri":3.3198198198198194,"ui":396.6801801801802,"tM":"5 N·m","tRi":"3,3 V","tui":"396,7 V"}},
+          {"label":"<b>M_r = 10 N·m</b> : <b>i = 4,50 A</b>, chute 6,6 V, <b>n = 1 692 tr/min</b>.","code":"Ω = (u − R·i)/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"10 N·m","type":"couple","kind":"heap","state":"changed"},{"id":"i","name":"i","value":"4,50 A","type":"courant","kind":"int","state":"changed"},{"id":"ri","name":"R·i","value":"6,6 V","type":"chute","kind":"ptr","state":"changed"},{"id":"ui","name":"u_i","value":"393,4 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"1 692 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"M":10,"n":1692.0336693989348,"i":4.504504504504504,"Ri":6.639639639639639,"ui":393.36036036036035,"tM":"10 N·m","tRi":"6,6 V","tui":"393,4 V"}},
+          {"label":"<b>M_r = 20 N·m</b> : <b>i = 9,01 A</b>, chute 13,3 V, <b>n = 1 663 tr/min</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"20 N·m","type":"couple","kind":"heap","state":"changed"},{"id":"i","name":"i","value":"9,01 A","type":"courant","kind":"int","state":"changed"},{"id":"ri","name":"R·i","value":"13,3 V","type":"chute","kind":"ptr","state":"changed"},{"id":"ui","name":"u_i","value":"386,7 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"1 663 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"M":20,"n":1663.4733594260288,"i":9.009009009009008,"Ri":13.279279279279278,"ui":386.72072072072075,"tM":"20 N·m","tRi":"13,3 V","tui":"386,7 V"}},
+          {"label":"<b>M_r = 30 N·m</b> : <b>i = 13,51 A</b>, chute 19,9 V, <b>n = 1 635 tr/min</b>.","code":"n ne dépend de M que par R·i","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"30 N·m","type":"couple","kind":"heap","state":"changed"},{"id":"i","name":"i","value":"13,51 A","type":"courant","kind":"int","state":"changed"},{"id":"ri","name":"R·i","value":"19,9 V","type":"chute","kind":"ptr","state":"changed"},{"id":"ui","name":"u_i","value":"380,1 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"1 635 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"M":30,"n":1634.913049453122,"i":13.513513513513512,"Ri":19.918918918918916,"ui":380.0810810810811,"tM":"30 N·m","tRi":"19,9 V","tui":"380,1 V"}},
+          {"label":"<b>M_r = 38,9 N·m</b> : <b>i = 17,52 A</b>, <b>n = 1 609 tr/min</b>. La vitesse a baissé de 111 tr/min (6,5 %) pour 38,9 N·m : la caractéristique est dure.","code":"Δn/n0 = R·i/u","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"mr","name":"M_r","value":"38,9 N·m","type":"couple","kind":"heap","state":"changed"},{"id":"i","name":"i","value":"17,52 A","type":"courant","kind":"int","state":"changed"},{"id":"ri","name":"R·i","value":"25,8 V","type":"chute","kind":"ptr","state":"changed"},{"id":"ui","name":"u_i","value":"374,2 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"1 609 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"M":38.9,"n":1609.4943735772351,"i":17.52252252252252,"Ri":25.828198198198198,"ui":374.1718018018018,"tM":"38,9 N·m","tRi":"25,8 V","tui":"374,2 V"}}
         ]}
         </script>
       </div>
@@ -1197,6 +1076,7 @@ Avec un rhéostat série <i>R</i><sub>d</sub> :   <i>i</i> = <i>u</i> / (<i>R</i
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="demarrage" viewBox="0 0 640 260" role="img" aria-label="Rotor, partage de la tension et droite du courant en fonction de la vitesse"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1212,42 +1092,12 @@ Avec un rhéostat série <i>R</i><sub>d</sub> :   <i>i</i> = <i>u</i> / (<i>R</i
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"À l'enclenchement, <b>Ω = 0</b> donc <b>u_i = 0</b> : <b>i = 400/1,474 = 271 A</b>, soit environ 200 fois le courant de régime.","code":"i = u / R","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"0 V","type":"fém","kind":"char"},
-            {"id":"ri","name":"R·i","value":"400 V","type":"chute","kind":"ptr","state":"err"},
-            {"id":"i","name":"i","value":"271 A","type":"courant","kind":"int","state":"err"},
-            {"id":"n","name":"n","value":"0 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[]},
-          {"label":"La vitesse monte : <b>Ω = 50 rad/s</b> (477 tr/min), <b>u_i = 111 V</b>, <b>i = 196 A</b>.","code":"u_i = kΦ · Ω","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"111 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"ri","name":"R·i","value":"289 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"i","name":"i","value":"196 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"n","name":"n","value":"477 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>Ω = 100 rad/s</b> (955 tr/min) : <b>u_i = 222 V</b>, <b>i = 121 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"222 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"ri","name":"R·i","value":"178 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"i","name":"i","value":"121 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"n","name":"n","value":"955 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>Ω = 150 rad/s</b> (1 432 tr/min) : <b>u_i = 333 V</b>, <b>i = 45,5 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"333 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"ri","name":"R·i","value":"67,0 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"i","name":"i","value":"45,5 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"n","name":"n","value":"1 432 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>Ω = 175 rad/s</b> (1 671 tr/min) : <b>u_i = 388,5 V</b>, <b>i = 7,80 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"388,5 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"ri","name":"R·i","value":"11,5 V","type":"chute","kind":"ptr","state":"changed"},
-            {"id":"i","name":"i","value":"7,80 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"n","name":"n","value":"1 671 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>Ω = 180,2 rad/s</b> (1 721 tr/min) : <b>u_i = 400 V</b>, <b>i = 0</b>. Le courant de démarrage est limité par R seul : d'où le démarrage sous tension réduite.","code":"Ω → u/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[
-            {"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},
-            {"id":"ui","name":"u_i","value":"400 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"ri","name":"R·i","value":"0 V","type":"chute","kind":"ptr"},
-            {"id":"i","name":"i","value":"0 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[]}
+          {"label":"À l'enclenchement, <b>Ω = 0</b> donc <b>u_i = 0</b> : <b>i = 400/1,474 = 271 A</b>, soit environ 200 fois le courant de régime.","code":"i = u / R","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"0 V","type":"fém","kind":"char"},{"id":"ri","name":"R·i","value":"400 V","type":"chute","kind":"ptr","state":"err"},{"id":"i","name":"i","value":"271 A","type":"courant","kind":"int","state":"err"},{"id":"n","name":"n","value":"0 tr/min","type":"vitesse","kind":"char"}]}],"arrows":[],"scene":{"n":0.0,"i":271.37042062415196,"ui":0.0,"Ri":400.0,"ti":"271 A","tW":"0 rad/s","tRi":"400 V","tui":"0 V"}},
+          {"label":"La vitesse monte : <b>Ω = 50 rad/s</b> (477 tr/min), <b>u_i = 111 V</b>, <b>i = 196 A</b>.","code":"u_i = kΦ · Ω","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"111 V","type":"fém","kind":"char","state":"changed"},{"id":"ri","name":"R·i","value":"289 V","type":"chute","kind":"ptr","state":"changed"},{"id":"i","name":"i","value":"196 A","type":"courant","kind":"int","state":"changed"},{"id":"n","name":"n","value":"477 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"n":477.46482927568604,"i":196.0651289009498,"ui":111.00000000000001,"Ri":289.0,"ti":"196 A","tW":"50 rad/s","tRi":"289 V","tui":"111 V"}},
+          {"label":"<b>Ω = 100 rad/s</b> (955 tr/min) : <b>u_i = 222 V</b>, <b>i = 121 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"222 V","type":"fém","kind":"char","state":"changed"},{"id":"ri","name":"R·i","value":"178 V","type":"chute","kind":"ptr","state":"changed"},{"id":"i","name":"i","value":"121 A","type":"courant","kind":"int","state":"changed"},{"id":"n","name":"n","value":"955 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"n":954.9296585513721,"i":120.75983717774761,"ui":222.00000000000003,"Ri":177.99999999999997,"ti":"121 A","tW":"100 rad/s","tRi":"178 V","tui":"222 V"}},
+          {"label":"<b>Ω = 150 rad/s</b> (1 432 tr/min) : <b>u_i = 333 V</b>, <b>i = 45,5 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"333 V","type":"fém","kind":"char","state":"changed"},{"id":"ri","name":"R·i","value":"67,0 V","type":"chute","kind":"ptr","state":"changed"},{"id":"i","name":"i","value":"45,5 A","type":"courant","kind":"int","state":"changed"},{"id":"n","name":"n","value":"1 432 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"n":1432.3944878270581,"i":45.45454545454542,"ui":333.00000000000006,"Ri":66.99999999999994,"ti":"45,5 A","tW":"150 rad/s","tRi":"67,0 V","tui":"333,0 V"}},
+          {"label":"<b>Ω = 175 rad/s</b> (1 671 tr/min) : <b>u_i = 388,5 V</b>, <b>i = 7,80 A</b>.","code":"i = (u − u_i)/R","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"388,5 V","type":"fém","kind":"char","state":"changed"},{"id":"ri","name":"R·i","value":"11,5 V","type":"chute","kind":"ptr","state":"changed"},{"id":"i","name":"i","value":"7,80 A","type":"courant","kind":"int","state":"changed"},{"id":"n","name":"n","value":"1 671 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"n":1671.1269024649011,"i":7.801899592944331,"ui":388.50000000000006,"Ri":11.499999999999943,"ti":"7,80 A","tW":"175 rad/s","tRi":"11,5 V","tui":"388,5 V"}},
+          {"label":"<b>Ω = 180,2 rad/s</b> (1 721 tr/min) : <b>u_i = 400 V</b>, <b>i = 0</b>. Le courant de démarrage est limité par R seul : d'où le démarrage sous tension réduite.","code":"Ω → u/kΦ","groups":[{"title":"Grandeurs d'induit","cells":[{"id":"u","name":"u","value":"400 V","type":"tension","kind":"int"},{"id":"ui","name":"u_i","value":"400 V","type":"fém","kind":"char","state":"changed"},{"id":"ri","name":"R·i","value":"0 V","type":"chute","kind":"ptr"},{"id":"i","name":"i","value":"0 A","type":"courant","kind":"int","state":"changed"},{"id":"n","name":"n","value":"1 721 tr/min","type":"vitesse","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"n":1720.5939793718414,"i":0.0,"ui":400.0,"Ri":0.0,"ti":"0 A","tW":"180,2 rad/s","tRi":"0 V","tui":"400 V"}}
         ]}
         </script>
       </div>
@@ -1345,6 +1195,7 @@ Moteur :  η = <i>P</i><sub>méc</sub> / <i>P</i><sub>él</sub>        Générat
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="generateur" viewBox="0 0 640 260" role="img" aria-label="Points mesurés U_a et U_i en fonction de I_a, puissance et couple"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1360,42 +1211,12 @@ Moteur :  η = <i>P</i><sub>méc</sub> / <i>P</i><sub>él</sub>        Générat
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Point à vide : <b>I_a = 0,15 A</b>, <b>U_a = 400 V</b>, <b>U_i = 400,2 V</b>. Le relevé note <b>P_i = 60 W</b>, ce n'est pas un vrai point à vide.","code":"U_i = U_a + R_a·I_a","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"0,15 A","type":"courant","kind":"int"},
-            {"id":"ua","name":"U_a","value":"400 V","type":"tension","kind":"char"},
-            {"id":"ui","name":"U_i","value":"400,2 V","type":"fém","kind":"char"},
-            {"id":"pi","name":"P_i","value":"60 W","type":"puissance","kind":"heap"},
-            {"id":"m","name":"M_é-m","value":"0,34 N·m","type":"couple","kind":"ptr"}]}],"arrows":[]},
-          {"label":"<b>I_a = 1,4 A</b> : <b>U_a = 396 V</b>, <b>U_i = 398,1 V</b>, <b>P_i = 557 W</b>.","code":"P_i = U_i · I_a","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"1,4 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ua","name":"U_a","value":"396 V","type":"tension","kind":"char","state":"changed"},
-            {"id":"ui","name":"U_i","value":"398,1 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"pi","name":"P_i","value":"557 W","type":"puissance","kind":"heap","state":"changed"},
-            {"id":"m","name":"M_é-m","value":"3,13 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>I_a = 4,63 A</b> : <b>P_i = 1 847 W</b>, <b>M_é-m = 10,4 N·m</b>. La chute <b>R_a I_a = 6,8 V</b> explique l'écart <b>U_i − U_a</b>.","code":"M_é-m = P_i / Ω","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"4,63 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ua","name":"U_a","value":"392 V","type":"tension","kind":"char","state":"changed"},
-            {"id":"ui","name":"U_i","value":"398,8 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"pi","name":"P_i","value":"1 847 W","type":"puissance","kind":"heap","state":"changed"},
-            {"id":"m","name":"M_é-m","value":"10,4 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>I_a = 10,5 A</b> : <b>P_i = 4 215 W</b>, <b>M_é-m = 23,7 N·m</b>.","code":"Ω = 2πn/60 = 178,02 rad/s","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"10,5 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ua","name":"U_a","value":"386 V","type":"tension","kind":"char","state":"changed"},
-            {"id":"ui","name":"U_i","value":"401,5 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"pi","name":"P_i","value":"4 215 W","type":"puissance","kind":"heap","state":"changed"},
-            {"id":"m","name":"M_é-m","value":"23,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"<b>I_a = 15,1 A</b> : <b>U_a = 375 V</b>, <b>P_i = 5 999 W</b>, <b>M_é-m = 33,7 N·m</b>.","code":"U_a = U_i − R_a·I_a","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"15,1 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ua","name":"U_a","value":"375 V","type":"tension","kind":"char","state":"changed"},
-            {"id":"ui","name":"U_i","value":"397,3 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"pi","name":"P_i","value":"5 999 W","type":"puissance","kind":"heap","state":"changed"},
-            {"id":"m","name":"M_é-m","value":"33,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"Pleine charge : <b>I_a = 17,2 A</b>, <b>U_a = 377 V</b>, <b>U_i = 402,3 V</b>, <b>P_i = 6 920 W</b>, <b>M_é-m = 38,9 N·m</b>. <b>ΔU = 23 V</b> contre <b>R_a I_a = 25,4 V</b> : <b>U_i</b> n'est pas exactement constant (dispersion 1,95 % sur les 10 points).","code":"ΔU = U_i − U_a","groups":[{"title":"Génératrice","cells":[
-            {"id":"ia","name":"I_a","value":"17,2 A","type":"courant","kind":"int","state":"changed"},
-            {"id":"ua","name":"U_a","value":"377 V","type":"tension","kind":"char","state":"changed"},
-            {"id":"ui","name":"U_i","value":"402,3 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"pi","name":"P_i","value":"6 920 W","type":"puissance","kind":"heap","state":"changed"},
-            {"id":"m","name":"M_é-m","value":"38,9 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[]}
+          {"label":"Point à vide : <b>I_a = 0,15 A</b>, <b>U_a = 400 V</b>, <b>U_i = 400,2 V</b>. Le relevé note <b>P_i = 60 W</b>, ce n'est pas un vrai point à vide.","code":"U_i = U_a + R_a·I_a","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"0,15 A","type":"courant","kind":"int"},{"id":"ua","name":"U_a","value":"400 V","type":"tension","kind":"char"},{"id":"ui","name":"U_i","value":"400,2 V","type":"fém","kind":"char"},{"id":"pi","name":"P_i","value":"60 W","type":"puissance","kind":"heap"},{"id":"m","name":"M_é-m","value":"0,34 N·m","type":"couple","kind":"ptr"}]}],"arrows":[],"scene":{"idx":0,"tIa":"0,15 A","tUa":"400 V","tUi":"400,2 V","tRI":"0,2 V","tPi":"60 W","tMem":"0,34 N·m"}},
+          {"label":"<b>I_a = 1,4 A</b> : <b>U_a = 396 V</b>, <b>U_i = 398,1 V</b>, <b>P_i = 557 W</b>.","code":"P_i = U_i · I_a","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"1,4 A","type":"courant","kind":"int","state":"changed"},{"id":"ua","name":"U_a","value":"396 V","type":"tension","kind":"char","state":"changed"},{"id":"ui","name":"U_i","value":"398,1 V","type":"fém","kind":"char","state":"changed"},{"id":"pi","name":"P_i","value":"557 W","type":"puissance","kind":"heap","state":"changed"},{"id":"m","name":"M_é-m","value":"3,13 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"idx":2,"tIa":"1,4 A","tUa":"396 V","tUi":"398,1 V","tRI":"2,1 V","tPi":"557 W","tMem":"3,1 N·m"}},
+          {"label":"<b>I_a = 4,63 A</b> : <b>P_i = 1 847 W</b>, <b>M_é-m = 10,4 N·m</b>. La chute <b>R_a I_a = 6,8 V</b> explique l'écart <b>U_i − U_a</b>.","code":"M_é-m = P_i / Ω","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"4,63 A","type":"courant","kind":"int","state":"changed"},{"id":"ua","name":"U_a","value":"392 V","type":"tension","kind":"char","state":"changed"},{"id":"ui","name":"U_i","value":"398,8 V","type":"fém","kind":"char","state":"changed"},{"id":"pi","name":"P_i","value":"1 847 W","type":"puissance","kind":"heap","state":"changed"},{"id":"m","name":"M_é-m","value":"10,4 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"idx":4,"tIa":"4,63 A","tUa":"392 V","tUi":"398,8 V","tRI":"6,8 V","tPi":"1 847 W","tMem":"10,4 N·m"}},
+          {"label":"<b>I_a = 10,5 A</b> : <b>P_i = 4 215 W</b>, <b>M_é-m = 23,7 N·m</b>.","code":"Ω = 2πn/60 = 178,02 rad/s","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"10,5 A","type":"courant","kind":"int","state":"changed"},{"id":"ua","name":"U_a","value":"386 V","type":"tension","kind":"char","state":"changed"},{"id":"ui","name":"U_i","value":"401,5 V","type":"fém","kind":"char","state":"changed"},{"id":"pi","name":"P_i","value":"4 215 W","type":"puissance","kind":"heap","state":"changed"},{"id":"m","name":"M_é-m","value":"23,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"idx":6,"tIa":"10,5 A","tUa":"386 V","tUi":"401,5 V","tRI":"15,5 V","tPi":"4 215 W","tMem":"23,7 N·m"}},
+          {"label":"<b>I_a = 15,1 A</b> : <b>U_a = 375 V</b>, <b>P_i = 5 999 W</b>, <b>M_é-m = 33,7 N·m</b>.","code":"U_a = U_i − R_a·I_a","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"15,1 A","type":"courant","kind":"int","state":"changed"},{"id":"ua","name":"U_a","value":"375 V","type":"tension","kind":"char","state":"changed"},{"id":"ui","name":"U_i","value":"397,3 V","type":"fém","kind":"char","state":"changed"},{"id":"pi","name":"P_i","value":"5 999 W","type":"puissance","kind":"heap","state":"changed"},{"id":"m","name":"M_é-m","value":"33,7 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"idx":8,"tIa":"15,1 A","tUa":"375 V","tUi":"397,3 V","tRI":"22,3 V","tPi":"5 999 W","tMem":"33,7 N·m"}},
+          {"label":"Pleine charge : <b>I_a = 17,2 A</b>, <b>U_a = 377 V</b>, <b>U_i = 402,3 V</b>, <b>P_i = 6 920 W</b>, <b>M_é-m = 38,9 N·m</b>. <b>ΔU = 23 V</b> contre <b>R_a I_a = 25,4 V</b> : <b>U_i</b> n'est pas exactement constant (dispersion 1,95 % sur les 10 points).","code":"ΔU = U_i − U_a","groups":[{"title":"Génératrice","cells":[{"id":"ia","name":"I_a","value":"17,2 A","type":"courant","kind":"int","state":"changed"},{"id":"ua","name":"U_a","value":"377 V","type":"tension","kind":"char","state":"changed"},{"id":"ui","name":"U_i","value":"402,3 V","type":"fém","kind":"char","state":"changed"},{"id":"pi","name":"P_i","value":"6 920 W","type":"puissance","kind":"heap","state":"changed"},{"id":"m","name":"M_é-m","value":"38,9 N·m","type":"couple","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"idx":9,"tIa":"17,2 A","tUa":"377 V","tUi":"402,3 V","tRI":"25,4 V","tPi":"6 920 W","tMem":"38,9 N·m"}}
         ]}
         </script>
       </div>
@@ -1436,26 +1257,7 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
       <figure class="fig-wide">
         <div class="figcard">
           <svg viewBox="0 0 640 300" role="img" aria-label="Points mesurés du défluxage et loi théorique n proportionnel à 1 sur If">
-            <path d="M70 40 V 250 H 610" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
-            <text class="ts" x="64" y="254" text-anchor="end">0</text>
-            <text class="ts" x="64" y="190" text-anchor="end">200</text>
-            <text class="ts" x="64" y="125" text-anchor="end">400</text>
-            <text class="ts" x="64" y="61" text-anchor="end">600</text>
-            <text class="ts" x="70" y="268" text-anchor="middle">0</text>
-            <text class="ts" x="190" y="268" text-anchor="middle">0,5</text>
-            <text class="ts" x="311" y="268" text-anchor="middle">1,0</text>
-            <text class="ts" x="431" y="268" text-anchor="middle">1,5</text>
-            <text class="ts" x="552" y="268" text-anchor="middle">2,0</text>
-            <text class="ts" x="335" y="292" text-anchor="middle">I_f (A)</text>
-            <text class="ts" x="0" y="0" transform="translate(22 145) rotate(-90)" text-anchor="middle">n (tr/min)</text>
-            <path d="M573 185 C 520 175, 450 160, 406 153 C 350 142, 280 78, 242 60" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-dasharray="6 4"/>
-            <circle cx="573" cy="185" r="5" fill="var(--accent)"/>
-            <circle cx="406" cy="172" r="5" fill="var(--accent)"/>
-            <circle cx="242" cy="118" r="5" fill="var(--accent)"/>
-            <text class="ts" x="584" y="182">201</text>
-            <text class="ts" x="416" y="168">243</text>
-            <text class="ts" x="252" y="114">408</text>
-            <text class="ts" x="300" y="58">n ∝ 1/I<tspan class="tm">f</tspan> (théorique)</text>
+<path d="M70 40 V 250 H 610" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="ts" x="64.0" y="254.0" text-anchor="end">0</text><text class="ts" x="64.0" y="189.7" text-anchor="end">200</text><text class="ts" x="64.0" y="125.3" text-anchor="end">400</text><text class="ts" x="64.0" y="61.0" text-anchor="end">600</text><text class="ts" x="70.0" y="268.0" text-anchor="middle">0</text><text class="ts" x="190.4" y="268.0" text-anchor="middle">0,5</text><text class="ts" x="310.8" y="268.0" text-anchor="middle">1,0</text><text class="ts" x="431.2" y="268.0" text-anchor="middle">1,5</text><text class="ts" x="551.6" y="268.0" text-anchor="middle">2,0</text><text class="ts" x="335.0" y="292.0" text-anchor="middle">I_f (A)</text><text class="ts" x="0" y="0" transform="translate(22 145) rotate(-90)" text-anchor="middle">n (tr/min)</text><path d="M238.6 56.9 L244.6 63.6 L250.6 69.8 L256.6 75.6 L262.6 81.1 L268.7 86.2 L274.7 91.0 L280.7 95.6 L286.7 99.8 L292.7 103.9 L298.8 107.7 L304.8 111.4 L310.8 114.9 L316.8 118.2 L322.8 121.3 L328.9 124.3 L334.9 127.1 L340.9 129.9 L346.9 132.5 L352.9 135.0 L359.0 137.4 L365.0 139.7 L371.0 141.9 L377.0 144.0 L383.0 146.0 L389.1 148.0 L395.1 149.9 L401.1 151.7 L407.1 153.5 L413.1 155.2 L419.2 156.8 L425.2 158.4 L431.2 159.9 L437.2 161.4 L443.2 162.8 L449.3 164.2 L455.3 165.5 L461.3 166.8 L467.3 168.1 L473.3 169.3 L479.4 170.5 L485.4 171.7 L491.4 172.8 L497.4 173.9 L503.4 174.9 L509.5 175.9 L515.5 176.9 L521.5 177.9 L527.5 178.9 L533.5 179.8 L539.6 180.7 L545.6 181.6 L551.6 182.4 L557.6 183.3 L563.6 184.1 L569.7 184.9 L575.7 185.6 L581.7 186.4 L587.7 187.1 L593.7 187.9 L599.8 188.6" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-dasharray="6 4"/><circle cx="573.3" cy="185.3" r="5" fill="var(--accent)"/><text class="ts" x="583.3" y="181.3">201</text><circle cx="573.3" cy="185.3" r="4" fill="var(--card)" stroke="var(--faint)" stroke-width="1.4"/><circle cx="405.7" cy="171.8" r="5" fill="var(--accent)"/><text class="ts" x="415.7" y="167.8">243</text><circle cx="405.7" cy="153.1" r="4" fill="var(--card)" stroke="var(--faint)" stroke-width="1.4"/><circle cx="242.2" cy="118.7" r="5" fill="var(--accent)"/><text class="ts" x="252.2" y="114.7">408</text><circle cx="242.2" cy="61.0" r="4" fill="var(--card)" stroke="var(--faint)" stroke-width="1.4"/><text class="ts" x="263.0" y="74.2">n ∝ 1/I_f (théorique, depuis 201 tr/min à 2,09 A)</text>
           </svg>
         </div>
         <figcaption>Points mesurés du défluxage et loi théorique <span class="fx">n ∝ 1/I<sub>f</sub></span> : les points restent sous la courbe théorique, car le flux ne baisse pas proportionnellement à <span class="fx">I<sub>f</sub></span> (saturation, rémanence) et parce que <span class="fx">U<sub>i</sub></span> n'est pas resté constant (46,8 → 43,4 V).</figcaption>
@@ -1467,6 +1269,7 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="defluxage" viewBox="0 0 640 260" role="img" aria-label="Vitesse en fonction du courant d'excitation : points mesurés et loi en 1/If"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1482,42 +1285,12 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Point de départ : <b>I_f = 2,09 A</b> (nominal du banc), <b>n = 201 tr/min</b>, <b>U_i = 46,8 V</b>, donc <b>kΦ = 2,23 V·s/rad</b>.","code":"kΦ = U_i / Ω","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"2,09 A","type":"excitation","kind":"int"},
-            {"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},
-            {"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},
-            {"id":"n","name":"n","value":"201 tr/min","type":"vitesse","kind":"char"},
-            {"id":"om","name":"Ω","value":"21,0 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[]},
-          {"label":"On réduit <b>I_f</b> à <b>1,394 A</b> (⅔). Si <b>Φ ∝ I_f</b>, la vitesse devrait monter dans le rapport <b>2,09/1,394 = 1,50</b>, soit <b>301 tr/min</b>.","code":"n théorique = n1 · If1 / If","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int","state":"changed"},
-            {"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},
-            {"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},
-            {"id":"n","name":"n","value":"301 tr/min","type":"vitesse","kind":"char","state":"new"},
-            {"id":"om","name":"Ω","value":"31,6 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[]},
-          {"label":"Mesure : <b>n = 243 tr/min</b>, soit <b>×1,21</b> seulement, <b>kΦ = 1,79 V·s/rad</b> : le flux n'a pas baissé dans le rapport des courants. Écart à la loi : <b>−19,4 %</b>.","code":"écart = (n − n_théorique)/n_théorique","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int"},
-            {"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},
-            {"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"243 tr/min","type":"vitesse","kind":"char","state":"changed"},
-            {"id":"om","name":"Ω","value":"25,4 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"On passe à <b>I_f = 0,715 A</b> (⅓). La loi <b>n ∝ 1/I_f</b> prédirait <b>588 tr/min</b>.","code":"n théorique = 201 · 2,09 / 0,715","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int","state":"changed"},
-            {"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","w":132},
-            {"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char"},
-            {"id":"n","name":"n","value":"588 tr/min","type":"vitesse","kind":"char","state":"new"},
-            {"id":"om","name":"Ω","value":"61,5 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[]},
-          {"label":"Mesure : <b>n = 408 tr/min</b>, soit <b>×2,03</b> quand le courant d'excitation est divisé par <b>2,92</b>. <b>kΦ</b> ne vaut plus que <b>1,02 V·s/rad</b> : <b>−30,6 %</b> par rapport à la loi.","code":"rapport n = 2,03  ≠  2,92","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},
-            {"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},
-            {"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char","state":"changed"},
-            {"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char","state":"changed"},
-            {"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[]},
-          {"label":"Bilan : le défluxage augmente bien la vitesse, mais la loi <b>n ∝ 1/I_f</b> ne vaut que si <b>Φ ∝ I_f</b>. Saturation et rémanence l'en écartent ; <b>U_i</b> a baissé de <b>−7,4 %</b>.","code":"saturation + rémanence","groups":[{"title":"Moteur à flux variable","cells":[
-            {"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},
-            {"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","w":132},
-            {"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char"},
-            {"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char"},
-            {"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[]}
+          {"label":"Point de départ : <b>I_f = 2,09 A</b> (nominal du banc), <b>n = 201 tr/min</b>, <b>U_i = 46,8 V</b>, donc <b>kΦ = 2,23 V·s/rad</b>.","code":"kΦ = U_i / Ω","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"2,09 A","type":"excitation","kind":"int"},{"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},{"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},{"id":"n","name":"n","value":"201 tr/min","type":"vitesse","kind":"char"},{"id":"om","name":"Ω","value":"21,0 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[],"scene":{"If":2.09,"n":201.0,"th":0,"tIf":"2,09 A","tk":"2,23 V·s/rad","tUi":"46,8 V","tE":""}},
+          {"label":"On réduit <b>I_f</b> à <b>1,394 A</b> (⅔). Si <b>Φ ∝ I_f</b>, la vitesse devrait monter dans le rapport <b>2,09/1,394 = 1,50</b>, soit <b>301 tr/min</b>.","code":"n théorique = n1 · If1 / If","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int","state":"changed"},{"id":"kp","name":"kΦ","value":"2,23 V·s/rad","type":"flux","kind":"heap","w":132},{"id":"ui","name":"U_i","value":"46,8 V","type":"fém","kind":"char"},{"id":"n","name":"n","value":"301 tr/min","type":"vitesse","kind":"char","state":"new"},{"id":"om","name":"Ω","value":"31,6 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[],"scene":{"If":1.394,"n":301.3558106169297,"th":1,"tIf":"1,394 A","tk":"2,23 V·s/rad","tUi":"46,8 V","tE":"loi : × 1,50"}},
+          {"label":"Mesure : <b>n = 243 tr/min</b>, soit <b>×1,21</b> seulement, <b>kΦ = 1,79 V·s/rad</b> : le flux n'a pas baissé dans le rapport des courants. Écart à la loi : <b>−19,4 %</b>.","code":"écart = (n − n_théorique)/n_théorique","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"1,394 A","type":"excitation","kind":"int"},{"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},{"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"243 tr/min","type":"vitesse","kind":"char","state":"changed"},{"id":"om","name":"Ω","value":"25,4 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"If":1.394,"n":243.0,"th":0,"tIf":"1,394 A","tk":"1,79 V·s/rad","tUi":"45,6 V","tE":"écart à la loi : −19,4 %"}},
+          {"label":"On passe à <b>I_f = 0,715 A</b> (⅓). La loi <b>n ∝ 1/I_f</b> prédirait <b>588 tr/min</b>.","code":"n théorique = 201 · 2,09 / 0,715","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int","state":"changed"},{"id":"kp","name":"kΦ","value":"1,79 V·s/rad","type":"flux","kind":"heap","w":132},{"id":"ui","name":"U_i","value":"45,6 V","type":"fém","kind":"char"},{"id":"n","name":"n","value":"588 tr/min","type":"vitesse","kind":"char","state":"new"},{"id":"om","name":"Ω","value":"61,5 rad/s","type":"vitesse","kind":"ptr","state":"new"}]}],"arrows":[],"scene":{"If":0.715,"n":587.5384615384615,"th":1,"tIf":"0,715 A","tk":"1,79 V·s/rad","tUi":"45,6 V","tE":"loi : × 2,92"}},
+          {"label":"Mesure : <b>n = 408 tr/min</b>, soit <b>×2,03</b> quand le courant d'excitation est divisé par <b>2,92</b>. <b>kΦ</b> ne vaut plus que <b>1,02 V·s/rad</b> : <b>−30,6 %</b> par rapport à la loi.","code":"rapport n = 2,03  ≠  2,92","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},{"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","state":"changed","w":132},{"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char","state":"changed"},{"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char","state":"changed"},{"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"If":0.715,"n":408.0,"th":0,"tIf":"0,715 A","tk":"1,02 V·s/rad","tUi":"43,4 V","tE":"écart à la loi : −30,6 %"}},
+          {"label":"Bilan : le défluxage augmente bien la vitesse, mais la loi <b>n ∝ 1/I_f</b> ne vaut que si <b>Φ ∝ I_f</b>. Saturation et rémanence l'en écartent ; <b>U_i</b> a baissé de <b>−7,4 %</b>.","code":"saturation + rémanence","groups":[{"title":"Moteur à flux variable","cells":[{"id":"if","name":"I_f","value":"0,715 A","type":"excitation","kind":"int"},{"id":"kp","name":"kΦ","value":"1,02 V·s/rad","type":"flux","kind":"heap","w":132},{"id":"ui","name":"U_i","value":"43,4 V","type":"fém","kind":"char"},{"id":"n","name":"n","value":"408 tr/min","type":"vitesse","kind":"char"},{"id":"om","name":"Ω","value":"42,7 rad/s","type":"vitesse","kind":"ptr"}]}],"arrows":[],"scene":{"If":0.715,"n":408.0,"th":0,"tIf":"0,715 A","tk":"1,02 V·s/rad","tUi":"43,4 V","tE":"U_i : −7,4 %"}}
         ]}
         </script>
       </div>
@@ -1592,6 +1365,382 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
     </section>
   </main>
 </div>
+
+
+<script>
+window.ELMEC_MCC = {u: 400.0, Ra: 1.474, kphi: 2.22};
+window.ELMEC_GENE = [[0.1500,400.0000,400.2211,60.0332,0.3372],[1.0500,393.0000,394.5474,414.2747,2.3271],[1.4000,396.0000,398.0632,557.2884,3.1304],[2.5000,394.0000,397.6842,994.2105,5.5847],[4.6300,392.0000,398.8232,1846.5512,10.3725],[7.7000,388.0000,399.3474,3074.9747,17.2729],[10.5000,386.0000,401.4737,4215.4737,23.6793],[13.0000,382.0000,401.1579,5215.0526,29.2942],[15.1000,375.0000,397.2526,5998.5147,33.6951],[17.2000,377.0000,402.3474,6920.3747,38.8734]];  /* I_a, U_a, U_i, P_i, M_é-m — classeur TP2 § 3 */
+window.ELMEC_DEFLUX = [[2.09,201.0,46.8421],[1.394,243.0,45.5505],[0.715,408.0,43.3958]];  /* I_f, n, U_i — classeur TP2 § 4 */
+/* Moteur des scènes SVG animées des laboratoires ELMEC1.
+   Chaque laboratoire porte <svg data-scene="nom">. Le contrôleur de laboratoire
+   appelle la fonction renvoyée par ElmecScenes.mount(root) à chaque état ;
+   les paramètres numériques de state.scene sont interpolés entre deux états,
+   les chaînes changent d'un coup. Aucune ressource externe. */
+window.ElmecScenes = (function () {
+  'use strict';
+  const REG = {};
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let UID = 0;
+  /* paramètres d'étape : jamais interpolés */
+  const DISCRETS = ['st', 'show', 'kind', 'div', 'rot', 'axis', 'idx', 'step'];
+
+  /* ---------- formatage ---------- */
+  function fr(x, d) {
+    if (x === null || x === undefined || isNaN(x)) return '—';
+    const s = Number(x).toFixed(d === undefined ? 2 : d);
+    const neg = s[0] === '-';
+    const parts = (neg ? s.slice(1) : s).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return (neg ? '−' : '') + parts.join(',');
+  }
+  const ESC = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'};
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ESC[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ---------- aide au dessin (renvoie des chaînes SVG) ---------- */
+  function helpers(id) {
+    const COLORS = ['ink', 'muted', 'faint', 'accent', 'coral', 'teal', 'amber', 'blue', 'green', 'red'];
+    function m(c) { return 'url(#' + id + '-' + (c || 'ink') + ')'; }
+    const h = {
+      fr: fr, esc: esc, clamp: clamp, lerp: lerp,
+      defs: function () {
+        return '<defs>' + COLORS.map(function (c) {
+          return '<marker id="' + id + '-' + c + '" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse">' +
+            '<path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--' + (c === 'ink' ? 'ink' : c) + ')"/></marker>';
+        }).join('') + '</defs>';
+      },
+      /* flèche droite ; c = couleur, w = épaisseur */
+      arrow: function (x1, y1, x2, y2, c, w, extra) {
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        if (len < 2) return '';
+        return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+          '" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) + '" stroke-linecap="round" marker-end="' + m(c) + '"' + (extra || '') + '/>';
+      },
+      /* chemin libre fléché */
+      path: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) +
+          '" stroke-linecap="round" stroke-linejoin="round"' +
+          (opts.dash ? ' stroke-dasharray="' + opts.dash + '"' : '') +
+          (opts.cls ? ' class="' + opts.cls + '"' : '') +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow ? ' marker-end="' + m(c) + '"' : '') + '/>';
+      },
+      /* flux qui circule : tirets animés */
+      flow: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'accent') + ')" stroke-width="' + (w || 2) +
+          '" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" class="sc-flow' + (opts.rev ? ' sc-rev' : '') + '"' +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow === false ? '' : ' marker-end="' + m(c || 'accent') + '"') + '/>';
+      },
+      text: function (x, y, s, cls, anchor, extra) {
+        return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" class="' + (cls || 'ts') + '"' +
+          (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + s + '</text>';
+      },
+      /* étiquette avec fond (lisible sur un tracé) */
+      tag: function (x, y, s, c, anchor) {
+        const w = Math.max(18, String(s).replace(/<[^>]+>/g, '').length * 6.6 + 12);
+        const x0 = anchor === 'end' ? x - w : anchor === 'start' ? x : x - w / 2;
+        return '<g class="sc-tag"><rect x="' + x0.toFixed(1) + '" y="' + (y - 12).toFixed(1) + '" width="' + w.toFixed(1) +
+          '" height="17" rx="5" fill="var(--card)" stroke="var(--' + (c || 'line') + ')" stroke-width="1"/>' +
+          '<text x="' + (x0 + w / 2).toFixed(1) + '" y="' + (y + 0.5).toFixed(1) + '" text-anchor="middle" class="sc-tagt" fill="var(--' +
+          (c && c !== 'line' ? c : 'ink') + ')">' + s + '</text></g>';
+      },
+      rect: function (x, y, w, hh, cls, rx, extra) {
+        return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' +
+          Math.max(0, hh).toFixed(1) + '" rx="' + (rx || 0) + '" class="' + (cls || 'core') + '"' + (extra || '') + '/>';
+      },
+      circle: function (x, y, r, cls, extra) {
+        return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" class="' + (cls || '') + '"' + (extra || '') + '/>';
+      },
+      /* bobine vue de côté : boucles en demi-ellipses le long d'un segment vertical ou horizontal */
+      coil: function (x, y, len, n, vertical, amp, c) {
+        let d = '';
+        const step = len / n;
+        amp = amp || 9;
+        for (let k = 0; k < n; k++) {
+          if (vertical) {
+            const y0 = y + k * step;
+            d += 'M' + (x - amp).toFixed(1) + ' ' + y0.toFixed(1) + ' C ' + (x + amp * 1.5).toFixed(1) + ' ' + y0.toFixed(1) + ', ' +
+              (x + amp * 1.5).toFixed(1) + ' ' + (y0 + step).toFixed(1) + ', ' + (x - amp).toFixed(1) + ' ' + (y0 + step * 0.92).toFixed(1) + ' ';
+          } else {
+            const x0 = x + k * step;
+            d += 'M' + x0.toFixed(1) + ' ' + (y + amp).toFixed(1) + ' C ' + x0.toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' +
+              (x0 + step).toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' + (x0 + step * 0.92).toFixed(1) + ' ' + (y + amp).toFixed(1) + ' ';
+          }
+        }
+        return '<path d="' + d + '" class="coil"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>';
+      },
+      /* résistance (rectangle normalisé) entre deux points alignés */
+      resistor: function (x, y, horiz, label, c, lab2) {
+        const w = horiz ? 34 : 13, hh = horiz ? 13 : 34;
+        return '<rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="2" class="sc-comp"' +
+          (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 13, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 22, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* inductance (quatre arcs) */
+      inductor: function (x, y, horiz, label, c, lab2) {
+        let d = '';
+        const n = 4, s = 8.5;
+        const x0 = horiz ? x - n * s / 2 : x, y0 = horiz ? y : y - n * s / 2;
+        for (let k = 0; k < n; k++) {
+          if (horiz) d += 'M' + (x0 + k * s) + ' ' + y0 + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 ' + s + ' 0 ';
+          else d += 'M' + x0 + ' ' + (y0 + k * s) + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 0 ' + s + ' ';
+        }
+        return '<path d="' + d + '" class="sc-ind"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 11, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 20, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* repère de graphique : renvoie {svg, X(v), Y(v)} */
+      plot: function (o) {
+        const X = function (v) { return o.x + (v - o.x0) / (o.x1 - o.x0) * o.w; };
+        const Y = function (v) { return o.y + o.h - (v - o.y0) / (o.y1 - o.y0) * o.h; };
+        let s = '';
+        (o.xt || []).forEach(function (t) {
+          s += '<line x1="' + X(t).toFixed(1) + '" y1="' + o.y + '" x2="' + X(t).toFixed(1) + '" y2="' + (o.y + o.h) + '" class="sc-grid"/>';
+          s += h.text(X(t), o.y + o.h + 14, o.xf ? o.xf(t) : fr(t, 0), 'sc-tick', 'middle');
+        });
+        (o.yt || []).forEach(function (t) {
+          s += '<line x1="' + o.x + '" y1="' + Y(t).toFixed(1) + '" x2="' + (o.x + o.w) + '" y2="' + Y(t).toFixed(1) + '" class="sc-grid"/>';
+          s += h.text(o.x - 6, Y(t) + 3.5, o.yf ? o.yf(t) : fr(t, 1), 'sc-tick', 'end');
+        });
+        s += h.arrow(o.x, o.y + o.h, o.x + o.w + 12, o.y + o.h, 'faint', 1.2);
+        s += h.arrow(o.x, o.y + o.h, o.x, o.y - 12, 'faint', 1.2);
+        if (o.xl) s += h.text(o.x + o.w + 12, o.y + o.h + 27, o.xl, 'sc-axis', 'end');
+        if (o.yl) s += h.text(o.x + 6, o.y - 8, o.yl, 'sc-axis', 'start');
+        return {svg: s, X: X, Y: Y, x: o.x, y: o.y, w: o.w, h: o.h};
+      },
+      /* rotation continue (CSS), vitesse en tours par seconde à l'écran */
+      spin: function (cx, cy, inner, period, dir) {
+        if (!period || period <= 0) return '<g>' + inner + '</g>';
+        const now = performance.now();
+        return '<g class="sc-spin' + (dir < 0 ? ' sc-ccw' : '') + '" style="transform-origin:' + cx + 'px ' + cy + 'px;animation-duration:' +
+          period.toFixed(2) + 's;animation-delay:-' + ((now / 1000) % period).toFixed(2) + 's">' + inner + '</g>';
+      }
+    };
+    return h;
+  }
+
+  function register(name, def) { REG[name] = def; }
+
+  function mount(root) {
+    const svg = root.querySelector('svg[data-scene]');
+    if (!svg) return null;
+    const def = REG[svg.getAttribute('data-scene')];
+    if (!def) { console.error('Scène inconnue', svg.getAttribute('data-scene')); return null; }
+    root.classList.add('has-scene');
+    const id = 'sc' + (++UID);
+    const h = helpers(id);
+    let cur = null, raf = 0;
+
+    function draw(p, k) {
+      const now = performance.now();
+      svg.style.setProperty('--sc-delay', '-' + ((now / 1000) % 1.6).toFixed(3) + 's');
+      svg.innerHTML = h.defs() + def.draw(p, h, k);
+    }
+
+    return function (state, k, animate) {
+      const target = Object.assign({}, def.base || {}, state.scene || {});
+      cancelAnimationFrame(raf);
+      if (!cur || !animate || reduce.matches) { cur = target; draw(cur, k); return; }
+      const from = cur, t0 = performance.now(), dur = def.duration || 750;
+      function frame(now) {
+        const t = clamp((now - t0) / dur, 0, 1);
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const p = {};
+        Object.keys(target).forEach(function (key) {
+          const a = from[key], b = target[key];
+          const libre = DISCRETS.indexOf(key) < 0 && (def.discrete || []).indexOf(key) < 0;
+          p[key] = (libre && typeof a === 'number' && typeof b === 'number') ? lerp(a, b, e) : b;
+        });
+        p._t = e;
+        cur = p;
+        draw(p, k);
+        if (t < 1) raf = requestAnimationFrame(frame);
+        else { cur = target; draw(target, k); }
+      }
+      raf = requestAnimationFrame(frame);
+    };
+  }
+
+  return {register: register, mount: mount, fr: fr};
+})();
+
+/* Scènes du chapitre 4 — MCC à aimants permanents et essais du banc (TP2). */
+(function (S) {
+  'use strict';
+
+  /* rotor stylisé qui tourne à une vitesse d'écran proportionnelle à n */
+  function rotor(h, cx, cy, r, n, nref) {
+    let g = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="var(--card2)" stroke="var(--muted)" stroke-width="1.6"/>';
+    for (let k = 0; k < 6; k++) {
+      const a = k * Math.PI / 3;
+      g += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r * Math.sin(a)).toFixed(1) + '" stroke="var(--muted)" stroke-width="1.2"/>';
+    }
+    g += '<circle cx="' + (cx + r * 0.62) + '" cy="' + cy + '" r="3.5" fill="var(--coral)"/>';
+    const per = n > 1 ? 0.9 * nref / n : 0;
+    return h.spin(cx, cy, g, per, 1) + h.text(cx, cy + r + 16, 'n = ' + (n > 0.5 ? S.fr(n, 0) : '0') + ' tr/min', 'sc-val', 'middle');
+  }
+  function barreU(h, x, y, w, ri, ui, u) {
+    const a = w * ri / u, b = w * ui / u;
+    return h.text(x, y - 6, 'u = R·i + u_i', 'sc-val') +
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="14" rx="3" class="sc-barbg"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="' + Math.max(0, b).toFixed(1) + '" height="14" rx="2" class="sc-bar3"/>' +
+      '<rect x="' + (x + b).toFixed(1) + '" y="' + y + '" width="' + Math.max(0, a).toFixed(1) + '" height="14" rx="2" class="sc-bar2"/>';
+  }
+
+  /* ---- force de Laplace, couple et commutation ---- */
+  S.register('laplace', {
+    base: {th: 180, i: 0, F: 0},
+    duration: 1400,
+    draw: function (p, h) {
+      const cx = 170, cy = 128, R = 70, r = 52;
+      let s = '';
+      s += '<path d="M' + (cx - 118) + ' ' + (cy - 60) + ' h34 a 86 86 0 0 0 0 120 h-34 Z" class="sc-mag-n"/>' + h.text(cx - 104, cy + 5, 'N', 'sc-lbl', 'middle');
+      s += '<path d="M' + (cx + 118) + ' ' + (cy - 60) + ' h-34 a 86 86 0 0 1 0 120 h34 Z" class="sc-mag-s"/>' + h.text(cx + 104, cy + 5, 'S', 'sc-lbl', 'middle');
+      for (let k = -2; k <= 2; k++) s += h.arrow(cx - 80, cy + k * 22, cx + 80, cy + k * 22, 'faint', 1, ' opacity=".55"');
+      s += h.text(cx - 76, cy - 52, 'B →', 'sc-lbl');
+      s += h.circle(cx, cy, R, '', ' fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"');
+      s += '<line x1="' + cx + '" y1="' + (cy - R - 8) + '" x2="' + cx + '" y2="' + (cy + R + 8) + '" stroke="var(--faint)" stroke-dasharray="2 4"/>' + h.text(cx, cy + R + 22, 'ligne neutre', 'sc-tick', 'middle');
+      const t = p.th * Math.PI / 180;
+      [['a', 0], ['b', Math.PI]].forEach(function (c) {
+        const a = t + c[1], x = cx + r * Math.cos(a), y = cy - r * Math.sin(a);
+        const gauche = Math.cos(a) < 0;
+        /* le collecteur impose le sens du courant selon le pôle : sortant sous N si i > 0 */
+        const sortant = (p.i > 0) === gauche;
+        s += h.circle(x, y, 11, '', ' fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"');
+        if (Math.abs(p.i) > 0.01) {
+          s += sortant ? h.circle(x, y, 3.2, '', ' fill="var(--ink)"') :
+            '<path d="M' + (x - 6) + ' ' + (y - 6) + ' L' + (x + 6) + ' ' + (y + 6) + ' M' + (x + 6) + ' ' + (y - 6) + ' L' + (x - 6) + ' ' + (y + 6) + '" stroke="var(--ink)" stroke-width="1.8"/>';
+          const L = 10 + Math.abs(p.F) * 9, dir = sortant ? -1 : 1;
+          s += h.arrow(x, y + dir * 13, x, y + dir * (13 + L), 'coral', 2.6);
+        }
+        s += h.text(x + (gauche ? -16 : 16), y - 12, c[0], 'sc-lbl', gauche ? 'end' : 'start');
+      });
+      if (Math.abs(p.i) > 0.01) {
+        const cw = p.i > 0;
+        s += h.path(cw ? 'M' + (cx - 22) + ' ' + (cy - 12) + ' A 25 25 0 1 1 ' + (cx - 12) + ' ' + (cy + 22) : 'M' + (cx + 22) + ' ' + (cy - 12) + ' A 25 25 0 1 0 ' + (cx + 12) + ' ' + (cy + 22), 'accent', 2.2, {arrow: true});
+        s += h.text(cx, cy + 5, 'M', 'sc-lbl', 'middle');
+      }
+      const tx = 380;
+      s += h.text(tx, 30, 'B = 0,8 T ; l = 0,2 m ; r = 0,075 m', 'sc-val');
+      s += h.text(tx, 48, '• courant sortant   ✕ courant entrant', 'sc-val');
+      s += h.tag(tx, 84, 'i = ' + p.ti, 'line', 'start');
+      s += h.tag(tx, 112, 'F = i l B = ' + p.tF, 'coral', 'start');
+      s += h.tag(tx, 140, p.tM, 'accent', 'start');
+      if (p.note) s += h.text(tx, 176, p.note, 'sc-val');
+      if (p.note2) s += h.text(tx, 194, p.note2, 'sc-val');
+      return s;
+    }
+  });
+
+  /* ---- point de fonctionnement à u constant ---- */
+  S.register('couple-charge', {
+    base: {M: 0, n: 1721, i: 0, Ri: 0, ui: 400},
+    draw: function (p, h) {
+      let s = '';
+      /* circuit d'induit */
+      const x0 = 40, x1 = 230, yt = 50, yb = 160;
+      s += h.path('M' + x0 + ' ' + (yt + 20) + ' V' + yt + ' H' + x1 + ' V' + (yt + 30) + ' M' + x1 + ' ' + (yb - 30) + ' V' + yb + ' H' + x0 + ' V' + (yb - 20), 'ink', 1.5);
+      s += '<circle cx="' + x0 + '" cy="' + ((yt + yb) / 2) + '" r="20" class="sc-comp"/>' + h.text(x0, (yt + yb) / 2 + 5, 'u', 'sc-lbl', 'middle');
+      s += h.resistor(130, yt, true, 'R = 1,474 Ω', 'coral');
+      s += '<circle cx="' + x1 + '" cy="' + ((yt + yb) / 2) + '" r="20" class="sc-comp"/>' + h.text(x1, (yt + yb) / 2 + 5, 'u_i', 'sc-lbl', 'middle');
+      if (p.i > 0.01) s += h.arrow(170, yt, 205, yt, 'coral', 1.4 + p.i * 0.18) + h.text(186, yt - 10, 'i', 'sc-lbl', 'middle');
+      s += barreU(h, x0, 206, 220, p.Ri, p.ui, 400);
+      s += h.text(x0, 236, 'R·i = ' + p.tRi + ' ; u_i = ' + p.tui, 'sc-val');
+      s += rotor(h, 300, 110, 26, p.n, 1721);
+      /* caractéristique n(M) */
+      const pl = h.plot({x: 390, y: 28, w: 210, h: 160, x0: 0, x1: 40, y0: 1600, y1: 1740, xt: [0, 10, 20, 30, 40], yt: [1600, 1650, 1700],
+        yf: function (t) { return S.fr(t, 0); }, xl: 'M (N·m)', yl: 'n (tr/min)'});
+      s += pl.svg;
+      s += h.text(pl.X(40), pl.y + 4, 'axe n tronqué à 1 600', 'sc-tick', 'end');
+      const T = window.ELMEC_MCC;
+      const nM = function (m) { return (T.u - T.Ra * m / T.kphi) / T.kphi * 60 / (2 * Math.PI); };
+      s += h.path('M' + pl.X(0) + ' ' + pl.Y(nM(0)).toFixed(1) + ' L' + pl.X(40) + ' ' + pl.Y(nM(40)).toFixed(1), 'accent', 2);
+      s += h.circle(pl.X(p.M), pl.Y(p.n), 5.5, 'sc-pt');
+      s += h.tag(pl.X(p.M) + (p.M > 25 ? -10 : 10), pl.Y(p.n) - 12, 'M_r = ' + p.tM, 'accent', p.M > 25 ? 'end' : 'start');
+      return s;
+    }
+  });
+
+  /* ---- démarrage direct : courant en fonction de la vitesse ---- */
+  S.register('demarrage', {
+    base: {n: 0, i: 271, ui: 0, Ri: 400},
+    draw: function (p, h) {
+      let s = '';
+      s += rotor(h, 90, 92, 42, p.n, 1721);
+      s += barreU(h, 30, 200, 250, p.Ri, p.ui, 400);
+      s += h.text(30, 232, 'R·i = ' + p.tRi + ' ; u_i = ' + p.tui, 'sc-val');
+      s += h.tag(200, 70, 'i = ' + p.ti, p.i > 100 ? 'red' : 'coral', 'start');
+      s += h.tag(200, 100, 'Ω = ' + p.tW, 'line', 'start');
+      const pl = h.plot({x: 380, y: 28, w: 220, h: 160, x0: 0, x1: 1800, y0: 0, y1: 300, xt: [0, 600, 1200, 1800], yt: [0, 100, 200, 300],
+        xf: function (t) { return S.fr(t, 0); }, yf: function (t) { return S.fr(t, 0); }, xl: 'n (tr/min)', yl: 'i (A)'});
+      s += pl.svg;
+      const T = window.ELMEC_MCC, n0 = T.u / T.kphi * 60 / (2 * Math.PI);
+      s += h.path('M' + pl.X(0) + ' ' + pl.Y(T.u / T.Ra).toFixed(1) + ' L' + pl.X(n0).toFixed(1) + ' ' + pl.Y(0), 'coral', 2);
+      s += h.text(pl.X(900), pl.Y(170), 'i = (u − kΦ Ω)/R', 'sc-val', 'start');
+      s += h.circle(pl.X(p.n), pl.Y(p.i), 5.5, 'sc-pt');
+      return s;
+    }
+  });
+
+  /* ---- essai en génératrice : points mesurés du relevé ---- */
+  S.register('generateur', {
+    base: {idx: 0},
+    draw: function (p, h) {
+      const G = window.ELMEC_GENE || [];
+      const pl = h.plot({x: 70, y: 28, w: 280, h: 170, x0: 0, x1: 18, y0: 370, y1: 405, xt: [0, 3, 6, 9, 12, 15, 18], yt: [370, 380, 390, 400],
+        yf: function (t) { return S.fr(t, 0); }, xl: 'I_a (A)', yl: 'U (V)'});
+      let s = pl.svg;
+      let da = '', di = '';
+      G.forEach(function (q, k) { da += (k ? ' L' : 'M') + pl.X(q[0]).toFixed(1) + ' ' + pl.Y(q[1]).toFixed(1); di += (k ? ' L' : 'M') + pl.X(q[0]).toFixed(1) + ' ' + pl.Y(q[2]).toFixed(1); });
+      s += h.path(di, 'teal', 1.4, {dash: '5 4'}) + h.path(da, 'accent', 1.6, {op: 0.6});
+      G.forEach(function (q, k) {
+        s += h.circle(pl.X(q[0]), pl.Y(q[2]), 3, '', ' fill="var(--teal)"');
+        s += h.circle(pl.X(q[0]), pl.Y(q[1]), k === p.idx ? 6 : 3.4, k === p.idx ? 'sc-pt' : 'sc-pt2');
+      });
+      const q = G[p.idx] || [0, 0, 0, 0, 0];
+      s += '<line x1="' + pl.X(q[0]).toFixed(1) + '" y1="' + pl.Y(q[1]).toFixed(1) + '" x2="' + pl.X(q[0]).toFixed(1) + '" y2="' + pl.Y(q[2]).toFixed(1) + '" stroke="var(--coral)" stroke-width="2"/>';
+      s += h.circle(78, 246, 4, 'sc-pt2') + h.text(86, 249, 'U_a mesurée', 'sc-tick') + h.circle(178, 246, 3, '', ' fill="var(--teal)"') + h.text(186, 249, 'U_i = U_a + R_a I_a ; axe U tronqué à 370 V', 'sc-tick');
+      const tx = 400;
+      s += h.text(tx, 30, 'n = 1 700 tr/min ; Ω = 178,02 rad/s', 'sc-val');
+      s += h.tag(tx, 62, 'I_a = ' + p.tIa + ' ; U_a = ' + p.tUa, 'accent', 'start');
+      s += h.tag(tx, 90, 'R_a I_a = ' + p.tRI + ' ; U_i = ' + p.tUi, 'coral', 'start');
+      s += h.text(tx, 126, 'P_i = U_i I_a', 'sc-val');
+      s += '<rect x="' + tx + '" y="134" width="180" height="11" rx="3" class="sc-barbg"/><rect x="' + tx + '" y="134" width="' + (180 * q[3] / 7000).toFixed(1) + '" height="11" rx="3" class="sc-bar"/>' + h.text(tx + 186, 144, p.tPi, 'sc-val');
+      s += h.text(tx, 172, 'M_é-m = P_i / Ω', 'sc-val');
+      s += '<rect x="' + tx + '" y="180" width="180" height="11" rx="3" class="sc-barbg"/><rect x="' + tx + '" y="180" width="' + (180 * q[4] / 40).toFixed(1) + '" height="11" rx="3" class="sc-bar2"/>' + h.text(tx + 186, 190, p.tMem, 'sc-val');
+      return s;
+    }
+  });
+
+  /* ---- défluxage : n en fonction de I_f ---- */
+  S.register('defluxage', {
+    base: {If: 2.09, n: 201, th: 0},
+    draw: function (p, h) {
+      const DF = window.ELMEC_DEFLUX || [];
+      const pl = h.plot({x: 70, y: 28, w: 280, h: 170, x0: 0.5, x1: 2.3, y0: 0, y1: 650, xt: [0.5, 1, 1.5, 2], yt: [0, 200, 400, 600],
+        xf: function (t) { return S.fr(t, 1); }, yf: function (t) { return S.fr(t, 0); }, xl: 'I_f (A)', yl: 'n (tr/min)'});
+      let s = pl.svg, d = '';
+      const n0 = DF[0][1] * DF[0][0];
+      for (let k = 0; k <= 40; k++) { const f = 0.62 + k / 40 * 1.62; d += (k ? ' L' : 'M') + pl.X(f).toFixed(1) + ' ' + pl.Y(n0 / f).toFixed(1); }
+      s += h.path(d, 'faint', 1.6, {dash: '6 4'}) + h.text(pl.X(2.24), pl.Y(n0 / 2.24) - 12, 'loi n ∝ 1/I_f', 'sc-val', 'end');
+      DF.forEach(function (q) { s += h.circle(pl.X(q[0]), pl.Y(q[1]), 4, 'sc-pt2'); });
+      s += h.circle(pl.X(p.If), pl.Y(p.n), 6, p.th ? '' : 'sc-pt', p.th ? ' fill="var(--card)" stroke="var(--coral)" stroke-width="2.4"' : '');
+      s += h.tag(pl.X(p.If) + 10, pl.Y(p.n) - 10, (p.th ? 'loi : ' : 'mesure : ') + S.fr(p.n, 0) + ' tr/min', p.th ? 'coral' : 'accent', 'start');
+      s += rotor(h, 450, 80, 34, p.n, 201);
+      const tx = 400;
+      s += h.tag(tx, 160, 'I_f = ' + p.tIf + ' ; kΦ = ' + p.tk, 'line', 'start');
+      s += h.tag(tx, 188, 'U_i = ' + p.tUi, 'line', 'start');
+      if (p.tE) s += h.tag(tx, 216, p.tE, 'coral', 'start');
+      return s;
+    }
+  });
+})(window.ElmecScenes);
+</script>
 
 <script>
 (function () {
@@ -1814,6 +1963,7 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
      ============================================================ */
   function mountLab(root, spec){
     const mem = makeMemory(root);
+    const scene = window.ElmecScenes ? window.ElmecScenes.mount(root) : null;
     const note = root.querySelector('[data-note]');
     const codeEl = root.querySelector('[data-code]');
     const linesEl = root.querySelector('[data-lines]');
@@ -1865,6 +2015,7 @@ Défluxage (excitation bobinée) :   <i>n</i> ∝ 1 / Φ   si   Φ ∝ <i>I</i><
     function paint(animate){
       const s = states[i];
       mem.render(s, animate !== false);
+      if (scene) scene(s, i, animate !== false);
       if (note) note.innerHTML = s.label;
       if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
       if (linesEl) {

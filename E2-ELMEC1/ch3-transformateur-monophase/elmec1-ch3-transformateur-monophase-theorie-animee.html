@@ -503,6 +503,54 @@
   .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
   .legend .sw-t{font-size:12px;color:var(--faint)}
   .tbl.wide{max-width:none}
+/* scenes:debut */
+  /* ---------- scènes animées des laboratoires (injecté par injecter_scenes.py) ---------- */
+  .scene-stage{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px 6px 4px;margin:2px 0 10px}
+  .scene-stage svg{width:100%;height:auto;display:block;overflow:visible}
+  @media (max-width:640px){.scene-stage{overflow-x:auto;-webkit-overflow-scrolling:touch}.scene-stage svg{width:600px;max-width:none}}
+  .sc-flow{animation:sc-flow 1.6s linear infinite;animation-delay:var(--sc-delay,0s)}
+  .sc-flow.sc-rev{animation-direction:reverse}
+  @keyframes sc-flow{to{stroke-dashoffset:-32}}
+  .sc-spin{animation:sc-spin 2s linear infinite}
+  .sc-spin.sc-ccw{animation-direction:reverse}
+  @keyframes sc-spin{to{transform:rotate(360deg)}}
+  .sc-grid{stroke:var(--line2);stroke-width:1}
+  .sc-tick{font:9.5px var(--mono);fill:var(--faint)}
+  .sc-axis{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-lbl{font:600 11.5px var(--sans);fill:var(--ink)}
+  .sc-val{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-big{font:700 15px var(--mono);fill:var(--ink)}
+  .sc-tagt{font:600 10.5px var(--mono)}
+  .sc-comp{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+  .sc-ind{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round}
+  .sc-wire{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .sc-dim{opacity:.28}
+  .sc-new{stroke:var(--accent)!important}
+  .sc-hl{fill:var(--accent-s);stroke:var(--accent);stroke-width:1.4}
+  .sc-air{fill:var(--card);stroke:none}
+  .sc-cu{fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4}
+  .sc-mag-n{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4}
+  .sc-mag-s{fill:var(--red-s);stroke:var(--red);stroke-width:1.4}
+  .sc-bar{fill:var(--accent);opacity:.85}
+  .sc-bar2{fill:var(--coral);opacity:.85}
+  .sc-bar3{fill:var(--teal);opacity:.85}
+  .sc-barbg{fill:var(--card);stroke:var(--line);stroke-width:1}
+  .sc-pt{fill:var(--accent);stroke:var(--card);stroke-width:1.5}
+  .sc-pt2{fill:var(--card);stroke:var(--muted);stroke-width:1.4}
+  .sc-zone{fill:var(--red-s);opacity:.7}
+  .lab.has-scene .mem-stage{padding:2px 0 0}
+  .lab.has-scene .arrow-layer{display:none}
+  .lab.has-scene .mem-groups,.lab.has-scene .mem-groups.is-stack{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;justify-content:center}
+  .lab.has-scene .mem-groups.is-stack .mem-group{width:auto;padding-top:0}
+  .lab.has-scene .mem-groups.is-stack .mem-gtitle,.lab.has-scene .mem-gtitle{position:static;font-size:8.5px}
+  .lab.has-scene .cells{gap:6px}
+  .lab.has-scene .cell{--cw:auto;min-width:74px;padding:4px 7px 3px;border-radius:8px}
+  .lab.has-scene .cname{font-size:10.5px;min-height:13px}
+  .lab.has-scene .ctype{display:none}
+  .lab.has-scene .cval{font-size:13px;margin:2px 0 0;min-height:16px}
+  .lab.has-scene .cf{font-size:10px}
+  @media (prefers-reduced-motion: reduce){.sc-flow,.sc-spin{animation:none}}
+  /* scenes:fin */
 </style>
 <meta name="robots" content="noindex">
 
@@ -545,6 +593,7 @@ table{max-width:100%}
   <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
     <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
+<marker id="fg-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--ink)"/></marker><marker id="fg-accent" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--accent)"/></marker><marker id="fg-coral" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--coral)"/></marker><marker id="fg-teal" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--teal)"/></marker><marker id="fg-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--muted)"/></marker><marker id="fg-faint" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--faint)"/></marker><marker id="fg-blue" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--blue)"/></marker><marker id="fg-red" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--red)"/></marker><marker id="fg-amber" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--amber)"/></marker>
 </defs></svg>
 
 <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
@@ -770,6 +819,7 @@ Z′₂ = k² Z₂        Z₂ = Z′₂/k²
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="ideal" viewBox="0 0 640 260" role="img" aria-label="Transformateur idéal : noyau, deux enroulements, tensions, courants et charge"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -785,29 +835,12 @@ Z′₂ = k² Z₂        Z₂ = Z′₂/k²
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Deux enroulements de <b>N₁ = 320</b> et <b>N₂ = 100</b> spires : le rapport vaut <b>k = 3,2</b>. La plaque ne donne pas le nombre de spires, seulement le rapport 400/125 V.","code":"k = N₁ / N₂","groups":[{"title":"Enroulements","cells":[
-            {"id":"n1","name":"N₁","value":"320","type":"spires"},
-            {"id":"n2","name":"N₂","value":"100","type":"spires"},
-            {"id":"k","name":"k","value":"3,2","type":"rapport","state":"new"}]}],"arrows":[]},
-          {"label":"On applique <b>400 V</b> au primaire : le secondaire délivre <b>U₂ = 400/3,2 = 125,0 V</b>. Aucune chute dans le modèle idéal.","code":"U₂ = U₁ / k","groups":[{"title":"Tensions","cells":[
-            {"id":"u1","name":"U₁","value":"400 V","type":"primaire"},
-            {"id":"u2","name":"U₂","value":"125,0 V","type":"secondaire","state":"changed"},
-            {"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"u1","to":"u2","accent":true}]},
-          {"label":"La charge appelle <b>8,00 A</b> au secondaire : le primaire appelle <b>I₁ = 8,00/3,2 = 2,50 A</b>. Le courant diminue quand la tension augmente.","code":"I₁ = I₂ / k","groups":[{"title":"Courants","cells":[
-            {"id":"i1","name":"I₁","value":"2,50 A","type":"primaire","state":"changed"},
-            {"id":"i2","name":"I₂","value":"8,00 A","type":"secondaire"},
-            {"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"i2","to":"i1","accent":true}]},
-          {"label":"Puissance apparente conservée : <b>S₁ = 400 × 2,50 = 1000 VA</b> et <b>S₂ = 125,0 × 8,00 = 1000 VA</b>.","code":"S₁ = U₁ I₁ = U₂ I₂ = S₂","groups":[{"title":"Puissances","cells":[
-            {"id":"s1","name":"S₁","value":"1000 VA","type":"primaire"},
-            {"id":"s2","name":"S₂","value":"1000 VA","type":"secondaire","state":"changed"}]}],"arrows":[{"from":"s1","to":"s2","label":"S","accent":true}]},
-          {"label":"La charge vaut <b>15,6 Ω</b> au secondaire ; vue du primaire elle vaut <b>Z′₂ = k²Z₂ = 10,24 × 15,6 = 160 Ω</b>. Vérification : 400 V / 2,50 A = 160 Ω.","code":"Z′₂ = k² Z₂","groups":[{"title":"Impédance ramenée","cells":[
-            {"id":"z2","name":"Z₂","value":"15,6 Ω","type":"secondaire"},
-            {"id":"z2p","name":"Z′₂","value":"160 Ω","type":"primaire","state":"new"},
-            {"id":"k2","name":"k²","value":"10,24","type":"facteur"}]}],"arrows":[{"from":"z2","to":"z2p","accent":true}]},
-          {"label":"Contrôle de la plaque : <b>400 × 2,6 = 1040 VA</b> contre <b>1000 VA</b> annoncés, soit <b>4,00 %</b> d'écart. Le courant exact pour 1000 VA est 2,50 A : la plaque arrondit.","code":"plaque : 400 V · 2,6 A · 1000 VA","groups":[{"title":"Plaque","cells":[
-            {"id":"sp","name":"S plaque","value":"1000 VA","type":"apparente"},
-            {"id":"sc","name":"U₁ I₁n","value":"1040 VA","type":"produit","state":"changed"},
-            {"id":"ec","name":"écart","value":"4,00 %","type":"relatif","state":"changed"}]}],"arrows":[]}
+          {"label":"Deux enroulements de <b>N₁ = 320</b> et <b>N₂ = 100</b> spires : le rapport vaut <b>k = 3,2</b>. La plaque ne donne pas le nombre de spires, seulement le rapport 400/125 V.","code":"k = N₁ / N₂","groups":[{"title":"Enroulements","cells":[{"id":"n1","name":"N₁","value":"320","type":"spires"},{"id":"n2","name":"N₂","value":"100","type":"spires"},{"id":"k","name":"k","value":"3,2","type":"rapport","state":"new"}]}],"arrows":[],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":0}},
+          {"label":"On applique <b>400 V</b> au primaire : le secondaire délivre <b>U₂ = 400/3,2 = 125,0 V</b>. Aucune chute dans le modèle idéal.","code":"U₂ = U₁ / k","groups":[{"title":"Tensions","cells":[{"id":"u1","name":"U₁","value":"400 V","type":"primaire"},{"id":"u2","name":"U₂","value":"125,0 V","type":"secondaire","state":"changed"},{"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"u1","to":"u2","accent":true}],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":1}},
+          {"label":"La charge appelle <b>8,00 A</b> au secondaire : le primaire appelle <b>I₁ = 8,00/3,2 = 2,50 A</b>. Le courant diminue quand la tension augmente.","code":"I₁ = I₂ / k","groups":[{"title":"Courants","cells":[{"id":"i1","name":"I₁","value":"2,50 A","type":"primaire","state":"changed"},{"id":"i2","name":"I₂","value":"8,00 A","type":"secondaire"},{"id":"k","name":"k","value":"3,2","type":"rapport"}]}],"arrows":[{"from":"i2","to":"i1","accent":true}],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":2}},
+          {"label":"Puissance apparente conservée : <b>S₁ = 400 × 2,50 = 1000 VA</b> et <b>S₂ = 125,0 × 8,00 = 1000 VA</b>.","code":"S₁ = U₁ I₁ = U₂ I₂ = S₂","groups":[{"title":"Puissances","cells":[{"id":"s1","name":"S₁","value":"1000 VA","type":"primaire"},{"id":"s2","name":"S₂","value":"1000 VA","type":"secondaire","state":"changed"}]}],"arrows":[{"from":"s1","to":"s2","label":"S","accent":true}],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":3}},
+          {"label":"La charge vaut <b>15,6 Ω</b> au secondaire ; vue du primaire elle vaut <b>Z′₂ = k²Z₂ = 10,24 × 15,6 = 160 Ω</b>. Vérification : 400 V / 2,50 A = 160 Ω.","code":"Z′₂ = k² Z₂","groups":[{"title":"Impédance ramenée","cells":[{"id":"z2","name":"Z₂","value":"15,6 Ω","type":"secondaire"},{"id":"z2p","name":"Z′₂","value":"160 Ω","type":"primaire","state":"new"},{"id":"k2","name":"k²","value":"10,24","type":"facteur"}]}],"arrows":[{"from":"z2","to":"z2p","accent":true}],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":4}},
+          {"label":"Contrôle de la plaque : <b>400 × 2,6 = 1040 VA</b> contre <b>1000 VA</b> annoncés, soit <b>4,00 %</b> d'écart. Le courant exact pour 1000 VA est 2,50 A : la plaque arrondit.","code":"plaque : 400 V · 2,6 A · 1000 VA","groups":[{"title":"Plaque","cells":[{"id":"sp","name":"S plaque","value":"1000 VA","type":"apparente"},{"id":"sc","name":"U₁ I₁n","value":"1040 VA","type":"produit","state":"changed"},{"id":"ec","name":"écart","value":"4,00 %","type":"relatif","state":"changed"}]}],"arrows":[],"scene":{"tU2":"125,0 V","tI1":"2,50 A","tI2":"8,00 A","tS":"1 000 VA","tZ2":"15,6 Ω","tZ2p":"160 Ω","tSp":"1 040 VA","tEc":"4,00 %","show":5}}
         ]}
         </script>
       </div>
@@ -1000,6 +1033,7 @@ Z′_L = k² Z_L
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="equivalent" viewBox="0 0 640 260" role="img" aria-label="Schéma équivalent en T construit élément par élément"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1015,37 +1049,12 @@ Z′_L = k² Z_L
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Première étape : l'enroulement primaire n'est pas idéal. Il porte une <b>résistance R₁ = 1,33 Ω</b> et une <b>réactance de fuite X_σ1 = 2,56 Ω</b>. Valeurs d'exemple issues de la répartition de l'essai en court-circuit.","code":"Z₁ = R₁ + jX_σ1","groups":[{"title":"Enroulement primaire","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[]},
-          {"label":"Les pertes fer se modélisent par une résistance placée en parallèle sur le flux : <b>R_fer = 6,70 kΩ</b>, déduite de l'essai à vide à 402,7 V.","code":"R_fer = U₀²/P₀","groups":[{"title":"Enroulement primaire","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
-            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"}]}],"arrows":[]},
-          {"label":"Le courant magnétisant ajoute une réactance en parallèle : <b>X_m = 6,77 kΩ</b>. L'ensemble <b>R_fer ∥ X_m</b> absorbe le courant à vide mesuré.","code":"R_fer ∥ jX_m","groups":[{"title":"Enroulement primaire","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
-            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
-            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"}]}],"arrows":[]},
-          {"label":"Le secondaire se ramène au primaire : <b>R′₂ = k²R₂ = 10,24 × 0,130 = 1,33 Ω</b> et <b>X′_σ2 = k²X_σ2 = 2,56 Ω</b>. Le modèle devient un T.","code":"R′₂ = k² R₂","groups":[{"title":"Enroulement primaire","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
-            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
-            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[
-            {"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω","state":"new"},
-            {"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[]},
-          {"label":"La charge se ramène elle aussi : <b>Z′_L = k²Z_L = 160 Ω</b> pour 15,6 Ω au secondaire. Le primaire voit Z₁ en série avec Z_h1 ∥ (Z′₂ + Z′_L).","code":"Z′_L = k² Z_L","groups":[{"title":"Enroulement primaire","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[
-            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},
-            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[
-            {"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω"},
-            {"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω"},
-            {"id":"zl","name":"Z′_L","value":"160 Ω","type":"charge","state":"new"}]}],"arrows":[]},
-          {"label":"Hypothèse de Kapp : à vide <b>I_m</b> est faible, la branche magnétisante est négligée pour les chutes. Le modèle se réduit à <b>Z_cc = Z₁ + Z′₂ = 5,77 Ω</b>.","code":"Z_cc = Z₁ + Z′₂","groups":[{"title":"Modèle de Kapp","cells":[
-            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},
-            {"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω"},
-            {"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"changed"}]}],"arrows":[]}
+          {"label":"Première étape : l'enroulement primaire n'est pas idéal. Il porte une <b>résistance R₁ = 1,33 Ω</b> et une <b>réactance de fuite X_σ1 = 2,56 Ω</b>. Valeurs d'exemple issues de la répartition de l'essai en court-circuit.","code":"Z₁ = R₁ + jX_σ1","groups":[{"title":"Enroulement primaire","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":0}},
+          {"label":"Les pertes fer se modélisent par une résistance placée en parallèle sur le flux : <b>R_fer = 6,70 kΩ</b>, déduite de l'essai à vide à 402,7 V.","code":"R_fer = U₀²/P₀","groups":[{"title":"Enroulement primaire","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[{"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":1}},
+          {"label":"Le courant magnétisant ajoute une réactance en parallèle : <b>X_m = 6,77 kΩ</b>. L'ensemble <b>R_fer ∥ X_m</b> absorbe le courant à vide mesuré.","code":"R_fer ∥ jX_m","groups":[{"title":"Enroulement primaire","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[{"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},{"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":2}},
+          {"label":"Le secondaire se ramène au primaire : <b>R′₂ = k²R₂ = 10,24 × 0,130 = 1,33 Ω</b> et <b>X′_σ2 = k²X_σ2 = 2,56 Ω</b>. Le modèle devient un T.","code":"R′₂ = k² R₂","groups":[{"title":"Enroulement primaire","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[{"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},{"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[{"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω","state":"new"},{"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω","state":"new"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":3}},
+          {"label":"La charge se ramène elle aussi : <b>Z′_L = k²Z_L = 160 Ω</b> pour 15,6 Ω au secondaire. Le primaire voit Z₁ en série avec Z_h1 ∥ (Z′₂ + Z′_L).","code":"Z′_L = k² Z_L","groups":[{"title":"Enroulement primaire","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω"}]},{"title":"Branche magnétisante","cells":[{"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω"},{"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω"}]},{"title":"Secondaire ramené","cells":[{"id":"r2p","name":"R′₂","value":"1,33 Ω","type":"Ω"},{"id":"xs2p","name":"X′_σ2","value":"2,56 Ω","type":"Ω"},{"id":"zl","name":"Z′_L","value":"160 Ω","type":"charge","state":"new"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":4}},
+          {"label":"Hypothèse de Kapp : à vide <b>I_m</b> est faible, la branche magnétisante est négligée pour les chutes. Le modèle se réduit à <b>Z_cc = Z₁ + Z′₂ = 5,77 Ω</b>.","code":"Z_cc = Z₁ + Z′₂","groups":[{"title":"Modèle de Kapp","cells":[{"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},{"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω"},{"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"changed"}]}],"arrows":[],"scene":{"tR1":"1,33 Ω","tX1":"2,56 Ω","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tR2":"1,33 Ω","tX2":"2,56 Ω","tZL":"160 Ω","tRcc":"2,66 Ω","tXcc":"5,12 Ω","tZcc":"5,77 Ω","show":5}}
         ]}
         </script>
       </div>
@@ -1105,7 +1114,7 @@ X_m ≈ U₀²/Q₀        L_m = X_m/(2πf)
             <text class="ts" x="50" y="105" text-anchor="middle">réseau</text>
             <text class="tm" x="50" y="150" text-anchor="middle">3×400 V</text>
             <text class="ts" x="140" y="105" text-anchor="middle">variac</text>
-            <text class="tm" x="140" y="150" text-anchor="middle">0…450 V</text>
+            <text class="tm" x="140" y="150" text-anchor="middle">réglable</text>
             <text class="tm" x="222" y="105" text-anchor="middle">A</text>
             <text class="tm" x="222" y="150" text-anchor="middle">I₀</text>
             <text class="tm" x="295" y="105" text-anchor="middle">W</text>
@@ -1145,6 +1154,7 @@ X_m ≈ U₀²/Q₀        L_m = X_m/(2πf)
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="vide" viewBox="0 0 640 260" role="img" aria-label="Courbe I0(U0) des onze points mesurés et triangle des puissances à vide"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1160,42 +1170,12 @@ X_m ≈ U₀²/Q₀        L_m = X_m/(2πf)
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Premier palier, <b>51,17 V</b> : le courant vaut 27,586 mA et la puissance 0,616 W, d'où <b>S₀ = 1,41 VA</b> et <b>cos φ₀ = 0,436</b>. Le courant est surtout magnétisant, d'où un facteur de puissance faible.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[
-            {"id":"u0","name":"U₀","value":"51,17 V","type":"mesure"},
-            {"id":"i0","name":"I₀","value":"27,586 mA","type":"mesure"},
-            {"id":"p0","name":"P₀","value":"0,616 W","type":"mesure"}]},{"title":"Calculs","cells":[
-            {"id":"s0","name":"S₀","value":"1,41 VA","type":"calcul","state":"new"},
-            {"id":"cos","name":"cos φ₀","value":"0,436","type":"calcul","state":"new"}]}],"arrows":[]},
-          {"label":"À <b>250,9 V</b> : 61,397 mA et 10,992 W donnent <b>S₀ = 15,4 VA</b> et <b>cos φ₀ = 0,714</b>. Les pertes fer augmentent avec la tension.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[
-            {"id":"u0","name":"U₀","value":"250,9 V","type":"mesure"},
-            {"id":"i0","name":"I₀","value":"61,397 mA","type":"mesure"},
-            {"id":"p0","name":"P₀","value":"10,992 W","type":"mesure"}]},{"title":"Calculs","cells":[
-            {"id":"s0","name":"S₀","value":"15,4 VA","type":"calcul","state":"changed"},
-            {"id":"cos","name":"cos φ₀","value":"0,714","type":"calcul","state":"changed"}]}],"arrows":[]},
-          {"label":"Au point nominal <b>402,7 V ≈ U₁n</b> : 84,54 mA et 24,19 W, soit <b>S₀ = 34,0 VA</b>, <b>cos φ₀ = 0,711</b> et <b>Q₀ = 24,0 var</b>.","code":"Q₀ = √(S₀² − P₀²)","groups":[{"title":"Point nominal","cells":[
-            {"id":"u0","name":"U₀","value":"402,7 V","type":"mesure"},
-            {"id":"i0","name":"I₀","value":"84,54 mA","type":"mesure"},
-            {"id":"p0","name":"P₀","value":"24,19 W","type":"mesure"}]},{"title":"Calculs","cells":[
-            {"id":"s0","name":"S₀","value":"34,0 VA","type":"calcul","state":"changed"},
-            {"id":"q0","name":"Q₀","value":"24,0 var","type":"calcul","state":"new"},
-            {"id":"cos","name":"cos φ₀","value":"0,711","type":"calcul"}]}],"arrows":[]},
-          {"label":"À <b>500,1 V</b> : 116,88 mA et 35,96 W donnent <b>S₀ = 58,5 VA</b>. Le courant à vide vaut déjà 1,38 fois sa valeur nominale : le fer sature.","code":"S₀ = U₀ I₀","groups":[{"title":"Mesures du banc","cells":[
-            {"id":"u0","name":"U₀","value":"500,1 V","type":"mesure"},
-            {"id":"i0","name":"I₀","value":"116,88 mA","type":"mesure","state":"changed"},
-            {"id":"p0","name":"P₀","value":"35,96 W","type":"mesure"}]},{"title":"Calculs","cells":[
-            {"id":"s0","name":"S₀","value":"58,5 VA","type":"calcul","state":"changed"},
-            {"id":"cos","name":"cos φ₀","value":"0,615","type":"calcul","state":"changed"}]}],"arrows":[]},
-          {"label":"À <b>600,2 V</b> : 184,00 mA et 50,91 W, soit <b>S₀ = 110 VA</b>. La tension n'a augmenté que de 1,49 fois mais le courant à vide de 2,18 fois : le noyau est saturé.","code":"U₀ ↑ 1,49 ; I₀ ↑ 2,18","groups":[{"title":"Mesures du banc","cells":[
-            {"id":"u0","name":"U₀","value":"600,2 V","type":"mesure","state":"changed"},
-            {"id":"i0","name":"I₀","value":"184,00 mA","type":"mesure","state":"changed"},
-            {"id":"p0","name":"P₀","value":"50,91 W","type":"mesure"}]},{"title":"Calculs","cells":[
-            {"id":"s0","name":"S₀","value":"110 VA","type":"calcul","state":"changed"},
-            {"id":"cos","name":"cos φ₀","value":"0,461","type":"calcul","state":"changed"}]}],"arrows":[]},
-          {"label":"Au point nominal, on retient <b>P_fer ≈ P₀ = 24,2 W</b>, <b>R_fer = 6,70 kΩ</b> et <b>X_m = 6,77 kΩ</b> ; le courant à vide vaut <b>3,25 %</b> du courant nominal. Ces éléments ne sont valables qu'au voisinage du point nominal.","code":"R_fer = U₀²/P₀ ; X_m = U₀²/Q₀","groups":[{"title":"Modèle déduit","cells":[
-            {"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"},
-            {"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"},
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes","state":"new"},
-            {"id":"pct","name":"I₀/I₁n","value":"3,25 %","type":"relatif","state":"new"}]}],"arrows":[]}
+          {"label":"Premier palier, <b>51,17 V</b> : le courant vaut 27,586 mA et la puissance 0,616 W, d'où <b>S₀ = 1,41 VA</b> et <b>cos φ₀ = 0,436</b>. Le courant est surtout magnétisant, d'où un facteur de puissance faible.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[{"id":"u0","name":"U₀","value":"51,17 V","type":"mesure"},{"id":"i0","name":"I₀","value":"27,586 mA","type":"mesure"},{"id":"p0","name":"P₀","value":"0,616 W","type":"mesure"}]},{"title":"Calculs","cells":[{"id":"s0","name":"S₀","value":"1,41 VA","type":"calcul","state":"new"},{"id":"cos","name":"cos φ₀","value":"0,436","type":"calcul","state":"new"}]}],"arrows":[],"scene":{"idx":0,"P":0.616,"Q":1.2700746950389905,"fin":0,"tP":"0,616 W","tQ":"1,3 var","tS":"1,41 VA","tcos":"0,436"}},
+          {"label":"À <b>250,9 V</b> : 61,397 mA et 10,992 W donnent <b>S₀ = 15,4 VA</b> et <b>cos φ₀ = 0,714</b>. Les pertes fer augmentent avec la tension.","code":"S₀ = U₀ I₀ ; cos φ₀ = P₀/S₀","groups":[{"title":"Mesures du banc","cells":[{"id":"u0","name":"U₀","value":"250,9 V","type":"mesure"},{"id":"i0","name":"I₀","value":"61,397 mA","type":"mesure"},{"id":"p0","name":"P₀","value":"10,992 W","type":"mesure"}]},{"title":"Calculs","cells":[{"id":"s0","name":"S₀","value":"15,4 VA","type":"calcul","state":"changed"},{"id":"cos","name":"cos φ₀","value":"0,714","type":"calcul","state":"changed"}]}],"arrows":[],"scene":{"idx":3,"P":10.992,"Q":10.792348268831637,"fin":0,"tP":"10,99 W","tQ":"10,8 var","tS":"15,4 VA","tcos":"0,714"}},
+          {"label":"Au point nominal <b>402,7 V ≈ U₁n</b> : 84,54 mA et 24,19 W, soit <b>S₀ = 34,0 VA</b>, <b>cos φ₀ = 0,711</b> et <b>Q₀ = 24,0 var</b>.","code":"Q₀ = √(S₀² − P₀²)","groups":[{"title":"Point nominal","cells":[{"id":"u0","name":"U₀","value":"402,7 V","type":"mesure"},{"id":"i0","name":"I₀","value":"84,54 mA","type":"mesure"},{"id":"p0","name":"P₀","value":"24,19 W","type":"mesure"}]},{"title":"Calculs","cells":[{"id":"s0","name":"S₀","value":"34,0 VA","type":"calcul","state":"changed"},{"id":"q0","name":"Q₀","value":"24,0 var","type":"calcul","state":"new"},{"id":"cos","name":"cos φ₀","value":"0,711","type":"calcul"}]}],"arrows":[],"scene":{"idx":6,"P":24.19,"Q":23.955279225476875,"fin":0,"tP":"24,19 W","tQ":"24,0 var","tS":"34,0 VA","tcos":"0,711"}},
+          {"label":"À <b>500,1 V</b> : 116,88 mA et 35,96 W donnent <b>S₀ = 58,5 VA</b>. Le courant à vide vaut déjà 1,38 fois sa valeur nominale : le fer sature.","code":"S₀ = U₀ I₀","groups":[{"title":"Mesures du banc","cells":[{"id":"u0","name":"U₀","value":"500,1 V","type":"mesure"},{"id":"i0","name":"I₀","value":"116,88 mA","type":"mesure","state":"changed"},{"id":"p0","name":"P₀","value":"35,96 W","type":"mesure"}]},{"title":"Calculs","cells":[{"id":"s0","name":"S₀","value":"58,5 VA","type":"calcul","state":"changed"},{"id":"cos","name":"cos φ₀","value":"0,615","type":"calcul","state":"changed"}]}],"arrows":[],"scene":{"idx":8,"P":35.96,"Q":46.08121341771877,"fin":0,"tP":"35,96 W","tQ":"46,1 var","tS":"58,5 VA","tcos":"0,615"}},
+          {"label":"À <b>600,2 V</b> : 184,00 mA et 50,91 W, soit <b>S₀ = 110 VA</b>. La tension n'a augmenté que de 1,49 fois mais le courant à vide de 2,18 fois : le noyau est saturé.","code":"U₀ ↑ 1,49 ; I₀ ↑ 2,18","groups":[{"title":"Mesures du banc","cells":[{"id":"u0","name":"U₀","value":"600,2 V","type":"mesure","state":"changed"},{"id":"i0","name":"I₀","value":"184,00 mA","type":"mesure","state":"changed"},{"id":"p0","name":"P₀","value":"50,91 W","type":"mesure"}]},{"title":"Calculs","cells":[{"id":"s0","name":"S₀","value":"110 VA","type":"calcul","state":"changed"},{"id":"cos","name":"cos φ₀","value":"0,461","type":"calcul","state":"changed"}]}],"arrows":[],"scene":{"idx":10,"P":50.91,"Q":98.00234024879202,"fin":0,"tP":"50,91 W","tQ":"98,0 var","tS":"110 VA","tcos":"0,461"}},
+          {"label":"Au point nominal, on retient <b>P_fer ≈ P₀ = 24,2 W</b>, <b>R_fer = 6,70 kΩ</b> et <b>X_m = 6,77 kΩ</b> ; le courant à vide vaut <b>3,25 %</b> du courant nominal. Ces éléments ne sont valables qu'au voisinage du point nominal.","code":"R_fer = U₀²/P₀ ; X_m = U₀²/Q₀","groups":[{"title":"Modèle déduit","cells":[{"id":"rfer","name":"R_fer","value":"6,70 kΩ","type":"Ω","state":"new"},{"id":"xm","name":"X_m","value":"6,77 kΩ","type":"Ω","state":"new"},{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes","state":"new"},{"id":"pct","name":"I₀/I₁n","value":"3,25 %","type":"relatif","state":"new"}]}],"arrows":[],"scene":{"idx":6,"P":24.19,"Q":23.955279225476875,"fin":1,"tP":"24,2 W","tRfe":"6,70 kΩ","tXm":"6,77 kΩ","tIr":"3,25 %"}}
         ]}
         </script>
       </div>
@@ -1270,6 +1250,7 @@ Q_cc = √(S_cc² − P_cc²) = 34,6 var        u_cc = 100 × 15,0/400 = 3,75 %
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="court-circuit" viewBox="0 0 640 260" role="img" aria-label="Montage de l'essai en court-circuit et triangle des impédances"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1285,30 +1266,12 @@ Q_cc = √(S_cc² − P_cc²) = 34,6 var        u_cc = 100 × 15,0/400 = 3,75 %
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Variac à zéro : le secondaire est déjà court-circuité, mais aucune tension n'est appliquée. <b>U = 0</b>, <b>I = 0</b>, <b>P = 0</b>.","code":"U = 0 ; I = 0 ; P = 0","groups":[{"title":"Données d'exemple","cells":[
-            {"id":"ucc","name":"U_cc","value":"0 V","type":"exemple"},
-            {"id":"icc","name":"I_cc","value":"0 A","type":"exemple"},
-            {"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[]},
-          {"label":"On augmente lentement la tension jusqu'à <b>I_cc = 2,6 A</b> au primaire : la tension nécessaire reste faible, <b>U_cc = 15,0 V</b>. Le flux est réduit, donc le courant magnétisant aussi.","code":"U_cc = 15,0 V ; I_cc = 2,6 A","groups":[{"title":"Données d'exemple","cells":[
-            {"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple","state":"new"},
-            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple","state":"new"},
-            {"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[]},
-          {"label":"La puissance active absorbée vaut <b>P_cc = 18,0 W</b> : elle part presque entièrement dans les résistances des enroulements.","code":"P_cc ≈ P_cu","groups":[{"title":"Données d'exemple","cells":[
-            {"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple"},
-            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"},
-            {"id":"pcc","name":"P_cc","value":"18,0 W","type":"exemple","state":"changed"}]}],"arrows":[]},
-          {"label":"On divise la puissance par le carré du courant : <b>R_cc = P_cc/I_cc² = 18,0/6,76 = 2,66 Ω</b>.","code":"R_cc = P_cc / I_cc²","groups":[{"title":"Impédances","cells":[
-            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω","state":"new"},
-            {"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"}]}],"arrows":[]},
-          {"label":"Le module vient de la tension : <b>Z_cc = U_cc/I_cc = 5,77 Ω</b>. La réactance se déduit du triangle : <b>X_cc = √(5,77² − 2,66²) = 5,12 Ω</b>.","code":"Z_cc = U_cc/I_cc ; X_cc = √(Z_cc² − R_cc²)","groups":[{"title":"Impédances","cells":[
-            {"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"new"},
-            {"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},
-            {"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω","state":"new"}]}],"arrows":[{"from":"rcc","to":"xcc","accent":true}]},
-          {"label":"Répartition : <b>R₁ ≈ R′₂ ≈ 1,33 Ω</b>, <b>X_σ1 ≈ X′_σ2 ≈ 2,56 Ω</b>, puis <b>R₂ = 0,130 Ω</b> et <b>X_σ2 = 0,250 Ω</b>. Tension de court-circuit : <b>u_cc = 3,75 %</b>.","code":"R₂ = R′₂/k² ; X_σ2 = X′_σ2/k²","groups":[{"title":"Enroulements séparés (hypothèse)","cells":[
-            {"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},
-            {"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"},
-            {"id":"r2","name":"R₂","value":"0,130 Ω","type":"Ω","state":"new"},
-            {"id":"xs2","name":"X_σ2","value":"0,250 Ω","type":"Ω","state":"new"}]}],"arrows":[]}
+          {"label":"Variac à zéro : le secondaire est déjà court-circuité, mais aucune tension n'est appliquée. <b>U = 0</b>, <b>I = 0</b>, <b>P = 0</b>.","code":"U = 0 ; I = 0 ; P = 0","groups":[{"title":"Données d'exemple","cells":[{"id":"ucc","name":"U_cc","value":"0 V","type":"exemple"},{"id":"icc","name":"I_cc","value":"0 A","type":"exemple"},{"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[],"scene":{"U":0,"I":0,"P":0,"R":2.662721893491124,"X":5.118001151481122,"tU":"0 V","tI":"0 A","tP":"0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":0}},
+          {"label":"On augmente lentement la tension jusqu'à <b>I_cc = 2,6 A</b> au primaire : la tension nécessaire reste faible, <b>U_cc = 15,0 V</b>. Le flux est réduit, donc le courant magnétisant aussi.","code":"U_cc = 15,0 V ; I_cc = 2,6 A","groups":[{"title":"Données d'exemple","cells":[{"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple","state":"new"},{"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple","state":"new"},{"id":"pcc","name":"P_cc","value":"0 W","type":"exemple"}]}],"arrows":[],"scene":{"U":15.0,"I":2.6,"P":0,"R":2.662721893491124,"X":5.118001151481122,"tU":"15,0 V","tI":"2,6 A","tP":"0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":1}},
+          {"label":"La puissance active absorbée vaut <b>P_cc = 18,0 W</b> : elle part presque entièrement dans les résistances des enroulements.","code":"P_cc ≈ P_cu","groups":[{"title":"Données d'exemple","cells":[{"id":"ucc","name":"U_cc","value":"15,0 V","type":"exemple"},{"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"},{"id":"pcc","name":"P_cc","value":"18,0 W","type":"exemple","state":"changed"}]}],"arrows":[],"scene":{"U":15.0,"I":2.6,"P":18.0,"R":2.662721893491124,"X":5.118001151481122,"tU":"15,0 V","tI":"2,6 A","tP":"18,0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":2}},
+          {"label":"On divise la puissance par le carré du courant : <b>R_cc = P_cc/I_cc² = 18,0/6,76 = 2,66 Ω</b>.","code":"R_cc = P_cc / I_cc²","groups":[{"title":"Impédances","cells":[{"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω","state":"new"},{"id":"icc","name":"I_cc","value":"2,6 A","type":"exemple"}]}],"arrows":[],"scene":{"U":15.0,"I":2.6,"P":18.0,"R":2.662721893491124,"X":5.118001151481122,"tU":"15,0 V","tI":"2,6 A","tP":"18,0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":3}},
+          {"label":"Le module vient de la tension : <b>Z_cc = U_cc/I_cc = 5,77 Ω</b>. La réactance se déduit du triangle : <b>X_cc = √(5,77² − 2,66²) = 5,12 Ω</b>.","code":"Z_cc = U_cc/I_cc ; X_cc = √(Z_cc² − R_cc²)","groups":[{"title":"Impédances","cells":[{"id":"zcc","name":"Z_cc","value":"5,77 Ω","type":"Ω","state":"new"},{"id":"rcc","name":"R_cc","value":"2,66 Ω","type":"Ω"},{"id":"xcc","name":"X_cc","value":"5,12 Ω","type":"Ω","state":"new"}]}],"arrows":[{"from":"rcc","to":"xcc","accent":true}],"scene":{"U":15.0,"I":2.6,"P":18.0,"R":2.662721893491124,"X":5.118001151481122,"tU":"15,0 V","tI":"2,6 A","tP":"18,0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":4}},
+          {"label":"Répartition : <b>R₁ ≈ R′₂ ≈ 1,33 Ω</b>, <b>X_σ1 ≈ X′_σ2 ≈ 2,56 Ω</b>, puis <b>R₂ = 0,130 Ω</b> et <b>X_σ2 = 0,250 Ω</b>. Tension de court-circuit : <b>u_cc = 3,75 %</b>.","code":"R₂ = R′₂/k² ; X_σ2 = X′_σ2/k²","groups":[{"title":"Enroulements séparés (hypothèse)","cells":[{"id":"r1","name":"R₁","value":"1,33 Ω","type":"Ω","state":"new"},{"id":"xs1","name":"X_σ1","value":"2,56 Ω","type":"Ω","state":"new"},{"id":"r2","name":"R₂","value":"0,130 Ω","type":"Ω","state":"new"},{"id":"xs2","name":"X_σ2","value":"0,250 Ω","type":"Ω","state":"new"}]}],"arrows":[],"scene":{"U":15.0,"I":2.6,"P":18.0,"R":2.662721893491124,"X":5.118001151481122,"tU":"15,0 V","tI":"2,6 A","tP":"18,0 W","tR":"2,66 Ω","tX":"5,12 Ω","tZ":"5,77 Ω","tR1":"1,33 Ω","tX1":"2,56 Ω","tR2":"0,130 Ω","tX2":"0,250 Ω","tucc":"3,75 %","show":5}}
         ]}
         </script>
       </div>
@@ -1333,23 +1296,8 @@ P_cu = R_cc I′₂²        η maximal quand P_cu = P_fer
 
       <figure>
         <div class="figcard fig-wide">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Diagramme de Fresnel simplifié de la chute de tension">
-            <path class="ax" d="M60 250 L580 250"/>
-            <path class="ax" d="M60 250 L60 40"/>
-            <text class="tm" x="588" y="256">I′₂</text>
-            <path d="M110 250 L420 250" fill="none" stroke="var(--teal)" stroke-width="2" marker-end="url(#ar)"/>
-            <text class="ts" x="300" y="268" fill="var(--teal)">I′₂ (référence)</text>
-            <path d="M110 250 L350 242" fill="none" stroke="var(--ink)" stroke-width="2" marker-end="url(#ar)"/>
-            <text class="ts" x="330" y="228">U′₂</text>
-            <path d="M350 242 L385 238" fill="none" stroke="var(--coral)" stroke-width="2" marker-end="url(#ar)"/>
-            <text class="tm" x="372" y="258">R_cc I′₂</text>
-            <path d="M385 238 L385 196" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar-accent)"/>
-            <text class="tm" x="392" y="212">jX_cc I′₂</text>
-            <path d="M110 250 L385 196" fill="none" stroke="var(--purple)" stroke-width="2" marker-end="url(#ar)"/>
-            <text class="ts" x="250" y="186">U₁</text>
-            <path class="ax" d="M110 250 C 180 250, 230 248, 300 244"/>
-            <text class="tm" x="240" y="236">φ₂</text>
-            <text class="ts" x="320" y="292" text-anchor="middle">diagramme qualitatif : l'échelle des chutes est exagérée</text>
+          <svg viewBox="0 0 640 270" role="img" aria-label="Diagramme de Kapp : U′2 en avance de phi2 sur I′2, chute R_cc I′2 parallèle à I′2, chute jX_cc I′2 perpendiculaire, U1 somme">
+<line x1="70.0" y1="236.0" x2="600.0" y2="236.0" stroke="var(--faint)" stroke-width="1.2" stroke-linecap="round" marker-end="url(#fg-faint)"/><text class="tm" x="600.0" y="228.0" text-anchor="end">axe de I′₂ (référence)</text><line x1="70.0" y1="236.0" x2="220.0" y2="236.0" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#fg-teal)"/><text class="ts" x="145.0" y="254.0" text-anchor="middle">I′₂</text><line x1="70.0" y1="236.0" x2="303.8" y2="101.0" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#fg-ink)"/><text class="ts" x="194.9" y="186.5">U′₂</text><line x1="303.8" y1="101.0" x2="347.8" y2="101.0" stroke="var(--coral)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#fg-coral)"/><text class="tm" x="325.8" y="117.0" text-anchor="middle">R_cc I′₂</text><line x1="347.8" y1="101.0" x2="347.8" y2="45.0" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#fg-amber)"/><text class="tm" x="355.8" y="73.0">jX_cc I′₂</text><line x1="70.0" y1="236.0" x2="347.8" y2="45.0" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#fg-accent)"/><text class="ts" x="198.9" y="130.5" text-anchor="end">U₁</text><path d="M160 236 A 90 90 0 0 0 147.9 191.0" fill="none" stroke="var(--muted)" stroke-width="1.2"/><text class="ts" x="170.0" y="218.0">φ₂</text><text class="tm" x="620.0" y="30.0" text-anchor="end">charge inductive (φ₂ > 0)</text><text class="tm" x="620.0" y="48.0" text-anchor="end">chutes agrandies</text>
           </svg>
         </div>
         <figcaption>La tension primaire <span class="fx">U₁</span> est la somme vectorielle de <span class="fx">U′₂</span>, de la chute ohmique <span class="fx">R_ccI′₂</span> et de la chute réactive <span class="fx">jX_ccI′₂</span>. Pour une charge inductive la chute réactive s'ajoute ; pour une charge capacitive elle se retranche et <span class="fx">U₂</span> peut monter au-dessus de sa valeur à vide.</figcaption>
@@ -1375,6 +1323,7 @@ P_cu = R_cc I′₂²        η maximal quand P_cu = P_fer
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="charge" viewBox="0 0 640 260" role="img" aria-label="Diagramme de Kapp, courbe du rendement et barres des pertes"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1390,45 +1339,12 @@ P_cu = R_cc I′₂²        η maximal quand P_cu = P_fer
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"À vide (<b>I₂ = 0</b>) : le secondaire est à <b>125,0 V</b>, la puissance secondaire est nulle. Le rendement est nul et seules les pertes fer, <b>24,2 W</b>, sont consommées.","code":"I₂ = 0 ; η = 0","groups":[{"title":"Grandeurs secondaires","cells":[
-            {"id":"i2","name":"I₂","value":"0 A","type":"courant"},
-            {"id":"u2","name":"U₂","value":"125,0 V","type":"tension"},
-            {"id":"p2","name":"P₂","value":"0 W","type":"puissance"}]},{"title":"Bilan","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"pcu","name":"P_cu","value":"0 W","type":"pertes"},
-            {"id":"eta","name":"η","value":"0 %","type":"rendement"}]}],"arrows":[]},
-          {"label":"À <b>I₂ = 2,00 A</b> (25 % du nominal) : la chute ohmique réduit la tension à <b>124,5 V</b>. <b>P₂ = 249 W</b>, <b>P_cu = 1,04 W</b>, <b>η = 90,8 %</b>.","code":"ΔU ≈ R_cc I′₂","groups":[{"title":"Grandeurs secondaires","cells":[
-            {"id":"i2","name":"I₂","value":"2,00 A","type":"courant","state":"changed"},
-            {"id":"u2","name":"U₂","value":"124,5 V","type":"tension","state":"changed"},
-            {"id":"p2","name":"P₂","value":"249 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"pcu","name":"P_cu","value":"1,04 W","type":"pertes","state":"changed"},
-            {"id":"eta","name":"η","value":"90,8 %","type":"rendement","state":"changed"}]}],"arrows":[]},
-          {"label":"À <b>I₂ = 4,00 A</b> : <b>U₂ = 124,0 V</b>, <b>P₂ = 496 W</b>, <b>P_cu = 4,16 W</b> et <b>η = 94,6 %</b>. Les pertes fer restent constantes.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[
-            {"id":"i2","name":"I₂","value":"4,00 A","type":"courant","state":"changed"},
-            {"id":"u2","name":"U₂","value":"124,0 V","type":"tension","state":"changed"},
-            {"id":"p2","name":"P₂","value":"496 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"pcu","name":"P_cu","value":"4,16 W","type":"pertes","state":"changed"},
-            {"id":"eta","name":"η","value":"94,6 %","type":"rendement","state":"changed"}]}],"arrows":[]},
-          {"label":"À <b>I₂ = 6,00 A</b> : <b>U₂ = 123,4 V</b>, <b>P₂ = 741 W</b>, <b>P_cu = 9,36 W</b> et <b>η = 95,7 %</b>. Les pertes cuivre augmentent comme le carré du courant.","code":"P_cu = R_cc I′₂²","groups":[{"title":"Grandeurs secondaires","cells":[
-            {"id":"i2","name":"I₂","value":"6,00 A","type":"courant","state":"changed"},
-            {"id":"u2","name":"U₂","value":"123,4 V","type":"tension","state":"changed"},
-            {"id":"p2","name":"P₂","value":"741 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"pcu","name":"P_cu","value":"9,36 W","type":"pertes","state":"changed"},
-            {"id":"eta","name":"η","value":"95,7 %","type":"rendement","state":"changed"}]}],"arrows":[]},
-          {"label":"À <b>I₂ = 8,00 A</b> (courant nominal) : <b>U₂ = 122,9 V</b>, <b>P₂ = 983 W</b>, <b>P_cu = 16,6 W</b> et <b>η = 96,0 %</b>. La chute relative atteint 1,66 %.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[
-            {"id":"i2","name":"I₂","value":"8,00 A","type":"courant","state":"changed"},
-            {"id":"u2","name":"U₂","value":"122,9 V","type":"tension","state":"changed"},
-            {"id":"p2","name":"P₂","value":"983 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"pcu","name":"P_cu","value":"16,6 W","type":"pertes","state":"changed"},
-            {"id":"eta","name":"η","value":"96,0 %","type":"rendement","state":"changed"}]}],"arrows":[]},
-          {"label":"Le rendement est maximal quand <b>P_cu = P_fer</b>, soit <b>I₂ = 9,65 A</b> : au-delà du courant nominal de 8,00 A. Sur ce banc, les pertes fer dominent encore à pleine charge (24,2 W contre 16,6 W).","code":"P_cu = P_fer ; chute = 1,66 %","groups":[{"title":"Optimum","cells":[
-            {"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},
-            {"id":"iopt","name":"I₂ optimal","value":"9,65 A","type":"courant","state":"new"},
-            {"id":"chute","name":"chute","value":"1,66 %","type":"relatif","state":"new"}]}],"arrows":[]}
+          {"label":"À vide (<b>I₂ = 0</b>) : le secondaire est à <b>125,0 V</b>, la puissance secondaire est nulle. Le rendement est nul et seules les pertes fer, <b>24,2 W</b>, sont consommées.","code":"I₂ = 0 ; η = 0","groups":[{"title":"Grandeurs secondaires","cells":[{"id":"i2","name":"I₂","value":"0 A","type":"courant"},{"id":"u2","name":"U₂","value":"125,0 V","type":"tension"},{"id":"p2","name":"P₂","value":"0 W","type":"puissance"}]},{"title":"Bilan","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"pcu","name":"P_cu","value":"0 W","type":"pertes"},{"id":"eta","name":"η","value":"0 %","type":"rendement"}]}],"arrows":[],"scene":{"I2":0.0,"U2":125.0,"Pcu":0.0,"eta":0.0,"opt":0,"iopt":9.645061649477531,"tI2":"0,00 A","tU2":"125,0 V","tPcu":"0,00","tEta":"0,0 %"}},
+          {"label":"À <b>I₂ = 2,00 A</b> (25 % du nominal) : la chute ohmique réduit la tension à <b>124,5 V</b>. <b>P₂ = 249 W</b>, <b>P_cu = 1,04 W</b>, <b>η = 90,8 %</b>.","code":"ΔU ≈ R_cc I′₂","groups":[{"title":"Grandeurs secondaires","cells":[{"id":"i2","name":"I₂","value":"2,00 A","type":"courant","state":"changed"},{"id":"u2","name":"U₂","value":"124,5 V","type":"tension","state":"changed"},{"id":"p2","name":"P₂","value":"249 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"pcu","name":"P_cu","value":"1,04 W","type":"pertes","state":"changed"},{"id":"eta","name":"η","value":"90,8 %","type":"rendement","state":"changed"}]}],"arrows":[],"scene":{"I2":2.0,"U2":124.47993713017752,"Pcu":1.0401257396449703,"eta":0.9079830564949671,"opt":0,"iopt":9.645061649477531,"tI2":"2,00 A","tU2":"124,5 V","tPcu":"1,04","tEta":"90,8 %"}},
+          {"label":"À <b>I₂ = 4,00 A</b> : <b>U₂ = 124,0 V</b>, <b>P₂ = 496 W</b>, <b>P_cu = 4,16 W</b> et <b>η = 94,6 %</b>. Les pertes fer restent constantes.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[{"id":"i2","name":"I₂","value":"4,00 A","type":"courant","state":"changed"},{"id":"u2","name":"U₂","value":"124,0 V","type":"tension","state":"changed"},{"id":"p2","name":"P₂","value":"496 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"pcu","name":"P_cu","value":"4,16 W","type":"pertes","state":"changed"},{"id":"eta","name":"η","value":"94,6 %","type":"rendement","state":"changed"}]}],"arrows":[],"scene":{"I2":4.0,"U2":123.95987426035504,"Pcu":4.160502958579881,"eta":0.9459155974769075,"opt":0,"iopt":9.645061649477531,"tI2":"4,00 A","tU2":"124,0 V","tPcu":"4,16","tEta":"94,6 %"}},
+          {"label":"À <b>I₂ = 6,00 A</b> : <b>U₂ = 123,4 V</b>, <b>P₂ = 741 W</b>, <b>P_cu = 9,36 W</b> et <b>η = 95,7 %</b>. Les pertes cuivre augmentent comme le carré du courant.","code":"P_cu = R_cc I′₂²","groups":[{"title":"Grandeurs secondaires","cells":[{"id":"i2","name":"I₂","value":"6,00 A","type":"courant","state":"changed"},{"id":"u2","name":"U₂","value":"123,4 V","type":"tension","state":"changed"},{"id":"p2","name":"P₂","value":"741 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"pcu","name":"P_cu","value":"9,36 W","type":"pertes","state":"changed"},{"id":"eta","name":"η","value":"95,7 %","type":"rendement","state":"changed"}]}],"arrows":[],"scene":{"I2":6.0,"U2":123.43981139053253,"Pcu":9.361131656804734,"eta":0.9566629229816908,"opt":0,"iopt":9.645061649477531,"tI2":"6,00 A","tU2":"123,4 V","tPcu":"9,36","tEta":"95,7 %"}},
+          {"label":"À <b>I₂ = 8,00 A</b> (courant nominal) : <b>U₂ = 122,9 V</b>, <b>P₂ = 983 W</b>, <b>P_cu = 16,6 W</b> et <b>η = 96,0 %</b>. La chute relative atteint 1,66 %.","code":"η = P₂/(P₂ + P_fer + P_cu)","groups":[{"title":"Grandeurs secondaires","cells":[{"id":"i2","name":"I₂","value":"8,00 A","type":"courant","state":"changed"},{"id":"u2","name":"U₂","value":"122,9 V","type":"tension","state":"changed"},{"id":"p2","name":"P₂","value":"983 W","type":"puissance","state":"changed"}]},{"title":"Bilan","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"pcu","name":"P_cu","value":"16,6 W","type":"pertes","state":"changed"},{"id":"eta","name":"η","value":"96,0 %","type":"rendement","state":"changed"}]}],"arrows":[],"scene":{"I2":8.0,"U2":122.91974852071004,"Pcu":16.642011834319526,"eta":0.9601323857542844,"opt":0,"iopt":9.645061649477531,"tI2":"8,00 A","tU2":"122,9 V","tPcu":"16,6","tEta":"96,0 %"}},
+          {"label":"Le rendement est maximal quand <b>P_cu = P_fer</b>, soit <b>I₂ = 9,65 A</b> : au-delà du courant nominal de 8,00 A. Sur ce banc, les pertes fer dominent encore à pleine charge (24,2 W contre 16,6 W).","code":"P_cu = P_fer ; chute = 1,66 %","groups":[{"title":"Optimum","cells":[{"id":"pfer","name":"P_fer","value":"24,2 W","type":"pertes"},{"id":"iopt","name":"I₂ optimal","value":"9,65 A","type":"courant","state":"new"},{"id":"chute","name":"chute","value":"1,66 %","type":"relatif","state":"new"}]}],"arrows":[],"scene":{"I2":8.0,"U2":122.91974852071004,"Pcu":16.642011834319526,"eta":0.9601323857542844,"opt":1,"iopt":9.645061649477531,"tI2":"8,00 A","tU2":"122,9 V","tPcu":"16,6","tEta":"96,0 %"}}
         ]}
         </script>
       </div>
@@ -1593,15 +1509,8 @@ I₂ = I₁ N₁/N₂
 
       <figure>
         <div class="figcard fig-wide">
-          <svg viewBox="0 0 640 220" role="img" aria-label="Flux sinusoïdal et force électromotrice en quadrature">
-            <path class="ax" d="M70 110 L590 110"/>
-            <path class="ax" d="M320 30 L320 190"/>
-            <polyline points="70,110.0 75,105.7 80,101.5 85,97.5 90,93.6 95,90.0 100,86.7 105,83.8 110,81.3 115,79.2 120,77.7 125,76.6 130,76.1 135,76.1 140,76.6 145,77.7 150,79.2 155,81.3 160,83.8 165,86.7 170,90.0 175,93.6 180,97.5 185,101.5 190,105.7 195,110.0 200,114.3 205,118.5 210,122.5 215,126.4 220,130.0 225,133.3 230,136.2 235,138.7 240,140.8 245,142.3 250,143.4 255,143.9 260,143.9 265,143.4 270,142.3 275,140.8 280,138.7 285,136.2 290,133.3 295,130.0 300,126.4 305,122.5 310,118.5 315,114.3 320,110.0 325,105.7 330,101.5 335,97.5 340,93.6 345,90.0 350,86.7 355,83.8 360,81.3 365,79.2 370,77.7 375,76.6 380,76.1 385,76.1 390,76.6 395,77.7 400,79.2 405,81.3 410,83.8 415,86.7 420,90.0 425,93.6 430,97.5 435,101.5 440,105.7 445,110.0 450,114.3 455,118.5 460,122.5 465,126.4 470,130.0 475,133.3 480,136.2 485,138.7 490,140.8 495,142.3 500,143.4 505,143.9 510,143.9 515,143.4 520,142.3 525,140.8 530,138.7 535,136.2 540,133.3 545,130.0 550,126.4 555,122.5 560,118.5 565,114.3 570,110.0" fill="none" stroke="var(--teal)" stroke-width="2"/>
-            <polyline points="70,58.0 75,58.4 80,59.6 85,61.7 90,64.4 95,67.9 100,72.1 105,76.9 110,82.1 115,87.9 120,93.9 125,100.3 130,106.7 135,113.3 140,119.7 145,126.1 150,132.1 155,137.9 160,143.1 165,147.9 170,152.1 175,155.6 180,158.3 185,160.4 190,161.6 195,162.0 200,161.6 205,160.4 210,158.3 215,155.6 220,152.1 225,147.9 230,143.1 235,137.9 240,132.1 245,126.1 250,119.7 255,113.3 260,106.7 265,100.3 270,93.9 275,87.9 280,82.1 285,76.9 290,72.1 295,67.9 300,64.4 305,61.7 310,59.6 315,58.4 320,58.0 325,58.4 330,59.6 335,61.7 340,64.4 345,67.9 350,72.1 355,76.9 360,82.1 365,87.9 370,93.9 375,100.3 380,106.7 385,113.3 390,119.7 395,126.1 400,132.1 405,137.9 410,143.1 415,147.9 420,152.1 425,155.6 430,158.3 435,160.4 440,161.6 445,162.0 450,161.6 455,160.4 460,158.3 465,155.6 470,152.1 475,147.9 480,143.1 485,137.9 490,132.1 495,126.1 500,119.7 505,113.3 510,106.7 515,100.3 520,93.9 525,87.9 530,82.1 535,76.9 540,72.1 545,67.9 550,64.4 555,61.7 560,59.6 565,58.4 570,58.0" fill="none" stroke="var(--coral)" stroke-width="2"/>
-            <text class="tm" x="132" y="66" text-anchor="middle" fill="var(--teal)">Φ(t)</text>
-            <text class="tm" x="320" y="44" text-anchor="middle" fill="var(--coral)">u_i(t)</text>
-            <text class="tm" x="330" y="196">t</text>
-            <text class="ts" x="320" y="212" text-anchor="middle">une période complète du flux correspond à une période de la force électromotrice, décalée d'un quart</text>
+          <svg viewBox="0 0 640 240" role="img" aria-label="Flux sinusoïdal et force électromotrice en quadrature sur deux périodes">
+<line x1="70.0" y1="120.0" x2="620.0" y2="120.0" stroke="var(--faint)" stroke-width="1.2" stroke-linecap="round" marker-end="url(#fg-faint)"/><text class="tm" x="622.0" y="136.0" text-anchor="end">t</text><line x1="70.0" y1="210.0" x2="70.0" y2="22.0" stroke="var(--faint)" stroke-width="1.2" stroke-linecap="round" marker-end="url(#fg-faint)"/><path d="M70.0 120.0 L72.7 115.6 L75.4 111.2 L78.1 106.9 L80.8 102.6 L83.5 98.4 L86.2 94.2 L88.9 90.2 L91.6 86.3 L94.3 82.5 L97.0 78.9 L99.7 75.4 L102.4 72.1 L105.1 69.0 L107.8 66.1 L110.5 63.4 L113.2 60.9 L115.9 58.7 L118.6 56.7 L121.3 54.9 L124.0 53.4 L126.7 52.2 L129.4 51.2 L132.1 50.6 L134.8 50.1 L137.5 50.0 L140.2 50.1 L142.9 50.6 L145.6 51.2 L148.3 52.2 L151.0 53.4 L153.7 54.9 L156.4 56.7 L159.1 58.7 L161.8 60.9 L164.5 63.4 L167.2 66.1 L169.9 69.0 L172.6 72.1 L175.3 75.4 L178.0 78.9 L180.7 82.5 L183.4 86.3 L186.1 90.2 L188.8 94.2 L191.5 98.4 L194.2 102.6 L196.9 106.9 L199.6 111.2 L202.3 115.6 L205.0 120.0 L207.7 124.4 L210.4 128.8 L213.1 133.1 L215.8 137.4 L218.5 141.6 L221.2 145.8 L223.9 149.8 L226.6 153.7 L229.3 157.5 L232.0 161.1 L234.7 164.6 L237.4 167.9 L240.1 171.0 L242.8 173.9 L245.5 176.6 L248.2 179.1 L250.9 181.3 L253.6 183.3 L256.3 185.1 L259.0 186.6 L261.7 187.8 L264.4 188.8 L267.1 189.4 L269.8 189.9 L272.5 190.0 L275.2 189.9 L277.9 189.4 L280.6 188.8 L283.3 187.8 L286.0 186.6 L288.7 185.1 L291.4 183.3 L294.1 181.3 L296.8 179.1 L299.5 176.6 L302.2 173.9 L304.9 171.0 L307.6 167.9 L310.3 164.6 L313.0 161.1 L315.7 157.5 L318.4 153.7 L321.1 149.8 L323.8 145.8 L326.5 141.6 L329.2 137.4 L331.9 133.1 L334.6 128.8 L337.3 124.4 L340.0 120.0 L342.7 115.6 L345.4 111.2 L348.1 106.9 L350.8 102.6 L353.5 98.4 L356.2 94.2 L358.9 90.2 L361.6 86.3 L364.3 82.5 L367.0 78.9 L369.7 75.4 L372.4 72.1 L375.1 69.0 L377.8 66.1 L380.5 63.4 L383.2 60.9 L385.9 58.7 L388.6 56.7 L391.3 54.9 L394.0 53.4 L396.7 52.2 L399.4 51.2 L402.1 50.6 L404.8 50.1 L407.5 50.0 L410.2 50.1 L412.9 50.6 L415.6 51.2 L418.3 52.2 L421.0 53.4 L423.7 54.9 L426.4 56.7 L429.1 58.7 L431.8 60.9 L434.5 63.4 L437.2 66.1 L439.9 69.0 L442.6 72.1 L445.3 75.4 L448.0 78.9 L450.7 82.5 L453.4 86.3 L456.1 90.2 L458.8 94.2 L461.5 98.4 L464.2 102.6 L466.9 106.9 L469.6 111.2 L472.3 115.6 L475.0 120.0 L477.7 124.4 L480.4 128.8 L483.1 133.1 L485.8 137.4 L488.5 141.6 L491.2 145.8 L493.9 149.8 L496.6 153.7 L499.3 157.5 L502.0 161.1 L504.7 164.6 L507.4 167.9 L510.1 171.0 L512.8 173.9 L515.5 176.6 L518.2 179.1 L520.9 181.3 L523.6 183.3 L526.3 185.1 L529.0 186.6 L531.7 187.8 L534.4 188.8 L537.1 189.4 L539.8 189.9 L542.5 190.0 L545.2 189.9 L547.9 189.4 L550.6 188.8 L553.3 187.8 L556.0 186.6 L558.7 185.1 L561.4 183.3 L564.1 181.3 L566.8 179.1 L569.5 176.6 L572.2 173.9 L574.9 171.0 L577.6 167.9 L580.3 164.6 L583.0 161.1 L585.7 157.5 L588.4 153.7 L591.1 149.8 L593.8 145.8 L596.5 141.6 L599.2 137.4 L601.9 133.1 L604.6 128.8 L607.3 124.4 L610.0 120.0" fill="none" stroke="var(--accent)" stroke-width="2.2"/><path d="M70.0 64.0 L72.7 64.1 L75.4 64.4 L78.1 65.0 L80.8 65.8 L83.5 66.7 L86.2 67.9 L88.9 69.3 L91.6 70.9 L94.3 72.7 L97.0 74.7 L99.7 76.9 L102.4 79.2 L105.1 81.7 L107.8 84.3 L110.5 87.1 L113.2 90.0 L115.9 93.0 L118.6 96.2 L121.3 99.4 L124.0 102.7 L126.7 106.1 L129.4 109.5 L132.1 113.0 L134.8 116.5 L137.5 120.0 L140.2 123.5 L142.9 127.0 L145.6 130.5 L148.3 133.9 L151.0 137.3 L153.7 140.6 L156.4 143.8 L159.1 147.0 L161.8 150.0 L164.5 152.9 L167.2 155.7 L169.9 158.3 L172.6 160.8 L175.3 163.1 L178.0 165.3 L180.7 167.3 L183.4 169.1 L186.1 170.7 L188.8 172.1 L191.5 173.3 L194.2 174.2 L196.9 175.0 L199.6 175.6 L202.3 175.9 L205.0 176.0 L207.7 175.9 L210.4 175.6 L213.1 175.0 L215.8 174.2 L218.5 173.3 L221.2 172.1 L223.9 170.7 L226.6 169.1 L229.3 167.3 L232.0 165.3 L234.7 163.1 L237.4 160.8 L240.1 158.3 L242.8 155.7 L245.5 152.9 L248.2 150.0 L250.9 147.0 L253.6 143.8 L256.3 140.6 L259.0 137.3 L261.7 133.9 L264.4 130.5 L267.1 127.0 L269.8 123.5 L272.5 120.0 L275.2 116.5 L277.9 113.0 L280.6 109.5 L283.3 106.1 L286.0 102.7 L288.7 99.4 L291.4 96.2 L294.1 93.0 L296.8 90.0 L299.5 87.1 L302.2 84.3 L304.9 81.7 L307.6 79.2 L310.3 76.9 L313.0 74.7 L315.7 72.7 L318.4 70.9 L321.1 69.3 L323.8 67.9 L326.5 66.7 L329.2 65.8 L331.9 65.0 L334.6 64.4 L337.3 64.1 L340.0 64.0 L342.7 64.1 L345.4 64.4 L348.1 65.0 L350.8 65.8 L353.5 66.7 L356.2 67.9 L358.9 69.3 L361.6 70.9 L364.3 72.7 L367.0 74.7 L369.7 76.9 L372.4 79.2 L375.1 81.7 L377.8 84.3 L380.5 87.1 L383.2 90.0 L385.9 93.0 L388.6 96.2 L391.3 99.4 L394.0 102.7 L396.7 106.1 L399.4 109.5 L402.1 113.0 L404.8 116.5 L407.5 120.0 L410.2 123.5 L412.9 127.0 L415.6 130.5 L418.3 133.9 L421.0 137.3 L423.7 140.6 L426.4 143.8 L429.1 147.0 L431.8 150.0 L434.5 152.9 L437.2 155.7 L439.9 158.3 L442.6 160.8 L445.3 163.1 L448.0 165.3 L450.7 167.3 L453.4 169.1 L456.1 170.7 L458.8 172.1 L461.5 173.3 L464.2 174.2 L466.9 175.0 L469.6 175.6 L472.3 175.9 L475.0 176.0 L477.7 175.9 L480.4 175.6 L483.1 175.0 L485.8 174.2 L488.5 173.3 L491.2 172.1 L493.9 170.7 L496.6 169.1 L499.3 167.3 L502.0 165.3 L504.7 163.1 L507.4 160.8 L510.1 158.3 L512.8 155.7 L515.5 152.9 L518.2 150.0 L520.9 147.0 L523.6 143.8 L526.3 140.6 L529.0 137.3 L531.7 133.9 L534.4 130.5 L537.1 127.0 L539.8 123.5 L542.5 120.0 L545.2 116.5 L547.9 113.0 L550.6 109.5 L553.3 106.1 L556.0 102.7 L558.7 99.4 L561.4 96.2 L564.1 93.0 L566.8 90.0 L569.5 87.1 L572.2 84.3 L574.9 81.7 L577.6 79.2 L580.3 76.9 L583.0 74.7 L585.7 72.7 L588.4 70.9 L591.1 69.3 L593.8 67.9 L596.5 66.7 L599.2 65.8 L601.9 65.0 L604.6 64.4 L607.3 64.1 L610.0 64.0" fill="none" stroke="var(--coral)" stroke-width="2.2"/><text class="ts" x="137.5" y="42.0" text-anchor="middle" style="fill:var(--accent)">Φ(t) = Φ̂ sin ωt</text><text class="ts" x="205.0" y="194.0" text-anchor="middle" style="fill:var(--coral)">u_i(t) = N dΦ/dt</text><line x1="137.5" y1="50" x2="137.5" y2="124" stroke="var(--faint)" stroke-dasharray="3 3"/><text class="tm" x="137.5" y="138.0" text-anchor="middle">T/4</text><text class="tm" x="340.0" y="138.0" text-anchor="middle">T</text><text class="ts" x="340.0" y="228.0" text-anchor="middle">Φ maximal quand u_i = 0 : quadrature, u_i en avance d'un quart de période</text>
           </svg>
         </div>
         <figcaption>Le flux et la force électromotrice sont en quadrature : quand le flux passe par son maximum, <span class="fx">u_i</span> est nulle, et inversement. La valeur efficace se déduit de l'amplitude par <span class="fx">Û/√2</span>.</figcaption>
@@ -1689,6 +1598,436 @@ N₂ = 100 → U₂ = 4,44 × 100 × 50 × 5,63·10⁻³ = 125,0 V
     </section>
   </main>
 </div>
+
+
+<script>
+window.ELMEC_VIDE = [[51.17,27.586,0.616],[99.78,41.566,2.477],[200.77,56.264,7.834],[250.9,61.397,10.992],[300.7,68.02,14.75],[350.2,75.37,18.93],[402.7,84.54,24.19],[449.4,96.97,29.4],[500.1,116.88,35.96],[549.6,143.92,42.94],[600.2,184.0,50.91]];  /* U₀ (V), I₀ (mA), P₀ (W) — README du TP1 */
+window.ELMEC_TRANSFO = {k: 3.2, U1: 400.0, Rcc: 2.662722, Xcc: 5.118001, Pfer: 24.19};
+/* Moteur des scènes SVG animées des laboratoires ELMEC1.
+   Chaque laboratoire porte <svg data-scene="nom">. Le contrôleur de laboratoire
+   appelle la fonction renvoyée par ElmecScenes.mount(root) à chaque état ;
+   les paramètres numériques de state.scene sont interpolés entre deux états,
+   les chaînes changent d'un coup. Aucune ressource externe. */
+window.ElmecScenes = (function () {
+  'use strict';
+  const REG = {};
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let UID = 0;
+  /* paramètres d'étape : jamais interpolés */
+  const DISCRETS = ['st', 'show', 'kind', 'div', 'rot', 'axis', 'idx', 'step'];
+
+  /* ---------- formatage ---------- */
+  function fr(x, d) {
+    if (x === null || x === undefined || isNaN(x)) return '—';
+    const s = Number(x).toFixed(d === undefined ? 2 : d);
+    const neg = s[0] === '-';
+    const parts = (neg ? s.slice(1) : s).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return (neg ? '−' : '') + parts.join(',');
+  }
+  const ESC = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'};
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ESC[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ---------- aide au dessin (renvoie des chaînes SVG) ---------- */
+  function helpers(id) {
+    const COLORS = ['ink', 'muted', 'faint', 'accent', 'coral', 'teal', 'amber', 'blue', 'green', 'red'];
+    function m(c) { return 'url(#' + id + '-' + (c || 'ink') + ')'; }
+    const h = {
+      fr: fr, esc: esc, clamp: clamp, lerp: lerp,
+      defs: function () {
+        return '<defs>' + COLORS.map(function (c) {
+          return '<marker id="' + id + '-' + c + '" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse">' +
+            '<path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--' + (c === 'ink' ? 'ink' : c) + ')"/></marker>';
+        }).join('') + '</defs>';
+      },
+      /* flèche droite ; c = couleur, w = épaisseur */
+      arrow: function (x1, y1, x2, y2, c, w, extra) {
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        if (len < 2) return '';
+        return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+          '" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) + '" stroke-linecap="round" marker-end="' + m(c) + '"' + (extra || '') + '/>';
+      },
+      /* chemin libre fléché */
+      path: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) +
+          '" stroke-linecap="round" stroke-linejoin="round"' +
+          (opts.dash ? ' stroke-dasharray="' + opts.dash + '"' : '') +
+          (opts.cls ? ' class="' + opts.cls + '"' : '') +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow ? ' marker-end="' + m(c) + '"' : '') + '/>';
+      },
+      /* flux qui circule : tirets animés */
+      flow: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'accent') + ')" stroke-width="' + (w || 2) +
+          '" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" class="sc-flow' + (opts.rev ? ' sc-rev' : '') + '"' +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow === false ? '' : ' marker-end="' + m(c || 'accent') + '"') + '/>';
+      },
+      text: function (x, y, s, cls, anchor, extra) {
+        return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" class="' + (cls || 'ts') + '"' +
+          (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + s + '</text>';
+      },
+      /* étiquette avec fond (lisible sur un tracé) */
+      tag: function (x, y, s, c, anchor) {
+        const w = Math.max(18, String(s).replace(/<[^>]+>/g, '').length * 6.6 + 12);
+        const x0 = anchor === 'end' ? x - w : anchor === 'start' ? x : x - w / 2;
+        return '<g class="sc-tag"><rect x="' + x0.toFixed(1) + '" y="' + (y - 12).toFixed(1) + '" width="' + w.toFixed(1) +
+          '" height="17" rx="5" fill="var(--card)" stroke="var(--' + (c || 'line') + ')" stroke-width="1"/>' +
+          '<text x="' + (x0 + w / 2).toFixed(1) + '" y="' + (y + 0.5).toFixed(1) + '" text-anchor="middle" class="sc-tagt" fill="var(--' +
+          (c && c !== 'line' ? c : 'ink') + ')">' + s + '</text></g>';
+      },
+      rect: function (x, y, w, hh, cls, rx, extra) {
+        return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' +
+          Math.max(0, hh).toFixed(1) + '" rx="' + (rx || 0) + '" class="' + (cls || 'core') + '"' + (extra || '') + '/>';
+      },
+      circle: function (x, y, r, cls, extra) {
+        return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" class="' + (cls || '') + '"' + (extra || '') + '/>';
+      },
+      /* bobine vue de côté : boucles en demi-ellipses le long d'un segment vertical ou horizontal */
+      coil: function (x, y, len, n, vertical, amp, c) {
+        let d = '';
+        const step = len / n;
+        amp = amp || 9;
+        for (let k = 0; k < n; k++) {
+          if (vertical) {
+            const y0 = y + k * step;
+            d += 'M' + (x - amp).toFixed(1) + ' ' + y0.toFixed(1) + ' C ' + (x + amp * 1.5).toFixed(1) + ' ' + y0.toFixed(1) + ', ' +
+              (x + amp * 1.5).toFixed(1) + ' ' + (y0 + step).toFixed(1) + ', ' + (x - amp).toFixed(1) + ' ' + (y0 + step * 0.92).toFixed(1) + ' ';
+          } else {
+            const x0 = x + k * step;
+            d += 'M' + x0.toFixed(1) + ' ' + (y + amp).toFixed(1) + ' C ' + x0.toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' +
+              (x0 + step).toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' + (x0 + step * 0.92).toFixed(1) + ' ' + (y + amp).toFixed(1) + ' ';
+          }
+        }
+        return '<path d="' + d + '" class="coil"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>';
+      },
+      /* résistance (rectangle normalisé) entre deux points alignés */
+      resistor: function (x, y, horiz, label, c, lab2) {
+        const w = horiz ? 34 : 13, hh = horiz ? 13 : 34;
+        return '<rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="2" class="sc-comp"' +
+          (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 13, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 22, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* inductance (quatre arcs) */
+      inductor: function (x, y, horiz, label, c, lab2) {
+        let d = '';
+        const n = 4, s = 8.5;
+        const x0 = horiz ? x - n * s / 2 : x, y0 = horiz ? y : y - n * s / 2;
+        for (let k = 0; k < n; k++) {
+          if (horiz) d += 'M' + (x0 + k * s) + ' ' + y0 + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 ' + s + ' 0 ';
+          else d += 'M' + x0 + ' ' + (y0 + k * s) + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 0 ' + s + ' ';
+        }
+        return '<path d="' + d + '" class="sc-ind"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 11, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 20, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* repère de graphique : renvoie {svg, X(v), Y(v)} */
+      plot: function (o) {
+        const X = function (v) { return o.x + (v - o.x0) / (o.x1 - o.x0) * o.w; };
+        const Y = function (v) { return o.y + o.h - (v - o.y0) / (o.y1 - o.y0) * o.h; };
+        let s = '';
+        (o.xt || []).forEach(function (t) {
+          s += '<line x1="' + X(t).toFixed(1) + '" y1="' + o.y + '" x2="' + X(t).toFixed(1) + '" y2="' + (o.y + o.h) + '" class="sc-grid"/>';
+          s += h.text(X(t), o.y + o.h + 14, o.xf ? o.xf(t) : fr(t, 0), 'sc-tick', 'middle');
+        });
+        (o.yt || []).forEach(function (t) {
+          s += '<line x1="' + o.x + '" y1="' + Y(t).toFixed(1) + '" x2="' + (o.x + o.w) + '" y2="' + Y(t).toFixed(1) + '" class="sc-grid"/>';
+          s += h.text(o.x - 6, Y(t) + 3.5, o.yf ? o.yf(t) : fr(t, 1), 'sc-tick', 'end');
+        });
+        s += h.arrow(o.x, o.y + o.h, o.x + o.w + 12, o.y + o.h, 'faint', 1.2);
+        s += h.arrow(o.x, o.y + o.h, o.x, o.y - 12, 'faint', 1.2);
+        if (o.xl) s += h.text(o.x + o.w + 12, o.y + o.h + 27, o.xl, 'sc-axis', 'end');
+        if (o.yl) s += h.text(o.x + 6, o.y - 8, o.yl, 'sc-axis', 'start');
+        return {svg: s, X: X, Y: Y, x: o.x, y: o.y, w: o.w, h: o.h};
+      },
+      /* rotation continue (CSS), vitesse en tours par seconde à l'écran */
+      spin: function (cx, cy, inner, period, dir) {
+        if (!period || period <= 0) return '<g>' + inner + '</g>';
+        const now = performance.now();
+        return '<g class="sc-spin' + (dir < 0 ? ' sc-ccw' : '') + '" style="transform-origin:' + cx + 'px ' + cy + 'px;animation-duration:' +
+          period.toFixed(2) + 's;animation-delay:-' + ((now / 1000) % period).toFixed(2) + 's">' + inner + '</g>';
+      }
+    };
+    return h;
+  }
+
+  function register(name, def) { REG[name] = def; }
+
+  function mount(root) {
+    const svg = root.querySelector('svg[data-scene]');
+    if (!svg) return null;
+    const def = REG[svg.getAttribute('data-scene')];
+    if (!def) { console.error('Scène inconnue', svg.getAttribute('data-scene')); return null; }
+    root.classList.add('has-scene');
+    const id = 'sc' + (++UID);
+    const h = helpers(id);
+    let cur = null, raf = 0;
+
+    function draw(p, k) {
+      const now = performance.now();
+      svg.style.setProperty('--sc-delay', '-' + ((now / 1000) % 1.6).toFixed(3) + 's');
+      svg.innerHTML = h.defs() + def.draw(p, h, k);
+    }
+
+    return function (state, k, animate) {
+      const target = Object.assign({}, def.base || {}, state.scene || {});
+      cancelAnimationFrame(raf);
+      if (!cur || !animate || reduce.matches) { cur = target; draw(cur, k); return; }
+      const from = cur, t0 = performance.now(), dur = def.duration || 750;
+      function frame(now) {
+        const t = clamp((now - t0) / dur, 0, 1);
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const p = {};
+        Object.keys(target).forEach(function (key) {
+          const a = from[key], b = target[key];
+          const libre = DISCRETS.indexOf(key) < 0 && (def.discrete || []).indexOf(key) < 0;
+          p[key] = (libre && typeof a === 'number' && typeof b === 'number') ? lerp(a, b, e) : b;
+        });
+        p._t = e;
+        cur = p;
+        draw(p, k);
+        if (t < 1) raf = requestAnimationFrame(frame);
+        else { cur = target; draw(target, k); }
+      }
+      raf = requestAnimationFrame(frame);
+    };
+  }
+
+  return {register: register, mount: mount, fr: fr};
+})();
+
+/* Scènes du chapitre 3 — transformateur monophasé. */
+(function (S) {
+  'use strict';
+
+  function cadre(x0, y0, x1, y1, e) {
+    return '<path d="M' + x0 + ' ' + y0 + ' H' + x1 + ' V' + y1 + ' H' + x0 + ' Z M' + (x0 + e) + ' ' + (y0 + e) + ' V' + (y1 - e) + ' H' + (x1 - e) + ' V' + (y0 + e) + ' Z" fill-rule="evenodd" class="core"/>';
+  }
+  function borne(h, x, y) { return h.circle(x, y, 3.2, '', ' fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"'); }
+
+  /* ---- transformateur idéal ---- */
+  S.register('ideal', {
+    base: {show: 0},
+    draw: function (p, h) {
+      const x0 = 150, x1 = 350, y0 = 50, y1 = 210, e = 24, ym = (y0 + y1) / 2;
+      let s = cadre(x0, y0, x1, y1, e);
+      s += h.coil(x0 + e / 2, ym - 48, 96, 9, true, 18);
+      s += h.coil(x1 - e / 2, ym - 15, 30, 3, true, 18, 'teal');
+      s += h.flow('M' + (x0 + e / 2) + ' ' + (ym + 40) + ' V' + (y0 + e / 2) + ' H' + (x1 - e / 2) + ' V' + (y1 - e / 2) + ' H' + (x0 + e / 2) + ' V' + (ym + 54), 'accent', 2);
+      s += h.path('M' + (x0 + 4) + ' ' + (ym - 48) + ' H' + 104 + ' M' + (x0 + 4) + ' ' + (ym + 48) + ' H' + 104, 'ink', 1.5);
+      s += h.path('M' + (x1 - 4) + ' ' + (ym - 15) + ' H' + 430 + ' M' + (x1 - 4) + ' ' + (ym + 15) + ' H' + 430, 'ink', 1.5);
+      s += borne(h, 104, ym - 48) + borne(h, 104, ym + 48) + borne(h, 430, ym - 15) + borne(h, 430, ym + 15);
+      s += h.text(x0 + e + 10, ym + 4, 'N₁ = 320', 'sc-val') + h.text(x1 - e - 10, ym + 4, 'N₂ = 100', 'sc-val', 'end');
+      s += h.tag((x0 + x1) / 2, y0 - 12, 'k = N₁/N₂ = 3,2', 'accent');
+      if (p.show >= 1) {
+        s += h.arrow(92, ym - 44, 92, ym + 44, 'ink', 1.8) + h.tag(84, ym + 4, 'U₁ = 400 V', 'line', 'end');
+        s += h.arrow(444, ym - 13, 444, ym + 13, 'ink', 1.8) + h.tag(452, ym + 4, 'U₂ = ' + p.tU2, 'line', 'start');
+      }
+      if (p.show >= 2) {
+        s += h.arrow(110, ym - 48, 142, ym - 48, 'coral', 1.6) + h.text(124, ym - 56, 'I₁ = ' + p.tI1, 'sc-val', 'middle');
+        s += h.arrow(370, ym - 15, 415, ym - 15, 'coral', 4.2) + h.text(392, ym - 24, 'I₂ = ' + p.tI2, 'sc-val', 'middle');
+      }
+      if (p.show === 3) {
+        s += h.rect(70, 226, 140, 12, 'sc-bar', 3) + h.text(140, 254, 'S₁ = U₁ I₁ = ' + p.tS, 'sc-val', 'middle');
+        s += h.rect(330, 226, 140, 12, 'sc-bar', 3) + h.text(400, 254, 'S₂ = U₂ I₂ = ' + p.tS, 'sc-val', 'middle');
+      }
+      if (p.show >= 4) {
+        s += h.path('M430 ' + (ym - 15) + ' H500 V' + (ym - 20) + ' M500 ' + (ym + 20) + ' V' + (ym + 15) + ' H430', 'ink', 1.5);
+        s += h.rect(492, ym - 20, 16, 40, 'sc-comp', 2) + h.text(514, ym + 34, 'Z₂ = ' + p.tZ2, 'sc-val');
+        if (p.show === 4) s += '<rect x="14" y="' + (ym + 60) + '" width="190" height="24" rx="5" fill="none" stroke="var(--accent)" stroke-dasharray="5 3"/>' +
+          h.text(109, ym + 76, 'vu du primaire : Z′₂ = ' + p.tZ2p, 'sc-val', 'middle');
+      }
+      if (p.show === 5) {
+        s += h.tag(632, 40, 'plaque : 400 V · 2,6 A', 'line', 'end');
+        s += h.tag(632, 68, 'U₁ I₁n = ' + p.tSp, 'coral', 'end');
+        s += h.tag(632, 96, 'S n = 1000 VA ; écart ' + p.tEc, 'accent', 'end');
+      }
+      return s;
+    }
+  });
+
+  /* ---- construction du schéma équivalent en T ---- */
+  S.register('equivalent', {
+    base: {show: 0},
+    draw: function (p, h) {
+      const yt = 70, yb = 200, xa = 40, xn = 290, xb = 560;
+      const kapp = p.show === 5;
+      function c(k) { return p.show === k ? 'accent' : ''; }
+      let s = '';
+      s += h.path('M' + xa + ' ' + yt + ' H' + xb + ' M' + xa + ' ' + yb + ' H' + xb, 'ink', 1.5);
+      s += borne(h, xa, yt) + borne(h, xa, yb) + borne(h, xb, yt) + borne(h, xb, yb);
+      s += h.arrow(xa - 14, yt + 6, xa - 14, yb - 6, 'ink', 1.4) + h.text(xa - 20, (yt + yb) / 2 + 4, 'U₁', 'sc-lbl', 'end');
+      function masque(x, w) { return '<rect x="' + (x - w / 2) + '" y="' + (yt - 8) + '" width="' + w + '" height="16" fill="var(--card)"/>'; }
+      if (kapp) {
+        s += masque(150, 40) + h.resistor(150, yt, true, 'R_cc', 'accent', p.tRcc);
+        s += masque(230, 44) + h.inductor(230, yt, true, 'X_cc', 'accent', p.tXcc);
+      } else {
+        s += masque(110, 40) + h.resistor(110, yt, true, 'R₁', c(0), p.tR1);
+        s += masque(180, 44) + h.inductor(180, yt, true, 'X_σ1', c(0), p.tX1);
+      }
+      if (p.show >= 1) {
+        const xr = xn - 22, xm = xn + 22, ya = yt + 26, yz = yb - 26, yc = (yt + yb) / 2;
+        s += '<g' + (kapp ? ' class="sc-dim"' : '') + '>';
+        s += h.path('M' + xn + ' ' + yt + ' V' + ya + ' M' + xr + ' ' + ya + ' H' + (p.show >= 2 ? xm : xn) + ' M' + xr + ' ' + yz + ' H' + (p.show >= 2 ? xm : xn) + ' M' + xn + ' ' + yz + ' V' + yb, 'ink', 1.5);
+        s += h.path('M' + xr + ' ' + ya + ' V' + yz, 'ink', 1.5) + h.resistor(xr, yc, false, '', c(1));
+        s += h.text(xr - 12, yc - 2, 'R_fer', 'sc-lbl', 'end') + h.text(xr - 12, yc + 14, p.tRfe, 'sc-val', 'end');
+        if (p.show >= 2) {
+          s += h.path('M' + xm + ' ' + ya + ' V' + (yc - 18) + ' M' + xm + ' ' + (yc + 18) + ' V' + yz, 'ink', 1.5);
+          s += h.inductor(xm, yc, false, '', c(2));
+          s += h.text(xm + 14, yc - 2, 'X_m', 'sc-lbl') + h.text(xm + 14, yc + 14, p.tXm, 'sc-val');
+        }
+        s += '</g>';
+      }
+      if (p.show >= 3 && !kapp) {
+        s += masque(390, 44) + h.inductor(390, yt, true, 'X′_σ2', c(3), p.tX2);
+        s += masque(460, 40) + h.resistor(460, yt, true, 'R′₂', c(3), p.tR2);
+      }
+      if (p.show >= 4) {
+        s += h.path('M' + xb + ' ' + yt + ' H' + (xb + 40) + ' V' + (yt + 40) + ' M' + (xb + 40) + ' ' + (yb - 40) + ' V' + yb + ' H' + xb, 'ink', 1.5);
+        s += h.rect(xb + 32, yt + 40, 16, yb - yt - 80, 'sc-comp', 2, c(4) ? ' style="stroke:var(--accent)"' : '');
+        s += h.text(xb + 40, yb + 18, 'Z′_L = ' + p.tZL, 'sc-val', 'middle');
+      }
+      if (kapp) s += h.tag(300, 240, 'Z_cc = ' + p.tZcc + ' (branche magnétisante négligée)', 'accent');
+      if (p.show >= 3 && !kapp) s += h.text(xb - 4, yt - 26, 'grandeurs ramenées au primaire (k² = 10,24)', 'sc-tick', 'end');
+      return s;
+    }
+  });
+
+  /* ---- essai à vide : courbe I₀(U₀) et triangle des puissances ---- */
+  S.register('vide', {
+    base: {idx: 0, P: 0, Q: 0, fin: 0},
+    draw: function (p, h) {
+      const D = window.ELMEC_VIDE || [];
+      const pl = h.plot({x: 60, y: 24, w: 290, h: 190, x0: 0, x1: 650, y0: 0, y1: 200, xt: [0, 100, 200, 300, 400, 500, 600], yt: [0, 50, 100, 150, 200],
+        yf: function (t) { return S.fr(t, 0); }, xl: 'U₀ (V)', yl: 'I₀ (mA)'});
+      let s = pl.svg, d = '';
+      D.forEach(function (q, i) { d += (i ? ' L' : 'M') + pl.X(q[0]).toFixed(1) + ' ' + pl.Y(q[1]).toFixed(1); });
+      s += h.path(d, 'accent', 1.6, {op: 0.5});
+      D.forEach(function (q, i) { s += h.circle(pl.X(q[0]), pl.Y(q[1]), i === p.idx ? 6 : 3.2, i === p.idx ? 'sc-pt' : 'sc-pt2'); });
+      s += '<line x1="' + pl.X(400) + '" y1="' + pl.y + '" x2="' + pl.X(400) + '" y2="' + (pl.y + pl.h) + '" stroke="var(--teal)" stroke-dasharray="4 3"/>' + h.text(pl.X(400) + 4, pl.y + 10, 'U₁n', 'sc-tick');
+      const q = D[p.idx] || [0, 0];
+      s += h.tag(pl.X(q[0]) - 8, pl.Y(q[1]) - 12, S.fr(q[0], 1) + ' V', 'accent', 'end');
+      /* triangle des puissances */
+      const ox = 410, oy = 200, k = 2.1;
+      if (!p.fin) {
+        const P = p.P * k, Q = p.Q * k;
+        s += h.text(ox, 34, 'Puissances à vide (échelle commune)', 'sc-lbl');
+        s += h.arrow(ox, oy, ox + P, oy, 'teal', 2.4) + h.text(ox + P / 2, oy + 16, 'P₀ = ' + p.tP, 'sc-val', 'middle');
+        s += h.arrow(ox + P, oy, ox + P, oy - Q, 'coral', 2.4) + h.text(ox + P + 6, oy - Q / 2, 'Q₀ = ' + p.tQ, 'sc-val');
+        s += h.arrow(ox, oy, ox + P, oy - Q, 'accent', 2.4) + h.text(ox + P / 2 - 8, oy - Q / 2 - 6, 'S₀ = ' + p.tS, 'sc-val', 'end');
+        s += h.tag(ox + 60, 64, 'cos φ₀ = ' + p.tcos, 'accent');
+      } else {
+        const xn = 450, yt = 60, yb = 200;
+        s += h.path('M' + (xn - 50) + ' ' + yt + ' H' + (xn + 90) + ' M' + (xn - 50) + ' ' + yb + ' H' + (xn + 90), 'ink', 1.5);
+        s += h.path('M' + xn + ' ' + yt + ' V' + (yt + 30) + ' M' + xn + ' ' + (yb - 30) + ' V' + yb + ' M' + (xn + 50) + ' ' + yt + ' V' + (yt + 30) + ' M' + (xn + 50) + ' ' + (yb - 30) + ' V' + yb, 'ink', 1.5);
+        s += h.path('M' + xn + ' ' + (yt + 30) + ' V' + (yb - 30) + ' M' + (xn + 50) + ' ' + (yt + 30) + ' V' + (yb - 30), 'ink', 1.5);
+        s += '<rect x="' + (xn - 6) + '" y="' + (yt + 40) + '" width="12" height="60" fill="var(--card)"/>' + h.resistor(xn, (yt + yb) / 2, false, '');
+        s += '<rect x="' + (xn + 44) + '" y="' + (yt + 40) + '" width="12" height="60" fill="var(--card)"/>' + h.inductor(xn + 50, (yt + yb) / 2 - 8, false, '');
+        s += h.text(xn - 12, (yt + yb) / 2 + 4, 'R_fer = ' + p.tRfe, 'sc-val', 'end') + h.text(xn + 62, (yt + yb) / 2 + 4, 'X_m = ' + p.tXm, 'sc-val');
+        s += h.tag(xn + 20, 36, 'P_fer ≈ ' + p.tP + ' ; I₀/I₁n = ' + p.tIr, 'accent');
+      }
+      return s;
+    }
+  });
+
+  /* ---- essai en court-circuit ---- */
+  S.register('court-circuit', {
+    base: {show: 0, U: 0, I: 0},
+    draw: function (p, h) {
+      const x0 = 150, x1 = 290, y0 = 60, y1 = 190, e = 20, ym = (y0 + y1) / 2;
+      let s = cadre(x0, y0, x1, y1, e);
+      s += h.coil(x0 + e / 2, ym - 40, 80, 8, true, 16);
+      s += h.coil(x1 - e / 2, ym - 15, 30, 3, true, 16, 'teal');
+      s += h.path('M' + (x0 + 4) + ' ' + (ym - 40) + ' H40 M' + (x0 + 4) + ' ' + (ym + 40) + ' H40', 'ink', 1.5);
+      s += h.path('M' + (x1 - 4) + ' ' + (ym - 15) + ' H330 V' + (ym + 15) + ' H' + (x1 - 4), 'ink', 2);
+      s += h.text(336, ym + 4, 'court-circuit', 'sc-val');
+      s += '<circle cx="90" cy="' + (ym - 40) + '" r="11" class="sc-comp"/>' + h.text(90, ym - 36, 'A', 'sc-lbl', 'middle');
+      s += '<circle cx="56" cy="' + ym + '" r="11" class="sc-comp"/>' + h.text(56, ym + 4, 'V', 'sc-lbl', 'middle');
+      s += h.path('M56 ' + (ym - 40) + ' V' + (ym - 11) + ' M56 ' + (ym + 11) + ' V' + (ym + 40), 'ink', 1.5);
+      s += h.text(40, y1 + 26, 'U_cc = ' + p.tU + ' ; I_cc = ' + p.tI + ' ; P_cc = ' + p.tP, 'sc-val');
+      s += h.text(40, y1 + 44, 'valeurs d’exemple, pas une mesure du banc', 'sc-tick');
+      if (p.I > 0.01) {
+        s += h.flow('M' + (x0 + e / 2) + ' ' + (ym + 30) + ' V' + (y0 + e / 2) + ' H' + (x1 - e / 2) + ' V' + (y1 - e / 2) + ' H' + (x0 + e / 2) + ' V' + (ym + 44), 'accent', 1.2, {op: 0.6});
+        s += h.arrow(108, ym - 40, 140, ym - 40, 'coral', 2.4);
+      }
+      /* triangle des impédances */
+      const ox = 430, oy = 210, k = 20;
+      if (p.show >= 3) {
+        const R = p.R * k, X = p.X * k;
+        s += h.arrow(ox, oy, ox + R, oy, 'teal', 2.4) + h.text(ox + R / 2, oy + 16, 'R_cc = ' + p.tR, 'sc-val', 'middle');
+        if (p.show >= 4) {
+          s += h.arrow(ox + R, oy, ox + R, oy - X, 'coral', 2.4) + h.text(ox + R + 6, oy - X / 2, 'X_cc = ' + p.tX, 'sc-val');
+          s += h.arrow(ox, oy, ox + R, oy - X, 'accent', 2.4) + h.text(ox + R / 2 - 8, oy - X / 2 - 4, 'Z_cc = ' + p.tZ, 'sc-val', 'end');
+        }
+        if (p.show >= 5) {
+          s += '<line x1="' + (ox + R / 2) + '" y1="' + (oy - 5) + '" x2="' + (ox + R / 2) + '" y2="' + (oy + 5) + '" stroke="var(--ink)" stroke-width="1.5"/>';
+          s += '<line x1="' + (ox + R - 5) + '" y1="' + (oy - X / 2) + '" x2="' + (ox + R + 5) + '" y2="' + (oy - X / 2) + '" stroke="var(--ink)" stroke-width="1.5"/>';
+          s += h.tag(300, 30, 'R₁ ≈ R′₂ = ' + p.tR1 + ' ; X_σ1 ≈ X′_σ2 = ' + p.tX1, 'accent', 'start');
+          s += h.tag(300, 56, 'R₂ = ' + p.tR2 + ' ; X_σ2 = ' + p.tX2 + ' ; u_cc = ' + p.tucc, 'line', 'start');
+        }
+      } else {
+        const bx = 400;
+        [['U_cc', p.U / 20, p.tU, 'sc-bar'], ['I_cc', p.I / 3, p.tI, 'sc-bar2'], ['P_cc', p.P / 20, p.tP, 'sc-bar3']].forEach(function (b, i) {
+          const y = 80 + i * 40;
+          s += h.text(bx, y - 5, b[0], 'sc-val') + '<rect x="' + bx + '" y="' + y + '" width="160" height="11" rx="3" class="sc-barbg"/>' +
+            '<rect x="' + bx + '" y="' + y + '" width="' + (160 * h.clamp(b[1], 0, 1)).toFixed(1) + '" height="11" rx="3" class="' + b[3] + '"/>' + h.text(bx + 166, y + 10, b[2], 'sc-val');
+        });
+      }
+      return s;
+    }
+  });
+
+  /* ---- en charge : diagramme de Kapp, pertes et rendement ---- */
+  S.register('charge', {
+    base: {I2: 0, eta: 0, Pcu: 0, opt: 0},
+    draw: function (p, h) {
+      let s = '';
+      /* diagramme de Kapp, chutes agrandies 10 fois */
+      const ox = 40, oy = 196, ku = 0.62, z = 10;
+      const T = window.ELMEC_TRANSFO;
+      const Ip = p.I2 / T.k, dR = T.Rcc * Ip * ku * z, dX = T.Xcc * Ip * ku * z;
+      const U2p = p.U2 * T.k * ku;
+      s += h.text(ox, 30, 'Diagramme de Kapp (charge résistive)', 'sc-lbl');
+      s += h.text(ox, 46, 'chutes agrandies ×10 ; ΔU ≈ R_cc I′₂ (cos φ = 1)', 'sc-tick');
+      s += h.arrow(ox, oy, ox + U2p, oy, 'teal', 2.4) + h.text(ox + 70, oy + 16, 'U′₂ = k U₂', 'sc-val');
+      if (Ip > 0.001) {
+        s += h.arrow(ox + U2p, oy, ox + U2p + dR, oy, 'coral', 2.2);
+        s += h.arrow(ox + U2p + dR, oy, ox + U2p + dR, oy - dX, 'amber', 2.2);
+        s += h.text(ox + U2p + dR + 5, oy - dX / 2 + 4, 'jX_cc I′₂', 'sc-tick');
+        s += h.text(ox + U2p + dR / 2, oy + 16, 'R_cc I′₂', 'sc-tick', 'middle');
+      }
+      s += h.arrow(ox, oy, ox + U2p + dR, oy - dX, 'accent', 1.6);
+      s += h.text(ox + (U2p + dR) / 2, oy - dX / 2 - 8, 'U₁ = 400 V', 'sc-val', 'middle');
+      s += h.tag(ox + 120, 92, 'U₂ = ' + p.tU2 + ' ; I₂ = ' + p.tI2, 'teal');
+      /* rendement */
+      const pl = h.plot({x: 380, y: 30, w: 210, h: 120, x0: 0, x1: 10, y0: 80, y1: 100, xt: [0, 2, 4, 6, 8, 10], yt: [80, 85, 90, 95, 100],
+        yf: function (t) { return S.fr(t, 0); }, xl: 'I₂ (A)', yl: 'η (%)'});
+      s += pl.svg;
+      const eta = function (i2) {
+        const ip = i2 / T.k, u2 = (T.U1 - T.Rcc * ip) / T.k, p2 = u2 * i2;
+        return i2 > 0 ? 100 * p2 / (p2 + T.Pfer + T.Rcc * ip * ip) : 0;
+      };
+      let d = '';
+      for (let i = 0; i <= 40; i++) { const i2 = 1.2 + i / 40 * 8.8; d += (i ? ' L' : 'M') + pl.X(i2).toFixed(1) + ' ' + pl.Y(eta(i2)).toFixed(1); }
+      s += h.path(d, 'accent', 2);
+      if (p.I2 > 1.1) s += h.circle(pl.X(p.I2), pl.Y(eta(p.I2)), 5, 'sc-pt');
+      if (p.opt) s += '<line x1="' + pl.X(p.iopt) + '" y1="30" x2="' + pl.X(p.iopt) + '" y2="150" stroke="var(--coral)" stroke-dasharray="3 3"/>' + h.text(pl.X(p.iopt) - 4, 44, 'η max', 'sc-tick', 'end');
+      /* pertes */
+      const bx = 380, by = 196, sc = 4;
+      s += h.text(bx, by - 8, 'Pertes (W)', 'sc-val');
+      s += '<rect x="' + bx + '" y="' + by + '" width="' + (T.Pfer * sc).toFixed(1) + '" height="11" rx="2" class="sc-bar3"/>' + h.text(bx + T.Pfer * sc + 6, by + 10, 'P_fer = ' + S.fr(T.Pfer, 1), 'sc-val');
+      s += '<rect x="' + bx + '" y="' + (by + 18) + '" width="' + Math.max(1, p.Pcu * sc).toFixed(1) + '" height="11" rx="2" class="sc-bar2"/>' + h.text(bx + Math.max(1, p.Pcu * sc) + 6, by + 28, 'P_cu = ' + p.tPcu, 'sc-val');
+      s += h.tag(560, 236, 'η = ' + p.tEta, 'accent');
+      return s;
+    }
+  });
+})(window.ElmecScenes);
+</script>
 
 <script>
 (function () {
@@ -1911,6 +2250,7 @@ N₂ = 100 → U₂ = 4,44 × 100 × 50 × 5,63·10⁻³ = 125,0 V
      ============================================================ */
   function mountLab(root, spec){
     const mem = makeMemory(root);
+    const scene = window.ElmecScenes ? window.ElmecScenes.mount(root) : null;
     const note = root.querySelector('[data-note]');
     const codeEl = root.querySelector('[data-code]');
     const linesEl = root.querySelector('[data-lines]');
@@ -1962,6 +2302,7 @@ N₂ = 100 → U₂ = 4,44 × 100 × 50 × 5,63·10⁻³ = 125,0 V
     function paint(animate){
       const s = states[i];
       mem.render(s, animate !== false);
+      if (scene) scene(s, i, animate !== false);
       if (note) note.innerHTML = s.label;
       if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
       if (linesEl) {

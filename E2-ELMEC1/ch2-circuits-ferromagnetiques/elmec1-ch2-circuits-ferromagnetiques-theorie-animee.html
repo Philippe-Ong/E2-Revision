@@ -503,6 +503,54 @@
   .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
   .legend .sw-t{font-size:12px;color:var(--faint)}
   .tbl.wide{max-width:none}
+/* scenes:debut */
+  /* ---------- scènes animées des laboratoires (injecté par injecter_scenes.py) ---------- */
+  .scene-stage{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px 6px 4px;margin:2px 0 10px}
+  .scene-stage svg{width:100%;height:auto;display:block;overflow:visible}
+  @media (max-width:640px){.scene-stage{overflow-x:auto;-webkit-overflow-scrolling:touch}.scene-stage svg{width:600px;max-width:none}}
+  .sc-flow{animation:sc-flow 1.6s linear infinite;animation-delay:var(--sc-delay,0s)}
+  .sc-flow.sc-rev{animation-direction:reverse}
+  @keyframes sc-flow{to{stroke-dashoffset:-32}}
+  .sc-spin{animation:sc-spin 2s linear infinite}
+  .sc-spin.sc-ccw{animation-direction:reverse}
+  @keyframes sc-spin{to{transform:rotate(360deg)}}
+  .sc-grid{stroke:var(--line2);stroke-width:1}
+  .sc-tick{font:9.5px var(--mono);fill:var(--faint)}
+  .sc-axis{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-lbl{font:600 11.5px var(--sans);fill:var(--ink)}
+  .sc-val{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-big{font:700 15px var(--mono);fill:var(--ink)}
+  .sc-tagt{font:600 10.5px var(--mono)}
+  .sc-comp{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+  .sc-ind{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round}
+  .sc-wire{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .sc-dim{opacity:.28}
+  .sc-new{stroke:var(--accent)!important}
+  .sc-hl{fill:var(--accent-s);stroke:var(--accent);stroke-width:1.4}
+  .sc-air{fill:var(--card);stroke:none}
+  .sc-cu{fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4}
+  .sc-mag-n{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4}
+  .sc-mag-s{fill:var(--red-s);stroke:var(--red);stroke-width:1.4}
+  .sc-bar{fill:var(--accent);opacity:.85}
+  .sc-bar2{fill:var(--coral);opacity:.85}
+  .sc-bar3{fill:var(--teal);opacity:.85}
+  .sc-barbg{fill:var(--card);stroke:var(--line);stroke-width:1}
+  .sc-pt{fill:var(--accent);stroke:var(--card);stroke-width:1.5}
+  .sc-pt2{fill:var(--card);stroke:var(--muted);stroke-width:1.4}
+  .sc-zone{fill:var(--red-s);opacity:.7}
+  .lab.has-scene .mem-stage{padding:2px 0 0}
+  .lab.has-scene .arrow-layer{display:none}
+  .lab.has-scene .mem-groups,.lab.has-scene .mem-groups.is-stack{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;justify-content:center}
+  .lab.has-scene .mem-groups.is-stack .mem-group{width:auto;padding-top:0}
+  .lab.has-scene .mem-groups.is-stack .mem-gtitle,.lab.has-scene .mem-gtitle{position:static;font-size:8.5px}
+  .lab.has-scene .cells{gap:6px}
+  .lab.has-scene .cell{--cw:auto;min-width:74px;padding:4px 7px 3px;border-radius:8px}
+  .lab.has-scene .cname{font-size:10.5px;min-height:13px}
+  .lab.has-scene .ctype{display:none}
+  .lab.has-scene .cval{font-size:13px;margin:2px 0 0;min-height:16px}
+  .lab.has-scene .cf{font-size:10px}
+  @media (prefers-reduced-motion: reduce){.sc-flow,.sc-spin{animation:none}}
+  /* scenes:fin */
 </style>
 <meta name="robots" content="noindex">
 
@@ -545,6 +593,7 @@ table{max-width:100%}
   <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
     <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
+<marker id="fg-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--ink)"/></marker><marker id="fg-accent" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--accent)"/></marker><marker id="fg-coral" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--coral)"/></marker><marker id="fg-teal" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--teal)"/></marker><marker id="fg-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--muted)"/></marker><marker id="fg-faint" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--faint)"/></marker><marker id="fg-blue" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--blue)"/></marker><marker id="fg-red" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--red)"/></marker><marker id="fg-amber" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--amber)"/></marker>
 </defs></svg>
 
 <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
@@ -758,6 +807,7 @@ maille :  Σ U<sub>j</sub> = Σ Θ<sub>j</sub>                    nœud :  Σ Φ
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="reluctance" viewBox="0 0 640 260" role="img" aria-label="Noyau à entrefer variable, flux, parts des réluctances et jauge de l'induction"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -773,72 +823,12 @@ maille :  Σ U<sub>j</sub> = Σ Θ<sub>j</sub>                    nœud :  Σ Φ
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Circuit au repos : le courant est nul, donc Θ = 0 et Φ = 0. Les réluctances ne dépendent que de la géométrie.","code":"Θ = N i = 0 A",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"0 A","type":"N·i","kind":"int"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},
-               {"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},
-               {"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}
-           ],"arrows":[]},
-          {"label":"Le courant est établi : Θ = N·i = 3000 × 5 = <b>15 000 A</b>. Le fer seul ne demande que ℜ<sub>fer</sub> = 3,18×10⁴ H⁻¹.","code":"Θ = N i = 15 000 A",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int","state":"changed"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},
-               {"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},
-               {"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}
-           ],"arrows":[]},
-          {"label":"L'entrefer de 12 mm vaut à lui seul <b>9,55×10⁶ H⁻¹</b>, soit 300 fois ℜ<sub>fer</sub> : il impose la réluctance totale.","code":"ℜ air = δ / (μ₀ A)",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int","state":"changed"},
-               {"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int","state":"changed"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},
-               {"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}
-           ],"arrows":[]},
-          {"label":"Φ = Θ/ℜ<sub>tot</sub> = 1,57 mWb, puis B = Φ/A = <b>1,57 T</b> : sous le coude, le modèle linéaire reste valable.","code":"Φ = Θ / ℜ tot   puis   B = Φ / A",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},
-               {"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"1,57 mWb","type":"flux","kind":"ptr","state":"new"},
-               {"id":"b","name":"B","value":"1,57 T","type":"induction","kind":"char","state":"new"}]}
-           ],"arrows":[]},
-          {"label":"Entrefer divisé par trois (4 mm) : ℜ<sub>air</sub> tombe à 3,18×10⁶ H⁻¹, Φ monte à 4,67 mWb. Le modèle linéaire donne déjà B = 4,67 T, au-delà de la saturation.","code":"δ = 4 mm",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 4 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"3,18×10⁶","type":"H⁻¹","kind":"int","state":"changed"},
-               {"id":"rt","name":"ℜ tot","value":"3,21×10⁶","type":"H⁻¹","kind":"int","state":"changed"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"4,67 mWb","type":"flux","kind":"ptr","state":"changed"},
-               {"id":"b","name":"B","value":"4,67 T","type":"induction","kind":"char","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Entrefer de 1 mm : ℜ<sub>air</sub> = 7,96×10⁵ H⁻¹ et B = 18,1 T. Ce nombre est impossible : l'Armco saturerait bien avant 1,8 T. Le modèle linéaire ne sert plus qu'à comparer les réluctances ; il faut la courbe B(H).","code":"δ = 1 mm   →   B = 18,1 T",
-           "groups":[
-             {"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Réluctances","hint":"entrefer δ = 1 mm","cells":[
-               {"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},
-               {"id":"ra","name":"ℜ air","value":"7,96×10⁵","type":"H⁻¹","kind":"int","state":"changed"},
-               {"id":"rt","name":"ℜ tot","value":"8,28×10⁵","type":"H⁻¹","kind":"int","state":"changed"}]},
-             {"title":"Réponse","cells":[
-               {"id":"phi","name":"Φ","value":"18,1 mWb","type":"flux","kind":"ptr","state":"changed"},
-               {"id":"b","name":"B","value":"18,1 T","type":"induction","kind":"char","state":"err"}]}
-           ],"arrows":[]}
+          {"label":"Circuit au repos : le courant est nul, donc Θ = 0 et Φ = 0. Les réluctances ne dépendent que de la géométrie.","code":"Θ = N i = 0 A","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"0 A","type":"N·i","kind":"int"}]},{"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},{"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},{"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}],"arrows":[],"scene":{"theta":0,"delta":12,"tdelta":"12 mm","phi":0.0,"B":0.0,"hl":"","tTheta":"Θ = N i = 0 A","tphi":"0,00 mWb","tB":"0,00 T","tRfe":"3,18×10⁴","tRair":"9,55×10⁶","tRtot":"9,58×10⁶","ffe":0.0033222591362126247,"fair":0.9966777408637874}},
+          {"label":"Le courant est établi : Θ = N·i = 3000 × 5 = <b>15 000 A</b>. Le fer seul ne demande que ℜ<sub>fer</sub> = 3,18×10⁴ H⁻¹.","code":"Θ = N i = 15 000 A","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int","state":"changed"}]},{"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},{"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},{"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}],"arrows":[],"scene":{"theta":15000.0,"delta":12,"tdelta":"12 mm","phi":0.0,"B":0.0,"hl":"fer","tTheta":"Θ = N i = 15 000 A","tphi":"0,00 mWb","tB":"0,00 T","tRfe":"3,18×10⁴","tRair":"9,55×10⁶","tRtot":"9,58×10⁶","ffe":0.0033222591362126247,"fair":0.9966777408637874}},
+          {"label":"L'entrefer de 12 mm vaut à lui seul <b>9,55×10⁶ H⁻¹</b>, soit 300 fois ℜ<sub>fer</sub> : il impose la réluctance totale.","code":"ℜ air = δ / (μ₀ A)","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},{"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int","state":"changed"},{"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int","state":"changed"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"0 Wb","type":"flux","kind":"ptr"},{"id":"b","name":"B","value":"0 T","type":"induction","kind":"char"}]}],"arrows":[],"scene":{"theta":15000.0,"delta":12,"tdelta":"12 mm","phi":0.0,"B":0.0,"hl":"air","tTheta":"Θ = N i = 15 000 A","tphi":"0,00 mWb","tB":"0,00 T","tRfe":"3,18×10⁴","tRair":"9,55×10⁶","tRtot":"9,58×10⁶","ffe":0.0033222591362126247,"fair":0.9966777408637874}},
+          {"label":"Φ = Θ/ℜ<sub>tot</sub> = 1,57 mWb, puis B = Φ/A = <b>1,57 T</b> : sous le coude, le modèle linéaire reste valable.","code":"Φ = Θ / ℜ tot   puis   B = Φ / A","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},{"title":"Réluctances","hint":"entrefer δ = 12 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"9,55×10⁶","type":"H⁻¹","kind":"int"},{"id":"rt","name":"ℜ tot","value":"9,58×10⁶","type":"H⁻¹","kind":"int"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"1,57 mWb","type":"flux","kind":"ptr","state":"new"},{"id":"b","name":"B","value":"1,57 T","type":"induction","kind":"char","state":"new"}]}],"arrows":[],"scene":{"theta":15000.0,"delta":12,"tdelta":"12 mm","phi":1.565577734347073,"B":1.565577734347073,"hl":"","tTheta":"Θ = N i = 15 000 A","tphi":"1,57 mWb","tB":"1,57 T","tRfe":"3,18×10⁴","tRair":"9,55×10⁶","tRtot":"9,58×10⁶","ffe":0.0033222591362126247,"fair":0.9966777408637874}},
+          {"label":"Entrefer divisé par trois (4 mm) : ℜ<sub>air</sub> tombe à 3,18×10⁶ H⁻¹, Φ monte à 4,67 mWb. Le modèle linéaire donne déjà B = 4,67 T, au-delà de la saturation.","code":"δ = 4 mm","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},{"title":"Réluctances","hint":"entrefer δ = 4 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"3,18×10⁶","type":"H⁻¹","kind":"int","state":"changed"},{"id":"rt","name":"ℜ tot","value":"3,21×10⁶","type":"H⁻¹","kind":"int","state":"changed"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"4,67 mWb","type":"flux","kind":"ptr","state":"changed"},{"id":"b","name":"B","value":"4,67 T","type":"induction","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"theta":15000.0,"delta":4,"tdelta":"4 mm","phi":4.665731663747218,"B":4.665731663747218,"hl":"","tTheta":"Θ = N i = 15 000 A","tphi":"4,67 mWb","tB":"4,67 T","tRfe":"3,18×10⁴","tRair":"3,18×10⁶","tRtot":"3,21×10⁶","ffe":0.009900990099009901,"fair":0.9900990099009901}},
+          {"label":"Entrefer de 1 mm : ℜ<sub>air</sub> = 7,96×10⁵ H⁻¹ et B = 18,1 T. Ce nombre est impossible : l'Armco saturerait bien avant 1,8 T. Le modèle linéaire ne sert plus qu'à comparer les réluctances ; il faut la courbe B(H).","code":"δ = 1 mm   →   B = 18,1 T","groups":[{"title":"Solénation","cells":[{"id":"theta","name":"Θ","value":"15 000 A","type":"N·i","kind":"int"}]},{"title":"Réluctances","hint":"entrefer δ = 1 mm","cells":[{"id":"rf","name":"ℜ fer","value":"3,18×10⁴","type":"H⁻¹","kind":"int"},{"id":"ra","name":"ℜ air","value":"7,96×10⁵","type":"H⁻¹","kind":"int","state":"changed"},{"id":"rt","name":"ℜ tot","value":"8,28×10⁵","type":"H⁻¹","kind":"int","state":"changed"}]},{"title":"Réponse","cells":[{"id":"phi","name":"Φ","value":"18,1 mWb","type":"flux","kind":"ptr","state":"changed"},{"id":"b","name":"B","value":"18,1 T","type":"induction","kind":"char","state":"err"}]}],"arrows":[],"scene":{"theta":15000.0,"delta":1,"tdelta":"1 mm","phi":18.124573001479575,"B":18.124573001479575,"hl":"","tTheta":"Θ = N i = 15 000 A","tphi":"18,1 mWb","tB":"18,1 T","tRfe":"3,18×10⁴","tRair":"7,96×10⁵","tRtot":"8,28×10⁵","ffe":0.038461538461538464,"fair":0.9615384615384615}}
         ]}
         </script>
       </div>
@@ -917,29 +907,8 @@ dans l'air :  H<sub>air</sub> = B / μ₀  =  μ<sub>r</sub> H<sub>fer</sub></di
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 340" role="img" aria-label="Noyau à trois colonnes : la bobine est sur la traverse centrale, chaque fenêtre a son propre entrefer, x1 en haut et x2 en bas">
-            <rect x="120" y="40" width="112" height="60" rx="3" class="core"/>
-            <rect x="240" y="40" width="280" height="60" rx="3" class="core"/>
-            <rect x="120" y="240" width="280" height="60" rx="3" class="core"/>
-            <rect x="408" y="240" width="112" height="60" rx="3" class="core"/>
-            <rect x="120" y="100" width="40" height="140" class="core"/>
-            <rect x="480" y="100" width="40" height="140" class="core"/>
-            <rect x="280" y="100" width="80" height="140" class="core"/>
-            <g class="coil">
-              <path d="M 262 158 q 58 -15 116 0"/>
-              <path d="M 262 172 q 58 -15 116 0"/>
-              <path d="M 262 186 q 58 -15 116 0"/>
-            </g>
-            <rect x="162" y="102" width="116" height="136" fill="none" stroke="var(--teal)" stroke-width="1.4" stroke-dasharray="6 4"/>
-            <rect x="362" y="102" width="116" height="136" fill="none" stroke="var(--teal)" stroke-width="1.4" stroke-dasharray="6 4"/>
-            <text class="ts" x="220" y="176" text-anchor="middle" fill="var(--teal)">maille 1</text>
-            <text class="ts" x="420" y="176" text-anchor="middle" fill="var(--teal)">maille 2</text>
-            <text class="tm" x="236" y="34" text-anchor="middle">x₁ = 2 mm</text>
-            <text class="tm" x="404" y="320" text-anchor="middle">x₂ = 1 mm</text>
-            <text class="ts" x="320" y="66" text-anchor="middle">culasse</text>
-            <text class="ts" x="60" y="118">bobine</text>
-            <text class="tm" x="60" y="134">N spires</text>
-            <text class="ts" x="200" y="326" text-anchor="middle">fer doux, μ → ∞ dans le modèle</text>
+          <svg viewBox="0 0 640 316" role="img" aria-label="Noyau à traverse centrale bobinée : deux fenêtres en parallèle, entrefer x1 en haut, x2 en bas, un flux par maille">
+<path d="M150 30 H450 V290 H150 Z M176 56 V264 H424 V56 Z" fill-rule="evenodd" class="core"/><rect x="175" y="147.0" width="250" height="26" class="core" style="stroke:none"/><path d="M176 147.0 H424 M176 173.0 H424" stroke="var(--muted)" stroke-width="2" fill="none"/><rect x="294.0" y="28" width="12" height="30" fill="var(--card)"/><path d="M294.0 30 V56 M306.0 30 V56" stroke="var(--muted)" stroke-width="2"/><rect x="297.0" y="262" width="6" height="30" fill="var(--card)"/><path d="M297.0 264 V290 M303.0 264 V290" stroke="var(--muted)" stroke-width="2"/><path d="M245.0 179.0 C 245.0 131.5, 258.8 131.5, 257.6 179.0 M258.8 179.0 C 258.8 131.5, 272.5 131.5, 271.4 179.0 M272.5 179.0 C 272.5 131.5, 286.2 131.5, 285.1 179.0 M286.2 179.0 C 286.2 131.5, 300.0 131.5, 298.9 179.0 M300.0 179.0 C 300.0 131.5, 313.8 131.5, 312.6 179.0 M313.8 179.0 C 313.8 131.5, 327.5 131.5, 326.4 179.0 M327.5 179.0 C 327.5 131.5, 341.2 131.5, 340.1 179.0 M341.2 179.0 C 341.2 131.5, 355.0 131.5, 353.9 179.0 " class="coil" style="stroke:var(--coral)"/><path d="M230 154.0 H437.0 V43.0 H163.0 V152.0" class="flux" marker-end="url(#fg-accent)"/><path d="M230 166.0 H437.0 V277.0 H163.0 V168.0" class="flux2" marker-end="url(#fg-teal)"/><text class="tm" x="300.0" y="22.0" text-anchor="middle">x₁ = 2 mm</text><text class="tm" x="300.0" y="308.0" text-anchor="middle">x₂ = 1 mm</text><text class="ts" x="300.0" y="120.0" text-anchor="middle">fenêtre haute : maille 1</text><text class="ts" x="300.0" y="210.0" text-anchor="middle">fenêtre basse : maille 2</text><text class="ts" x="466.0" y="156.0">bobine N</text><text class="tm" x="466.0" y="172.0">sur la traverse</text><text class="tm" x="138.0" y="164.0" text-anchor="end">fer idéal</text>
           </svg>
         </div>
         <figcaption>Bobine sur la traverse centrale (CH2 ex. 1, circuit 3). Chaque fenêtre est une maille indépendante et entoure la bobine : elle voit la pleine solénation <span class="fx">NI</span>, mais son propre entrefer.</figcaption>
@@ -951,6 +920,7 @@ dans l'air :  H<sub>air</sub> = B / μ₀  =  μ<sub>r</sub> H<sub>fer</sub></di
           <span class="lab-tag">7 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="trois-colonnes" viewBox="0 0 640 260" role="img" aria-label="Noyau à traverse centrale bobinée, deux fenêtres et leurs entrefers, flux de chaque maille"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -966,90 +936,13 @@ dans l'air :  H<sub>air</sub> = B / μ₀  =  μ<sub>r</sub> H<sub>fer</sub></di
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Circuit au repos : Θ = 0, aucun flux dans les deux fenêtres.","code":"Θ = N i = 0 A",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"0 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},
-               {"id":"ux1","name":"U x1","value":"—","type":"A","kind":"ptr"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},
-               {"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}
-           ],"arrows":[]},
-          {"label":"On établit le courant : Θ = NI = <b>1000 A</b>. Le fer a une réluctance nulle, donc il ne prend aucune tension magnétique : <b>chaque</b> entrefer reçoit toute la solénation.","code":"Θ = N i = 1000 A",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int","state":"changed"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},
-               {"id":"ux1","name":"U x1","value":"—","type":"A","kind":"ptr"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},
-               {"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}
-           ],"arrows":[]},
-          {"label":"Fenêtre haute : la maille donne H<sub>x1</sub>·x₁ = NI, donc H<sub>x1</sub> = 1000/0,002 = <b>5,0×10⁵ A/m</b>.","code":"H x1 = NI / x1",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int","state":"new"},
-               {"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},
-               {"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},
-               {"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}
-           ],"arrows":[]},
-          {"label":"Puis B<sub>x1</sub> = μ₀H<sub>x1</sub> = <b>0,628 T</b>. L'air est linéaire : B est proportionnel à H dans l'entrefer.","code":"B x1 = μ₀ H x1",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},
-               {"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char","state":"new"},
-               {"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},
-               {"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},
-               {"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}
-           ],"arrows":[]},
-          {"label":"Fenêtre basse : x₂ = 1 mm, deux fois moins que x₁, donc deux fois plus de champ : H<sub>x2</sub> = <b>1,0×10⁶ A/m</b> et B<sub>x2</sub> = <b>1,257 T</b>.","code":"H x2 = NI / x2",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},
-               {"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char"},
-               {"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"1,0×10⁶","type":"A/m","kind":"int","state":"new"},
-               {"id":"bx2","name":"B x2","value":"1,257 T","type":"T","kind":"char","state":"new"},
-               {"id":"ux2","name":"U x2","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Conclusion : les deux fenêtres sont en parallèle, chacune voit la <b>pleine</b> solénation NI = 1000 A. Les deux entrefers n'ont ni le même H ni le même B : il n'y a pas un flux unique, le flux de la traverse se partage.","code":"U x1 = U x2 = NI",
-           "groups":[
-             {"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},
-               {"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char"},
-               {"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"1,0×10⁶","type":"A/m","kind":"int"},
-               {"id":"bx2","name":"B x2","value":"1,257 T","type":"T","kind":"char"},
-               {"id":"ux2","name":"U x2","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Bobine déplacée sur une colonne extérieure : les deux entrefers sont maintenant dans la <b>même</b> maille. Le flux est commun, B = μ₀NI/(x₁+x₂) = <b>0,419 T</b> ; la solénation se partage en U₁ = 667 A et U₂ = 333 A.","code":"B = μ₀ NI / (x1 + x2)",
-           "groups":[
-             {"title":"Source · colonne extérieure","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},
-             {"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[
-               {"id":"hx1","name":"H x1","value":"3,33×10⁵","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bx1","name":"B x1","value":"0,419 T","type":"T","kind":"char","state":"changed"},
-               {"id":"ux1","name":"U x1","value":"667 A","type":"A","kind":"ptr","state":"changed"}]},
-             {"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[
-               {"id":"hx2","name":"H x2","value":"3,33×10⁵","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bx2","name":"B x2","value":"0,419 T","type":"T","kind":"char","state":"changed"},
-               {"id":"ux2","name":"U x2","value":"333 A","type":"A","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]}
+          {"label":"Circuit au repos : Θ = 0, aucun flux dans les deux fenêtres.","code":"Θ = N i = 0 A","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"0 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"—","type":"A/m","kind":"int"},{"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},{"id":"ux1","name":"U x1","value":"—","type":"A","kind":"ptr"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},{"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},{"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}],"arrows":[],"scene":{"show":0,"b1":0,"b2":0,"tTheta":"Θ = 0 A","lines":[],"concl":""}},
+          {"label":"On établit le courant : Θ = NI = <b>1000 A</b>. Le fer a une réluctance nulle, donc il ne prend aucune tension magnétique : <b>chaque</b> entrefer reçoit toute la solénation.","code":"Θ = N i = 1000 A","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int","state":"changed"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"—","type":"A/m","kind":"int"},{"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},{"id":"ux1","name":"U x1","value":"—","type":"A","kind":"ptr"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},{"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},{"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}],"arrows":[],"scene":{"show":1,"b1":0,"b2":0,"tTheta":"Θ = NI = 1 000 A","lines":[],"concl":"fer idéal : U fer = 0"}},
+          {"label":"Fenêtre haute : la maille donne H<sub>x1</sub>·x₁ = NI, donc H<sub>x1</sub> = 1000/0,002 = <b>5,0×10⁵ A/m</b>.","code":"H x1 = NI / x1","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int","state":"new"},{"id":"bx1","name":"B x1","value":"—","type":"T","kind":"char"},{"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},{"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},{"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}],"arrows":[],"scene":{"show":2,"b1":0,"b2":0,"tTheta":"Θ = NI = 1 000 A","lines":[["fenêtre haute : Hx₁ = 5,0×10⁵ A/m","accent"]],"concl":""}},
+          {"label":"Puis B<sub>x1</sub> = μ₀H<sub>x1</sub> = <b>0,628 T</b>. L'air est linéaire : B est proportionnel à H dans l'entrefer.","code":"B x1 = μ₀ H x1","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},{"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char","state":"new"},{"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"—","type":"A/m","kind":"int"},{"id":"bx2","name":"B x2","value":"—","type":"T","kind":"char"},{"id":"ux2","name":"U x2","value":"—","type":"A","kind":"ptr"}]}],"arrows":[],"scene":{"show":3,"b1":0.6283185307179586,"b2":0,"tTheta":"Θ = NI = 1 000 A","lines":[["fenêtre haute : Hx₁ = 5,0×10⁵ A/m","accent"],["Bx₁ = 0,628 T ; Ux₁ = 1 000 A","accent"]],"concl":""}},
+          {"label":"Fenêtre basse : x₂ = 1 mm, deux fois moins que x₁, donc deux fois plus de champ : H<sub>x2</sub> = <b>1,0×10⁶ A/m</b> et B<sub>x2</sub> = <b>1,257 T</b>.","code":"H x2 = NI / x2","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},{"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char"},{"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"1,0×10⁶","type":"A/m","kind":"int","state":"new"},{"id":"bx2","name":"B x2","value":"1,257 T","type":"T","kind":"char","state":"new"},{"id":"ux2","name":"U x2","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"show":4,"b1":0.6283185307179586,"b2":1.2566370614359172,"tTheta":"Θ = NI = 1 000 A","lines":[["fenêtre haute : Hx₁ = 5,0×10⁵ A/m","accent"],["Bx₁ = 0,628 T ; Ux₁ = 1 000 A","accent"],["fenêtre basse : Hx₂ = 1,0×10⁶ A/m","teal"],["Bx₂ = 1,257 T ; Ux₂ = 1 000 A","teal"]],"concl":""}},
+          {"label":"Conclusion : les deux fenêtres sont en parallèle, chacune voit la <b>pleine</b> solénation NI = 1000 A. Les deux entrefers n'ont ni le même H ni le même B : il n'y a pas un flux unique, le flux de la traverse se partage.","code":"U x1 = U x2 = NI","groups":[{"title":"Source · traverse centrale","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"5,0×10⁵","type":"A/m","kind":"int"},{"id":"bx1","name":"B x1","value":"0,628 T","type":"T","kind":"char"},{"id":"ux1","name":"U x1","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"1,0×10⁶","type":"A/m","kind":"int"},{"id":"bx2","name":"B x2","value":"1,257 T","type":"T","kind":"char"},{"id":"ux2","name":"U x2","value":"1 000 A","type":"A","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"show":5,"b1":0.6283185307179586,"b2":1.2566370614359172,"tTheta":"Θ = NI = 1 000 A","lines":[["fenêtre haute : Hx₁ = 5,0×10⁵ A/m","accent"],["Bx₁ = 0,628 T ; Ux₁ = 1 000 A","accent"],["fenêtre basse : Hx₂ = 1,0×10⁶ A/m","teal"],["Bx₂ = 1,257 T ; Ux₂ = 1 000 A","teal"]],"concl":"Ux₁ = Ux₂ = NI : pas de flux unique"}},
+          {"label":"Comparaison : <b>sans la traverse centrale</b> (cadre simple, bobine sur une colonne), les deux entrefers sont dans la même maille. Le flux est commun, <b>B = μ₀NI/(x₁+x₂) = 0,419 T</b> ; la solénation se partage en <b>U₁ = 667 A</b> et <b>U₂ = 333 A</b>. Avec la traverse, une bobine sur une colonne extérieure n'alimenterait que sa propre fenêtre.","code":"B = μ₀ NI / (x1 + x2)","groups":[{"title":"Source · colonne extérieure","cells":[{"id":"theta","name":"Θ","value":"1 000 A","type":"N·i","kind":"int"}]},{"title":"Fenêtre haute","hint":"x₁ = 2 mm","cells":[{"id":"hx1","name":"H x1","value":"3,33×10⁵","type":"A/m","kind":"int","state":"changed"},{"id":"bx1","name":"B x1","value":"0,419 T","type":"T","kind":"char","state":"changed"},{"id":"ux1","name":"U x1","value":"667 A","type":"A","kind":"ptr","state":"changed"}]},{"title":"Fenêtre basse","hint":"x₂ = 1 mm","cells":[{"id":"hx2","name":"H x2","value":"3,33×10⁵","type":"A/m","kind":"int","state":"changed"},{"id":"bx2","name":"B x2","value":"0,419 T","type":"T","kind":"char","state":"changed"},{"id":"ux2","name":"U x2","value":"333 A","type":"A","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"show":6,"b1":0.41887902047863906,"b2":0,"tTheta":"Θ = NI = 1 000 A","lines":[["Hx₁ = Hx₂ = 3,33×10⁵ A/m","accent"],["B = μ₀NI/(x₁ + x₂) = 0,419 T","accent"],["Ux₁ = 667 A","accent"],["Ux₂ = 333 A","accent"]],"concl":"un seul flux, deux entrefers en série"}}
         ]}
         </script>
       </div>
@@ -1173,40 +1066,9 @@ cas 2 (Θ donné) : droite de charge, ou itérations jusqu'à Θ − ΣU ≈ 0</
 
       <figure class="fig-wide">
         <div class="figcard">
-          <svg viewBox="0 0 640 320" role="img" aria-label="Droite de charge de l'électroaimant CH2 ex. 4 : trois droites B égale mu zéro (thêta moins H l f) sur deux delta, et la courbe Armco">
-<defs><marker id="fc-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--faint)" stroke-width="1.4"/></marker></defs>
-<line x1="62" y1="214.0" x2="600" y2="214.0" class="ax"/>
-<text class="tm" x="54" y="217.5" text-anchor="end">0,5</text>
-<line x1="62" y1="152.0" x2="600" y2="152.0" class="ax"/>
-<text class="tm" x="54" y="155.5" text-anchor="end">1,0</text>
-<line x1="62" y1="90.0" x2="600" y2="90.0" class="ax"/>
-<text class="tm" x="54" y="93.5" text-anchor="end">1,5</text>
-<line x1="62" y1="28.0" x2="600" y2="28.0" class="ax"/>
-<text class="tm" x="54" y="31.5" text-anchor="end">2,0</text>
-<line x1="196.5" y1="28" x2="196.5" y2="276" class="ax"/>
-<text class="tm" x="196.5" y="291" text-anchor="middle">2 000</text>
-<line x1="331.0" y1="28" x2="331.0" y2="276" class="ax"/>
-<text class="tm" x="331.0" y="291" text-anchor="middle">4 000</text>
-<line x1="465.5" y1="28" x2="465.5" y2="276" class="ax"/>
-<text class="tm" x="465.5" y="291" text-anchor="middle">6 000</text>
-<line x1="600.0" y1="28" x2="600.0" y2="276" class="ax"/>
-<text class="tm" x="600.0" y="291" text-anchor="middle">8 000</text>
-<line x1="62" y1="276" x2="600" y2="276" class="arr" marker-end="url(#fc-ar)"/>
-<line x1="62" y1="276" x2="62" y2="28" class="arr" marker-end="url(#fc-ar)"/>
-<text class="ts" x="600" y="305" text-anchor="end">H [A/m]</text>
-<text class="ts" x="68" y="42">B [T]</text>
-<polyline points="83.0,223.9 84.1,221.4 84.5,219.0 86.0,216.5 86.1,214.0 87.5,211.5 89.1,209.0 89.5,206.6 90.6,204.1 91.9,201.6 92.1,199.1 93.7,196.6 95.2,194.2 95.2,191.7 96.7,189.2 97.8,186.7 97.8,184.2 99.3,181.8 100.7,179.3 102.2,176.8 102.6,174.3 103.7,171.8 105.2,169.4 106.7,166.9 108.1,164.4 109.6,161.9 111.1,159.4 112.6,157.0 114.1,154.5 114.7,152.0 117.0,149.5 118.5,147.0 119.6,144.6 121.0,142.1 123.8,139.6 125.3,137.1 125.3,134.6 131.5,129.7 131.5,127.2 134.5,124.7 137.5,122.2 140.2,119.8 141.4,117.3 144.3,114.8 148.7,112.3 152.0,109.8 155.0,107.4 162.0,104.9 165.7,102.4 169.7,99.9 176.4,97.4 181.9,95.0 187.8,92.5 190.4,90.0 201.1,87.5 207.0,85.0 213.3,82.6 224.3,80.1 230.7,77.6 250.2,75.1 267.2,72.6 282.6,70.2 302.2,67.7 335.0,65.2 357.6,62.7 403.7,60.2 442.4,57.8 491.5,55.3 527.7,52.8" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
-<line x1="62.0" y1="198.1" x2="600.0" y2="260.4" stroke="var(--teal)" stroke-width="1.4" stroke-dasharray="6 4"/>
-<circle cx="91.9" cy="201.5" r="4.2" fill="var(--teal)" stroke="var(--card)" stroke-width="1.2"/>
-<line x1="62.0" y1="42.3" x2="600.0" y2="104.6" stroke="var(--coral)" stroke-width="1.4" stroke-dasharray="6 4"/>
-<circle cx="292.3" cy="68.9" r="4.2" fill="var(--coral)" stroke="var(--card)" stroke-width="1.2"/>
-<line x1="62.0" y1="120.2" x2="196.5" y2="276.0" stroke="var(--purple)" stroke-width="1.4" stroke-dasharray="6 4"/>
-<circle cx="104.9" cy="169.9" r="4.2" fill="var(--purple)" stroke="var(--card)" stroke-width="1.2"/>
-<text class="ts" x="103.7" y="238.8">cas b</text>
-<text class="ts" x="324.3" y="102.4">cas c</text>
-<text class="ts" x="114.5" y="127.2">cas d</text>
-<text class="tm" x="438.6" y="223.9">droites de charge</text>
-</svg>
+          <svg viewBox="0 0 640 320" role="img" aria-label="Droites de charge de l'électroaimant CH2 ex. 4 pour trois cas, et leurs intersections avec la courbe Armco">
+<line x1="62" y1="214.0" x2="600" y2="214.0" class="ax"/><text class="tm" x="54.0" y="217.5" text-anchor="end">0,5</text><line x1="62" y1="152.0" x2="600" y2="152.0" class="ax"/><text class="tm" x="54.0" y="155.5" text-anchor="end">1,0</text><line x1="62" y1="90.0" x2="600" y2="90.0" class="ax"/><text class="tm" x="54.0" y="93.5" text-anchor="end">1,5</text><line x1="62" y1="28.0" x2="600" y2="28.0" class="ax"/><text class="tm" x="54.0" y="31.5" text-anchor="end">2,0</text><line x1="196.5" y1="28" x2="196.5" y2="276" class="ax"/><text class="tm" x="196.5" y="291.0" text-anchor="middle">2 000</text><line x1="331.0" y1="28" x2="331.0" y2="276" class="ax"/><text class="tm" x="331.0" y="291.0" text-anchor="middle">4 000</text><line x1="465.5" y1="28" x2="465.5" y2="276" class="ax"/><text class="tm" x="465.5" y="291.0" text-anchor="middle">6 000</text><line x1="600.0" y1="28" x2="600.0" y2="276" class="ax"/><text class="tm" x="600.0" y="291.0" text-anchor="middle">8 000</text><line x1="62.0" y1="276.0" x2="610.0" y2="276.0" stroke="var(--faint)" stroke-width="1.2" stroke-linecap="round" marker-end="url(#fg-faint)"/><line x1="62.0" y1="276.0" x2="62.0" y2="20.0" stroke="var(--faint)" stroke-width="1.2" stroke-linecap="round" marker-end="url(#fg-faint)"/><text class="ts" x="608.0" y="305.0" text-anchor="end">H [A/m]</text><text class="ts" x="70.0" y="18.0">B [T]</text><polyline points="83.0,223.9 84.1,221.4 84.5,219.0 86.0,216.5 86.1,214.0 87.5,211.5 89.1,209.0 89.5,206.6 90.6,204.1 91.9,201.6 92.1,199.1 93.7,196.6 95.2,194.2 95.2,191.7 96.7,189.2 97.8,186.7 97.8,184.2 99.3,181.8 100.7,179.3 102.2,176.8 102.6,174.3 103.7,171.8 105.2,169.4 106.7,166.9 108.1,164.4 109.6,161.9 111.1,159.4 112.6,157.0 114.1,154.5 114.7,152.0 117.0,149.5 118.5,147.0 119.6,144.6 121.0,142.1 123.8,139.6 125.3,137.1 125.3,134.6 131.5,129.7 131.5,127.2 134.5,124.7 137.5,122.2 140.2,119.8 141.4,117.3 144.3,114.8 148.7,112.3 152.0,109.8 155.0,107.4 162.0,104.9 165.7,102.4 169.7,99.9 176.4,97.4 181.9,95.0 187.8,92.5 190.4,90.0 201.1,87.5 207.0,85.0 213.3,82.6 224.3,80.1 230.7,77.6 250.2,75.1 267.2,72.6 282.6,70.2 302.2,67.7 335.0,65.2 357.6,62.7 403.7,60.2 442.4,57.8 491.5,55.3 527.7,52.8" fill="none" stroke="var(--accent)" stroke-width="2.4"/><text class="tm" x="89.0" y="237.9">Armco numérisée dès 0,42 T</text><line x1="62" y1="198.1" x2="600.0" y2="260.4" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="6 4"/><circle cx="91.9" cy="201.5" r="4.4" fill="var(--teal)" stroke="var(--card)" stroke-width="1.2"/><text class="tm" x="596.0" y="223.6" text-anchor="end" style="fill:var(--teal)">cas b : Θ = 1 000 A, δ = 1 mm → 0,60 T</text><line x1="62" y1="42.3" x2="600.0" y2="104.6" stroke="var(--coral)" stroke-width="1.5" stroke-dasharray="6 4"/><circle cx="292.3" cy="68.9" r="4.4" fill="var(--coral)" stroke="var(--card)" stroke-width="1.2"/><text class="tm" x="596.0" y="120.6" text-anchor="end" style="fill:var(--coral)">cas c : Θ = 3 000 A, δ = 1 mm → 1,67 T</text><line x1="62" y1="120.2" x2="196.5" y2="276.0" stroke="var(--purple)" stroke-width="1.5" stroke-dasharray="6 4"/><circle cx="104.9" cy="169.9" r="4.4" fill="var(--purple)" stroke="var(--card)" stroke-width="1.2"/><text class="tm" x="204.5" y="262.0" style="fill:var(--purple)">cas d : Θ = 200 A, δ = 0,1 mm → 0,86 T</text>
+          </svg>
         </div>
         <figcaption>Les trois cas de CH2 ex. 4 (<span class="fx">N = 2000</span>, <span class="fx">ℓ_f = 100 mm</span>, <span class="fx">A_f = 100 mm²</span>, deux entrefers <span class="fx">δ</span>). Les droites sont tracées pour <span class="fx">B = μ₀(Θ − Hℓ_f)/(2δ)</span> ; les points ronds sont les intersections réelles avec la courbe Armco.</figcaption>
       </figure>
@@ -1222,6 +1084,7 @@ cas 2 (Θ donné) : droite de charge, ou itérations jusqu'à Θ − ΣU ≈ 0</
           <span class="lab-tag">7 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="droite-charge" viewBox="0 0 640 260" role="img" aria-label="Courbe B(H) Armco, droite de charge et intervalle de la dichotomie"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1237,86 +1100,13 @@ cas 2 (Θ donné) : droite de charge, ou itérations jusqu'à Θ − ΣU ≈ 0</
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Maille de l'électroaimant en U : H<sub>f</sub>·ℓ<sub>f</sub> + 2δ·B/μ₀ = Θ = <b>3 000 A</b>. Les deux entrefers comptent, chacun δ = 1 mm.","code":"Hf lf + 2δ B/μ0 = Θ",
-           "groups":[
-             {"title":"Données","cells":[
-               {"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},
-               {"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},
-               {"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},
-             {"title":"Droite de charge","cells":[
-               {"id":"h","name":"H","value":"—","type":"A/m","kind":"int"},
-               {"id":"bd","name":"B droite","value":"—","type":"T","kind":"char"}]},
-             {"title":"Courbe Armco","cells":[
-               {"id":"bc","name":"B courbe","value":"—","type":"T","kind":"char"}]}
-           ],"arrows":[]},
-          {"label":"La droite s'écrit B = μ₀(3000 − 0,1H)/0,002. Pour H = 0, elle coupe l'axe à <b>1,885 T</b> : c'est le modèle « fer parfait ».","code":"B = μ0 (Θ − 0,1 H) / 0,002",
-           "groups":[
-             {"title":"Données","cells":[
-               {"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},
-               {"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},
-               {"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},
-             {"title":"Droite de charge","cells":[
-               {"id":"h","name":"H","value":"0 A/m","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bd","name":"B droite","value":"1,885 T","type":"T","kind":"char","state":"new"}]},
-             {"title":"Courbe Armco","cells":[
-               {"id":"bc","name":"B courbe","value":"—","type":"T","kind":"char"}]}
-           ],"arrows":[]},
-          {"label":"À H = 5 000 A/m, la droite donne 1,571 T et la courbe 1,738 T. La droite est passée sous la courbe : la solution est entre 0 et 5 000 A/m.","code":"H = 5 000 A/m",
-           "groups":[
-             {"title":"Données","cells":[
-               {"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},
-               {"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},
-               {"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},
-             {"title":"Droite de charge","cells":[
-               {"id":"h","name":"H","value":"5 000 A/m","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bd","name":"B droite","value":"1,571 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Courbe Armco","cells":[
-               {"id":"bc","name":"B courbe","value":"1,738 T","type":"T","kind":"char","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Au milieu, H = 2 500 A/m : B<sub>droite</sub> = 1,728 T, B<sub>courbe</sub> = 1,598 T. La racine reste dans [2 500 ; 5 000].","code":"H = 2 500 A/m",
-           "groups":[
-             {"title":"Données","cells":[
-               {"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},
-               {"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},
-               {"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},
-             {"title":"Droite de charge","cells":[
-               {"id":"h","name":"H","value":"2 500 A/m","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bd","name":"B droite","value":"1,728 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Courbe Armco","cells":[
-               {"id":"bc","name":"B courbe","value":"1,598 T","type":"T","kind":"char","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"H = 3 750 A/m : B<sub>droite</sub> = 1,649 T, B<sub>courbe</sub> = 1,687 T. La droite est repassée au-dessous : la racine est dans [2 500 ; 3 750].","code":"H = 3 750 A/m",
-           "groups":[
-             {"title":"Données","cells":[
-               {"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},
-               {"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},
-               {"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},
-             {"title":"Droite de charge","cells":[
-               {"id":"h","name":"H","value":"3 750 A/m","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bd","name":"B droite","value":"1,649 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Courbe Armco","cells":[
-               {"id":"bc","name":"B courbe","value":"1,687 T","type":"T","kind":"char","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Convergence : H = <b>3 424 A/m</b> et B = <b>1,67 T</b>. Contrôle de la maille : U<sub>f</sub> = H·ℓ<sub>f</sub> = 342 A, U<sub>2δ</sub> = 2 658 A, la somme vaut bien 3 000 A.","code":"H* = 3 424 A/m   B* = 1,67 T",
-           "groups":[
-             {"title":"Point retenu","cells":[
-               {"id":"h","name":"H","value":"3 424 A/m","type":"A/m","kind":"int","state":"changed"},
-               {"id":"bd","name":"B","value":"1,67 T","type":"T","kind":"char","state":"changed"},
-               {"id":"bc","name":"B courbe","value":"1,67 T","type":"T","kind":"char"}]},
-             {"title":"Contrôle de la maille","cells":[
-               {"id":"uf","name":"U fer","value":"342 A","type":"H·ℓf","kind":"ptr","state":"new"},
-               {"id":"ud","name":"U 2δ","value":"2 658 A","type":"2δB/μ₀","kind":"ptr","state":"new"}]}
-           ],"arrows":[]},
-          {"label":"Le modèle linéaire donnait 1,885 T : l'écart est de <b>11 %</b>. Le point réel est plus bas parce que le fer exige 342 A sur les 3 000 A disponibles. Toujours vérifier que B reste dans la plage de la courbe.","code":"écart = (1,885 − 1,67)/1,885 = 11 %",
-           "groups":[
-             {"title":"Point retenu","cells":[
-               {"id":"h","name":"H","value":"3 424 A/m","type":"A/m","kind":"int"},
-               {"id":"bd","name":"B","value":"1,67 T","type":"T","kind":"char"},
-               {"id":"bc","name":"B courbe","value":"1,67 T","type":"T","kind":"char"}]},
-             {"title":"Bilan","cells":[
-               {"id":"blin","name":"B linéaire","value":"1,885 T","type":"fer parfait","kind":"int"},
-               {"id":"ecart","name":"écart","value":"11 %","type":"réel vs linéaire","kind":"int","state":"changed"}]}
-           ],"arrows":[]}
+          {"label":"Maille de l'électroaimant en U : H<sub>f</sub>·ℓ<sub>f</sub> + 2δ·B/μ₀ = Θ = <b>3 000 A</b>. Les deux entrefers comptent, chacun δ = 1 mm.","code":"Hf lf + 2δ B/μ0 = Θ","groups":[{"title":"Données","cells":[{"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},{"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},{"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},{"title":"Droite de charge","cells":[{"id":"h","name":"H","value":"—","type":"A/m","kind":"int"},{"id":"bd","name":"B droite","value":"—","type":"T","kind":"char"}]},{"title":"Courbe Armco","cells":[{"id":"bc","name":"B courbe","value":"—","type":"T","kind":"char"}]}],"arrows":[],"scene":{"H":-1,"lo":-1,"hi":-1,"fin":0,"Bc":-1,"tH":"","tBd":"","tBc":"","tI":""}},
+          {"label":"La droite s'écrit B = μ₀(3000 − 0,1H)/0,002. Pour H = 0, elle coupe l'axe à <b>1,885 T</b> : c'est le modèle « fer parfait ».","code":"B = μ0 (Θ − 0,1 H) / 0,002","groups":[{"title":"Données","cells":[{"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},{"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},{"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},{"title":"Droite de charge","cells":[{"id":"h","name":"H","value":"0 A/m","type":"A/m","kind":"int","state":"changed"},{"id":"bd","name":"B droite","value":"1,885 T","type":"T","kind":"char","state":"new"}]},{"title":"Courbe Armco","cells":[{"id":"bc","name":"B courbe","value":"—","type":"T","kind":"char"}]}],"arrows":[],"scene":{"H":0,"lo":-1,"hi":-1,"fin":0,"Bc":-1,"tH":"0 A/m","tBd":"1,885 T","tBc":"","tI":"fer parfait : H = 0"}},
+          {"label":"À H = 5 000 A/m, la droite donne 1,571 T et la courbe 1,738 T. La droite est passée sous la courbe : la solution est entre 0 et 5 000 A/m.","code":"H = 5 000 A/m","groups":[{"title":"Données","cells":[{"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},{"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},{"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},{"title":"Droite de charge","cells":[{"id":"h","name":"H","value":"5 000 A/m","type":"A/m","kind":"int","state":"changed"},{"id":"bd","name":"B droite","value":"1,571 T","type":"T","kind":"char","state":"changed"}]},{"title":"Courbe Armco","cells":[{"id":"bc","name":"B courbe","value":"1,738 T","type":"T","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"H":5000,"lo":0,"hi":5000,"fin":0,"Bc":1.7376384839650145,"tH":"5 000 A/m","tBd":"1,571 T","tBc":"1,738 T","tI":"racine dans [0 ; 5 000]"}},
+          {"label":"Au milieu, H = 2 500 A/m : B<sub>droite</sub> = 1,728 T, B<sub>courbe</sub> = 1,598 T. La racine reste dans [2 500 ; 5 000].","code":"H = 2 500 A/m","groups":[{"title":"Données","cells":[{"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},{"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},{"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},{"title":"Droite de charge","cells":[{"id":"h","name":"H","value":"2 500 A/m","type":"A/m","kind":"int","state":"changed"},{"id":"bd","name":"B droite","value":"1,728 T","type":"T","kind":"char","state":"changed"}]},{"title":"Courbe Armco","cells":[{"id":"bc","name":"B courbe","value":"1,598 T","type":"T","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"H":2500,"lo":2500,"hi":5000,"fin":0,"Bc":1.5982978723404255,"tH":"2 500 A/m","tBd":"1,728 T","tBc":"1,598 T","tI":"racine dans [2 500 ; 5 000]"}},
+          {"label":"H = 3 750 A/m : B<sub>droite</sub> = 1,649 T, B<sub>courbe</sub> = 1,687 T. La droite est repassée au-dessous : la racine est dans [2 500 ; 3 750].","code":"H = 3 750 A/m","groups":[{"title":"Données","cells":[{"id":"theta","name":"Θ","value":"3 000 A","type":"N·i","kind":"int"},{"id":"lf","name":"ℓ fer","value":"100 mm","type":"longueur","kind":"int"},{"id":"d2","name":"2δ","value":"2 mm","type":"entrefers","kind":"int"}]},{"title":"Droite de charge","cells":[{"id":"h","name":"H","value":"3 750 A/m","type":"A/m","kind":"int","state":"changed"},{"id":"bd","name":"B droite","value":"1,649 T","type":"T","kind":"char","state":"changed"}]},{"title":"Courbe Armco","cells":[{"id":"bc","name":"B courbe","value":"1,687 T","type":"T","kind":"char","state":"changed"}]}],"arrows":[],"scene":{"H":3750,"lo":2500,"hi":3750,"fin":0,"Bc":1.687295081967213,"tH":"3 750 A/m","tBd":"1,649 T","tBc":"1,687 T","tI":"racine dans [2 500 ; 3 750]"}},
+          {"label":"Convergence : H = <b>3 424 A/m</b> et B = <b>1,67 T</b>. Contrôle de la maille : U<sub>f</sub> = H·ℓ<sub>f</sub> = 342 A, U<sub>2δ</sub> = 2 658 A, la somme vaut bien 3 000 A.","code":"H* = 3 424 A/m   B* = 1,67 T","groups":[{"title":"Point retenu","cells":[{"id":"h","name":"H","value":"3 424 A/m","type":"A/m","kind":"int","state":"changed"},{"id":"bd","name":"B","value":"1,67 T","type":"T","kind":"char","state":"changed"},{"id":"bc","name":"B courbe","value":"1,67 T","type":"T","kind":"char"}]},{"title":"Contrôle de la maille","cells":[{"id":"uf","name":"U fer","value":"342 A","type":"H·ℓf","kind":"ptr","state":"new"},{"id":"ud","name":"U 2δ","value":"2 658 A","type":"2δB/μ₀","kind":"ptr","state":"new"}]}],"arrows":[],"scene":{"H":3423.9327194219095,"lo":-1,"hi":-1,"fin":0,"Bc":1.669823554599444,"tH":"3 424 A/m","tBd":"1,67 T","tBc":"1,67 T","tI":"U fer = 342 A ; U 2δ = 2 658 A"}},
+          {"label":"Le modèle linéaire donnait 1,885 T : l'écart est de <b>11 %</b>. Le point réel est plus bas parce que le fer exige 342 A sur les 3 000 A disponibles. Toujours vérifier que B reste dans la plage de la courbe.","code":"écart = (1,885 − 1,67)/1,885 = 11 %","groups":[{"title":"Point retenu","cells":[{"id":"h","name":"H","value":"3 424 A/m","type":"A/m","kind":"int"},{"id":"bd","name":"B","value":"1,67 T","type":"T","kind":"char"},{"id":"bc","name":"B courbe","value":"1,67 T","type":"T","kind":"char"}]},{"title":"Bilan","cells":[{"id":"blin","name":"B linéaire","value":"1,885 T","type":"fer parfait","kind":"int"},{"id":"ecart","name":"écart","value":"11 %","type":"réel vs linéaire","kind":"int","state":"changed"}]}],"arrows":[],"scene":{"H":3423.9327194219095,"lo":-1,"hi":-1,"fin":1,"Bc":1.669823554599444,"tH":"3 424 A/m","tBd":"1,67 T","tBc":"1,67 T","tI":"écart = 11 %"}}
         ]}
         </script>
       </div>
@@ -1401,6 +1191,7 @@ k = L<sub>12</sub> / √(L<sub>11</sub> L<sub>22</sub>)        σ = 1 − k²   
           <span class="lab-tag">7 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="mutuelle" viewBox="0 0 640 260" role="img" aria-label="Deux bobines sur un noyau, flux principal, flux de fuite, jauges de k et de sigma"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1416,116 +1207,13 @@ k = L<sub>12</sub> / √(L<sub>11</sub> L<sub>22</sub>)        σ = 1 − k²   
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Une seule source est allumée : i₁ = 1 A, i₂ = 0. C'est la règle qui évite les erreurs de signe et de somme.","code":"i1 = 1 A    i2 = 0",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"—","type":"Wb·tr","kind":"ptr"}]},
-             {"title":"Enroulement 2 · N₂ = 500","cells":[
-               {"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},
-             {"title":"Circuit magnétique","cells":[
-               {"id":"phih","name":"Φ h","value":"—","type":"Wb","kind":"char"},
-               {"id":"m","name":"M","value":"—","type":"H","kind":"int"},
-               {"id":"k","name":"k","value":"—","type":"—","kind":"int"},
-               {"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}
-           ],"arrows":[]},
-          {"label":"Le courant crée le flux principal dans la culasse : Φ<sub>h</sub> = Λ<sub>h</sub>N₁i₁ = 1×10⁻⁷ × 1000 × 1 = <b>1,00×10⁻⁴ Wb</b>.","code":"Φh = Λh N1 i1",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"—","type":"Wb·tr","kind":"ptr"}]},
-             {"title":"Enroulement 2 · N₂ = 500","cells":[
-               {"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},
-             {"title":"Circuit magnétique","cells":[
-               {"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char","state":"new"},
-               {"id":"m","name":"M","value":"—","type":"H","kind":"int"},
-               {"id":"k","name":"k","value":"—","type":"—","kind":"int"},
-               {"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}
-           ],"arrows":[]},
-          {"label":"Flux propre de l'enroulement 1, fuites comprises : Ψ₁₁ = N₁²(Λ_h + Λ_σ1)i₁ = <b>0,105 Wb·tr</b>, donc L₁₁ = Ψ₁₁/i₁ = <b>0,105 H</b>.","code":"Ψ11 = N1² (Λh + Λσ1) i1",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr","state":"new"},
-               {"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int","state":"new"}]},
-             {"title":"Enroulement 2 · N₂ = 500","cells":[
-               {"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},
-             {"title":"Circuit magnétique","cells":[
-               {"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char"},
-               {"id":"m","name":"M","value":"—","type":"H","kind":"int"},
-               {"id":"k","name":"k","value":"—","type":"—","kind":"int"},
-               {"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}
-           ],"arrows":[]},
-          {"label":"Côté enroulement 2, seules les spires comptent : Ψ₂₁ = N₂Φ<sub>h</sub> = 500 × 1,00×10⁻⁴ = <b>0,050 Wb·tr</b>. D'où M = Ψ₂₁/i₁ = <b>0,050 H</b>.","code":"Ψ21 = N2 Φh    puis    M = Ψ21 / i1",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},
-               {"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},
-             {"title":"Enroulement 2 · N₂ = 500","cells":[
-               {"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"0,050 Wb·tr","type":"Wb·tr","kind":"ptr","state":"new"}]},
-             {"title":"Circuit magnétique","cells":[
-               {"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char"},
-               {"id":"m","name":"M","value":"0,050 H","type":"H","kind":"int","state":"new"},
-               {"id":"k","name":"k","value":"—","type":"—","kind":"int"},
-               {"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}
-           ],"arrows":[]},
-          {"label":"Le couplage se calcule avec les deux inductances propres : k = M/√(L₁₁L₂₂) = <b>0,952</b>, donc σ = 1 − k² = <b>0,0930</b>. Les fuites de 5 % suffisent à faire 9,3 % de dispersion.","code":"k = M / √(L11 L22)",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},
-               {"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},
-             {"title":"Enroulement 2 · N₂ = 500","cells":[
-               {"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"0,050 Wb·tr","type":"Wb·tr","kind":"ptr"},
-               {"id":"l22","name":"L₂₂","value":"0,0263 H","type":"H","kind":"int","state":"new"}]},
-             {"title":"Couplage","cells":[
-               {"id":"m","name":"M","value":"0,050 H","type":"H","kind":"int"},
-               {"id":"k","name":"k","value":"0,952","type":"—","kind":"int","state":"changed"},
-               {"id":"sig","name":"σ","value":"0,0930","type":"—","kind":"int","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"On double N₂ (1000 spires) : L₂₂ quadruple et M double (0,100 H), mais <b>k ne change pas</b> — le rapport M/√(L₁₁L₂₂) est indépendant du nombre de spires.","code":"N2 = 1000",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},
-               {"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},
-             {"title":"Enroulement 2 · N₂ = 1000","cells":[
-               {"id":"n2","name":"N₂","value":"1 000","type":"spires","kind":"int","state":"changed"},
-               {"id":"psi21","name":"Ψ₂₁","value":"0,100 Wb·tr","type":"Wb·tr","kind":"ptr","state":"changed"},
-               {"id":"l22","name":"L₂₂","value":"0,105 H","type":"H","kind":"int","state":"changed"}]},
-             {"title":"Couplage","cells":[
-               {"id":"m","name":"M","value":"0,100 H","type":"H","kind":"int","state":"changed"},
-               {"id":"k","name":"k","value":"0,952","type":"—","kind":"int"},
-               {"id":"sig","name":"σ","value":"0,0930","type":"—","kind":"int"}]}
-           ],"arrows":[]},
-          {"label":"On augmente les fuites à 20 % par bobine (entrefer plus large) : k = 1/1,2 = <b>0,833</b> et σ = <b>0,306</b>. Plus l'entrefer est grand, plus k baisse et plus σ monte.","code":"fuites 20 %   →   k = 1 / 1,2",
-           "groups":[
-             {"title":"Enroulement 1 · N₁ = 1000","cells":[
-               {"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},
-               {"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},
-               {"id":"psi11","name":"Ψ₁₁","value":"0,120 Wb·tr","type":"Wb·tr","kind":"ptr","state":"changed"},
-               {"id":"l11","name":"L₁₁","value":"0,120 H","type":"H","kind":"int","state":"changed"}]},
-             {"title":"Enroulement 2 · N₂ = 1000","cells":[
-               {"id":"n2","name":"N₂","value":"1 000","type":"spires","kind":"int"},
-               {"id":"psi21","name":"Ψ₂₁","value":"0,100 Wb·tr","type":"Wb·tr","kind":"ptr"},
-               {"id":"l22","name":"L₂₂","value":"0,120 H","type":"H","kind":"int","state":"changed"}]},
-             {"title":"Couplage","cells":[
-               {"id":"m","name":"M","value":"0,100 H","type":"H","kind":"int"},
-               {"id":"k","name":"k","value":"0,833","type":"—","kind":"int","state":"changed"},
-               {"id":"sig","name":"σ","value":"0,306","type":"—","kind":"int","state":"changed"}]}
-           ],"arrows":[]}
+          {"label":"Une seule source est allumée : i₁ = 1 A, i₂ = 0. C'est la règle qui évite les erreurs de signe et de somme.","code":"i1 = 1 A    i2 = 0","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"—","type":"Wb·tr","kind":"ptr"}]},{"title":"Enroulement 2 · N₂ = 500","cells":[{"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},{"title":"Circuit magnétique","cells":[{"id":"phih","name":"Φ h","value":"—","type":"Wb","kind":"char"},{"id":"m","name":"M","value":"—","type":"H","kind":"int"},{"id":"k","name":"k","value":"—","type":"—","kind":"int"},{"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}],"arrows":[],"scene":{"show":0,"n2":4.0,"tN2":"500","leak":0.05,"tleak":"5 %","tPhi":"","tL11":"","tM":"","k":0,"sigma":0}},
+          {"label":"Le courant crée le flux principal dans la culasse : Φ<sub>h</sub> = Λ<sub>h</sub>N₁i₁ = 1×10⁻⁷ × 1000 × 1 = <b>1,00×10⁻⁴ Wb</b>.","code":"Φh = Λh N1 i1","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"—","type":"Wb·tr","kind":"ptr"}]},{"title":"Enroulement 2 · N₂ = 500","cells":[{"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},{"title":"Circuit magnétique","cells":[{"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char","state":"new"},{"id":"m","name":"M","value":"—","type":"H","kind":"int"},{"id":"k","name":"k","value":"—","type":"—","kind":"int"},{"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}],"arrows":[],"scene":{"show":1,"n2":4.0,"tN2":"500","leak":0.05,"tleak":"5 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"","tM":"","k":0,"sigma":0}},
+          {"label":"Flux propre de l'enroulement 1, fuites comprises : Ψ₁₁ = N₁²(Λ_h + Λ_σ1)i₁ = <b>0,105 Wb·tr</b>, donc L₁₁ = Ψ₁₁/i₁ = <b>0,105 H</b>.","code":"Ψ11 = N1² (Λh + Λσ1) i1","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr","state":"new"},{"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int","state":"new"}]},{"title":"Enroulement 2 · N₂ = 500","cells":[{"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"—","type":"Wb·tr","kind":"ptr"}]},{"title":"Circuit magnétique","cells":[{"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char"},{"id":"m","name":"M","value":"—","type":"H","kind":"int"},{"id":"k","name":"k","value":"—","type":"—","kind":"int"},{"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}],"arrows":[],"scene":{"show":2,"n2":4.0,"tN2":"500","leak":0.05,"tleak":"5 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"Ψ₁₁ = 0,105 Wb·tr → L₁₁ = 0,105 H","tM":"","k":0,"sigma":0}},
+          {"label":"Côté enroulement 2, seules les spires comptent : Ψ₂₁ = N₂Φ<sub>h</sub> = 500 × 1,00×10⁻⁴ = <b>0,050 Wb·tr</b>. D'où M = Ψ₂₁/i₁ = <b>0,050 H</b>.","code":"Ψ21 = N2 Φh    puis    M = Ψ21 / i1","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},{"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},{"title":"Enroulement 2 · N₂ = 500","cells":[{"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"0,050 Wb·tr","type":"Wb·tr","kind":"ptr","state":"new"}]},{"title":"Circuit magnétique","cells":[{"id":"phih","name":"Φ h","value":"1,00×10⁻⁴ Wb","type":"Wb","kind":"char"},{"id":"m","name":"M","value":"0,050 H","type":"H","kind":"int","state":"new"},{"id":"k","name":"k","value":"—","type":"—","kind":"int"},{"id":"sig","name":"σ","value":"—","type":"—","kind":"int"}]}],"arrows":[],"scene":{"show":3,"n2":4.0,"tN2":"500","leak":0.05,"tleak":"5 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"Ψ₁₁ = 0,105 Wb·tr → L₁₁ = 0,105 H","tM":"Ψ₂₁ = 0,050 Wb·tr → M = 0,050 H","k":0,"sigma":0}},
+          {"label":"Le couplage se calcule avec les deux inductances propres : k = M/√(L₁₁L₂₂) = <b>0,952</b>, donc σ = 1 − k² = <b>0,0930</b>. Les fuites de 5 % suffisent à faire 9,3 % de dispersion.","code":"k = M / √(L11 L22)","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},{"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},{"title":"Enroulement 2 · N₂ = 500","cells":[{"id":"n2","name":"N₂","value":"500","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"0,050 Wb·tr","type":"Wb·tr","kind":"ptr"},{"id":"l22","name":"L₂₂","value":"0,0263 H","type":"H","kind":"int","state":"new"}]},{"title":"Couplage","cells":[{"id":"m","name":"M","value":"0,050 H","type":"H","kind":"int"},{"id":"k","name":"k","value":"0,952","type":"—","kind":"int","state":"changed"},{"id":"sig","name":"σ","value":"0,0930","type":"—","kind":"int","state":"changed"}]}],"arrows":[],"scene":{"show":4,"n2":4.0,"tN2":"500","leak":0.05,"tleak":"5 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"Ψ₁₁ = 0,105 Wb·tr → L₁₁ = 0,105 H","tM":"Ψ₂₁ = 0,050 Wb·tr → M = 0,050 H","k":0.9523809523809523,"sigma":0.09297052154195018}},
+          {"label":"On double N₂ (1000 spires) : L₂₂ quadruple et M double (0,100 H), mais <b>k ne change pas</b> — le rapport M/√(L₁₁L₂₂) est indépendant du nombre de spires.","code":"N2 = 1000","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"0,105 Wb·tr","type":"Wb·tr","kind":"ptr"},{"id":"l11","name":"L₁₁","value":"0,105 H","type":"H","kind":"int"}]},{"title":"Enroulement 2 · N₂ = 1000","cells":[{"id":"n2","name":"N₂","value":"1 000","type":"spires","kind":"int","state":"changed"},{"id":"psi21","name":"Ψ₂₁","value":"0,100 Wb·tr","type":"Wb·tr","kind":"ptr","state":"changed"},{"id":"l22","name":"L₂₂","value":"0,105 H","type":"H","kind":"int","state":"changed"}]},{"title":"Couplage","cells":[{"id":"m","name":"M","value":"0,100 H","type":"H","kind":"int","state":"changed"},{"id":"k","name":"k","value":"0,952","type":"—","kind":"int"},{"id":"sig","name":"σ","value":"0,0930","type":"—","kind":"int"}]}],"arrows":[],"scene":{"show":5,"n2":8.0,"tN2":"1 000","leak":0.05,"tleak":"5 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"Ψ₁₁ = 0,105 Wb·tr → L₁₁ = 0,105 H","tM":"Ψ₂₁ = 0,100 Wb·tr → M = 0,100 H","k":0.9523809523809523,"sigma":0.09297052154195018}},
+          {"label":"On augmente les fuites à 20 % par bobine (entrefer plus large) : k = 1/1,2 = <b>0,833</b> et σ = <b>0,306</b>. Plus l'entrefer est grand, plus k baisse et plus σ monte.","code":"fuites 20 %   →   k = 1 / 1,2","groups":[{"title":"Enroulement 1 · N₁ = 1000","cells":[{"id":"n1","name":"N₁","value":"1 000","type":"spires","kind":"int"},{"id":"i1","name":"i₁","value":"1 A","type":"courant","kind":"int"},{"id":"psi11","name":"Ψ₁₁","value":"0,120 Wb·tr","type":"Wb·tr","kind":"ptr","state":"changed"},{"id":"l11","name":"L₁₁","value":"0,120 H","type":"H","kind":"int","state":"changed"}]},{"title":"Enroulement 2 · N₂ = 1000","cells":[{"id":"n2","name":"N₂","value":"1 000","type":"spires","kind":"int"},{"id":"psi21","name":"Ψ₂₁","value":"0,100 Wb·tr","type":"Wb·tr","kind":"ptr"},{"id":"l22","name":"L₂₂","value":"0,120 H","type":"H","kind":"int","state":"changed"}]},{"title":"Couplage","cells":[{"id":"m","name":"M","value":"0,100 H","type":"H","kind":"int"},{"id":"k","name":"k","value":"0,833","type":"—","kind":"int","state":"changed"},{"id":"sig","name":"σ","value":"0,306","type":"—","kind":"int","state":"changed"}]}],"arrows":[],"scene":{"show":6,"n2":8.0,"tN2":"1 000","leak":0.2,"tleak":"20 %","tPhi":"1,00×10⁻⁴ Wb","tL11":"Ψ₁₁ = 0,120 Wb·tr → L₁₁ = 0,120 H","tM":"Ψ₂₁ = 0,100 Wb·tr → M = 0,100 H","k":0.8333333333333334,"sigma":0.30555555555555547}}
         ]}
         </script>
       </div>
@@ -1553,35 +1241,8 @@ k = L<sub>12</sub> / √(L<sub>11</sub>L<sub>22</sub>) = 1 / √[(1 + Λ<sub>σ1
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Deux bobines sur un noyau : le flux principal traverse les deux, les flux de fuite se referment autour de chaque bobine">
-            <rect x="140" y="50" width="360" height="42" rx="4" class="core"/>
-            <rect x="140" y="208" width="360" height="42" rx="4" class="core"/>
-            <rect x="140" y="92" width="42" height="116" class="core"/>
-            <rect x="458" y="92" width="42" height="116" class="core"/>
-            <g class="coil">
-              <path d="M 132 108 q 30 -13 58 0"/>
-              <path d="M 132 128 q 30 -13 58 0"/>
-              <path d="M 132 148 q 30 -13 58 0"/>
-              <path d="M 132 168 q 30 -13 58 0"/>
-              <path d="M 132 188 q 30 -13 58 0"/>
-            </g>
-            <g class="coil">
-              <path d="M 450 108 q 30 -13 58 0"/>
-              <path d="M 450 128 q 30 -13 58 0"/>
-              <path d="M 450 148 q 30 -13 58 0"/>
-              <path d="M 450 168 q 30 -13 58 0"/>
-              <path d="M 450 188 q 30 -13 58 0"/>
-            </g>
-            <path d="M 161 170 V 71 H 479 V 200" class="flux" marker-end="url(#ar-accent)"/>
-            <path d="M 479 230 H 161 V 170" class="flux" marker-end="url(#ar-accent)"/>
-            <path d="M 120 118 C 74 138, 74 196, 116 210" class="flux2" marker-end="url(#ar-accent)"/>
-            <path d="M 120 130 C 84 148, 84 190, 118 202" class="flux2" marker-end="url(#ar-accent)"/>
-            <path d="M 524 118 C 570 138, 570 196, 528 210" class="flux2" marker-end="url(#ar-accent)"/>
-            <text class="t" x="320" y="42" text-anchor="middle">Φ h</text>
-            <text class="ts" x="70" y="240">Φ σ1</text>
-            <text class="ts" x="558" y="240">Φ σ2</text>
-            <text class="tm" x="196" y="282">flux principal : traverse les deux enroulements</text>
-            <text class="tm" x="196" y="298">fuites : se referment autour d'une seule bobine</text>
+          <svg viewBox="0 0 640 300" role="img" aria-label="Deux bobines sur un noyau : le flux principal traverse les deux, chaque flux de fuite entoure une seule bobine">
+<path d="M170 50 H470 V250 H170 Z M198 78 V222 H442 V78 Z" fill-rule="evenodd" class="core"/><path d="M164.0 100.0 C 214.0 100.0, 214.0 112.5, 164.0 111.5 M164.0 112.5 C 214.0 112.5, 214.0 125.0, 164.0 124.0 M164.0 125.0 C 214.0 125.0, 214.0 137.5, 164.0 136.5 M164.0 137.5 C 214.0 137.5, 214.0 150.0, 164.0 149.0 M164.0 150.0 C 214.0 150.0, 214.0 162.5, 164.0 161.5 M164.0 162.5 C 214.0 162.5, 214.0 175.0, 164.0 174.0 M164.0 175.0 C 214.0 175.0, 214.0 187.5, 164.0 186.5 M164.0 187.5 C 214.0 187.5, 214.0 200.0, 164.0 199.0 " class="coil" style="stroke:var(--coral)"/><path d="M436.0 100.0 C 486.0 100.0, 486.0 112.5, 436.0 111.5 M436.0 112.5 C 486.0 112.5, 486.0 125.0, 436.0 124.0 M436.0 125.0 C 486.0 125.0, 486.0 137.5, 436.0 136.5 M436.0 137.5 C 486.0 137.5, 486.0 150.0, 436.0 149.0 M436.0 150.0 C 486.0 150.0, 486.0 162.5, 436.0 161.5 M436.0 162.5 C 486.0 162.5, 486.0 175.0, 436.0 174.0 M436.0 175.0 C 486.0 175.0, 486.0 187.5, 436.0 186.5 M436.0 187.5 C 486.0 187.5, 486.0 200.0, 436.0 199.0 " class="coil" style="stroke:var(--teal)"/><path d="M184.0 180.0 V64.0 H456.0 V236.0 H184.0 V194.0" class="flux" marker-end="url(#fg-accent)"/><ellipse cx="184.0" cy="150.0" rx="44" ry="70" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="5 4"/><ellipse cx="456.0" cy="150.0" rx="44" ry="70" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="5 4"/><text class="ts" x="320.0" y="90.0" text-anchor="middle">Φ_h : traverse les deux bobines</text><text class="ts" x="130.0" y="74.0" text-anchor="end">Φ_σ1</text><text class="ts" x="510.0" y="74.0">Φ_σ2</text><text class="tm" x="320.0" y="286.0" text-anchor="middle">flux de fuite : se referme dans l'air autour d'une seule bobine</text>
           </svg>
         </div>
         <figcaption>Le flux principal <span class="fx">Φ_h</span> traverse les deux bobines et crée la mutuelle. Les flux de fuite <span class="fx">Φ_σ1</span> et <span class="fx">Φ_σ2</span> n'en traversent qu'une : ils augmentent la propre inductance sans augmenter <span class="fx">M</span>.</figcaption>
@@ -1619,6 +1280,7 @@ W = ½ L i²        w = B² / (2μ)        F = ½ i² dL/dx = B² A / (2μ₀)  
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="energie-force" viewBox="0 0 640 260" role="img" aria-label="Électroaimant en U, barre à distance x, force et courbe F(x)"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1634,70 +1296,12 @@ W = ½ L i²        w = B² / (2μ)        F = ½ i² dL/dx = B² A / (2μ₀)  
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Au repos, i = 0 : aucune énergie, mais l'inductance existe déjà. À x = 2 mm, L = N²μ₀A/(2x) = <b>0,126 H</b>.","code":"i = 0 A    x = 2 mm",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"2 mm","type":"entrefer","kind":"int"},
-               {"id":"i","name":"i","value":"0 A","type":"courant","kind":"int"}]},
-             {"title":"Inductance et énergie","cells":[
-               {"id":"l","name":"L","value":"0,126 H","type":"H","kind":"int"},
-               {"id":"w","name":"W","value":"0 mJ","type":"J","kind":"char"},
-               {"id":"b","name":"B","value":"0 T","type":"T","kind":"char"}]},
-             {"title":"Force","cells":[{"id":"f","name":"F","value":"—","type":"N","kind":"ptr"}]}
-           ],"arrows":[]},
-          {"label":"On établit i = 0,5 A : W = ½Li² = <b>15,7 mJ</b>, B = μ₀Ni/(2x) = <b>0,314 T</b> et F = B²A/μ₀ = <b>7,85 N</b>.","code":"W = ½ L i²    F = B² A / μ0",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"2 mm","type":"entrefer","kind":"int"},
-               {"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int","state":"changed"}]},
-             {"title":"Inductance et énergie","cells":[
-               {"id":"l","name":"L","value":"0,126 H","type":"H","kind":"int"},
-               {"id":"w","name":"W","value":"15,7 mJ","type":"J","kind":"char","state":"new"},
-               {"id":"b","name":"B","value":"0,314 T","type":"T","kind":"char","state":"new"}]},
-             {"title":"Force","cells":[{"id":"f","name":"F","value":"7,85 N","type":"N","kind":"ptr","state":"new"}]}
-           ],"arrows":[]},
-          {"label":"La barre se rapproche : x = 1,5 mm. L monte à 0,168 H, W à 20,9 mJ, B à 0,419 T et la force à <b>14,0 N</b>.","code":"x = 1,5 mm",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"1,5 mm","type":"entrefer","kind":"int","state":"changed"},
-               {"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},
-             {"title":"Inductance et énergie","cells":[
-               {"id":"l","name":"L","value":"0,168 H","type":"H","kind":"int","state":"changed"},
-               {"id":"w","name":"W","value":"20,9 mJ","type":"J","kind":"char","state":"changed"},
-               {"id":"b","name":"B","value":"0,419 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Force","cells":[{"id":"f","name":"F","value":"14,0 N","type":"N","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"x = 1 mm : L = 0,251 H, W = 31,4 mJ, B = 0,628 T et F = <b>31,4 N</b>. L'énergie et la force augmentent quand l'entrefer diminue.","code":"x = 1 mm",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"1 mm","type":"entrefer","kind":"int","state":"changed"},
-               {"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},
-             {"title":"Inductance et énergie","cells":[
-               {"id":"l","name":"L","value":"0,251 H","type":"H","kind":"int","state":"changed"},
-               {"id":"w","name":"W","value":"31,4 mJ","type":"J","kind":"char","state":"changed"},
-               {"id":"b","name":"B","value":"0,628 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Force","cells":[{"id":"f","name":"F","value":"31,4 N","type":"N","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"x = 0,5 mm : L = 0,503 H, W = 62,8 mJ, B = 1,257 T et F = <b>126 N</b>. La force croît comme B², donc comme 1/x².","code":"x = 0,5 mm",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"0,5 mm","type":"entrefer","kind":"int","state":"changed"},
-               {"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},
-             {"title":"Inductance et énergie","cells":[
-               {"id":"l","name":"L","value":"0,503 H","type":"H","kind":"int","state":"changed"},
-               {"id":"w","name":"W","value":"62,8 mJ","type":"J","kind":"char","state":"changed"},
-               {"id":"b","name":"B","value":"1,257 T","type":"T","kind":"char","state":"changed"}]},
-             {"title":"Force","cells":[{"id":"f","name":"F","value":"126 N","type":"N","kind":"ptr","state":"changed"}]}
-           ],"arrows":[]},
-          {"label":"Bilan : entre 2 mm et 1 mm, le travail mécanique vaut <b>15,7 mJ</b>, exactement la variation d'énergie magnétique à courant constant. La formule F = B²A/μ₀ (deux faces) redonne la même force que ½i²dL/dx.","code":"W méca = ∫ F dx = ΔW",
-           "groups":[
-             {"title":"Électroaimant","cells":[
-               {"id":"x","name":"x","value":"2 → 1 mm","type":"déplacement","kind":"int"},
-               {"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},
-             {"title":"Bilan","cells":[
-               {"id":"ww","name":"W méca","value":"15,7 mJ","type":"∫F dx","kind":"char","state":"new"},
-               {"id":"dw","name":"ΔW","value":"15,7 mJ","type":"magnétique","kind":"char","state":"new"}]}
-           ],"arrows":[]}
+          {"label":"Au repos, i = 0 : aucune énergie, mais l'inductance existe déjà. À x = 2 mm, L = N²μ₀A/(2x) = <b>0,126 H</b>.","code":"i = 0 A    x = 2 mm","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"2 mm","type":"entrefer","kind":"int"},{"id":"i","name":"i","value":"0 A","type":"courant","kind":"int"}]},{"title":"Inductance et énergie","cells":[{"id":"l","name":"L","value":"0,126 H","type":"H","kind":"int"},{"id":"w","name":"W","value":"0 mJ","type":"J","kind":"char"},{"id":"b","name":"B","value":"0 T","type":"T","kind":"char"}]},{"title":"Force","cells":[{"id":"f","name":"F","value":"—","type":"N","kind":"ptr"}]}],"arrows":[],"scene":{"x":2,"tx":"2 mm","i":0,"B":0.0,"F":0.0,"tF":"0,00 N","aire":0,"tL":"L = 0,126 H ; W = 0,0 mJ"}},
+          {"label":"On établit i = 0,5 A : W = ½Li² = <b>15,7 mJ</b>, B = μ₀Ni/(2x) = <b>0,314 T</b> et F = B²A/μ₀ = <b>7,85 N</b>.","code":"W = ½ L i²    F = B² A / μ0","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"2 mm","type":"entrefer","kind":"int"},{"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int","state":"changed"}]},{"title":"Inductance et énergie","cells":[{"id":"l","name":"L","value":"0,126 H","type":"H","kind":"int"},{"id":"w","name":"W","value":"15,7 mJ","type":"J","kind":"char","state":"new"},{"id":"b","name":"B","value":"0,314 T","type":"T","kind":"char","state":"new"}]},{"title":"Force","cells":[{"id":"f","name":"F","value":"7,85 N","type":"N","kind":"ptr","state":"new"}]}],"arrows":[],"scene":{"x":2,"tx":"2 mm","i":0.5,"B":0.3141592653589793,"F":7.853981633974482,"tF":"7,85 N","aire":0,"tL":"L = 0,126 H ; W = 15,7 mJ"}},
+          {"label":"La barre se rapproche : x = 1,5 mm. L monte à 0,168 H, W à 20,9 mJ, B à 0,419 T et la force à <b>14,0 N</b>.","code":"x = 1,5 mm","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"1,5 mm","type":"entrefer","kind":"int","state":"changed"},{"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},{"title":"Inductance et énergie","cells":[{"id":"l","name":"L","value":"0,168 H","type":"H","kind":"int","state":"changed"},{"id":"w","name":"W","value":"20,9 mJ","type":"J","kind":"char","state":"changed"},{"id":"b","name":"B","value":"0,419 T","type":"T","kind":"char","state":"changed"}]},{"title":"Force","cells":[{"id":"f","name":"F","value":"14,0 N","type":"N","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"x":1.5,"tx":"1,5 mm","i":0.5,"B":0.41887902047863906,"F":13.962634015954636,"tF":"14,0 N","aire":0,"tL":"L = 0,168 H ; W = 20,9 mJ"}},
+          {"label":"x = 1 mm : L = 0,251 H, W = 31,4 mJ, B = 0,628 T et F = <b>31,4 N</b>. L'énergie et la force augmentent quand l'entrefer diminue.","code":"x = 1 mm","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"1 mm","type":"entrefer","kind":"int","state":"changed"},{"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},{"title":"Inductance et énergie","cells":[{"id":"l","name":"L","value":"0,251 H","type":"H","kind":"int","state":"changed"},{"id":"w","name":"W","value":"31,4 mJ","type":"J","kind":"char","state":"changed"},{"id":"b","name":"B","value":"0,628 T","type":"T","kind":"char","state":"changed"}]},{"title":"Force","cells":[{"id":"f","name":"F","value":"31,4 N","type":"N","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"x":1,"tx":"1 mm","i":0.5,"B":0.6283185307179586,"F":31.415926535897928,"tF":"31,4 N","aire":0,"tL":"L = 0,251 H ; W = 31,4 mJ"}},
+          {"label":"x = 0,5 mm : L = 0,503 H, W = 62,8 mJ, B = 1,257 T et F = <b>126 N</b>. La force croît comme B², donc comme 1/x².","code":"x = 0,5 mm","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"0,5 mm","type":"entrefer","kind":"int","state":"changed"},{"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},{"title":"Inductance et énergie","cells":[{"id":"l","name":"L","value":"0,503 H","type":"H","kind":"int","state":"changed"},{"id":"w","name":"W","value":"62,8 mJ","type":"J","kind":"char","state":"changed"},{"id":"b","name":"B","value":"1,257 T","type":"T","kind":"char","state":"changed"}]},{"title":"Force","cells":[{"id":"f","name":"F","value":"126 N","type":"N","kind":"ptr","state":"changed"}]}],"arrows":[],"scene":{"x":0.5,"tx":"0,5 mm","i":0.5,"B":1.2566370614359172,"F":125.66370614359171,"tF":"126 N","aire":0,"tL":"L = 0,503 H ; W = 62,8 mJ"}},
+          {"label":"Bilan : entre 2 mm et 1 mm, le travail mécanique vaut <b>15,7 mJ</b>, exactement la variation d'énergie magnétique à courant constant. La formule F = B²A/μ₀ (deux faces) redonne la même force que ½i²dL/dx.","code":"W méca = ∫ F dx = ΔW","groups":[{"title":"Électroaimant","cells":[{"id":"x","name":"x","value":"2 → 1 mm","type":"déplacement","kind":"int"},{"id":"i","name":"i","value":"0,5 A","type":"courant","kind":"int"}]},{"title":"Bilan","cells":[{"id":"ww","name":"W méca","value":"15,7 mJ","type":"∫F dx","kind":"char","state":"new"},{"id":"dw","name":"ΔW","value":"15,7 mJ","type":"magnétique","kind":"char","state":"new"}]}],"arrows":[],"scene":{"x":1,"tx":"1 mm","i":0.5,"B":0.6283185307179586,"F":31.415926535897928,"tF":"31,4 N","aire":1,"tL":"W méca = ΔW = 15,7 mJ"}}
         ]}
         </script>
       </div>
@@ -1733,12 +1337,12 @@ W = ½ L i²        w = B² / (2μ)        F = ½ i² dL/dx = B² A / (2μ₀)  
 <line x1="64" y1="250" x2="600" y2="250" class="arr" marker-end="url(#ff-ar)"/>
 <line x1="64" y1="250" x2="64" y2="30" class="arr" marker-end="url(#ff-ar)"/>
 <text class="ts" x="600" y="279" text-anchor="end">B [T]</text>
-<text class="ts" x="70" y="44">F [N]</text>
+<text class="ts" x="70" y="24">F [N]</text>
 <polyline points="64.0,250.0 78.9,249.8 93.8,249.3 108.7,248.5 123.6,247.3 138.4,245.8 153.3,243.9 168.2,241.8 183.1,239.2 198.0,236.4 212.9,233.2 227.8,229.6 242.7,225.8 257.6,221.6 272.4,217.0 287.3,212.1 302.2,206.9 317.1,201.4 332.0,195.5 346.9,189.2 361.8,182.7 376.7,175.8 391.6,168.5 406.4,160.9 421.3,153.0 436.2,144.8 451.1,136.2 466.0,127.3 480.9,118.0 495.8,108.4 510.7,98.5 525.6,88.2 540.4,77.6 555.3,66.7 570.2,55.4 585.1,43.8 600.0,31.8" fill="none" stroke="var(--coral)" stroke-width="2.4"/>
 <circle cx="361.8" cy="182.7" r="4" fill="var(--accent)" stroke="var(--card)" stroke-width="1.2"/>
 <circle cx="561.3" cy="62.2" r="4" fill="var(--accent)" stroke="var(--card)" stroke-width="1.2"/>
-<text class="ts" x="371.8" y="172.6">1 T → 39,8 N</text>
-<text class="ts" x="443.3" y="52.3">1,67 T → 111 N</text>
+<text class="ts" x="352" y="176" text-anchor="end">1 T → 39,8 N</text>
+<text class="ts" x="551" y="58" text-anchor="end">1,67 T → 111 N</text>
 <text class="tm" x="90" y="145">F = B²A/(2μ₀), A = 100 mm²</text>
 </svg>
         </div>
@@ -1883,6 +1487,428 @@ convention récepteur :  u = R i + dΨ/dt        convention générateur :  u<su
     </section>
   </main>
 </div>
+
+
+<script>
+window.ELMEC_ARMCO = [[0.42,313.0],[0.44,329.0],[0.46,335.0],[0.48,357.0],[0.5,359.0],[0.52,379.0],[0.54,403.0],[0.56,409.0],[0.58,425.0],[0.6,444.0],[0.62,447.0],[0.64,472.0],[0.66,494.0],[0.68,494.0],[0.7,516.0],[0.72,532.0],[0.74,532.0],[0.76,554.0],[0.78,576.0],[0.8,598.0],[0.82,604.0],[0.84,620.0],[0.86,642.0],[0.88,664.0],[0.9,686.0],[0.92,708.0],[0.94,730.0],[0.96,752.0],[0.98,774.0],[1.0,783.0],[1.02,818.0],[1.04,840.0],[1.06,856.0],[1.08,878.0],[1.1,919.0],[1.12,941.0],[1.14,941.0],[1.18,1034.0],[1.2,1034.0],[1.22,1078.0],[1.24,1122.0],[1.26,1163.0],[1.28,1180.0],[1.3,1224.0],[1.32,1289.0],[1.34,1339.0],[1.36,1383.0],[1.38,1487.0],[1.4,1542.0],[1.42,1602.0],[1.44,1701.0],[1.46,1783.0],[1.48,1871.0],[1.5,1909.0],[1.52,2069.0],[1.54,2156.0],[1.56,2250.0],[1.58,2414.0],[1.6,2508.0],[1.62,2798.0],[1.64,3051.0],[1.66,3281.0],[1.68,3572.0],[1.7,4060.0],[1.72,4395.0],[1.74,5081.0],[1.76,5657.0],[1.78,6387.0],[1.8,6925.0],[1.82,8143.0],[1.84,9262.0],[1.86,10513.0],[1.88,11572.0]];  /* (B en T, H en A/m) — scripts/donnees/armco-bh-numerise.csv */
+/* Moteur des scènes SVG animées des laboratoires ELMEC1.
+   Chaque laboratoire porte <svg data-scene="nom">. Le contrôleur de laboratoire
+   appelle la fonction renvoyée par ElmecScenes.mount(root) à chaque état ;
+   les paramètres numériques de state.scene sont interpolés entre deux états,
+   les chaînes changent d'un coup. Aucune ressource externe. */
+window.ElmecScenes = (function () {
+  'use strict';
+  const REG = {};
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let UID = 0;
+  /* paramètres d'étape : jamais interpolés */
+  const DISCRETS = ['st', 'show', 'kind', 'div', 'rot', 'axis', 'idx', 'step'];
+
+  /* ---------- formatage ---------- */
+  function fr(x, d) {
+    if (x === null || x === undefined || isNaN(x)) return '—';
+    const s = Number(x).toFixed(d === undefined ? 2 : d);
+    const neg = s[0] === '-';
+    const parts = (neg ? s.slice(1) : s).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return (neg ? '−' : '') + parts.join(',');
+  }
+  const ESC = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'};
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ESC[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ---------- aide au dessin (renvoie des chaînes SVG) ---------- */
+  function helpers(id) {
+    const COLORS = ['ink', 'muted', 'faint', 'accent', 'coral', 'teal', 'amber', 'blue', 'green', 'red'];
+    function m(c) { return 'url(#' + id + '-' + (c || 'ink') + ')'; }
+    const h = {
+      fr: fr, esc: esc, clamp: clamp, lerp: lerp,
+      defs: function () {
+        return '<defs>' + COLORS.map(function (c) {
+          return '<marker id="' + id + '-' + c + '" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse">' +
+            '<path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--' + (c === 'ink' ? 'ink' : c) + ')"/></marker>';
+        }).join('') + '</defs>';
+      },
+      /* flèche droite ; c = couleur, w = épaisseur */
+      arrow: function (x1, y1, x2, y2, c, w, extra) {
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        if (len < 2) return '';
+        return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+          '" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) + '" stroke-linecap="round" marker-end="' + m(c) + '"' + (extra || '') + '/>';
+      },
+      /* chemin libre fléché */
+      path: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) +
+          '" stroke-linecap="round" stroke-linejoin="round"' +
+          (opts.dash ? ' stroke-dasharray="' + opts.dash + '"' : '') +
+          (opts.cls ? ' class="' + opts.cls + '"' : '') +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow ? ' marker-end="' + m(c) + '"' : '') + '/>';
+      },
+      /* flux qui circule : tirets animés */
+      flow: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'accent') + ')" stroke-width="' + (w || 2) +
+          '" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" class="sc-flow' + (opts.rev ? ' sc-rev' : '') + '"' +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow === false ? '' : ' marker-end="' + m(c || 'accent') + '"') + '/>';
+      },
+      text: function (x, y, s, cls, anchor, extra) {
+        return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" class="' + (cls || 'ts') + '"' +
+          (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + s + '</text>';
+      },
+      /* étiquette avec fond (lisible sur un tracé) */
+      tag: function (x, y, s, c, anchor) {
+        const w = Math.max(18, String(s).replace(/<[^>]+>/g, '').length * 6.6 + 12);
+        const x0 = anchor === 'end' ? x - w : anchor === 'start' ? x : x - w / 2;
+        return '<g class="sc-tag"><rect x="' + x0.toFixed(1) + '" y="' + (y - 12).toFixed(1) + '" width="' + w.toFixed(1) +
+          '" height="17" rx="5" fill="var(--card)" stroke="var(--' + (c || 'line') + ')" stroke-width="1"/>' +
+          '<text x="' + (x0 + w / 2).toFixed(1) + '" y="' + (y + 0.5).toFixed(1) + '" text-anchor="middle" class="sc-tagt" fill="var(--' +
+          (c && c !== 'line' ? c : 'ink') + ')">' + s + '</text></g>';
+      },
+      rect: function (x, y, w, hh, cls, rx, extra) {
+        return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' +
+          Math.max(0, hh).toFixed(1) + '" rx="' + (rx || 0) + '" class="' + (cls || 'core') + '"' + (extra || '') + '/>';
+      },
+      circle: function (x, y, r, cls, extra) {
+        return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" class="' + (cls || '') + '"' + (extra || '') + '/>';
+      },
+      /* bobine vue de côté : boucles en demi-ellipses le long d'un segment vertical ou horizontal */
+      coil: function (x, y, len, n, vertical, amp, c) {
+        let d = '';
+        const step = len / n;
+        amp = amp || 9;
+        for (let k = 0; k < n; k++) {
+          if (vertical) {
+            const y0 = y + k * step;
+            d += 'M' + (x - amp).toFixed(1) + ' ' + y0.toFixed(1) + ' C ' + (x + amp * 1.5).toFixed(1) + ' ' + y0.toFixed(1) + ', ' +
+              (x + amp * 1.5).toFixed(1) + ' ' + (y0 + step).toFixed(1) + ', ' + (x - amp).toFixed(1) + ' ' + (y0 + step * 0.92).toFixed(1) + ' ';
+          } else {
+            const x0 = x + k * step;
+            d += 'M' + x0.toFixed(1) + ' ' + (y + amp).toFixed(1) + ' C ' + x0.toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' +
+              (x0 + step).toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' + (x0 + step * 0.92).toFixed(1) + ' ' + (y + amp).toFixed(1) + ' ';
+          }
+        }
+        return '<path d="' + d + '" class="coil"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>';
+      },
+      /* résistance (rectangle normalisé) entre deux points alignés */
+      resistor: function (x, y, horiz, label, c, lab2) {
+        const w = horiz ? 34 : 13, hh = horiz ? 13 : 34;
+        return '<rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="2" class="sc-comp"' +
+          (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 13, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 22, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* inductance (quatre arcs) */
+      inductor: function (x, y, horiz, label, c, lab2) {
+        let d = '';
+        const n = 4, s = 8.5;
+        const x0 = horiz ? x - n * s / 2 : x, y0 = horiz ? y : y - n * s / 2;
+        for (let k = 0; k < n; k++) {
+          if (horiz) d += 'M' + (x0 + k * s) + ' ' + y0 + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 ' + s + ' 0 ';
+          else d += 'M' + x0 + ' ' + (y0 + k * s) + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 0 ' + s + ' ';
+        }
+        return '<path d="' + d + '" class="sc-ind"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 11, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 20, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* repère de graphique : renvoie {svg, X(v), Y(v)} */
+      plot: function (o) {
+        const X = function (v) { return o.x + (v - o.x0) / (o.x1 - o.x0) * o.w; };
+        const Y = function (v) { return o.y + o.h - (v - o.y0) / (o.y1 - o.y0) * o.h; };
+        let s = '';
+        (o.xt || []).forEach(function (t) {
+          s += '<line x1="' + X(t).toFixed(1) + '" y1="' + o.y + '" x2="' + X(t).toFixed(1) + '" y2="' + (o.y + o.h) + '" class="sc-grid"/>';
+          s += h.text(X(t), o.y + o.h + 14, o.xf ? o.xf(t) : fr(t, 0), 'sc-tick', 'middle');
+        });
+        (o.yt || []).forEach(function (t) {
+          s += '<line x1="' + o.x + '" y1="' + Y(t).toFixed(1) + '" x2="' + (o.x + o.w) + '" y2="' + Y(t).toFixed(1) + '" class="sc-grid"/>';
+          s += h.text(o.x - 6, Y(t) + 3.5, o.yf ? o.yf(t) : fr(t, 1), 'sc-tick', 'end');
+        });
+        s += h.arrow(o.x, o.y + o.h, o.x + o.w + 12, o.y + o.h, 'faint', 1.2);
+        s += h.arrow(o.x, o.y + o.h, o.x, o.y - 12, 'faint', 1.2);
+        if (o.xl) s += h.text(o.x + o.w + 12, o.y + o.h + 27, o.xl, 'sc-axis', 'end');
+        if (o.yl) s += h.text(o.x + 6, o.y - 8, o.yl, 'sc-axis', 'start');
+        return {svg: s, X: X, Y: Y, x: o.x, y: o.y, w: o.w, h: o.h};
+      },
+      /* rotation continue (CSS), vitesse en tours par seconde à l'écran */
+      spin: function (cx, cy, inner, period, dir) {
+        if (!period || period <= 0) return '<g>' + inner + '</g>';
+        const now = performance.now();
+        return '<g class="sc-spin' + (dir < 0 ? ' sc-ccw' : '') + '" style="transform-origin:' + cx + 'px ' + cy + 'px;animation-duration:' +
+          period.toFixed(2) + 's;animation-delay:-' + ((now / 1000) % period).toFixed(2) + 's">' + inner + '</g>';
+      }
+    };
+    return h;
+  }
+
+  function register(name, def) { REG[name] = def; }
+
+  function mount(root) {
+    const svg = root.querySelector('svg[data-scene]');
+    if (!svg) return null;
+    const def = REG[svg.getAttribute('data-scene')];
+    if (!def) { console.error('Scène inconnue', svg.getAttribute('data-scene')); return null; }
+    root.classList.add('has-scene');
+    const id = 'sc' + (++UID);
+    const h = helpers(id);
+    let cur = null, raf = 0;
+
+    function draw(p, k) {
+      const now = performance.now();
+      svg.style.setProperty('--sc-delay', '-' + ((now / 1000) % 1.6).toFixed(3) + 's');
+      svg.innerHTML = h.defs() + def.draw(p, h, k);
+    }
+
+    return function (state, k, animate) {
+      const target = Object.assign({}, def.base || {}, state.scene || {});
+      cancelAnimationFrame(raf);
+      if (!cur || !animate || reduce.matches) { cur = target; draw(cur, k); return; }
+      const from = cur, t0 = performance.now(), dur = def.duration || 750;
+      function frame(now) {
+        const t = clamp((now - t0) / dur, 0, 1);
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const p = {};
+        Object.keys(target).forEach(function (key) {
+          const a = from[key], b = target[key];
+          const libre = DISCRETS.indexOf(key) < 0 && (def.discrete || []).indexOf(key) < 0;
+          p[key] = (libre && typeof a === 'number' && typeof b === 'number') ? lerp(a, b, e) : b;
+        });
+        p._t = e;
+        cur = p;
+        draw(p, k);
+        if (t < 1) raf = requestAnimationFrame(frame);
+        else { cur = target; draw(target, k); }
+      }
+      raf = requestAnimationFrame(frame);
+    };
+  }
+
+  return {register: register, mount: mount, fr: fr};
+})();
+
+/* Scènes du chapitre 2 — circuits magnétiques et fer réel. */
+(function (S) {
+  'use strict';
+
+  /* cadre de fer : rectangle extérieur moins fenêtre */
+  function cadre(h, x0, y0, x1, y1, e, extra) {
+    return '<path d="M' + x0 + ' ' + y0 + ' H' + x1 + ' V' + y1 + ' H' + x0 + ' Z M' + (x0 + e) + ' ' + (y0 + e) + ' V' + (y1 - e) + ' H' + (x1 - e) + ' V' + (y0 + e) + ' Z" fill-rule="evenodd" class="core"' + (extra || '') + '/>';
+  }
+  function barre(h, x, y, w, frac, cls, label, val) {
+    return h.text(x, y - 6, label, 'sc-val') + '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="11" rx="3" class="sc-barbg"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="' + Math.max(1.5, w * h.clamp(frac, 0, 1)).toFixed(1) + '" height="11" rx="3" class="' + cls + '"/>' +
+      h.text(x + w + 6, y + 9.5, val, 'sc-val');
+  }
+
+  /* ---- noyau avec entrefer variable (ex. 2) ---- */
+  S.register('reluctance', {
+    base: {theta: 0, delta: 12, phi: 0, B: 0},
+    draw: function (p, h) {
+      const x0 = 50, y0 = 34, x1 = 290, y1 = 226, e = 28;
+      let s = cadre(h, x0, y0, x1, y1, e);
+      const g = h.clamp(p.delta * 2.1, 3, 30), gy = (y0 + y1) / 2;
+      s += '<rect x="' + (x1 - e - 2) + '" y="' + (gy - g / 2).toFixed(1) + '" width="' + (e + 4) + '" height="' + g.toFixed(1) + '" fill="var(--card2)" stroke="none"/>';
+      s += h.path('M' + (x1 - e) + ' ' + (gy - g / 2).toFixed(1) + ' H' + x1 + ' M' + (x1 - e) + ' ' + (gy + g / 2).toFixed(1) + ' H' + x1, 'muted', 2);
+      s += h.tag(x1 + 10, gy + 4, 'δ = ' + p.tdelta, p.hl === 'air' ? 'amber' : 'line', 'start');
+      s += h.coil(x0 + e / 2, y0 + 50, 92, 7, true, 20);
+      s += h.tag(x0 + e / 2, y1 + 22, p.tTheta, p.theta > 0 ? 'coral' : 'line');
+      if (p.hl === 'fer') s += cadre(h, x0, y0, x1, y1, e, ' style="fill:var(--amber-s);stroke:var(--amber)"');
+      if (p.phi > 0.01) {
+        const m = e / 2, w = 1.4 + Math.min(p.phi, 6) * 0.75;
+        s += h.flow('M' + (x0 + m) + ' ' + (y1 - m - 20) + ' V' + (y0 + m) + ' H' + (x1 - m) + ' V' + (y1 - m) + ' H' + (x0 + m) + ' V' + (y1 - m - 30), 'accent', w);
+        s += h.tag((x0 + x1) / 2, y0 + m + 22, 'Φ = ' + p.tphi, 'accent');
+      }
+      /* réluctances */
+      const bx = 380, bw = 170;
+      s += h.text(bx, 30, 'Part de chaque tronçon dans ℜ tot', 'sc-lbl');
+      s += barre(h, bx, 52, bw, p.ffe, 'sc-bar3', 'ℜ fer = ' + p.tRfe + ' H⁻¹', '');
+      s += barre(h, bx, 92, bw, p.fair, 'sc-bar2', 'ℜ air = ' + p.tRair + ' H⁻¹', S.fr(100 * p.fair, 1) + ' %');
+      s += h.text(bx, 128, 'ℜ tot = ' + p.tRtot + ' H⁻¹', 'sc-val');
+      /* jauge de B */
+      const gx = 380, gw = 210, gyb = 186, Bmax = 5;
+      s += h.text(gx, gyb - 14, 'Induction dans le fer (modèle linéaire)', 'sc-lbl');
+      s += '<rect x="' + gx + '" y="' + gyb + '" width="' + gw + '" height="14" rx="3" class="sc-barbg"/>';
+      s += '<rect x="' + (gx + gw * 1.8 / Bmax) + '" y="' + gyb + '" width="' + (gw * (1 - 1.8 / Bmax)) + '" height="14" class="sc-zone"/>';
+      s += h.text(gx + gw * 1.8 / Bmax + 4, gyb + 10.5, 'saturation > 1,8 T', 'sc-tick');
+      const bb = Math.min(p.B, Bmax) / Bmax * gw;
+      s += '<rect x="' + gx + '" y="' + (gyb + 3) + '" width="' + Math.max(0, bb).toFixed(1) + '" height="8" rx="2" class="sc-bar"/>';
+      [0, 1, 2, 3, 4, 5].forEach(function (t) { s += h.text(gx + gw * t / Bmax, gyb + 27, String(t), 'sc-tick', 'middle'); });
+      s += h.text(gx + gw + 4, gyb + 27, 'T', 'sc-tick');
+      s += h.tag(gx, gyb + 50, 'B = ' + p.tB + (p.B > Bmax ? ' : hors échelle, impossible' : p.B > 1.8 ? ' : au-delà de la saturation' : ''), p.B > 1.8 ? 'red' : 'accent', 'start');
+      return s;
+    }
+  });
+
+  /* ---- noyau à trois colonnes : bobine sur la traverse centrale (ex. 1, circuit 3) ---- */
+  S.register('trois-colonnes', {
+    base: {show: 0, b1: 0, b2: 0},
+    draw: function (p, h) {
+      const x0 = 60, x1 = 320, y0 = 26, y1 = 234, e = 22, ym = (y0 + y1) / 2, serie = p.show === 6;
+      let s = '';
+      s += cadre(h, x0, y0, x1, y1, e);
+      if (!serie) s += '<rect x="' + (x0 + e - 1) + '" y="' + (ym - e / 2) + '" width="' + (x1 - x0 - 2 * e + 2) + '" height="' + e + '" class="core" style="stroke:none"/>' +
+        h.path('M' + (x0 + e) + ' ' + (ym - e / 2) + ' H' + (x1 - e) + ' M' + (x0 + e) + ' ' + (ym + e / 2) + ' H' + (x1 - e), 'muted', 2);
+      else s += '<rect x="' + (x0 + e) + '" y="' + (ym - e / 2) + '" width="' + (x1 - x0 - 2 * e) + '" height="' + e + '" fill="none" stroke="var(--faint)" stroke-dasharray="4 4"/>' +
+        h.text((x0 + x1) / 2, ym + 4, 'sans traverse', 'sc-val', 'middle');
+      const xc = (x0 + x1) / 2, g1 = 10, g2 = 5;
+      s += '<rect x="' + (xc - g1 / 2) + '" y="' + (y0 - 2) + '" width="' + g1 + '" height="' + (e + 4) + '" fill="var(--card2)"/>';
+      s += '<rect x="' + (xc - g2 / 2) + '" y="' + (y1 - e - 2) + '" width="' + g2 + '" height="' + (e + 4) + '" fill="var(--card2)"/>';
+      s += h.path('M' + (xc - g1 / 2) + ' ' + y0 + ' V' + (y0 + e) + ' M' + (xc + g1 / 2) + ' ' + y0 + ' V' + (y0 + e), 'muted', 2);
+      s += h.path('M' + (xc - g2 / 2) + ' ' + (y1 - e) + ' V' + y1 + ' M' + (xc + g2 / 2) + ' ' + (y1 - e) + ' V' + y1, 'muted', 2);
+      s += h.tag(xc, y0 - 4, 'x₁ = 2 mm', p.show >= 2 && p.show !== 4 ? 'accent' : 'line');
+      s += h.tag(xc, y1 + 18, 'x₂ = 1 mm', p.show >= 4 ? 'teal' : 'line');
+      if (!serie) {
+        s += h.coil(xc - 44, ym, 88, 7, false, 17);
+        s += h.text(xc + 54, ym + 30, 'bobine N', 'sc-val');
+      } else {
+        s += h.coil(x0 + e / 2, ym - 50, 100, 7, true, 17);
+      }
+      const m = e / 2;
+      if (p.b1 > 0.01 && !serie) {
+        s += h.flow('M' + (x0 + 60) + ' ' + ym + ' H' + (x1 - m) + ' V' + (y0 + m) + ' H' + (x0 + m) + ' V' + (ym - 4), 'accent', 1.4 + p.b1 * 3.2);
+      }
+      if (p.b2 > 0.01 && !serie) {
+        s += h.flow('M' + (x0 + 60) + ' ' + ym + ' H' + (x1 - m) + ' V' + (y1 - m) + ' H' + (x0 + m) + ' V' + (ym + 4), 'teal', 1.4 + p.b2 * 3.2);
+      }
+      if (serie && p.b1 > 0.01) {
+        s += h.flow('M' + (x0 + m) + ' ' + (ym + 40) + ' V' + (y0 + m) + ' H' + (x1 - m) + ' V' + (y1 - m) + ' H' + (x0 + m) + ' V' + (ym + 52), 'accent', 1.4 + p.b1 * 3.2);
+      }
+      if (p.show >= 1) s += h.tag(x0 + 4, ym + 34, p.tTheta, 'coral', 'start');
+      /* résultats */
+      const tx = 370;
+      s += h.text(tx, 34, serie ? 'Cadre simple : une seule maille' : 'Deux fenêtres en parallèle', 'sc-lbl');
+      s += h.text(tx, 52, serie ? 'Hx₁ x₁ + Hx₂ x₂ = NI' : 'chaque maille : Hx · x = NI', 'sc-val');
+      (p.lines || []).forEach(function (l, i) { s += h.tag(tx, 88 + i * 28 + (i > 1 ? 10 : 0), l[0], l[1], 'start'); });
+      if (p.concl) s += h.text(tx, 222, p.concl, 'sc-val');
+      return s;
+    }
+  });
+
+  /* ---- droite de charge et dichotomie sur la courbe Armco (ex. 4, cas c) ---- */
+  S.register('droite-charge', {
+    base: {H: -1, lo: -1, hi: -1, fin: 0},
+    draw: function (p, h) {
+      const D = window.ELMEC_ARMCO || [];
+      const pl = h.plot({x: 70, y: 24, w: 330, h: 196, x0: 0, x1: 6000, y0: 0, y1: 2.0, xt: [0, 1000, 2000, 3000, 4000, 5000, 6000], yt: [0, 0.5, 1, 1.5, 2],
+        xf: function (t) { return S.fr(t, 0); }, yf: function (t) { return S.fr(t, 1); }, xl: 'H (A/m)', yl: 'B (T)'});
+      let s = pl.svg;
+      if (p.lo >= 0 && p.hi > p.lo) {
+        const ya = pl.Y(0) + 26;
+        s += '<rect x="' + pl.X(p.lo).toFixed(1) + '" y="' + pl.y + '" width="' + (pl.X(p.hi) - pl.X(p.lo)).toFixed(1) + '" height="196" fill="var(--amber-s)" opacity=".55"/>';
+        s += h.path('M' + pl.X(p.lo).toFixed(1) + ' ' + (ya - 4) + ' V' + ya + ' H' + pl.X(p.hi).toFixed(1) + ' V' + (ya - 4), 'amber', 2);
+      }
+      let d = '';
+      D.forEach(function (q, i) { if (q[1] <= 6000) d += (d ? ' L' : 'M') + pl.X(q[1]).toFixed(1) + ' ' + pl.Y(q[0]).toFixed(1); });
+      s += h.path(d, 'accent', 2.2);
+      s += h.text(pl.X(600), pl.Y(0.55), 'Armco (numérisée 0,42 → 1,88 T)', 'sc-val', 'start');
+      const mu = 4e-7 * Math.PI, bl = function (H) { return mu * (3000 - 0.1 * H) / 0.002; };
+      s += h.path('M' + pl.X(0) + ' ' + pl.Y(bl(0)).toFixed(1) + ' L' + pl.X(6000) + ' ' + pl.Y(bl(6000)).toFixed(1), 'coral', 2, {dash: '7 4'});
+      s += h.text(pl.X(5900), pl.Y(bl(5900)) + 16, 'droite de charge', 'sc-val', 'end');
+      if (p.H >= 0) {
+        const x = pl.X(p.H);
+        s += '<line x1="' + x.toFixed(1) + '" y1="' + pl.y + '" x2="' + x.toFixed(1) + '" y2="' + (pl.y + 196) + '" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3"/>';
+        s += h.circle(x, pl.Y(bl(p.H)), 5, '', ' fill="var(--coral)" stroke="var(--card)" stroke-width="1.5"');
+        if (p.Bc > 0) s += h.circle(x, pl.Y(p.Bc), 5, 'sc-pt');
+      }
+      if (p.fin) {
+        s += h.circle(pl.X(0), pl.Y(bl(0)), 5, 'sc-pt2');
+        s += h.tag(pl.X(0) + 10, pl.Y(bl(0)) - 8, 'linéaire 1,885 T', 'line', 'start');
+      }
+      const tx = 440;
+      s += h.text(tx, 34, 'Θ = 3 000 A ; 2δ = 2 mm', 'sc-lbl');
+      s += h.text(tx, 52, 'ℓ_f = 100 mm', 'sc-val');
+      s += h.text(tx, 70, 'B = μ₀ (Θ − H ℓ_f) / (2δ)', 'sc-val');
+      if (p.tH) s += h.tag(tx, 104, 'H = ' + p.tH, 'line', 'start');
+      if (p.tBd) s += h.tag(tx, 132, 'droite : ' + p.tBd, 'coral', 'start');
+      if (p.tBc) s += h.tag(tx, 160, 'courbe : ' + p.tBc, 'accent', 'start');
+      if (p.tI) s += h.tag(634, 196, p.tI, 'amber', 'end');
+      return s;
+    }
+  });
+
+  /* ---- deux enroulements couplés : flux principal, fuites, k et σ ---- */
+  S.register('mutuelle', {
+    base: {show: 0, n2: 4, leak: 0.05},
+    draw: function (p, h) {
+      const x0 = 70, y0 = 40, x1 = 300, y1 = 212, e = 26;
+      let s = cadre(h, x0, y0, x1, y1, e);
+      const ym = (y0 + y1) / 2, n2 = Math.max(1, Math.round(p.n2));
+      s += h.coil(x0 + e / 2, ym - 44, 88, 8, true, 19);
+      s += h.coil(x1 - e / 2, ym - 44 * n2 / 8, 88 * n2 / 8, n2, true, 19, 'teal');
+      s += h.text(x0 - 6, ym + 64, 'N₁ = 1 000', 'sc-val', 'end');
+      s += h.text(x1 + 6, ym + 64, 'N₂ = ' + p.tN2, 'sc-val');
+      s += h.arrow(x0 - 34, ym - 50, x0 - 2, ym - 50, 'coral', 2) + h.text(x0 - 36, ym - 58, 'i₁ = 1 A', 'sc-val', 'start');
+      const m = e / 2;
+      if (p.show >= 1) s += h.flow('M' + (x0 + m) + ' ' + (ym + 20) + ' V' + (y0 + m) + ' H' + (x1 - m) + ' V' + (y1 - m) + ' H' + (x0 + m) + ' V' + (ym + 34), 'accent', 3);
+      if (p.show >= 1) s += h.tag((x0 + x1) / 2, y0 + m + 24, 'Φh', 'accent');
+      if (p.show >= 2) {
+        const rx = 22 + p.leak * 140, ry = 50 + p.leak * 80;
+        s += '<ellipse cx="' + (x0 + e + 6) + '" cy="' + ym + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="5 4" class="sc-flow"/>';
+        s += h.text(x0 + e + 10 + rx, ym + 4, 'Φσ1', 'sc-val');
+        if (p.show >= 5 || p.leak > 0.1) {
+          s += '<ellipse cx="' + (x1 - e - 6) + '" cy="' + ym + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="5 4" opacity=".7"/>';
+        }
+      }
+      const tx = 380;
+      s += h.text(tx, 30, 'Λh = 1×10⁻⁷ H ; fuites ' + p.tleak + ' par bobine', 'sc-val');
+      if (p.tPhi) s += h.tag(tx, 62, 'Φh = ' + p.tPhi, 'accent', 'start');
+      if (p.tL11) s += h.tag(tx, 90, p.tL11, 'line', 'start');
+      if (p.tM) s += h.tag(tx, 118, p.tM, 'teal', 'start');
+      if (p.k > 0) {
+        s += barre(h, tx, 160, 150, p.k, 'sc-bar', 'couplage k', S.fr(p.k, 3));
+        s += barre(h, tx, 200, 150, p.sigma, 'sc-bar2', 'dispersion σ = 1 − k²', S.fr(p.sigma, p.sigma < 0.1 ? 4 : 3));
+      }
+      return s;
+    }
+  });
+
+  /* ---- électroaimant : entrefer x, énergie et force ---- */
+  S.register('energie-force', {
+    base: {x: 2, F: 0, i: 0, B: 0, aire: 0},
+    draw: function (p, h) {
+      const xl = 70, xr = 270, yt = 40, e = 30, legB = 150, k = 26;
+      const gap = p.x * k;
+      let s = '';
+      s += '<path d="M' + xl + ' ' + legB + ' V' + yt + ' H' + xr + ' V' + legB + ' H' + (xr - e) + ' V' + (yt + e) + ' H' + (xl + e) + ' V' + legB + ' Z" class="core"/>';
+      const ya = legB + gap;
+      s += h.rect(xl - 10, ya, xr - xl + 20, 26, 'core', 2);
+      s += h.coil(xl + 52, yt + e / 2, 96, 7, false, 22);
+      if (p.i > 0) {
+        const w = 1.3 + p.B * 3;
+        s += h.flow('M' + (xl + e / 2) + ' ' + (legB - 20) + ' V' + (yt + e / 2) + ' H' + (xr - e / 2) + ' V' + (ya + 13) + ' H' + (xl + e / 2) + ' V' + (legB - 6), 'accent', w);
+        const L = 8 + Math.sqrt(p.F) * 4.4;
+        [xl + 15, xr - 15].forEach(function (x) { s += h.arrow(x, ya + 40 + L, x, ya + 30, 'coral', 3); });
+        s += h.tag((xl + xr) / 2, ya + 52, 'F = ' + p.tF, 'coral');
+      }
+      s += h.path('M' + (xr + 14) + ' ' + legB + ' V' + ya.toFixed(1), 'ink', 1, {});
+      s += h.text(xr + 20, legB + gap / 2 + 4, 'x = ' + p.tx, 'sc-val');
+      s += h.text(xl - 12, yt + 14, 'N = 2 000', 'sc-val', 'end');
+      s += h.text(xl - 12, yt + 30, 'i = ' + S.fr(p.i, 1) + ' A', 'sc-val', 'end');
+      /* graphe F(x) */
+      const pl = h.plot({x: 380, y: 26, w: 220, h: 150, x0: 0, x1: 2.2, y0: 0, y1: 140, xt: [0, 0.5, 1, 1.5, 2], yt: [0, 40, 80, 120],
+        xf: function (t) { return S.fr(t, 1); }, yf: function (t) { return S.fr(t, 0); }, xl: 'x (mm)', yl: 'F (N)'});
+      s += pl.svg;
+      const C = 4e-7 * Math.PI * 4e6 * 0.25 * 1e-4 / 4;
+      const F = function (xm) { return C / Math.pow(xm / 1000, 2); };
+      if (p.aire) {
+        let a = 'M' + pl.X(1) + ' ' + pl.Y(0);
+        for (let i = 0; i <= 20; i++) { const xm = 1 + i / 20; a += ' L' + pl.X(xm).toFixed(1) + ' ' + pl.Y(F(xm)).toFixed(1); }
+        s += '<path d="' + a + ' L' + pl.X(2) + ' ' + pl.Y(0) + ' Z" fill="var(--amber-s)" stroke="var(--amber)" stroke-width="1"/>';
+        s += h.text(pl.X(1.5), pl.Y(8), '∫F dx', 'sc-val', 'middle');
+      }
+      let d = '';
+      for (let i = 0; i <= 40; i++) { const xm = 0.45 + i / 40 * 1.65; d += (i ? ' L' : 'M') + pl.X(xm).toFixed(1) + ' ' + pl.Y(Math.min(F(xm), 140)).toFixed(1); }
+      s += h.path(d, 'coral', 2);
+      if (p.i > 0 && !p.aire) s += h.circle(pl.X(p.x), pl.Y(Math.min(F(p.x), 140)), 5, 'sc-pt');
+      if (p.tL) s += h.tag(490, 222, p.tL, 'accent');
+      return s;
+    }
+  });
+})(window.ElmecScenes);
+</script>
 
 <script>
 (function () {
@@ -2105,6 +2131,7 @@ convention récepteur :  u = R i + dΨ/dt        convention générateur :  u<su
      ============================================================ */
   function mountLab(root, spec){
     const mem = makeMemory(root);
+    const scene = window.ElmecScenes ? window.ElmecScenes.mount(root) : null;
     const note = root.querySelector('[data-note]');
     const codeEl = root.querySelector('[data-code]');
     const linesEl = root.querySelector('[data-lines]');
@@ -2156,6 +2183,7 @@ convention récepteur :  u = R i + dΨ/dt        convention générateur :  u<su
     function paint(animate){
       const s = states[i];
       mem.render(s, animate !== false);
+      if (scene) scene(s, i, animate !== false);
       if (note) note.innerHTML = s.label;
       if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
       if (linesEl) {

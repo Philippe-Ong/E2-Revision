@@ -503,6 +503,54 @@
   .sw-air{background:repeating-linear-gradient(135deg,transparent 0 2px,var(--line) 2px 3px);border-color:var(--line)}
   .legend .sw-t{font-size:12px;color:var(--faint)}
   .tbl.wide{max-width:none}
+/* scenes:debut */
+  /* ---------- scènes animées des laboratoires (injecté par injecter_scenes.py) ---------- */
+  .scene-stage{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px 6px 4px;margin:2px 0 10px}
+  .scene-stage svg{width:100%;height:auto;display:block;overflow:visible}
+  @media (max-width:640px){.scene-stage{overflow-x:auto;-webkit-overflow-scrolling:touch}.scene-stage svg{width:600px;max-width:none}}
+  .sc-flow{animation:sc-flow 1.6s linear infinite;animation-delay:var(--sc-delay,0s)}
+  .sc-flow.sc-rev{animation-direction:reverse}
+  @keyframes sc-flow{to{stroke-dashoffset:-32}}
+  .sc-spin{animation:sc-spin 2s linear infinite}
+  .sc-spin.sc-ccw{animation-direction:reverse}
+  @keyframes sc-spin{to{transform:rotate(360deg)}}
+  .sc-grid{stroke:var(--line2);stroke-width:1}
+  .sc-tick{font:9.5px var(--mono);fill:var(--faint)}
+  .sc-axis{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-lbl{font:600 11.5px var(--sans);fill:var(--ink)}
+  .sc-val{font:10.5px var(--mono);fill:var(--muted)}
+  .sc-big{font:700 15px var(--mono);fill:var(--ink)}
+  .sc-tagt{font:600 10.5px var(--mono)}
+  .sc-comp{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+  .sc-ind{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round}
+  .sc-wire{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .sc-dim{opacity:.28}
+  .sc-new{stroke:var(--accent)!important}
+  .sc-hl{fill:var(--accent-s);stroke:var(--accent);stroke-width:1.4}
+  .sc-air{fill:var(--card);stroke:none}
+  .sc-cu{fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4}
+  .sc-mag-n{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4}
+  .sc-mag-s{fill:var(--red-s);stroke:var(--red);stroke-width:1.4}
+  .sc-bar{fill:var(--accent);opacity:.85}
+  .sc-bar2{fill:var(--coral);opacity:.85}
+  .sc-bar3{fill:var(--teal);opacity:.85}
+  .sc-barbg{fill:var(--card);stroke:var(--line);stroke-width:1}
+  .sc-pt{fill:var(--accent);stroke:var(--card);stroke-width:1.5}
+  .sc-pt2{fill:var(--card);stroke:var(--muted);stroke-width:1.4}
+  .sc-zone{fill:var(--red-s);opacity:.7}
+  .lab.has-scene .mem-stage{padding:2px 0 0}
+  .lab.has-scene .arrow-layer{display:none}
+  .lab.has-scene .mem-groups,.lab.has-scene .mem-groups.is-stack{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;justify-content:center}
+  .lab.has-scene .mem-groups.is-stack .mem-group{width:auto;padding-top:0}
+  .lab.has-scene .mem-groups.is-stack .mem-gtitle,.lab.has-scene .mem-gtitle{position:static;font-size:8.5px}
+  .lab.has-scene .cells{gap:6px}
+  .lab.has-scene .cell{--cw:auto;min-width:74px;padding:4px 7px 3px;border-radius:8px}
+  .lab.has-scene .cname{font-size:10.5px;min-height:13px}
+  .lab.has-scene .ctype{display:none}
+  .lab.has-scene .cval{font-size:13px;margin:2px 0 0;min-height:16px}
+  .lab.has-scene .cf{font-size:10px}
+  @media (prefers-reduced-motion: reduce){.sc-flow,.sc-spin{animation:none}}
+  /* scenes:fin */
 </style>
 <meta name="robots" content="noindex">
 
@@ -545,6 +593,7 @@ table{max-width:100%}
   <marker id="ar-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
     <path d="M2 1.5 L8.5 5 L2 8.5" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
+<marker id="fg-ink" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--ink)"/></marker><marker id="fg-accent" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--accent)"/></marker><marker id="fg-coral" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--coral)"/></marker><marker id="fg-teal" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--teal)"/></marker><marker id="fg-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--muted)"/></marker><marker id="fg-faint" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--faint)"/></marker><marker id="fg-blue" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--blue)"/></marker><marker id="fg-red" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--red)"/></marker><marker id="fg-amber" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--amber)"/></marker>
 </defs></svg>
 
 <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="side" aria-label="Ouvrir le sommaire">
@@ -672,30 +721,11 @@ table{max-width:100%}
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 280" role="img" aria-label="Coupe d'une machine tournante : stator, rotor, entrefer, conducteurs et arbre">
-            <circle cx="190" cy="140" r="112" class="core"/>
-            <circle cx="190" cy="140" r="85" fill="var(--bg)" stroke="var(--muted)" stroke-width="2"/>
-            <circle cx="190" cy="140" r="70" class="core"/>
-            <circle cx="190" cy="140" r="36" class="core"/>
-            <circle cx="190" cy="140" r="36" fill="var(--card2)" stroke="var(--muted)" stroke-width="2"/>
-            <g fill="var(--coral)">
-              <circle cx="288" cy="126" r="4.5"/><circle cx="269" cy="71" r="4.5"/><circle cx="218" cy="41" r="4.5"/><circle cx="162" cy="41" r="4.5"/><circle cx="111" cy="71" r="4.5"/><circle cx="92" cy="126" r="4.5"/><circle cx="92" cy="155" r="4.5"/><circle cx="111" cy="209" r="4.5"/><circle cx="162" cy="239" r="4.5"/><circle cx="218" cy="239" r="4.5"/><circle cx="269" cy="209" r="4.5"/><circle cx="288" cy="155" r="4.5"/>
-              <circle cx="236" cy="176" r="3.5"/><circle cx="214" cy="204" r="3.5"/><circle cx="166" cy="204" r="3.5"/><circle cx="144" cy="176" r="3.5"/>
-            </g>
-            <path d="M298 104 L326 73" class="ax"/>
-            <path d="M294 122 L326 110" class="ax"/>
-            <path d="M266 153 L326 151" class="ax"/>
-            <path d="M239 162 L326 190" class="ax"/>
-            <path d="M240 181 L326 229" class="ax"/>
-            <text class="ts" x="332" y="77">stator : circuit magnétique</text>
-            <text class="ts" x="332" y="114">conducteurs statoriques</text>
-            <text class="ts" x="332" y="155">entrefer δ</text>
-            <text class="ts" x="332" y="194">rotor : circuit magnétique</text>
-            <text class="ts" x="332" y="233">conducteurs rotoriques</text>
-            <text class="tm" x="190" y="144" text-anchor="middle">arbre</text>
+          <svg viewBox="0 0 640 284" role="img" aria-label="Coupe d'une machine tournante : stator, rotor, entrefer, conducteurs et arbre">
+<circle cx="200" cy="140" r="122" class="core"/><circle cx="200" cy="140" r="80" fill="var(--card)" stroke="var(--muted)" stroke-width="1.4"/><circle cx="200" cy="140" r="72" class="core"/><circle cx="200" cy="140" r="17" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="286.9" cy="116.7" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="263.6" cy="76.4" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="223.3" cy="53.1" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="176.7" cy="53.1" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="136.4" cy="76.4" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="113.1" cy="116.7" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="113.1" cy="163.3" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="136.4" cy="203.6" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="176.7" cy="226.9" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="223.3" cy="226.9" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="263.6" cy="203.6" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="286.9" cy="163.3" r="5.5" class="sc-cu" style="fill:var(--coral-s);stroke:var(--coral);stroke-width:1.4"/><circle cx="253.6" cy="117.8" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="222.2" cy="86.4" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="177.8" cy="86.4" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="146.4" cy="117.8" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="146.4" cy="162.2" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="177.8" cy="193.6" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="222.2" cy="193.6" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><circle cx="253.6" cy="162.2" r="5" style="fill:var(--blue-s);stroke:var(--blue);stroke-width:1.4"/><path d="M96 118 L300 118" class="flux" marker-end="url(#fg-accent)"/><path d="M306 106 A 108 108 0 0 0 94 106" class="flux" marker-end="url(#fg-accent)"/><path d="M290.1 76.9 L380 48 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="290.1" cy="76.9" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="52.0">stator : circuit magnétique</text><path d="M286.9 116.7 L380 88 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="286.9" cy="116.7" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="92.0">conducteurs statoriques (encoches)</text><path d="M275.3 150.6 L380 128 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="275.3" cy="150.6" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="132.0">entrefer δ</text><path d="M234.5 168.9 L380 168 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="234.5" cy="168.9" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="172.0">rotor : circuit magnétique</text><path d="M222.7 193.4 L380 208 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="222.7" cy="193.4" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="212.0">conducteurs rotoriques</text><path d="M212.0 152.0 L380 248 H392" fill="none" stroke="var(--faint)" stroke-width="1"/><circle cx="212.0" cy="152.0" r="2.2" fill="var(--ink)"/><text class="ts" x="398.0" y="252.0">arbre</text><text class="tm" x="320.0" y="276.0" text-anchor="middle">flux d'une machine bipolaire : entrefer → rotor → entrefer → culasse du stator</text>
           </svg>
         </div>
-        <figcaption>Les douze points périphériques figurent les conducteurs logés dans les encoches du stator ; les quatre points intérieurs, les conducteurs du rotor. Le flux traverse le fer du stator, l'entrefer puis le fer du rotor.</figcaption>
+        <figcaption>Les douze points périphériques figurent les conducteurs logés dans les encoches du stator ; les huit points intérieurs, les conducteurs du rotor. Le flux traverse l'entrefer, le fer du rotor, de nouveau l'entrefer, puis se referme par la culasse du stator.</figcaption>
       </figure>
 
       <details class="try">
@@ -778,6 +808,7 @@ au point (2 ; 4 ; 1) :  ∇<i>f</i> = (12 ; 8 ; −19,0)      |∇<i>f</i>| = 23
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="grad" viewBox="0 0 640 260" role="img" aria-label="Point P en perspective, déplacement élémentaire et barres des dérivées partielles"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -793,12 +824,12 @@ au point (2 ; 4 ; 1) :  ∇<i>f</i> = (12 ; 8 ; −19,0)      |∇<i>f</i>| = 23
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"On évalue le champ scalaire au point <b>P(2 ; 4 ; 1)</b> : <b>f = 33,97</b>.","code":"f = 3x² + 8y − 7e^z + 9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97","state":"active"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"scalaire","value":"—"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
-          {"label":"Déplacement de <b>Δx = 0,1</b> : f passe de 33,97 à <b>35,20</b>, donc Δf/Δx = <b>12,3</b>.","code":"Δf/Δx = (35,20 − 33,97) / 0,1 = 12,3","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2,1"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"35,20","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
-          {"label":"Déplacement de <b>Δy = 0,1</b> : f passe à <b>34,77</b>, donc Δf/Δy = <b>8,00</b>.","code":"Δf/Δy = (34,77 − 33,97) / 0,1 = 8,00","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4,1"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"34,77","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[]},
-          {"label":"Déplacement de <b>Δz = 0,1</b> : f diminue à <b>31,97</b>, donc Δf/Δz = <b>−20,0</b> ; le champ décroît quand z augmente.","code":"Δf/Δz = (31,97 − 33,97) / 0,1 = −20,0","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1,1"}]},{"id":"f","name":"f","type":"scalaire","value":"31,97","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00"},{"id":"gz","name":"∂f/∂z","type":"différence finie","value":"−20,0","state":"changed"}]}],"arrows":[]},
-          {"label":"Les dérivées exactes en P donnent <b>∇f = (12 ; 8 ; −19,0)</b> ; les différences finies du pas 0,1 en sont proches.","code":"∇f = (6x ; 8 ; −7e^z)","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0","state":"changed"}]}],"arrows":[]},
-          {"label":"Résultat au point P : <b>∇f = (12 ; 8 ; −19,0)</b> et <b>|∇f| = 23,9</b> ; le gradient pointe vers la croissance la plus rapide de f.","code":"|∇f| = √(12² + 8² + (−19,0)²) = 23,9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0"}]}],"arrows":[]}
+          {"label":"On évalue le champ scalaire au point <b>P(2 ; 4 ; 1)</b> : <b>f = 33,97</b>.","code":"f = 3x² + 8y − 7e^z + 9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97","state":"active"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"scalaire","value":"—"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[],"scene":{"axis":"","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":0,"sy":0,"sz":0,"ex":0,"grad":0,"tx":"12,3","ty":"8,00","tz":"−20,0","norm":"","f":"33,97"}},
+          {"label":"Déplacement de <b>Δx = 0,1</b> : f passe de 33,97 à <b>35,20</b>, donc Δf/Δx = <b>12,3</b>.","code":"Δf/Δx = (35,20 − 33,97) / 0,1 = 12,3","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2,1"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"35,20","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"scalaire","value":"—"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[],"scene":{"axis":"x","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":1,"sy":0,"sz":0,"ex":0,"grad":0,"tx":"12,3","ty":"8,00","tz":"−20,0","norm":"","f":"35,20"}},
+          {"label":"Déplacement de <b>Δy = 0,1</b> : f passe à <b>34,77</b>, donc Δf/Δy = <b>8,00</b>.","code":"Δf/Δy = (34,77 − 33,97) / 0,1 = 8,00","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4,1"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"34,77","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"scalaire","value":"—"}]}],"arrows":[],"scene":{"axis":"y","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":1,"sy":1,"sz":0,"ex":0,"grad":0,"tx":"12,3","ty":"8,00","tz":"−20,0","norm":"","f":"34,77"}},
+          {"label":"Déplacement de <b>Δz = 0,1</b> : f diminue à <b>31,97</b>, donc Δf/Δz = <b>−20,0</b> ; le champ décroît quand z augmente.","code":"Δf/Δz = (31,97 − 33,97) / 0,1 = −20,0","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1,1"}]},{"id":"f","name":"f","type":"scalaire","value":"31,97","state":"changed"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"différence finie","value":"12,3"},{"id":"gy","name":"∂f/∂y","type":"différence finie","value":"8,00"},{"id":"gz","name":"∂f/∂z","type":"différence finie","value":"−20,0","state":"changed"}]}],"arrows":[],"scene":{"axis":"z","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":1,"sy":1,"sz":1,"ex":0,"grad":0,"tx":"12,3","ty":"8,00","tz":"−20,0","norm":"","f":"31,97"}},
+          {"label":"Les dérivées exactes en P donnent <b>∇f = (12 ; 8 ; −19,0)</b> ; les différences finies du pas 0,1 en sont proches.","code":"∇f = (6x ; 8 ; −7e^z)","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12","state":"changed"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8","state":"changed"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0","state":"changed"}]}],"arrows":[],"scene":{"axis":"","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":1,"sy":1,"sz":1,"ex":1,"grad":0,"tx":"12","ty":"8","tz":"−19,0","norm":"","f":"33,97"}},
+          {"label":"Résultat au point P : <b>∇f = (12 ; 8 ; −19,0)</b> et <b>|∇f| = 23,9</b> ; le gradient pointe vers la croissance la plus rapide de f.","code":"|∇f| = √(12² + 8² + (−19,0)²) = 23,9","groups":[{"title":"Point de mesure","cells":[{"id":"P","name":"P","type":"point","fields":[{"k":"x","v":"2"},{"k":"y","v":"4"},{"k":"z","v":"1"}]},{"id":"f","name":"f","type":"scalaire","value":"33,97"}]},{"title":"Dérivées partielles en P","cells":[{"id":"gx","name":"∂f/∂x","type":"exacte","value":"12"},{"id":"gy","name":"∂f/∂y","type":"exacte","value":"8"},{"id":"gz","name":"∂f/∂z","type":"exacte","value":"−19,0"}]}],"arrows":[],"scene":{"axis":"","fx":12.30000000000004,"fy":7.999999999999972,"fz":-20.01189368411719,"sx":1,"sy":1,"sz":1,"ex":1,"grad":1,"tx":"12","ty":"8","tz":"−19,0","norm":"|∇f| = 23,9","f":"33,97"}}
         ]}
         </script>
       </div>
@@ -881,20 +912,8 @@ au point (2 ; 4 ; 1) :  rot <i>v</i> = (−4 ; −6 ; −5)
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 250" role="img" aria-label="Roue à aubes dans un cisaillement, qui tourne, et dans un champ uniforme, qui reste immobile">
-            <g stroke="var(--ink)" stroke-width="1.4" fill="none" marker-end="url(#ar)">
-              <path d="M95 55 L125 55"/><path d="M95 75 L132 75"/><path d="M95 95 L139 95"/><path d="M95 115 L146 115"/><path d="M95 135 L153 135"/><path d="M95 155 L160 155"/><path d="M95 175 L167 175"/>
-              <path d="M420 55 L470 55"/><path d="M420 75 L470 75"/><path d="M420 95 L470 95"/><path d="M420 115 L470 115"/><path d="M420 135 L470 135"/><path d="M420 155 L470 155"/><path d="M420 175 L470 175"/>
-            </g>
-            <circle cx="175" cy="115" r="17" class="wire"/>
-            <path d="M175 98 L175 132 M158 115 L192 115" class="wire-d"/>
-            <path d="M192 102 A 20 20 0 1 1 175 95" class="flux" marker-end="url(#ar-accent)"/>
-            <circle cx="500" cy="115" r="17" class="wire"/>
-            <path d="M500 98 L500 132 M483 115 L517 115" class="wire-d"/>
-            <text class="ts" x="150" y="222" text-anchor="middle">cisaillement : lignes droites</text>
-            <text class="tm" x="150" y="242" text-anchor="middle">div = 0 ; rot ≠ 0 : la roue tourne</text>
-            <text class="ts" x="500" y="222" text-anchor="middle">champ uniforme</text>
-            <text class="tm" x="500" y="242" text-anchor="middle">div = 0 ; rot = 0 : la roue reste fixe</text>
+          <svg viewBox="0 0 640 252" role="img" aria-label="Roue à aubes dans un cisaillement, qui tourne, et dans un champ uniforme, qui reste immobile">
+<line x1="60.0" y1="40.0" x2="210.0" y2="40.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="66.0" x2="193.0" y2="66.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="92.0" x2="176.0" y2="92.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="118.0" x2="159.0" y2="118.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="144.0" x2="142.0" y2="144.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="170.0" x2="125.0" y2="170.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="60.0" y1="196.0" x2="108.0" y2="196.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><g><circle cx="150" cy="118" r="17" fill="var(--card)" stroke="var(--coral)" stroke-width="2"/><line x1="150" y1="118" x2="170.0" y2="118.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="150" y1="118" x2="150.0" y2="138.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="150" y1="118" x2="130.0" y2="118.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="150" y1="118" x2="150.0" y2="98.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/></g><path d="M128 96 A 31 31 0 0 1 178 104" fill="none" stroke="var(--accent)" stroke-width="2" marker-end="url(#fg-accent)"/><text class="ts" x="150.0" y="222.0" text-anchor="middle">cisaillement v = (y ; 0 ; 0) : lignes droites</text><text class="tm" x="150.0" y="242.0" text-anchor="middle">div = 0 ; rot ≠ 0 : la roue tourne (sens horaire)</text><line x1="420.0" y1="40.0" x2="520.0" y2="40.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="66.0" x2="520.0" y2="66.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="92.0" x2="520.0" y2="92.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="118.0" x2="520.0" y2="118.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="144.0" x2="520.0" y2="144.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="170.0" x2="520.0" y2="170.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="420.0" y1="196.0" x2="520.0" y2="196.0" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" marker-end="url(#fg-ink)"/><circle cx="470" cy="118" r="17" fill="var(--card)" stroke="var(--coral)" stroke-width="2"/><line x1="470" y1="118" x2="490.0" y2="118.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="470" y1="118" x2="470.0" y2="138.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="470" y1="118" x2="450.0" y2="118.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><line x1="470" y1="118" x2="470.0" y2="98.0" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/><text class="ts" x="470.0" y="222.0" text-anchor="middle">champ uniforme v = (1 ; 0 ; 0)</text><text class="tm" x="470.0" y="242.0" text-anchor="middle">div = 0 ; rot = 0 : la roue reste fixe</text><text class="tm" x="40.0" y="26.0">y ↑</text>
           </svg>
         </div>
         <figcaption>La rotation se lit localement, avec deux flèches voisines, pas avec la courbure d'ensemble des lignes. Un cisaillement a des lignes droites et un rotationnel non nul.</figcaption>
@@ -918,6 +937,7 @@ au point (2 ; 4 ; 1) :  rot <i>v</i> = (−4 ; −6 ; −5)
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="divrot" viewBox="0 0 640 260" role="img" aria-label="Champ de vecteurs fléché, surface de contrôle et roue à aubes"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -933,12 +953,12 @@ au point (2 ; 4 ; 1) :  rot <i>v</i> = (−4 ; −6 ; −5)
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Les flèches s'écartent du centre : c'est une source. Pour <b>v = (x ; y ; 0)</b>, div v = <b>2</b> et rot v = <b>0</b>.","code":"div v = ∂x x + ∂y y = 1 + 1 = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x"},{"k":"vy","v":"y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"active"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[]},
-          {"label":"Les flèches convergent : c'est un puits. Pour <b>v = (−x ; −y ; 0)</b>, div v = <b>−2</b> et rot v = <b>0</b>.","code":"div v = −1 − 1 = −2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−x"},{"k":"vy","v":"−y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"−2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[]},
-          {"label":"Les flèches tournent : pour <b>v = (−y ; x ; 0)</b>, div v = <b>0</b> et rot v = <b>(0 ; 0 ; 2)</b> ; la roue tourne, le flux ne sort pas.","code":"rot v = ∂x(x) − ∂y(−y) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−y"},{"k":"vy","v":"x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[]},
-          {"label":"Flèches identiques partout : <b>v = (1 ; 0 ; 0)</b> donne div v = <b>0</b> et rot v = <b>0</b>. Un champ uniforme n'a ni source ni tourbillon.","code":"div v = 0 ; rot v = 0","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"1"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0","state":"changed"}]}],"arrows":[]},
-          {"label":"Cisaillement <b>v = (y ; 0 ; 0)</b> : div v = <b>0</b> mais rot v = <b>(0 ; 0 ; −1)</b>. Lignes droites, roue qui tourne : le rotationnel ne se lit pas sur la courbure.","code":"rot v = ∂x(0) − ∂y(y) = −1","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"y"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;−1)","state":"changed"}]}],"arrows":[]},
-          {"label":"Un champ peut cumuler les deux : <b>v = (x − y ; y + x ; 0)</b> donne div v = <b>2</b> et rot v = <b>(0 ; 0 ; 2)</b>.","code":"div v = 1 + 1 = 2 ; rot v = 1 − (−1) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x − y"},{"k":"vy","v":"y + x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[]}
+          {"label":"Les flèches s'écartent du centre : c'est une source. Pour <b>v = (x ; y ; 0)</b>, div v = <b>2</b> et rot v = <b>0</b>.","code":"div v = ∂x x + ∂y y = 1 + 1 = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x"},{"k":"vy","v":"y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"active"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[],"scene":{"kind":"source","title":"Source radiale","vtxt":"v = (x ; y ; 0)","div":2,"rot":0,"tdiv":"2","trot":"0"}},
+          {"label":"Les flèches convergent : c'est un puits. Pour <b>v = (−x ; −y ; 0)</b>, div v = <b>−2</b> et rot v = <b>0</b>.","code":"div v = −1 − 1 = −2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−x"},{"k":"vy","v":"−y"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"−2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0"}]}],"arrows":[],"scene":{"kind":"puits","title":"Puits","vtxt":"v = (−x ; −y ; 0)","div":-2,"rot":0,"tdiv":"−2","trot":"0"}},
+          {"label":"Les flèches tournent : pour <b>v = (−y ; x ; 0)</b>, div v = <b>0</b> et rot v = <b>(0 ; 0 ; 2)</b> ; la roue tourne, le flux ne sort pas.","code":"rot v = ∂x(x) − ∂y(−y) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"−y"},{"k":"vy","v":"x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[],"scene":{"kind":"tourbillon","title":"Tourbillon","vtxt":"v = (−y ; x ; 0)","div":0,"rot":2,"tdiv":"0","trot":"(0 ; 0 ; 2)"}},
+          {"label":"Flèches identiques partout : <b>v = (1 ; 0 ; 0)</b> donne div v = <b>0</b> et rot v = <b>0</b>. Un champ uniforme n'a ni source ni tourbillon.","code":"div v = 0 ; rot v = 0","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"1"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"0","state":"changed"}]}],"arrows":[],"scene":{"kind":"uniforme","title":"Champ uniforme","vtxt":"v = (1 ; 0 ; 0)","div":0,"rot":0,"tdiv":"0","trot":"0"}},
+          {"label":"Cisaillement <b>v = (y ; 0 ; 0)</b> : div v = <b>0</b> mais rot v = <b>(0 ; 0 ; −1)</b>. Lignes droites, roue qui tourne : le rotationnel ne se lit pas sur la courbure.","code":"rot v = ∂x(0) − ∂y(y) = −1","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"y"},{"k":"vy","v":"0"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"0","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;−1)","state":"changed"}]}],"arrows":[],"scene":{"kind":"cisaillement","title":"Cisaillement","vtxt":"v = (y ; 0 ; 0)","div":0,"rot":-1,"tdiv":"0","trot":"(0 ; 0 ; −1)"}},
+          {"label":"Un champ peut cumuler les deux : <b>v = (x − y ; y + x ; 0)</b> donne div v = <b>2</b> et rot v = <b>(0 ; 0 ; 2)</b>.","code":"div v = 1 + 1 = 2 ; rot v = 1 − (−1) = 2","groups":[{"title":"Champ testé","cells":[{"id":"v","name":"v","type":"champ 2D","fields":[{"k":"vx","v":"x − y"},{"k":"vy","v":"y + x"}]}]},{"title":"Verdict local","cells":[{"id":"div","name":"div v","type":"scalaire","value":"2","state":"changed"},{"id":"rot","name":"rot v","type":"vecteur","value":"(0;0;2)","state":"changed"}]}],"arrows":[],"scene":{"kind":"spirale","title":"Source et tourbillon","vtxt":"v = (x − y ; y + x ; 0)","div":2,"rot":2,"tdiv":"2","trot":"(0 ; 0 ; 2)"}}
         ]}
         </script>
       </div>
@@ -1009,20 +1029,8 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 260" role="img" aria-label="Champ B croissant linéairement selon x, perpendiculaire à une surface rectangulaire">
-            <path d="M60 200 L360 200" class="wire"/>
-            <g class="arr" marker-end="url(#ar)">
-              <path d="M75 200 L75 160"/><path d="M125 200 L125 151"/><path d="M185 200 L185 141"/><path d="M245 200 L245 131"/><path d="M305 200 L305 121"/><path d="M355 200 L355 111"/>
-            </g>
-            <path d="M55 205 L365 205" class="flux2" marker-end="url(#ar)"/>
-            <text class="tm" x="60" y="232">0 ≤ x ≤ a = 10 cm</text>
-            <text class="tm" x="365" y="232" text-anchor="end">0 ≤ y ≤ b = 5 cm</text>
-            <text class="ts" x="78" y="140">B₀ = 0,5 T</text>
-            <text class="ts" x="358" y="103" text-anchor="end">B(a) = 1,0 T</text>
-            <text class="tm" x="210" y="66">B = B₀ (1 + x/a) e_z</text>
-            <text class="tm" x="470" y="120">Φ = ∬ B · dA</text>
-            <text class="tm" x="470" y="145">dA = dx dy e_z</text>
-            <text class="tm" x="470" y="170">Φ = 3,75 mWb</text>
+          <svg viewBox="0 0 640 240" role="img" aria-label="Champ B croissant linéairement selon x, perpendiculaire à une surface rectangulaire a fois b vue en perspective">
+<path d="M70.0 214.0 L330.0 214.0 L400.0 162.0 L140.0 162.0 Z" fill="var(--accent-s)" stroke="var(--accent)" stroke-width="1.5"/><line x1="70.0" y1="214.0" x2="70.0" y2="168.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="105.0" y1="188.0" x2="105.0" y2="142.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="140.0" y1="162.0" x2="140.0" y2="116.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="135.0" y1="214.0" x2="135.0" y2="156.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="170.0" y1="188.0" x2="170.0" y2="130.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="205.0" y1="162.0" x2="205.0" y2="104.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="200.0" y1="214.0" x2="200.0" y2="145.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="235.0" y1="188.0" x2="235.0" y2="119.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="270.0" y1="162.0" x2="270.0" y2="93.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="265.0" y1="214.0" x2="265.0" y2="133.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="300.0" y1="188.0" x2="300.0" y2="107.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="335.0" y1="162.0" x2="335.0" y2="81.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="330.0" y1="214.0" x2="330.0" y2="122.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="365.0" y1="188.0" x2="365.0" y2="96.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="400.0" y1="162.0" x2="400.0" y2="70.0" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#fg-ink)"/><line x1="70.0" y1="214.0" x2="370.0" y2="214.0" stroke="var(--faint)" stroke-width="1.1" stroke-linecap="round" marker-end="url(#fg-faint)"/><text class="tm" x="374.0" y="218.0">x</text><text class="tm" x="200.0" y="232.0" text-anchor="middle">0 ≤ x ≤ a = 10 cm</text><text class="tm" x="377.0" y="192.0">0 ≤ y ≤ b = 5 cm</text><text class="ts" x="64.0" y="162.0" text-anchor="end">B(0) = 0,5 T</text><text class="ts" x="410.0" y="82.0">B(a) = 1,0 T</text><text class="ts" x="20.0" y="30.0">B = B₀ (1 + x/a) e_z</text><text class="tm" x="20.0" y="54.0">dA = dx dy e_z</text><text class="tm" x="20.0" y="78.0">Φ = ∫₀ᵇ ∫₀ᵃ B₀ (1 + x/a) dx dy</text><text class="tm" x="20.0" y="102.0">Φ = 1,5 B₀ a b = 3,75 mWb</text>
           </svg>
         </div>
         <figcaption>Le champ est perpendiculaire au plan de la surface : le produit scalaire se réduit à B<sub>z</sub> dx dy. La longueur des flèches traduit la croissance linéaire de B selon x.</figcaption>
@@ -1034,6 +1042,7 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="flux" viewBox="0 0 640 260" role="img" aria-label="Rectangle a fois b en perspective, flèches de B croissant selon x et flux intégré"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1049,12 +1058,12 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"La surface est le rectangle 0 ≤ x ≤ a, 0 ≤ y ≤ b ; la normale est e_z, donc <b>dA = dx dy e_z</b>.","code":"dA = dx dy e_z","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
-          {"label":"Aux bords : <b>B(0) = 0,5 T</b> et <b>B(a) = 1,0 T</b> ; le champ croît linéairement selon x.","code":"B(0) = B₀ = 0,5 T ; B(a) = 2 B₀ = 1,0 T","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B(0)","v":"0,5 T"},{"k":"B(a)","v":"1,0 T"},{"k":"type","v":"linéaire"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
-          {"label":"Intégrale en x : <b>∫₀ᵃ B₀(1 + x/a) dx = B₀(a + a/2) = 1,5 B₀ a = 0,075 T·m</b>.","code":"∫₀ᵃ (1 + x/a) dx = a + a/2 = 1,5 a","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075","state":"active"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[]},
-          {"label":"Intégrale en y : B ne dépend pas de y, il reste b. <b>Φ = 1,5 B₀ a b = 3,75·10⁻³ Wb</b>.","code":"Φ = 1,5 × 0,5 × 0,10 × 0,05 = 3,75·10⁻³ Wb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075"},{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"}]}],"arrows":[]},
-          {"label":"Comparaison : un champ uniforme donnerait <b>Φ = B₀ a b = 2,50·10⁻³ Wb</b> ; le rapport vaut 1,5, moyenne de 1 + x/a sur [0 ; a].","code":"Φ_uniforme = B₀ a b = 2,50 mWb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[]},
-          {"label":"Contrôle : <b>div B = 0</b>, car B_z ne dépend que de x. Le flux est conservé et le théorème de la divergence s'applique au volume.","code":"div B = ∂Bz/∂z = 0","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"div B","v":"0"},{"k":"Bz","v":"f(x)"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[]}
+          {"label":"La surface est le rectangle 0 ≤ x ≤ a, 0 ≤ y ≤ b ; la normale est e_z, donc <b>dA = dx dy e_z</b>.","code":"dA = dx dy e_z","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[],"scene":{"st":0,"sweep":0,"lines":["dA = dx dy e_z"]}},
+          {"label":"Aux bords : <b>B(0) = 0,5 T</b> et <b>B(a) = 1,0 T</b> ; le champ croît linéairement selon x.","code":"B(0) = B₀ = 0,5 T ; B(a) = 2 B₀ = 1,0 T","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B(0)","v":"0,5 T"},{"k":"B(a)","v":"1,0 T"},{"k":"type","v":"linéaire"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"—"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[],"scene":{"st":1,"sweep":0,"lines":["B(0) = 0,5 T ; B(a) = 1,0 T"]}},
+          {"label":"Intégrale en x : <b>∫₀ᵃ B₀(1 + x/a) dx = B₀(a + a/2) = 1,5 B₀ a = 0,075 T·m</b>.","code":"∫₀ᵃ (1 + x/a) dx = a + a/2 = 1,5 a","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075","state":"active"},{"id":"phi","name":"Φ","type":"Wb","value":"—"}]}],"arrows":[],"scene":{"st":2,"sweep":1,"lines":["∫₀ᵃ B dx = 1,5 B₀ a = 0,075 T·m"]}},
+          {"label":"Intégrale en y : B ne dépend pas de y, il reste b. <b>Φ = 1,5 B₀ a b = 3,75·10⁻³ Wb</b>.","code":"Φ = 1,5 × 0,5 × 0,10 × 0,05 = 3,75·10⁻³ Wb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"Ix","name":"∫ B dx","type":"T·m","value":"0,075"},{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"}]}],"arrows":[],"scene":{"st":3,"sweep":1,"lines":["∫₀ᵃ B dx = 0,075 T·m","Φ = 1,5 B₀ a b = 3,75 mWb"]}},
+          {"label":"Comparaison : un champ uniforme donnerait <b>Φ = B₀ a b = 2,50·10⁻³ Wb</b> ; le rapport vaut 1,5, moyenne de 1 + x/a sur [0 ; a].","code":"Φ_uniforme = B₀ a b = 2,50 mWb","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"B₀","v":"0,5 T"},{"k":"a","v":"10 cm"},{"k":"b","v":"5 cm"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb","state":"changed"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[],"scene":{"st":4,"sweep":1,"lines":["Φ = 3,75 mWb","Φ uniforme = B₀ a b = 2,50 mWb","rapport = 1,5"]}},
+          {"label":"Contrôle : <b>div B = 0</b>, car B_z ne dépend que de x. Le flux est conservé et le théorème de la divergence s'applique au volume.","code":"div B = ∂Bz/∂z = 0","groups":[{"title":"Champ imposé","cells":[{"id":"B","name":"B","type":"T","fields":[{"k":"div B","v":"0"},{"k":"Bz","v":"f(x)"}]}]},{"title":"Intégrale de surface","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,75 mWb"},{"id":"phiu","name":"Φ uniforme","type":"Wb","value":"2,50 mWb"},{"id":"rap","name":"rapport","type":"—","value":"1,5"}]}],"arrows":[],"scene":{"st":5,"sweep":1,"lines":["div B = ∂B_z/∂z = 0","Φ = 3,75 mWb"]}}
         ]}
         </script>
       </div>
@@ -1109,6 +1118,7 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="ampere" viewBox="0 0 640 260" role="img" aria-label="Section du conducteur, contour d'Ampère et courbe B(r)"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1124,12 +1134,12 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"La symétrie de révolution impose des lignes de champ circulaires autour de l'axe ; on choisit un contour circulaire de rayon r, parcouru dans le sens du champ.","code":"∮ H · dl = 2 π r H(r)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"à choisir"},{"id":"ien","name":"I enlacé","type":"A","value":"—"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[]},
-          {"label":"À l'intérieur (<b>r = 6 cm &lt; a = 12 cm</b>), le contour n'enlace que la fraction du courant <b>J πr² = 2,5·10⁴ A</b>.","code":"I enlacé = J π r² = I r² / a²","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[]},
-          {"label":"Alors <b>B(r) = μ₀ I r/(2π a²) = 0,0833 T</b> : le champ croît linéairement et s'annule sur l'axe du conducteur.","code":"B(r) = μ₀ J r / 2 = μ₀ I r / (2 π a²)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A"},{"id":"B","name":"B(r)","type":"T","value":"0,0833 T","state":"changed"}]}],"arrows":[]},
-          {"label":"Sur la surface (<b>r = a = 12 cm</b>), le contour enlace tout le courant : <b>I enlacé = 1,0·10⁵ A</b> et <b>B(a) = 0,167 T</b>.","code":"B(a) = μ₀ I / (2 π a)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"12 cm","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"0,167 T","state":"changed"}]}],"arrows":[]},
-          {"label":"À l'extérieur (<b>r &gt; a</b>), tout le courant est enlacé : <b>B(r) = μ₀ I/(2π r) = 0,02/r</b>. En r = a, les deux formules donnent 0,167 T.","code":"B(r) = μ₀ I / (2 π r) = 0,02 / r","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"r ≥ 12 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"0,02/r"}]}],"arrows":[]},
-          {"label":"Application : le seuil de 2,4·10⁻³ T est atteint à <b>r = μ₀ I/(2π B) = 8,33 m</b> pour l'éclair de 10⁵ A.","code":"r = μ₀ I / (2 π B) = 8,33 m","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"I","v":"1,0·10⁵ A"},{"k":"B seuil","v":"2,4 mT"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"8,33 m","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"2,4·10⁻³ T","state":"changed"}]}],"arrows":[]}
+          {"label":"La symétrie de révolution impose des lignes de champ circulaires autour de l'axe ; on choisit un contour circulaire de rayon r, parcouru dans le sens du champ.","code":"∮ H · dl = 2 π r H(r)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"à choisir"},{"id":"ien","name":"I enlacé","type":"A","value":"—"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[],"scene":{"r":0,"tr":"","tI":"","tB":""}},
+          {"label":"À l'intérieur (<b>r = 6 cm &lt; a = 12 cm</b>), le contour n'enlace que la fraction du courant <b>J πr² = 2,5·10⁴ A</b>.","code":"I enlacé = J π r² = I r² / a²","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"—"}]}],"arrows":[],"scene":{"r":6,"tr":"6 cm","tI":"2,5·10⁴ A","tB":""}},
+          {"label":"Alors <b>B(r) = μ₀ I r/(2π a²) = 0,0833 T</b> : le champ croît linéairement et s'annule sur l'axe du conducteur.","code":"B(r) = μ₀ J r / 2 = μ₀ I r / (2 π a²)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"6 cm"},{"id":"ien","name":"I enlacé","type":"A","value":"2,5·10⁴ A"},{"id":"B","name":"B(r)","type":"T","value":"0,0833 T","state":"changed"}]}],"arrows":[],"scene":{"r":6,"tr":"6 cm","tI":"2,5·10⁴ A","tB":"0,0833 T"}},
+          {"label":"Sur la surface (<b>r = a = 12 cm</b>), le contour enlace tout le courant : <b>I enlacé = 1,0·10⁵ A</b> et <b>B(a) = 0,167 T</b>.","code":"B(a) = μ₀ I / (2 π a)","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"12 cm","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A","state":"changed"},{"id":"B","name":"B(r)","type":"T","value":"0,167 T","state":"changed"}]}],"arrows":[],"scene":{"r":12,"tr":"a = 12 cm","tI":"1,0·10⁵ A","tB":"0,167 T"}},
+          {"label":"À l'extérieur (<b>r &gt; a</b>), tout le courant est enlacé : <b>B(r) = μ₀ I/(2π r) = 0,02/r</b>. En r = a, les deux formules donnent 0,167 T.","code":"B(r) = μ₀ I / (2 π r) = 0,02 / r","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"a","v":"12 cm"},{"k":"I","v":"1,0·10⁵ A"},{"k":"J","v":"2,21·10⁶ A/m²"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"r ≥ 12 cm","state":"active"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"0,02/r"}]}],"arrows":[],"scene":{"r":24,"tr":"24 cm > a","tI":"1,0·10⁵ A","tB":"0,02/r"}},
+          {"label":"Application : le seuil de 2,4·10⁻³ T est atteint à <b>r = μ₀ I/(2π B) = 8,33 m</b> pour l'éclair de 10⁵ A.","code":"r = μ₀ I / (2 π B) = 8,33 m","groups":[{"title":"Conducteur","cells":[{"id":"fil","name":"fil","type":"A, m","fields":[{"k":"I","v":"1,0·10⁵ A"},{"k":"B seuil","v":"2,4 mT"}]}]},{"title":"Contour de rayon r","cells":[{"id":"r","name":"r","type":"m","value":"8,33 m","state":"changed"},{"id":"ien","name":"I enlacé","type":"A","value":"1,0·10⁵ A"},{"id":"B","name":"B(r)","type":"T","value":"2,4·10⁻³ T","state":"changed"}]}],"arrows":[],"scene":{"r":833.3333333333336,"tr":"8,33 m","tI":"1,0·10⁵ A","tB":"2,4 mT"}}
         ]}
         </script>
       </div>
@@ -1164,17 +1174,8 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
 
       <figure>
         <div class="figcard">
-          <svg viewBox="0 0 640 300" role="img" aria-label="Cycle des quatre équations de Maxwell, avec les relations de matériau">
-            <g class="c-blue"><rect x="30" y="118" width="180" height="64" rx="10"/><text class="t" x="120" y="146" text-anchor="middle">rot E = −∂B/∂t</text><text class="ts" x="120" y="166" text-anchor="middle">Maxwell–Faraday</text></g>
-            <g class="c-purple"><rect x="230" y="22" width="180" height="64" rx="10"/><text class="t" x="320" y="50" text-anchor="middle">B = μ H</text><text class="ts" x="320" y="70" text-anchor="middle">aimantation</text></g>
-            <g class="c-coral"><rect x="430" y="118" width="180" height="64" rx="10"/><text class="t" x="520" y="146" text-anchor="middle">rot H = J + ∂D/∂t</text><text class="ts" x="520" y="166" text-anchor="middle">Maxwell–Ampère</text></g>
-            <g class="c-teal"><rect x="230" y="214" width="180" height="64" rx="10"/><text class="t" x="320" y="242" text-anchor="middle">D = ε E</text><text class="ts" x="320" y="262" text-anchor="middle">conduction J = σ E</text></g>
-            <path d="M150 118 C 165 85, 195 62, 228 56" class="arr" marker-end="url(#ar)"/>
-            <path d="M410 56 C 445 62, 475 85, 490 116" class="arr" marker-end="url(#ar)"/>
-            <path d="M520 182 C 500 215, 470 240, 412 246" class="arr" marker-end="url(#ar)"/>
-            <path d="M230 246 C 195 240, 165 215, 150 182" class="arr" marker-end="url(#ar)"/>
-            <text class="th" x="320" y="140" text-anchor="middle">div D = ρf</text>
-            <text class="th" x="320" y="163" text-anchor="middle">div B = 0</text>
+          <svg viewBox="0 0 640 300" role="img" aria-label="Cycle des quatre équations de Maxwell, avec les relations de matériau, dans le sens de la causalité">
+<g class="c-purple"><rect x="215" y="32" width="210" height="60" rx="10"/><text class="t" x="320" y="59" text-anchor="middle">B = μ H</text><text class="ts" x="320" y="79" text-anchor="middle">aimantation</text></g><g class="c-coral"><rect x="435" y="132" width="210" height="60" rx="10"/><text class="t" x="540" y="159" text-anchor="middle">rot H = J + ∂D/∂t</text><text class="ts" x="540" y="179" text-anchor="middle">Maxwell–Ampère</text></g><g class="c-teal"><rect x="215" y="232" width="210" height="60" rx="10"/><text class="t" x="320" y="259" text-anchor="middle">D = ε E ; J = σ E</text><text class="ts" x="320" y="279" text-anchor="middle">conduction, polarisation</text></g><g class="c-blue"><rect x="-5" y="132" width="210" height="60" rx="10"/><text class="t" x="100" y="159" text-anchor="middle">rot E = −∂B/∂t</text><text class="ts" x="100" y="179" text-anchor="middle">Maxwell–Faraday</text></g><path d="M150 196 Q 170 262 212 262" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#fg-ink)"/><text class="tm" x="160.0" y="252.0" text-anchor="middle">E</text><path d="M428 262 Q 520 262 540 196" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#fg-ink)"/><text class="tm" x="520.0" y="252.0" text-anchor="middle">J, D</text><path d="M540 128 Q 520 62 428 62" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#fg-ink)"/><text class="tm" x="520.0" y="82.0" text-anchor="middle">H</text><path d="M212 62 Q 120 62 100 128" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#fg-ink)"/><text class="tm" x="120.0" y="82.0" text-anchor="middle">∂B/∂t</text><text class="th" x="320.0" y="156.0" text-anchor="middle">div D = ρ_f</text><text class="th" x="320.0" y="180.0" text-anchor="middle">div B = 0</text>
           </svg>
         </div>
         <figcaption>Le cycle des quatre équations : un B variable crée un E, un E met les charges en mouvement, un courant crée un H, et le matériau amplifie H en B. Les deux divergences disent les sources.</figcaption>
@@ -1289,6 +1290,7 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
           <span class="lab-tag">6 états</span>
         </div>
         <code class="lab-code" data-code></code>
+        <div class="scene-stage"><svg data-scene="faraday" viewBox="0 0 640 260" role="img" aria-label="Solénoïde traversé par B, courbe du flux totalisé et courant induit"></svg></div>
         <div class="mem-stage" data-stage>
           <div class="mem-groups" data-groups></div>
           <svg class="arrow-layer" data-arrows aria-hidden="true"></svg>
@@ -1304,12 +1306,12 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
         </div>
         <script type="application/json" data-spec>
         {"states":[
-          {"label":"Le solénoïde a <b>N = 100 spires</b> de rayon r = 5 cm : la section vaut <b>A = πr² = 7,854·10⁻³ m²</b>.","code":"A = π r² = π × 0,05²","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"—"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"—"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
-          {"label":"Flux initial : <b>Φ₁ = B₁A = 3,927·10⁻³ Wb</b> par spire, soit <b>Ψ₁ = NΦ₁ = 0,3927 Wb·tr</b>.","code":"Φ = B A ; Ψ = N Φ","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
-          {"label":"Flux final : <b>Φ₂ = B₂A = 7,854·10⁻³ Wb</b>, soit <b>Ψ₂ = 0,7854 Wb·tr</b> ; le flux a doublé.","code":"Φ₂ = 1,0 × 7,854·10⁻³","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"7,85 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,785","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
-          {"label":"Variation : <b>ΔΦ = 3,927·10⁻³ Wb</b> par spire, soit <b>ΔΨ = 0,3927 Wb·tr</b>, pendant <b>Δt = 0,2 s</b>.","code":"ΔΨ = N ΔΦ = 0,3927 Wb·tr","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[]},
-          {"label":"La fém induite vaut <b>|u_i| = ΔΨ/Δt = 1,96 V</b> ; le signe vient de Lenz : flux croissant, champ induit opposé.","code":"u_i = − dΨ/dt = − N dΦ/dt","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393"},{"id":"fem","name":"u induite","type":"V","value":"1,96 V","state":"changed"}]}],"arrows":[]},
-          {"label":"Le courant vaut <b>i = |u_i|/R = 0,982 A</b> ; il circule dans le sens qui crée un champ opposé à la croissance du flux.","code":"i = |u_i| / R = 1,96 / 2 ≈ 0,982 A","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 → 7,85 mWb"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393 → 0,785"},{"id":"fem","name":"i induit","type":"A","value":"0,982 A","state":"changed"}]}],"arrows":[]}
+          {"label":"Le solénoïde a <b>N = 100 spires</b> de rayon r = 5 cm : la section vaut <b>A = πr² = 7,854·10⁻³ m²</b>.","code":"A = π r² = π × 0,05²","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"—"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"—"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[],"scene":{"B":0,"tm":0,"show":0,"tr":"A = π r² = 7,854·10⁻³ m²"}},
+          {"label":"Flux initial : <b>Φ₁ = B₁A = 3,927·10⁻³ Wb</b> par spire, soit <b>Ψ₁ = NΦ₁ = 0,3927 Wb·tr</b>.","code":"Φ = B A ; Ψ = N Φ","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[],"scene":{"B":0.5,"tm":0,"show":0,"tr":"Φ₁ = 3,927 mWb ; Ψ₁ = 0,3927 Wb·tr"}},
+          {"label":"Flux final : <b>Φ₂ = B₂A = 7,854·10⁻³ Wb</b>, soit <b>Ψ₂ = 0,7854 Wb·tr</b> ; le flux a doublé.","code":"Φ₂ = 1,0 × 7,854·10⁻³","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"r","v":"5 cm"},{"k":"A","v":"7,854·10⁻³ m²"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"7,85 mWb","state":"changed"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,785","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[],"scene":{"B":1.0,"tm":0.2,"show":0,"tr":"Φ₂ = 7,854 mWb ; Ψ₂ = 0,7854 Wb·tr"}},
+          {"label":"Variation : <b>ΔΦ = 3,927·10⁻³ Wb</b> par spire, soit <b>ΔΨ = 0,3927 Wb·tr</b>, pendant <b>Δt = 0,2 s</b>.","code":"ΔΨ = N ΔΦ = 0,3927 Wb·tr","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb","state":"changed"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393","state":"changed"},{"id":"fem","name":"u induite","type":"V","value":"—"}]}],"arrows":[],"scene":{"B":1.0,"tm":0.2,"show":1,"tr":"ΔΨ = 0,3927 Wb·tr en 0,2 s"}},
+          {"label":"La fém induite vaut <b>|u_i| = ΔΨ/Δt = 1,96 V</b> ; le signe vient de Lenz : flux croissant, champ induit opposé.","code":"u_i = − dΨ/dt = − N dΦ/dt","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"ΔΦ","type":"Wb","value":"3,93 mWb"},{"id":"psi","name":"ΔΨ","type":"Wb·tr","value":"0,393"},{"id":"fem","name":"u induite","type":"V","value":"1,96 V","state":"changed"}]}],"arrows":[],"scene":{"B":1.0,"tm":0.2,"show":1,"tr":"|u_i| = ΔΨ/Δt = 1,96 V"}},
+          {"label":"Le courant vaut <b>i = |u_i|/R = 0,982 A</b> ; il circule dans le sens qui crée un champ opposé à la croissance du flux.","code":"i = |u_i| / R = 1,96 / 2 ≈ 0,982 A","groups":[{"title":"Spire","cells":[{"id":"N","name":"N","type":"spires","fields":[{"k":"N","v":"100"},{"k":"Δt","v":"0,2 s"},{"k":"R","v":"2 Ω"}]}]},{"title":"Flux et fém","cells":[{"id":"phi","name":"Φ","type":"Wb","value":"3,93 → 7,85 mWb"},{"id":"psi","name":"Ψ","type":"Wb·tr","value":"0,393 → 0,785"},{"id":"fem","name":"i induit","type":"A","value":"0,982 A","state":"changed"}]}],"arrows":[],"scene":{"B":1.0,"tm":0.2,"show":2,"tr":"i = |u_i|/R = 0,982 A"}}
         ]}
         </script>
       </div>
@@ -1375,6 +1377,475 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
     </section>
   </main>
 </div>
+
+
+<script>
+/* Moteur des scènes SVG animées des laboratoires ELMEC1.
+   Chaque laboratoire porte <svg data-scene="nom">. Le contrôleur de laboratoire
+   appelle la fonction renvoyée par ElmecScenes.mount(root) à chaque état ;
+   les paramètres numériques de state.scene sont interpolés entre deux états,
+   les chaînes changent d'un coup. Aucune ressource externe. */
+window.ElmecScenes = (function () {
+  'use strict';
+  const REG = {};
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let UID = 0;
+  /* paramètres d'étape : jamais interpolés */
+  const DISCRETS = ['st', 'show', 'kind', 'div', 'rot', 'axis', 'idx', 'step'];
+
+  /* ---------- formatage ---------- */
+  function fr(x, d) {
+    if (x === null || x === undefined || isNaN(x)) return '—';
+    const s = Number(x).toFixed(d === undefined ? 2 : d);
+    const neg = s[0] === '-';
+    const parts = (neg ? s.slice(1) : s).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return (neg ? '−' : '') + parts.join(',');
+  }
+  const ESC = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'};
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ESC[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ---------- aide au dessin (renvoie des chaînes SVG) ---------- */
+  function helpers(id) {
+    const COLORS = ['ink', 'muted', 'faint', 'accent', 'coral', 'teal', 'amber', 'blue', 'green', 'red'];
+    function m(c) { return 'url(#' + id + '-' + (c || 'ink') + ')'; }
+    const h = {
+      fr: fr, esc: esc, clamp: clamp, lerp: lerp,
+      defs: function () {
+        return '<defs>' + COLORS.map(function (c) {
+          return '<marker id="' + id + '-' + c + '" viewBox="0 0 10 10" refX="8.6" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse">' +
+            '<path d="M0 0.6 L10 5 L0 9.4 Z" fill="var(--' + (c === 'ink' ? 'ink' : c) + ')"/></marker>';
+        }).join('') + '</defs>';
+      },
+      /* flèche droite ; c = couleur, w = épaisseur */
+      arrow: function (x1, y1, x2, y2, c, w, extra) {
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        if (len < 2) return '';
+        return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+          '" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) + '" stroke-linecap="round" marker-end="' + m(c) + '"' + (extra || '') + '/>';
+      },
+      /* chemin libre fléché */
+      path: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'ink') + ')" stroke-width="' + (w || 1.6) +
+          '" stroke-linecap="round" stroke-linejoin="round"' +
+          (opts.dash ? ' stroke-dasharray="' + opts.dash + '"' : '') +
+          (opts.cls ? ' class="' + opts.cls + '"' : '') +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow ? ' marker-end="' + m(c) + '"' : '') + '/>';
+      },
+      /* flux qui circule : tirets animés */
+      flow: function (d, c, w, opts) {
+        opts = opts || {};
+        return '<path d="' + d + '" fill="none" stroke="var(--' + (c || 'accent') + ')" stroke-width="' + (w || 2) +
+          '" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" class="sc-flow' + (opts.rev ? ' sc-rev' : '') + '"' +
+          (opts.op !== undefined ? ' opacity="' + opts.op + '"' : '') +
+          (opts.arrow === false ? '' : ' marker-end="' + m(c || 'accent') + '"') + '/>';
+      },
+      text: function (x, y, s, cls, anchor, extra) {
+        return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" class="' + (cls || 'ts') + '"' +
+          (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + s + '</text>';
+      },
+      /* étiquette avec fond (lisible sur un tracé) */
+      tag: function (x, y, s, c, anchor) {
+        const w = Math.max(18, String(s).replace(/<[^>]+>/g, '').length * 6.6 + 12);
+        const x0 = anchor === 'end' ? x - w : anchor === 'start' ? x : x - w / 2;
+        return '<g class="sc-tag"><rect x="' + x0.toFixed(1) + '" y="' + (y - 12).toFixed(1) + '" width="' + w.toFixed(1) +
+          '" height="17" rx="5" fill="var(--card)" stroke="var(--' + (c || 'line') + ')" stroke-width="1"/>' +
+          '<text x="' + (x0 + w / 2).toFixed(1) + '" y="' + (y + 0.5).toFixed(1) + '" text-anchor="middle" class="sc-tagt" fill="var(--' +
+          (c && c !== 'line' ? c : 'ink') + ')">' + s + '</text></g>';
+      },
+      rect: function (x, y, w, hh, cls, rx, extra) {
+        return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' +
+          Math.max(0, hh).toFixed(1) + '" rx="' + (rx || 0) + '" class="' + (cls || 'core') + '"' + (extra || '') + '/>';
+      },
+      circle: function (x, y, r, cls, extra) {
+        return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" class="' + (cls || '') + '"' + (extra || '') + '/>';
+      },
+      /* bobine vue de côté : boucles en demi-ellipses le long d'un segment vertical ou horizontal */
+      coil: function (x, y, len, n, vertical, amp, c) {
+        let d = '';
+        const step = len / n;
+        amp = amp || 9;
+        for (let k = 0; k < n; k++) {
+          if (vertical) {
+            const y0 = y + k * step;
+            d += 'M' + (x - amp).toFixed(1) + ' ' + y0.toFixed(1) + ' C ' + (x + amp * 1.5).toFixed(1) + ' ' + y0.toFixed(1) + ', ' +
+              (x + amp * 1.5).toFixed(1) + ' ' + (y0 + step).toFixed(1) + ', ' + (x - amp).toFixed(1) + ' ' + (y0 + step * 0.92).toFixed(1) + ' ';
+          } else {
+            const x0 = x + k * step;
+            d += 'M' + x0.toFixed(1) + ' ' + (y + amp).toFixed(1) + ' C ' + x0.toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' +
+              (x0 + step).toFixed(1) + ' ' + (y - amp * 1.5).toFixed(1) + ', ' + (x0 + step * 0.92).toFixed(1) + ' ' + (y + amp).toFixed(1) + ' ';
+          }
+        }
+        return '<path d="' + d + '" class="coil"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>';
+      },
+      /* résistance (rectangle normalisé) entre deux points alignés */
+      resistor: function (x, y, horiz, label, c, lab2) {
+        const w = horiz ? 34 : 13, hh = horiz ? 13 : 34;
+        return '<rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="2" class="sc-comp"' +
+          (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 13, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 22, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* inductance (quatre arcs) */
+      inductor: function (x, y, horiz, label, c, lab2) {
+        let d = '';
+        const n = 4, s = 8.5;
+        const x0 = horiz ? x - n * s / 2 : x, y0 = horiz ? y : y - n * s / 2;
+        for (let k = 0; k < n; k++) {
+          if (horiz) d += 'M' + (x0 + k * s) + ' ' + y0 + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 ' + s + ' 0 ';
+          else d += 'M' + x0 + ' ' + (y0 + k * s) + ' a ' + s / 2 + ' ' + s / 2 + ' 0 0 1 0 ' + s + ' ';
+        }
+        return '<path d="' + d + '" class="sc-ind"' + (c ? ' style="stroke:var(--' + c + ')"' : '') + '/>' +
+          (label ? (horiz ? h.text(x, y - 11, label, 'sc-lbl', 'middle') : h.text(x + 12, y + 4, label, 'sc-lbl', 'start')) : '') +
+          (lab2 ? (horiz ? h.text(x, y + 20, lab2, 'sc-val', 'middle') : h.text(x + 12, y + 18, lab2, 'sc-val', 'start')) : '');
+      },
+      /* repère de graphique : renvoie {svg, X(v), Y(v)} */
+      plot: function (o) {
+        const X = function (v) { return o.x + (v - o.x0) / (o.x1 - o.x0) * o.w; };
+        const Y = function (v) { return o.y + o.h - (v - o.y0) / (o.y1 - o.y0) * o.h; };
+        let s = '';
+        (o.xt || []).forEach(function (t) {
+          s += '<line x1="' + X(t).toFixed(1) + '" y1="' + o.y + '" x2="' + X(t).toFixed(1) + '" y2="' + (o.y + o.h) + '" class="sc-grid"/>';
+          s += h.text(X(t), o.y + o.h + 14, o.xf ? o.xf(t) : fr(t, 0), 'sc-tick', 'middle');
+        });
+        (o.yt || []).forEach(function (t) {
+          s += '<line x1="' + o.x + '" y1="' + Y(t).toFixed(1) + '" x2="' + (o.x + o.w) + '" y2="' + Y(t).toFixed(1) + '" class="sc-grid"/>';
+          s += h.text(o.x - 6, Y(t) + 3.5, o.yf ? o.yf(t) : fr(t, 1), 'sc-tick', 'end');
+        });
+        s += h.arrow(o.x, o.y + o.h, o.x + o.w + 12, o.y + o.h, 'faint', 1.2);
+        s += h.arrow(o.x, o.y + o.h, o.x, o.y - 12, 'faint', 1.2);
+        if (o.xl) s += h.text(o.x + o.w + 12, o.y + o.h + 27, o.xl, 'sc-axis', 'end');
+        if (o.yl) s += h.text(o.x + 6, o.y - 8, o.yl, 'sc-axis', 'start');
+        return {svg: s, X: X, Y: Y, x: o.x, y: o.y, w: o.w, h: o.h};
+      },
+      /* rotation continue (CSS), vitesse en tours par seconde à l'écran */
+      spin: function (cx, cy, inner, period, dir) {
+        if (!period || period <= 0) return '<g>' + inner + '</g>';
+        const now = performance.now();
+        return '<g class="sc-spin' + (dir < 0 ? ' sc-ccw' : '') + '" style="transform-origin:' + cx + 'px ' + cy + 'px;animation-duration:' +
+          period.toFixed(2) + 's;animation-delay:-' + ((now / 1000) % period).toFixed(2) + 's">' + inner + '</g>';
+      }
+    };
+    return h;
+  }
+
+  function register(name, def) { REG[name] = def; }
+
+  function mount(root) {
+    const svg = root.querySelector('svg[data-scene]');
+    if (!svg) return null;
+    const def = REG[svg.getAttribute('data-scene')];
+    if (!def) { console.error('Scène inconnue', svg.getAttribute('data-scene')); return null; }
+    root.classList.add('has-scene');
+    const id = 'sc' + (++UID);
+    const h = helpers(id);
+    let cur = null, raf = 0;
+
+    function draw(p, k) {
+      const now = performance.now();
+      svg.style.setProperty('--sc-delay', '-' + ((now / 1000) % 1.6).toFixed(3) + 's');
+      svg.innerHTML = h.defs() + def.draw(p, h, k);
+    }
+
+    return function (state, k, animate) {
+      const target = Object.assign({}, def.base || {}, state.scene || {});
+      cancelAnimationFrame(raf);
+      if (!cur || !animate || reduce.matches) { cur = target; draw(cur, k); return; }
+      const from = cur, t0 = performance.now(), dur = def.duration || 750;
+      function frame(now) {
+        const t = clamp((now - t0) / dur, 0, 1);
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const p = {};
+        Object.keys(target).forEach(function (key) {
+          const a = from[key], b = target[key];
+          const libre = DISCRETS.indexOf(key) < 0 && (def.discrete || []).indexOf(key) < 0;
+          p[key] = (libre && typeof a === 'number' && typeof b === 'number') ? lerp(a, b, e) : b;
+        });
+        p._t = e;
+        cur = p;
+        draw(p, k);
+        if (t < 1) raf = requestAnimationFrame(frame);
+        else { cur = target; draw(target, k); }
+      }
+      raf = requestAnimationFrame(frame);
+    };
+  }
+
+  return {register: register, mount: mount, fr: fr};
+})();
+
+/* Scènes du chapitre 1 — champs et équations de Maxwell. Les nombres affichés
+   viennent de state.scene (calculés par injecter_scenes.py). */
+(function (S) {
+  'use strict';
+
+  /* ---- gradient : point P en perspective + barres des dérivées partielles ---- */
+  S.register('grad', {
+    base: {axis: '', fx: 0, fy: 0, fz: 0, sx: 0, sy: 0, sz: 0, ex: 0, grad: 0},
+    draw: function (p, h) {
+      const u = 26, ox = 70, oy = 176;
+      function pr(x, y, z) { return [ox + y * u - x * 0.55 * u, oy - z * u + x * 0.38 * u]; }
+      let s = '';
+      const O = pr(0, 0, 0), X = pr(4.2, 0, 0), Y = pr(0, 6.6, 0), Z = pr(0, 0, 5.2);
+      s += h.arrow(O[0], O[1], X[0], X[1], 'faint', 1.2) + h.text(X[0] - 4, X[1] + 14, 'x', 'sc-axis', 'middle');
+      s += h.arrow(O[0], O[1], Y[0], Y[1], 'faint', 1.2) + h.text(Y[0] + 8, Y[1] + 4, 'y', 'sc-axis');
+      s += h.arrow(O[0], O[1], Z[0], Z[1], 'faint', 1.2) + h.text(Z[0] - 10, Z[1] + 4, 'z', 'sc-axis', 'end');
+      const A = pr(2, 0, 0), B = pr(2, 4, 0), P = pr(2, 4, 1);
+      s += h.path('M' + O + ' L' + A + ' L' + B + ' L' + P, 'faint', 1, {dash: '3 3'});
+      s += h.text(A[0] - 6, A[1] + 4, '2', 'sc-tick', 'end') + h.text(B[0] + 4, B[1] + 13, '(2 ; 4)', 'sc-tick');
+      const dirs = {x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1]};
+      if (p.axis && dirs[p.axis]) {
+        const d = dirs[p.axis], Q = pr(2 + d[0] * 1.6, 4 + d[1] * 1.6, 1 + d[2] * 1.6);
+        s += h.arrow(P[0], P[1], Q[0], Q[1], 'coral', 2.2);
+        s += h.tag(Q[0] + (p.axis === 'x' ? -6 : 8), Q[1] + (p.axis === 'z' ? -8 : 14), 'Δ' + p.axis + ' = 0,1', 'coral', p.axis === 'x' ? 'end' : 'start');
+      }
+      if (p.grad > 0.01) {
+        const g = [12, 8, -7 * Math.E], n = Math.hypot(g[0], g[1], g[2]), k = 2.2 / n;
+        const G = pr(2 + g[0] * k, 4 + g[1] * k, 1 + g[2] * k);
+        s += '<g opacity="' + p.grad.toFixed(2) + '">' + h.arrow(P[0], P[1], G[0], G[1], 'accent', 2.6) +
+          h.tag(G[0] + 10, G[1] + 4, '∇f', 'accent', 'start') + '</g>';
+      }
+      s += h.circle(P[0], P[1], 4.5, 'sc-pt');
+      s += h.tag(P[0] - 10, P[1] - 14, 'P · f = ' + p.f, 'accent', 'end');
+      /* barres */
+      const bx = 360, zero = 128, k2 = 3.9;
+      s += '<line x1="' + (bx - 10) + '" y1="' + zero + '" x2="' + (bx + 250) + '" y2="' + zero + '" stroke="var(--faint)" stroke-width="1"/>';
+      s += h.text(bx - 14, zero + 3, '0', 'sc-tick', 'end');
+      [['∂f/∂x', p.fx, p.sx, 12, p.tx], ['∂f/∂y', p.fy, p.sy, 8, p.ty], ['∂f/∂z', p.fz, p.sz, -7 * Math.E, p.tz]].forEach(function (b, i) {
+        const x = bx + 20 + i * 82, w = 40;
+        s += h.text(x + w / 2, 238, b[0], 'sc-lbl', 'middle');
+        if (b[2] > 0.01) {
+          const v = b[1], hh = Math.abs(v) * k2, y = v >= 0 ? zero - hh : zero;
+          s += '<g opacity="' + Math.min(1, b[2]).toFixed(2) + '">';
+          s += '<rect x="' + x + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + hh.toFixed(1) + '" rx="3" fill="var(--coral-s)" stroke="var(--coral)" stroke-width="1.4" stroke-dasharray="4 3"/>';
+          if (p.ex > 0.01) {
+            const ve = b[3], he = Math.abs(ve) * k2, ye = ve >= 0 ? zero - he : zero;
+            s += '<rect x="' + (x + 7) + '" y="' + ye.toFixed(1) + '" width="' + (w - 14) + '" height="' + he.toFixed(1) + '" rx="2" class="sc-bar" opacity="' + p.ex.toFixed(2) + '"/>';
+          }
+          s += h.text(x + w / 2, v >= 0 ? zero - hh - 6 : zero + hh + 14, b[4] || '', 'sc-val', 'middle');
+          s += '</g>';
+        }
+      });
+      s += '<rect x="' + (bx + 6) + '" y="16" width="12" height="9" rx="2" fill="var(--coral-s)" stroke="var(--coral)" stroke-dasharray="3 2"/>' + h.text(bx + 22, 24, 'différence finie (pas 0,1)', 'sc-val');
+      s += '<rect x="' + (bx + 6) + '" y="32" width="12" height="9" rx="2" class="sc-bar"/>' + h.text(bx + 22, 40, 'dérivée exacte en P', 'sc-val');
+      if (p.norm) s += h.tag(bx + 125, 66, p.norm, 'accent');
+      return s;
+    }
+  });
+
+  /* ---- divergence et rotationnel : champ fléché, surface de contrôle, roue à aubes ---- */
+  const FIELDS = {
+    source: function (x, y) { return [x, y]; },
+    puits: function (x, y) { return [-x, -y]; },
+    tourbillon: function (x, y) { return [-y, x]; },
+    uniforme: function () { return [1, 0]; },
+    cisaillement: function (x, y) { return [y, 0]; },
+    spirale: function (x, y) { return [x - y, y + x]; }
+  };
+  S.register('divrot', {
+    base: {kind: 'source', rot: 0, div: 0},
+    draw: function (p, h) {
+      const f = FIELDS[p.kind] || FIELDS.source, cx = 190, cy = 126, g = 36;
+      let s = '', vmax = 0;
+      const pts = [];
+      for (let i = -4; i <= 4; i++) for (let j = -3; j <= 3; j++) {
+        const v = f(i, j); pts.push([i, j, v]); vmax = Math.max(vmax, Math.hypot(v[0], v[1]));
+      }
+      pts.forEach(function (q) {
+        const v = q[2], m = Math.hypot(v[0], v[1]);
+        if (m < 1e-9 || (q[0] === 0 && q[1] === 0)) return;
+        const L = 7 + 21 * m / vmax, x = cx + q[0] * g, y = cy - q[1] * g * 0.92;
+        const dx = v[0] / m * L, dy = -v[1] / m * L;
+        s += h.arrow(x - dx / 2, y - dy / 2, x + dx / 2, y + dy / 2, 'muted', 1.3);
+      });
+      /* petite surface de contrôle */
+      s += '<rect x="' + (cx - 24) + '" y="' + (cy - 22) + '" width="48" height="44" rx="4" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 3"/>';
+      if (Math.abs(p.div) > 0.01) {
+        const o = p.div > 0 ? 1 : -1;
+        [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+          const x1 = cx + d[0] * (o > 0 ? 26 : 46), y1 = cy + d[1] * (o > 0 ? 24 : 44);
+          const x2 = cx + d[0] * (o > 0 ? 46 : 28), y2 = cy + d[1] * (o > 0 ? 44 : 26);
+          s += h.arrow(x1, y1, x2, y2, 'accent', 2.2);
+        });
+      }
+      /* roue à aubes */
+      let wheel = '<circle cx="' + cx + '" cy="' + cy + '" r="13" fill="var(--card)" stroke="var(--coral)" stroke-width="2"/>';
+      for (let k = 0; k < 4; k++) {
+        const a = k * Math.PI / 2;
+        wheel += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 16 * Math.cos(a)).toFixed(1) + '" y2="' + (cy + 16 * Math.sin(a)).toFixed(1) + '" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"/>';
+      }
+      wheel += '<circle cx="' + (cx + 9) + '" cy="' + (cy - 9) + '" r="2.4" fill="var(--coral)"/>';
+      s += p.rot ? h.spin(cx, cy, wheel, 2.4, p.rot > 0 ? -1 : 1) : wheel;
+      /* verdict */
+      const x0 = 400;
+      s += h.text(x0, 50, p.title || '', 'sc-lbl');
+      s += h.text(x0, 72, p.vtxt || '', 'sc-val');
+      s += h.tag(x0, 112, 'div v = ' + p.tdiv, p.div > 0.01 ? 'accent' : p.div < -0.01 ? 'coral' : 'line', 'start');
+      s += h.tag(x0, 142, 'rot v = ' + p.trot, p.rot ? 'coral' : 'line', 'start');
+      s += h.text(x0, 180, '▢ pointillé : flux net sortant (div)', 'sc-val');
+      s += h.text(x0, 198, '✣ roue : rotation locale (rot)', 'sc-val');
+      s += h.text(x0, 216, p.rot > 0 ? 'la roue tourne dans le sens direct' : p.rot < 0 ? 'la roue tourne dans le sens horaire' : 'la roue reste immobile', 'sc-val');
+      return s;
+    }
+  });
+
+  /* ---- flux non uniforme (ex. 6) : surface a × b en perspective ---- */
+  S.register('flux', {
+    base: {st: 0, sweep: 0},
+    draw: function (p, h) {
+      const O = [70, 214], ax = [260, 0], by = [70, -52], h0 = 46;
+      function P(xr, yr, z) { return [O[0] + ax[0] * xr + by[0] * yr, O[1] + ax[1] * xr + by[1] * yr - z]; }
+      function pt(a) { return a[0].toFixed(1) + ' ' + a[1].toFixed(1); }
+      let s = '';
+      const c00 = P(0, 0, 0), c10 = P(1, 0, 0), c11 = P(1, 1, 0), c01 = P(0, 1, 0);
+      s += '<path d="M' + pt(c00) + ' L' + pt(c10) + ' L' + pt(c11) + ' L' + pt(c01) + ' Z" fill="var(--accent-s)" stroke="var(--accent)" stroke-width="1.5"/>';
+      s += h.text(c10[0] - 40, c10[1] + 18, 'x → a = 10 cm', 'sc-val') + h.text(c00[0] - 6, c00[1] + 18, '0', 'sc-val', 'end');
+      s += h.text((c10[0] + c11[0]) / 2 + 10, (c10[1] + c11[1]) / 2 + 6, 'y → b = 5 cm', 'sc-val');
+      if (p.st === 0) {
+        const a = P(0.45, 0.4, 0), b = P(0.53, 0.4, 0), c = P(0.53, 0.55, 0), d = P(0.45, 0.55, 0);
+        s += '<path d="M' + pt(a) + ' L' + pt(b) + ' L' + pt(c) + ' L' + pt(d) + ' Z" fill="var(--coral-s)" stroke="var(--coral)" stroke-width="1.4"/>';
+        const m = P(0.49, 0.47, 0);
+        s += h.arrow(m[0], m[1], m[0], m[1] - 62, 'coral', 2.2) + h.tag(m[0] + 8, m[1] - 50, 'dA = dx dy e_z', 'coral', 'start');
+      }
+      const vol = p.st >= 3 ? 1 : 0;
+      if (p.st === 2 || vol) {
+        const sw = vol ? 1 : p.sweep, n = 24;
+        let d = 'M' + pt(P(0, 0, 0));
+        for (let k = 0; k <= n; k++) { const xr = k / n * sw; d += ' L' + pt(P(xr, 0, h0 * (1 + xr))); }
+        d += ' L' + pt(P(sw, 0, 0)) + ' Z';
+        s += '<path d="' + d + '" fill="var(--amber-s)" stroke="var(--amber)" stroke-width="1.5" opacity=".9"/>';
+        if (vol) {
+          s += '<path d="M' + pt(P(0, 0, h0)) + ' L' + pt(P(1, 0, 2 * h0)) + ' L' + pt(P(1, 1, 2 * h0)) + ' L' + pt(P(0, 1, h0)) + ' Z" fill="var(--amber-s)" stroke="var(--amber)" stroke-width="1.2" opacity=".55"/>';
+          s += h.path('M' + pt(P(1, 0, 2 * h0)) + ' L' + pt(P(1, 1, 2 * h0)) + ' L' + pt(P(1, 1, 0)), 'amber', 1.2, {dash: '4 3'});
+        }
+      }
+      if (p.st === 4) {
+        s += '<path d="M' + pt(P(0, 0, h0)) + ' L' + pt(P(1, 0, h0)) + ' L' + pt(P(1, 1, h0)) + ' L' + pt(P(0, 1, h0)) + ' Z" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="6 4"/>';
+        s += h.tag(P(1, 0, h0)[0] + 6, P(1, 0, h0)[1] + 16, 'uniforme B₀', 'teal', 'start');
+      }
+      if (p.st >= 1) {
+        for (let i = 0; i <= 4; i++) for (let j = 0; j <= 2; j++) {
+          const xr = i / 4, yr = j / 2, b = P(xr, yr, 0), t = P(xr, yr, h0 * (1 + xr));
+          s += h.arrow(b[0], b[1], t[0], t[1], 'ink', 1.5);
+        }
+      }
+      if (p.st === 1) {
+        const t0 = P(0, 0, h0), t1 = P(1, 0, 2 * h0);
+        s += h.tag(t0[0] - 4, t0[1] - 10, 'B(0) = 0,5 T', 'accent', 'start') + h.tag(t1[0] + 8, t1[1] - 4, 'B(a) = 1,0 T', 'accent', 'start');
+      }
+      if (p.st === 5) {
+        const q = P(0.5, 0.5, 0);
+        s += '<rect x="' + (q[0] - 60) + '" y="' + (q[1] - 150) + '" width="120" height="50" rx="4" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="5 3"/>';
+        s += h.arrow(q[0] - 30, q[1] - 80, q[0] - 30, q[1] - 170, 'teal', 1.8) + h.arrow(q[0] + 30, q[1] - 80, q[0] + 30, q[1] - 170, 'teal', 1.8);
+        s += h.text(q[0] + 66, q[1] - 122, 'entre = sort', 'sc-val');
+      }
+      const x0 = 420;
+      s += h.text(x0, 34, 'B = B₀ (1 + x/a) e_z', 'sc-lbl');
+      s += h.text(x0, 52, 'B₀ = 0,5 T', 'sc-val') + h.text(x0, 68, 'a = 10 cm ; b = 5 cm', 'sc-val');
+      (p.lines || []).forEach(function (l, i) { s += h.tag(x0, 104 + i * 30, l, i === (p.lines.length - 1) ? 'accent' : 'line', 'start'); });
+      return s;
+    }
+  });
+
+  /* ---- contour d'Ampère sur un conducteur de rayon a ---- */
+  S.register('ampere', {
+    base: {r: 0, rk: 0},
+    draw: function (p, h) {
+      const cx = 132, cy = 128, k = 4.2, a = 12 * k;
+      let s = '';
+      s += h.circle(cx, cy, a, 'sc-cu');
+      for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
+        if (i * i + j * j > 5) continue;
+        s += h.circle(cx + i * 17, cy + j * 17, 1.8, '', ' fill="var(--coral)"');
+      }
+      s += h.text(cx, cy + a + 15, 'a = 12 cm', 'sc-val', 'middle');
+      if (p.r > 0.1) {
+        const R = Math.min(p.r * k, 112), far = p.r * k > 112;
+        if (p.r < 12) s += h.circle(cx, cy, R, '', ' fill="var(--accent-s)" opacity=".85"');
+        s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R.toFixed(1) + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="' + (far ? '2 5' : '7 4') + '"/>';
+        for (let n = 0; n < 8; n++) {
+          const t = n * Math.PI / 4 + 0.3, x = cx + R * Math.cos(t), y = cy - R * Math.sin(t);
+          const tx = -Math.sin(t), ty = -Math.cos(t);
+          s += h.arrow(x - tx * 7, y - ty * 7, x + tx * 9, y + ty * 9, 'accent', 2);
+        }
+        s += h.path('M' + cx + ' ' + cy + ' L' + (cx + R * 0.71).toFixed(1) + ' ' + (cy + R * 0.71).toFixed(1), 'accent', 1.2);
+        s += h.tag(cx + R * 0.71 + 4, cy + R * 0.71 + 12, 'r = ' + p.tr, 'accent', 'start');
+      }
+      s += h.circle(cx, cy, 6, '', ' fill="var(--card)" stroke="var(--ink)" stroke-width="1.4"') + h.circle(cx, cy, 2, '', ' fill="var(--ink)"');
+      /* graphe B(r) */
+      const pl = h.plot({x: 330, y: 30, w: 270, h: 170, x0: 0, x1: 36, y0: 0, y1: 0.2, xt: [0, 12, 24, 36], yt: [0, 0.05, 0.1, 0.15, 0.2],
+        yf: function (t) { return S.fr(t, 2); }, xl: 'r (cm)', yl: 'B (T)'});
+      s += pl.svg;
+      const mu = 4e-7 * Math.PI, I = 1e5, A = 0.12;
+      function B(rc) { const r = rc / 100; return r < A ? mu * I * r / (2 * Math.PI * A * A) : mu * I / (2 * Math.PI * r); }
+      let d = '';
+      for (let i = 0; i <= 72; i++) { const rc = i / 2; d += (i ? ' L' : 'M') + pl.X(rc).toFixed(1) + ' ' + pl.Y(B(rc)).toFixed(1); }
+      s += h.path(d, 'accent', 2);
+      s += '<line x1="' + pl.X(12) + '" y1="30" x2="' + pl.X(12) + '" y2="200" stroke="var(--coral)" stroke-dasharray="3 3"/>';
+      s += h.text(pl.X(6), 44, 'B ∝ r', 'sc-val', 'middle') + h.text(pl.X(27), 108, 'B ∝ 1/r', 'sc-val', 'middle');
+      if (p.r > 0.1 && p.r <= 36) {
+        const xb = pl.X(p.r), yb = pl.Y(B(p.r));
+        s += h.circle(xb, yb, 5, 'sc-pt');
+      } else if (p.r > 36) {
+        s += h.arrow(pl.X(31), pl.Y(0.012), pl.X(36) + 8, pl.Y(0.012), 'accent', 2) + h.text(pl.X(30), pl.Y(0.012) - 8, 'r = 8,33 m →', 'sc-val', 'end');
+      }
+      if (p.tI) s += h.tag(465, 232, 'I enlacé = ' + p.tI + (p.tB ? ' ; B = ' + p.tB : ''), 'accent');
+      return s;
+    }
+  });
+
+  /* ---- Faraday : solénoïde, flux, fém, courant ---- */
+  S.register('faraday', {
+    base: {B: 0, tm: 0, show: 0},
+    draw: function (p, h) {
+      const x0 = 50, x1 = 250, cy = 118, ry = 46;
+      let s = '';
+      /* lignes de champ, nombre proportionnel à B */
+      const nl = Math.round(p.B * 8);
+      for (let i = 0; i < nl; i++) {
+        const y = cy - ry + 10 + i * (2 * ry - 20) / Math.max(1, nl - 1);
+        s += h.flow('M' + (x0 - 14) + ' ' + y.toFixed(1) + ' L' + (x1 + 18) + ' ' + y.toFixed(1), 'accent', 1.6, {op: 0.9});
+      }
+      for (let k = 0; k <= 10; k++) {
+        const x = x0 + k * (x1 - x0) / 10;
+        s += '<ellipse cx="' + x.toFixed(1) + '" cy="' + cy + '" rx="7" ry="' + ry + '" fill="none" stroke="var(--coral)" stroke-width="2"/>';
+      }
+      s += h.text((x0 + x1) / 2, cy + ry + 18, 'N = 100 ; r = 5 cm ; A = 7,854·10⁻³ m²', 'sc-val', 'middle');
+      if (p.B > 0.01) s += h.tag(x0 + 40, cy - ry - 14, 'B = ' + S.fr(p.B, 2) + ' T', 'accent');
+      /* boucle de mesure */
+      if (p.show >= 2) {
+        s += h.path('M' + x0 + ' ' + (cy + ry) + ' L' + x0 + ' 228 L' + x1 + ' 228 L' + x1 + ' ' + (cy + ry), 'ink', 1.5);
+        s += '<rect x="' + ((x0 + x1) / 2 - 18) + '" y="221" width="36" height="14" rx="2" class="sc-comp"/>' + h.text((x0 + x1) / 2, 248, 'R = 2 Ω', 'sc-val', 'middle');
+        s += h.arrow(x1 - 30, 228, x0 + 60, 228, 'coral', 2.4) + h.tag(x0 + 40, 214, 'i', 'coral');
+        s += h.arrow(x1 + 10, cy - ry - 18, x0 + 110, cy - ry - 18, 'teal', 2.4);
+        s += h.text(x1 + 14, cy - ry - 14, 'B induit (Lenz)', 'sc-val');
+      }
+      /* graphe Ψ(t) */
+      const pl = h.plot({x: 360, y: 30, w: 230, h: 150, x0: 0, x1: 0.3, y0: 0, y1: 0.9, xt: [0, 0.1, 0.2, 0.3], yt: [0, 0.3, 0.6, 0.9],
+        xf: function (t) { return S.fr(t, 1); }, xl: 't (s)', yl: 'Ψ (Wb·tr)'});
+      s += pl.svg;
+      const psi = function (t) { return 0.3927 + (0.7854 - 0.3927) * Math.max(0, Math.min(1, t / 0.2)); };
+      if (p.B > 0.01) {
+        let d = '';
+        const tmax = p.tm;
+        for (let i = 0; i <= 30; i++) { const t = i / 30 * tmax; d += (i ? ' L' : 'M') + pl.X(t).toFixed(1) + ' ' + pl.Y(psi(t)).toFixed(1); }
+        s += h.path(d, 'accent', 2.2);
+        s += h.circle(pl.X(tmax), pl.Y(psi(tmax)), 4.5, 'sc-pt');
+        if (p.show >= 1) {
+          s += h.path('M' + pl.X(0) + ' ' + pl.Y(0.3927) + ' L' + pl.X(0.2) + ' ' + pl.Y(0.3927) + ' L' + pl.X(0.2) + ' ' + pl.Y(0.7854), 'coral', 1.4, {dash: '4 3'});
+          s += h.text(pl.X(0.2) + 6, pl.Y(0.59), 'ΔΨ = 0,393', 'sc-val') + h.text(pl.X(0.1), pl.Y(0.3927) + 14, 'Δt = 0,2 s', 'sc-val', 'middle');
+        }
+      }
+      if (p.tr) s += h.tag(475, 230, p.tr, 'accent');
+      return s;
+    }
+  });
+})(window.ElmecScenes);
+</script>
 
 <script>
 (function () {
@@ -1597,6 +2068,7 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
      ============================================================ */
   function mountLab(root, spec){
     const mem = makeMemory(root);
+    const scene = window.ElmecScenes ? window.ElmecScenes.mount(root) : null;
     const note = root.querySelector('[data-note]');
     const codeEl = root.querySelector('[data-code]');
     const linesEl = root.querySelector('[data-lines]');
@@ -1648,6 +2120,7 @@ rot(grad <i>f</i>) = <b>0</b>          div(rot <i>u</i>) = <b>0</b>
     function paint(animate){
       const s = states[i];
       mem.render(s, animate !== false);
+      if (scene) scene(s, i, animate !== false);
       if (note) note.innerHTML = s.label;
       if (codeEl) codeEl.innerHTML = s.code ? hl(s.code) : '';
       if (linesEl) {

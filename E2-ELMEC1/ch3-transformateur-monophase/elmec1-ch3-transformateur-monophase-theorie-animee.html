@@ -1998,7 +1998,11 @@ window.ElmecScenes = (function () {
       if (Ip > 0.001) {
         s += h.arrow(ox + U2p, oy, ox + U2p + dR, oy, 'coral', 2.2);
         s += h.arrow(ox + U2p + dR, oy, ox + U2p + dR, oy - dX, 'amber', 2.2);
-        s += h.text(ox + U2p + dR + 5, oy - dX / 2 + 4, 'jX_cc I′₂', 'sc-tick');
+        /* triangle plat (faible courant) : étiquette à droite, sous le graphe η ;
+           triangle haut : à gauche de la flèche, dans le triangle, pour ne pas toucher l'axe du graphe η */
+        const xr = ox + U2p + dR;
+        s += dX < 30 ? h.text(xr + 5, oy - dX / 2 + 4, 'jX_cc I′₂', 'sc-tick')
+          : h.text(xr - 6, oy - dX / 2 + 4, 'jX_cc I′₂', 'sc-tick', 'end');
         s += h.text(ox + U2p + dR / 2, oy + 16, 'R_cc I′₂', 'sc-tick', 'middle');
       }
       s += h.arrow(ox, oy, ox + U2p + dR, oy - dX, 'accent', 1.6);
